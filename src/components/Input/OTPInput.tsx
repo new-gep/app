@@ -31,7 +31,6 @@ const OTPInput = ({code,setCode,maximumLength,setIsPinReady} : props) => {
         
         const isDigitFocused = isCurrentDigit || (isLastDigit && isCodeFull);
 
-
         return (
             <View  key={index} style={[styles.SplitBoxes, isDigitFocused ? styles.SplitBoxesFocused : null]}>
                 <Text style={[FONTS.fontLight,styles.SplitBoxText,{color:colors.title}]}>{digit}</Text>
@@ -45,13 +44,15 @@ const OTPInput = ({code,setCode,maximumLength,setIsPinReady} : props) => {
     const handleOnPress = () => {
         setIsInputBoxFocused(true);
         inputRef.current.focus();
-      };
+    };
      
-      const handleOnBlur = () => {
+    const handleOnBlur = () => {
         setIsInputBoxFocused(false);
-      };
+    };     
 
-     
+    useEffect(()=>{
+
+    },[code])
 
   return (
     <View style={styles.OTPInputContainer}>
@@ -64,9 +65,9 @@ const OTPInput = ({code,setCode,maximumLength,setIsPinReady} : props) => {
             onChangeText={setCode}
             maxLength={maximumLength}
             ref={inputRef}
-            onFocus={handleOnPress}
+            // onFocus={handleOnPress}
             onBlur={handleOnBlur}
-            keyboardType={'number-pad'}
+            keyboardType={'default'}
         />
     </View>
   )

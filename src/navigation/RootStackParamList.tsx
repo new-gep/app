@@ -9,7 +9,7 @@ export type RootStackParamList = {
     QrCodeScanner: undefined;
     WelCome: undefined;
     SignUp: undefined;
-    SingIn: undefined;
+    SingIn:undefined
     SignUpAuthentication: undefined;
     Onboarding: undefined;
     Login: undefined;

@@ -1,4 +1,3 @@
-// src/utils/validation.ts
 
 export type FormValues = {
     name?: string;
@@ -15,44 +14,62 @@ export type FormValues = {
 export const validateForm = async (formValues: FormValues) => {
     const errors: Record<string, string> = {};
 
-    if (formValues.name === undefined || formValues.name.trim() === '') {
-        errors.name = 'Nome é obrigatório.';
-    }
-
-    if (formValues.cpf === undefined || formValues.cpf.trim() === '') {
-        errors.cpf = 'CPF é obrigatório.';
-    } else {
-        const isValidCPF = await validateCPF(formValues.cpf);
-        if (!isValidCPF) {
-            errors.cpf = 'CPF inválido.';
+    if ('name' in formValues) {
+        if (formValues.name === undefined || formValues.name.trim() === '') {
+            errors.name = 'Nome é obrigatório.';
         }
     }
 
-    if (formValues.phone === undefined || formValues.phone.trim() === '') {
-        errors.phone = 'Celular é obrigatório.';
-    } else if (formValues.phone.replace(/\D/g, '').length !== 11) {
-        errors.phone = 'Celular inválido.';
-    }
-    
-
-    if (formValues.email === undefined || !/\S+@\S+\.\S+/.test(formValues.email)) {
-        errors.email = 'Email inválido.';
-    }
-
-    if (formValues.password === undefined || formValues.password.length < 6) {
-        errors.password = 'A senha deve ser maior que 6 caracteres.';
+    if ('cpf' in formValues) {
+        if (formValues.cpf === undefined || formValues.cpf.trim() === '') {
+            errors.cpf = 'CPF é obrigatório.';
+        } else {
+            const isValidCPF = await validateCPF(formValues.cpf);
+            if (!isValidCPF) {
+                errors.cpf = 'CPF inválido.';
+            }
+        }
     }
 
-    if (formValues.password !== formValues.repeatPassword) {
-        errors.repeatPassword = 'As senhas devem ser iguais.';
+    if ('phone' in formValues) {
+        if (formValues.phone === undefined || formValues.phone.trim() === '') {
+            errors.phone = 'Celular é obrigatório.';
+        } else if (formValues.phone.replace(/\D/g, '').length !== 11) {
+            errors.phone = 'Celular inválido.';
+        }
     }
 
-    if (!formValues.terms) {
-        errors.terms = 'É obrigatório aceitar os termos';
+    if ('email' in formValues) {
+        if (formValues.email === undefined || !/\S+@\S+\.\S+/.test(formValues.email)) {
+            errors.email = 'Email inválido.';
+        }
+    }
+
+    if ('password' in formValues) {
+        if (formValues.password === undefined || formValues.password.length < 6) {
+            errors.password = 'A senha deve ser maior que 6 caracteres.';
+        }
+    }
+
+    if ('repeatPassword' in formValues) {
+        if (formValues.password !== formValues.repeatPassword) {
+            errors.repeatPassword = 'As senhas devem ser iguais.';
+        }
+    }
+
+    if ('terms' in formValues) {
+        if (!formValues.terms) {
+            errors.terms = 'É obrigatório aceitar os termos';
+        }
+    }
+
+    if ('checkCode' in formValues) {
+        // Adicione a validação específica para 'checkCode' aqui, se necessário
     }
 
     return errors;
 };
+
 
 async function validateCPF(cpf: string): Promise<boolean> {
     cpf = cpf.replace(/[^\d]/g, ''); 

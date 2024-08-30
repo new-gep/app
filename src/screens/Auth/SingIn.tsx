@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native'
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { COLORS, FONTS } from '../../constants/theme'
 import { GlobalStyleSheet } from '../../constants/StyleSheet'
 import { useTheme } from '@react-navigation/native'
@@ -9,21 +9,72 @@ import Input from '../../components/Input/Input'
 import { IMAGES } from '../../constants/Images'
 import Button from '../../components/Button/Button'
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import RBSheet from 'react-native-raw-bottom-sheet';
+import SuccessSheet from '../../components/BottomSheet/SuccessSheet';
+import DangerSheet from '../../components/BottomSheet/DangerSheet';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 type SingInScreenProps = StackScreenProps<RootStackParamList, 'SingIn'>;
 
-const SingIn = ({navigation} : SingInScreenProps) => {
+const SingIn = ({route, navigation} : SingInScreenProps) => {
 
     const theme = useTheme();
     const { colors }: { colors : any} = theme;
-
     const [isFocused , setisFocused] = useState(false);
     const [isFocused2 , setisFocused2] = useState(false);
     const [cpf , setCpf] = useState('');
     const [password , setpassword] = useState('');
+    const [activeSheet, setActiveSheet]   = useState(String);
+    const [messageSheet, setMessageSheet] = useState(String);
+    const refRBSheet = useRef<any>(null);
 
+    const handleFocus = useCallback( () => {
+       const searchRegister = async () => {
+        const response = await AsyncStorage.getItem('createSuccess');
+        if(response){
+            await AsyncStorage.removeItem('createSuccess');
+            setActiveSheet('success')
+            setMessageSheet('Conta criada, parabéns')
+            Sheet()
+        }
+       };
+       searchRegister();
+    }, []);
+    
+    const Sheet = async () => {
+        await refRBSheet.current.open();
+    };
+
+    useFocusEffect(handleFocus);
 
   return (
     <SafeAreaView style={{flex:1,backgroundColor:colors.card,}}>
+        <RBSheet
+            ref={refRBSheet}
+            closeOnDragDown={true}
+            height={215}
+            openDuration={100}
+            customStyles={{
+                container: {
+                    backgroundColor: theme.dark ? colors.background : colors.cardBg,
+                },
+                draggableIcon: {
+                    marginTop: 10,
+                    marginBottom: 5,
+                    height: 5,
+                    width: 80,
+                    backgroundColor: colors.border,
+                }
+            }}
+        >
+
+            { activeSheet === "success" ?
+                <SuccessSheet message={messageSheet} />
+                :
+                <DangerSheet  message={messageSheet} />
+            }
+        </RBSheet>
         <View className='justify-center items-center h-40'>
             <Image
                 className='h-60 w-60'
@@ -85,7 +136,7 @@ const SingIn = ({navigation} : SingInScreenProps) => {
                 <View style={{marginTop:25}}>
                     <Button
                         title={"Entrar"}
-                        bg={'bg-black'}
+                        color={COLORS.dark}
                         onPress={() => navigation.navigate('DrawerNavigation',{screen : 'Home'} )}
                         style={{borderRadius:52}}
                     />

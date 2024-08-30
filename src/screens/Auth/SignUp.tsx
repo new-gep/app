@@ -55,14 +55,15 @@ const SignUp = ({navigation} : SignUpScreenProps) => {
         if (Object.keys(validationErrors).length !== 0) {
             const firstErrorMessage = Object.values(validationErrors)[0];
             setMessage(firstErrorMessage)
+            setLoad(false)
             Sheet()
             return
         };
         const response = await CheckCollaborator(formValues);
         switch (response.status) {
             case 200:
-                setFormValues({ ...formValues, checkCode: response.code })
-                await AsyncStorage.setItem('checkCollaborator', JSON.stringify(formValues));
+                const updatedFormValues = { ...formValues, checkCode: response.code };
+                await AsyncStorage.setItem('checkCollaborator', JSON.stringify(updatedFormValues));
                 navigation.navigate('SignUpAuthentication')
                 setLoad(false)
                 break;
