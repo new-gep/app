@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, ScrollView, Image, TouchableOpacity, TextInput, StyleSheet, BackHandler } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
 import { IMAGES } from '../../constants/Images';
@@ -12,7 +12,6 @@ import { addTowishList } from '../../redux/reducer/wishListReducer';
 import ImageSwiper from '../../components/ImageSwiper';
 import Cardstyle4 from '../../components/Card/Cardstyle4';
 import { openDrawer } from '../../redux/actions/drawerAction';
-
 
 const ArrivalData = [
     {
@@ -126,6 +125,13 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     const addItemToWishList = (data: any) => {
         dispatch(addTowishList(data));
     }
+
+    useEffect(() => {
+        const backHandlerSubscription = BackHandler.addEventListener('hardwareBackPress', () => {
+            return true;
+        });
+        return () => backHandlerSubscription.remove();
+    },[])
     
     return (
         <View style={{ backgroundColor: colors.card, flex: 1 }}>

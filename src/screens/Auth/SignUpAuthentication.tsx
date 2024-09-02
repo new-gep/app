@@ -65,7 +65,7 @@ const SignUpAuthentication = () => {
                 switch (response.status) {
                     case 201:
                         await AsyncStorage.removeItem('checkCollaborator');
-                        await AsyncStorage.setItem('createSuccess', 'success');
+                        await AsyncStorage.setItem('collaboratorCreateSuccess', 'success');
                         navigation.navigate('SingIn')
                         break;
                     case 409:
@@ -227,13 +227,6 @@ const SignUpAuthentication = () => {
                             </Text>
                         </ScrollView>
                         <View style={{marginBottom:10}}>
-                            <View style={{}}>
-                                <Button
-                                    title={"Verify and proceed"}
-                                    onPress={() => navigation.navigate('NewPassword')}
-                                    style={{borderRadius:48}}
-                                />
-                            </View>
                             <View style={[GlobalStyleSheet.bottombtn]}>
                                 <Text style={[FONTS.fontRegular,{fontSize:14,color:colors.title}]}>New Gep</Text>
                                 <Text style={styles.title4}>technology</Text>

@@ -56,11 +56,18 @@ const Onboarding = ({navigation} : OnboardingScreenProps) => {
 
     const checkCollaborator = async () => {
         const checkCollaborator = await AsyncStorage.getItem('checkCollaborator');
-        if(!checkCollaborator){
+        const rememberMy        = await AsyncStorage.getItem('rememberMy');
+        if(checkCollaborator){
             setWaitProcess(true)
+            navigation.navigate('SignUpAuthentication')
             return
-        }
-        navigation.navigate('SignUpAuthentication')
+        };
+        if(rememberMy){
+            setWaitProcess(true)
+            navigation.navigate('DrawerNavigation',{screen : 'Home'} )
+            return
+        };
+        setWaitProcess(true);
     };
 
     const [imageScale] = useState(new Animated.Value(0));

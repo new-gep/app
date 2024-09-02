@@ -59,10 +59,11 @@ const ForgotPassword = ({navigation} :ForgotPasswordScreenProps) => {
                                 const collaborator = {
                                     code : response.code,
                                     email: dates.collaborator.email,
-                                    cpf  : dates.collaborator.cpf
+                                    cpf  : dates.collaborator.CPF
                                 }
                                 await AsyncStorage.setItem('datesForgotPassword',  JSON.stringify(collaborator));
                                 navigation.navigate('OTPAuthentication')
+                                setWaitProcess(false)
                                 return
                             default:
                                 setMessageSheet(` Algo deu errado, tente mais tarde.`)

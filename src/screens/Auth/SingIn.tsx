@@ -13,38 +13,84 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import SuccessSheet from '../../components/BottomSheet/SuccessSheet';
 import DangerSheet from '../../components/BottomSheet/DangerSheet';
 import { useFocusEffect } from '@react-navigation/native';
+import AuthASingIn from '../../hooks/utils/authAccessCollaborator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SingInScreenProps = StackScreenProps<RootStackParamList, 'SingIn'>;
-
+type Props = {
+    cpf     :string
+    password:string
+ }
 const SingIn = ({route, navigation} : SingInScreenProps) => {
 
     const theme = useTheme();
     const { colors }: { colors : any} = theme;
     const [isFocused , setisFocused] = useState(false);
     const [isFocused2 , setisFocused2] = useState(false);
-    const [cpf , setCpf] = useState('');
-    const [password , setpassword] = useState('');
+    const [cpf , setCpf] = useState<any>('');
+    const [password , setpassword] = useState(String);
     const [activeSheet, setActiveSheet]   = useState(String);
+    const [waitProcessSingIn, setWaitProcessSingIn] = useState(false);
+    const [remember, setRemember] = useState(true)
     const [messageSheet, setMessageSheet] = useState(String);
     const refRBSheet = useRef<any>(null);
 
     const handleFocus = useCallback( () => {
        const searchRegister = async () => {
-        const response = await AsyncStorage.getItem('createSuccess');
-        if(response){
-            await AsyncStorage.removeItem('createSuccess');
-            setActiveSheet('success')
-            setMessageSheet('Conta criada, parabéns')
-            Sheet()
-        }
-       };
+           const newCollaborator         = await AsyncStorage.getItem('collaboratorCreateSuccess');
+           const newCollaboratorPassword = await AsyncStorage.getItem('collaboratorCreateNewPasswordSuccess');
+            if(newCollaborator){
+                await AsyncStorage.removeItem('collaboratorCreateSuccess');
+                setActiveSheet('success')
+                setMessageSheet('Conta criada, parabéns')
+                Sheet()
+            };
+            if(newCollaboratorPassword){
+                await AsyncStorage.removeItem('collaboratorCreateNewPasswordSuccess');
+                setActiveSheet('success')
+                setMessageSheet('Senha alterada, parabéns')
+                Sheet()
+            };
+        };
        searchRegister();
     }, []);
     
     const Sheet = async () => {
         await refRBSheet.current.open();
     };
+
+    const handleSingIn = async () => {
+        if(waitProcessSingIn){
+            return
+        }
+        setWaitProcessSingIn(true)
+        const props: Props = { cpf, password };
+        const response = await AuthASingIn(props)
+        switch (response.status) {
+            case 200:
+                await AsyncStorage.setItem('collaborator', JSON.stringify(response.collaborator));
+                await AsyncStorage.removeItem('rememberMy');
+                if(remember){
+                    await AsyncStorage.setItem('rememberMy', '1');
+                }
+                navigation.navigate('DrawerNavigation',{screen : 'Home'} )
+                setWaitProcessSingIn(false)
+                break;
+            case 409:
+                setActiveSheet('danger')
+                setMessageSheet(response.message)
+                Sheet()
+                setWaitProcessSingIn(false)
+                break;
+            default:
+                setActiveSheet('danger')
+                setMessageSheet(response.message)
+                Sheet()
+                setWaitProcessSingIn(false)
+                break;
+        };
+        setWaitProcessSingIn(false)
+    }
 
     useFocusEffect(handleFocus);
 
@@ -98,7 +144,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                             onFocus={() => setisFocused(true)}
                             onBlur={() => setisFocused(false)}
                             value={cpf}
-                            onChangeText={(value) => setCpf(value)}
+                            onChangeText={ (masked, unmasked) => setCpf(unmasked) }
                             isFocused={isFocused}
                             keyboardType={'numeric'}
                             inputBorder
@@ -112,9 +158,10 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                             onFocus={() => setisFocused2(true)}
                             onBlur={() => setisFocused2(false)}
                             backround={colors.card}
-                            onChangeText={(value) => console.log(value)}
+                            value={password}
+                            onChangeText={(value) => setpassword(value)}
                             isFocused={isFocused2}
-                            type={'password'}
+                            type={'default'}
                             inputBorder
                         />
                     </View>
@@ -127,17 +174,19 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                                     unfillColor="#f4f4f4"
                                     isChecked={true}
                                     iconStyle={{ borderColor: "#fde047" }}
-                                    // innerIconStyle={{ borderWidth: 1 }}
-                                    // onPress={()=>setRemember(!remember)}
+                                    onPress={()=>setRemember(!remember)}
                                 />
                             </View>
                             <Text className={'px-2 mt-1'} style={[styles.text,{color:colors.title}]}>Lembrar de mim</Text>
                         </View>
                 <View style={{marginTop:25}}>
                     <Button
+                        load={waitProcessSingIn}
+                        loadSize={20}
+                        loadColor={'#FFFFFF'}
                         title={"Entrar"}
                         color={COLORS.dark}
-                        onPress={() => navigation.navigate('DrawerNavigation',{screen : 'Home'} )}
+                        onPress={handleSingIn}
                         style={{borderRadius:52}}
                     />
                     <View 

@@ -78,7 +78,7 @@ const SignUp = ({navigation} : SignUpScreenProps) => {
                 setLoad(false)
                 break;
         }
-    }
+    };
 
     const checkCollaborator = async () => {
         let collaboratorDates = await AsyncStorage.getItem('checkCollaborator');  
@@ -93,11 +93,17 @@ const SignUp = ({navigation} : SignUpScreenProps) => {
         }
         setWaitProcess(true)
         return
-    }
+    };
+
+    const handleGoBack = async () => {
+        await AsyncStorage.removeItem('checkCollaborator');
+        navigation.navigate('SingIn')
+        
+    };
 
     useEffect(()=>{
         checkCollaborator()
-    })
+    });
 
   return (
     <SafeAreaView style={{flex:1,backgroundColor:colors.card,}}>
@@ -123,7 +129,7 @@ const SignUp = ({navigation} : SignUpScreenProps) => {
         </RBSheet>
         <View className={`px-10 py-5 h-40 flex-row justify-center items-center`}>
             <TouchableOpacity
-                onPress={() => navigation.goBack()}
+                onPress={handleGoBack}
                 activeOpacity={0.5}
                 style={[styles.imagebackground,{
                     backgroundColor:'#F6F6F6',

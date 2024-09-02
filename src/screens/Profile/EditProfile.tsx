@@ -50,7 +50,7 @@ const EditProfile = () => {
     return (
        <View style={{backgroundColor:colors.background,flex:1}}>
            <Header
-                title='Edit Profile'
+                title='Editar Perfil'
                 leftIcon='back'
                 titleRight
            />
@@ -85,7 +85,7 @@ const EditProfile = () => {
                 </View>
                 <View style={[GlobalStyleSheet.container,{backgroundColor:theme.dark ? 'rgba(255,255,255,.1)':colors.card,marginTop:10,paddingVertical:10,borderRadius:15}]}>
                     <View style={[styles.cardBackground,{ borderBottomColor:COLORS.inputborder,borderStyle:'dashed'}]}>
-                        <Text style={{ ...FONTS.fontRegular, fontSize: 14, color: colors.title }}>Overall Rating</Text>
+                        <Text style={{ ...FONTS.fontRegular, fontSize: 14, color: colors.title }}>Informação básica geral</Text>
                     </View>
                     <View style={{ marginBottom: 15, marginTop: 10 }}>
                         <Input  
@@ -97,7 +97,7 @@ const EditProfile = () => {
                             style={{borderRadius:48}}
                             inputicon
                             placeholder='Full Name'
-                            icon={<Image source={IMAGES.user2} style={[styles.icon,{tintColor:colors.title}]}/>}
+                            icon={<Image source={IMAGES.user1} style={[styles.icon,{tintColor:colors.title}]}/>}
                         />
                     </View>
                     <View style={{ marginBottom: 15 }}>
