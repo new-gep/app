@@ -10,7 +10,7 @@ import SuccessModal from '../../components/Modal/SuccessModal';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
 import { COLORS, FONTS, SIZES } from '../../constants/theme';
 import Header from '../../layout/Header';
-
+import ProfileLock from '../../components/Modal/ProfileLock';
 
 const ModalBox = () => {
 
@@ -20,11 +20,21 @@ const ModalBox = () => {
     const [activeSheet , setActiveSheet] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
 
+    const handleCompleteProfile = () => {
+        // Lógica para completar o perfil do usuário
+        setModalVisible(false);  // Fecha o modal
+    };
+
     const ActionData = [
         {
             icon : "info",
             title : "Confirm modal",
             sheet : 'option',
+        },
+        {
+            icon : "lock",
+            title : "locket",
+            sheet : 'locket',
         },
         {
             icon : "check-circle",
@@ -75,7 +85,9 @@ const ModalBox = () => {
                         activeSheet === "login" ?
                         <LoginModal close={setModalVisible}/> :
                         activeSheet === "register" ?
-                        <RegisterModal close={setModalVisible}/>
+                        <RegisterModal close={setModalVisible}/>:
+                        activeSheet === "locket"?
+                        <ProfileLock visible={modalVisible} close={handleCompleteProfile} />
                         :
                         <SuccessModal/>
                     }

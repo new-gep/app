@@ -1,6 +1,5 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, StyleSheet, ActivityIndicator } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { useFocusEffect } from '@react-navigation/native';
 import { COLORS, FONTS } from '../../constants/theme'
 import { GlobalStyleSheet } from '../../constants/StyleSheet'
 import { useTheme } from '@react-navigation/native'
@@ -12,7 +11,7 @@ import { IMAGES } from '../../constants/Images'
 import Button from '../../components/Button/Button'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import DangerSheet from '../../components/BottomSheet/DangerSheet'
-import CheckCollaborator from '../../hooks/utils/checkCollaborator'
+import CheckCollaborator from '../../hooks/utils/CheckCollaborator'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { FormValues, validateForm } from '../../utils/validateField'
 import AsyncStorage from '@react-native-async-storage/async-storage';

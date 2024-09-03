@@ -13,7 +13,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import DangerSheet from '../../components/BottomSheet/DangerSheet'
 import { FormValues, validateForm } from '../../utils/validateField'
 import FindCollaborator from '../../hooks/find/collaborator'
-import SendCodeByEmail from '../../hooks/utils/sendCodeByEmail'
+import SendCodeByEmail from '../../hooks/utils/SendCodeByEmail'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 type ForgotPasswordScreenProps = StackScreenProps<RootStackParamList, 'ForgotPassword'>;
 interface Props { email: string }

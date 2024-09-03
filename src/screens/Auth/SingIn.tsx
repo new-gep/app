@@ -13,7 +13,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import SuccessSheet from '../../components/BottomSheet/SuccessSheet';
 import DangerSheet from '../../components/BottomSheet/DangerSheet';
 import { useFocusEffect } from '@react-navigation/native';
-import AuthASingIn from '../../hooks/utils/authAccessCollaborator';
+import AuthASingIn from '../../hooks/utils/AuthAccessCollaborator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SingInScreenProps = StackScreenProps<RootStackParamList, 'SingIn'>;

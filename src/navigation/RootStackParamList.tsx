@@ -2,6 +2,8 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 import { BottomTabParamList } from "./BottomTabParamList";
 
 export type RootStackParamList = {
+    addListener(arg0: string, arg1: () => void): unknown;
+    navigate(arg0: string): unknown;
     DrawerNavigation: NavigatorScreenParams<BottomTabParamList>;
     openDrawer:undefined;
     Demo: undefined;

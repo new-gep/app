@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormValues } from '../../utils/validateField'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import DangerSheet from '../../components/BottomSheet/DangerSheet'
-import SendCodeByEmail from '../../hooks/utils/sendCodeByEmail'
+import SendCodeByEmail from '../../hooks/utils/SendCodeByEmail'
 import SuccessSheet from '../../components/BottomSheet/SuccessSheet'
 import CreateCollaborator from '../../hooks/create/collaborator'
 type SignUpAuthenticationNavigationProp = NavigationProp<RootStackParamList, 'SignUpAuthentication'>;

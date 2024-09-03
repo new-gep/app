@@ -11,23 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadScreenSimple from '../../components/LoadScreen/Simple';
 import Mask from '../../utils/mask';
 import ListStyle1 from '../../components/List/ListStyle1';
-import { Feather, AntDesign, SimpleLineIcons  } from '@expo/vector-icons';
-const profilecartData = [
-    {
-        id:"1",
-        title: "Creamy Latte\nCoffee",
-        subtitle:"Beverages",
-        image:IMAGES.item15
-    },
-    {
-        id:"2",
-        title: "Ombe Ice Coffee \n Latte",
-        subtitle:"Beverages",
-        image:IMAGES.item16
-    },
-
-]
-
+import CheckCadasterCollaboratorProfile from '../utils/checkCadasterCollaboratorProfile';
+import { AntDesign, SimpleLineIcons  } from '@expo/vector-icons';
 type ProfileScreenProps = StackScreenProps<RootStackParamList, 'Profile'>;
 type propsCollaborator = {
     name    :string
@@ -76,7 +61,35 @@ const Profile = ({navigation} : ProfileScreenProps) => {
             title:'Endereço',
             subtitle:`${collaborator.zip_code ? '': 'Cadastro incompleto'}`
         },
-    ]
+        {
+            id:"4",
+            image:IMAGES.children,
+            title:'Filhos',
+            subtitle:`${collaborator.zip_code ? '': 'Cadastro incompleto'}`
+        },
+        {
+            id:"5",
+            image:IMAGES.ring,
+            title:'Casamento',
+            subtitle:`${collaborator.zip_code ? '': 'Cadastro incompleto'}`
+        },
+    ];
+
+    const profilecartData = [
+        {
+            id:"1",
+            title: "Ponto Digital\nRH",
+            subtitle: "Gestão de Ponto",
+            image:IMAGES.unique0
+        },
+        {
+            id:"2",
+            title: "Holerite Digital\nRH",
+            subtitle:"Gestão de Holerite",
+            image:IMAGES.unique1
+        },
+    
+    ];
 
     const fetchData = async () => {
         try {
@@ -125,7 +138,6 @@ const Profile = ({navigation} : ProfileScreenProps) => {
 
     useEffect(()=>{
         fetchData()
-        console.log(collaborator)
     },[])
 
   return (
@@ -140,7 +152,8 @@ const Profile = ({navigation} : ProfileScreenProps) => {
             :
             <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{flexGrow:1,paddingBottom:50}}>
                 <View className={`px-5`}>
-                    <View className={`bg-dark px-5 rounded-b-3xl`}>
+                    <CheckCadasterCollaboratorProfile/>
+                    {/* <View className={`bg-dark px-5 rounded-b-3xl`}>
                         <View style={[GlobalStyleSheet.cardHeader,{borderBottomColor:COLORS.inputborder}]}>
                             <Text className={`text-xl text-warning`} style={{...FONTS.fontMedium,}} >
                                 <AntDesign name="warning" size={24} color={COLORS.warning} />  Cadastro Incompleto 
@@ -150,23 +163,28 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                                 para liberar o uso da plataforma. 
                             </Text>
                         </View>
-                        <View style={GlobalStyleSheet.cardBody}>
-                            <ListStyle1 
-                                onPress={()=>{navigation.navigate('EditProfile')}}
-                                arrowRight 
-                                icon={<AntDesign name={'user'} size={15} color={COLORS.warning} />}
-                                title={'Foto de perfil'}
-                            />
-                            { !collaborator.zip_code &&
+                        <View className={`mt-3`}>
+                            <View>
+                                <Text className={`text-white font-semibold`}>Dados simples</Text>
+                            </View>
+                            <View style={GlobalStyleSheet.cardBody}>
                                 <ListStyle1 
                                     onPress={()=>{navigation.navigate('EditProfile')}}
                                     arrowRight 
-                                    icon={<SimpleLineIcons name={'location-pin'} size={15} color={COLORS.warning} />}
-                                    title={'Endereço'}
+                                    icon={<AntDesign name={'user'} size={15} color={COLORS.warning} />}
+                                    title={'Foto de perfil'}
                                 />
-                            }
+                                { !collaborator.zip_code &&
+                                    <ListStyle1 
+                                        onPress={()=>{navigation.navigate('EditProfile')}}
+                                        arrowRight 
+                                        icon={<SimpleLineIcons name={'location-pin'} size={15} color={COLORS.warning} />}
+                                        title={'Endereço'}
+                                    />
+                                }
+                            </View>
                         </View>
-                    </View>
+                    </View> */}
                 </View>
                 <View style={[GlobalStyleSheet.container,{alignItems:'center',marginTop:50,padding:0}]}>
                     <View
@@ -232,7 +250,7 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                                                 onPress={() => navigation.navigate('ProductsDetails')}      
                                                 key={index}
                                                 style={[styles.arrivaldata,{
-                                                    backgroundColor:COLORS.primary,
+                                                    backgroundColor:COLORS.dark,
                                                     borderColor:'#EFEFEF',
                                                 }]}>
                                                 <View style={[GlobalStyleSheet.flexcenter,{gap:20,justifyContent:'space-around'}]}>
@@ -241,9 +259,9 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                                                         source={data.image}
                                                     />
                                                     <View>
-                                                        <Text numberOfLines={1} style={{ ...FONTS.fontMedium, fontSize: 16, color:  COLORS.card}}>{data.title}</Text>
+                                                        <Text numberOfLines={1} style={{ ...FONTS.fontMedium, fontSize: 16, color:  COLORS.primary}}>{data.title}</Text>
                                                         <View style={{flexDirection:'row',alignItems:'center',gap:10}}>
-                                                            <Text style={{ ...FONTS.fontRegular, fontSize: 14, color:COLORS.card,opacity:.5 }}>{data.subtitle}</Text>
+                                                            <Text style={{ ...FONTS.fontRegular, fontSize: 14, color:COLORS.primary,opacity:.5 }}>{data.subtitle}</Text>
                                                             <Image
                                                                 style={{height:16,width:16,resizeMode:'contain',}}
                                                                 source={IMAGES.share}

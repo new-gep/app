@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, TextInput, StyleSheet, BackHandler } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
@@ -12,7 +12,9 @@ import { addTowishList } from '../../redux/reducer/wishListReducer';
 import ImageSwiper from '../../components/ImageSwiper';
 import Cardstyle4 from '../../components/Card/Cardstyle4';
 import { openDrawer } from '../../redux/actions/drawerAction';
-
+import ProfileCompletionModal from '../../components/Modal/ProfileLock';
+import CheckAccountCompletion from '../../hooks/utils/CheckAccountCompletion';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const ArrivalData = [
     {
         id:"1",
@@ -111,7 +113,10 @@ const SwiperData = [
 ]
 
 type HomeScreenProps = StackScreenProps<RootStackParamList, 'Home'>
-
+type propsCollaborator = {
+    name:string
+    cpf :string
+};
 export const Home = ({ navigation }: HomeScreenProps) => {
 
     // const wishList = useSelector((state:any) => state.wishList.wishList);
@@ -121,20 +126,56 @@ export const Home = ({ navigation }: HomeScreenProps) => {
 
     const theme = useTheme();
     const { colors }: { colors: any; } = theme;
+    const [modalAlertCadaster, setModalAlertCadaster] = useState(false)
+    const [collaborator, setCollaborator] = useState<propsCollaborator>({
+        name: '',
+        cpf : ''
+    })
 
     const addItemToWishList = (data: any) => {
         dispatch(addTowishList(data));
     }
+    
+    const checkCadasterCollaborator = async () => {
+        const storedData = await AsyncStorage.getItem('collaborator');
+            if (storedData) {
+                const collaboratorDates = JSON.parse(storedData) as {
+                    name: string; 
+                    cpf :string;
+                };
+                
+                console.log(collaboratorDates)
+                const { name, cpf } = collaboratorDates;
+                if (name && cpf ) {
+                    const response = await CheckAccountCompletion(cpf)
+                    console.log(response)
+
+                }
+            }
+        // setModalAlertCadaster(true)
+    }
+
+    const handleCloseModalAlertCadaster = () => {
+        setModalAlertCadaster(false);
+    }
 
     useEffect(() => {
-        const backHandlerSubscription = BackHandler.addEventListener('hardwareBackPress', () => {
-            return true;
+        const unsubscribe = navigation.addListener('focus', () => {
+            checkCadasterCollaborator();
+            const backHandlerSubscription = BackHandler.addEventListener('hardwareBackPress', () => {
+                return true;
+            });
+            return () => backHandlerSubscription.remove();
         });
-        return () => backHandlerSubscription.remove();
+        return unsubscribe;
     },[])
+
+    
+
     
     return (
         <View style={{ backgroundColor: colors.card, flex: 1 }}>
+            <ProfileCompletionModal visible={modalAlertCadaster} close={handleCloseModalAlertCadaster}/>
             <View style={{}}>
                 <View style={[GlobalStyleSheet.container, { paddingHorizontal: 30,padding:0,paddingTop:30 }]}>
                     <View style={[GlobalStyleSheet.flex]}>

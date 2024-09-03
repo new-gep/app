@@ -69,6 +69,11 @@ export const IMAGES = {
     chat: require('../assets/images/icons/chat2.png'), 
     logout: require('../assets/images/icons/logout.png'), 
     call: require('../assets/images/icons/call.png'), 
+    ring: require('../assets/picture/icons/rings.png'), 
+    children: require('../assets/picture/icons/children.png'), 
+    completeProfile1: require('../assets/picture/unique/unique2.png'),
+    completeProfile2: require('../assets/picture/unique/unique3.png'),
+    completeProfile3: require('../assets/picture/unique/unique4.png'),  
     happy: require('../assets/images/icons/happy.png'), 
     send: require('../assets/images/icons/send.png'), 
     volume: require('../assets/images/icons/volume.png'), 
@@ -183,5 +188,8 @@ export const IMAGES = {
     flags12: require('../assets/images/flags/pic12.png'),
     flags13: require('../assets/images/flags/pic13.png'),
     flags14: require('../assets/images/flags/pic14.png'),
+
+    unique0: require('../assets/picture/unique/unique0.png'),
+    unique1: require('../assets/picture/unique/unique1.png'),
 
 }
