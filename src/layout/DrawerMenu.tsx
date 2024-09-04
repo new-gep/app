@@ -8,6 +8,7 @@ import ThemeBtn from '../components/ThemeBtn';
 import { useDispatch } from 'react-redux';
 import { closeDrawer } from '../redux/actions/drawerAction';
 import { GlobalStyleSheet } from '../constants/StyleSheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MenuItems = [
     {
@@ -69,6 +70,11 @@ const MenuItems = [
         icon: IMAGES.logout,
         name: "Logout",
         navigate: 'SingIn',
+        onPress: async () => {
+            // Lógica de logout
+            await AsyncStorage.clear();
+            console.log("Usuário deslogado");
+        } // Adicionando função onPress customizada para o logout
     },
 ]
 
@@ -125,14 +131,21 @@ const DrawerMenu = () => {
                     {MenuItems.map((data:any,index:any) => {
                         return(
                             <TouchableOpacity
-                                activeOpacity={0.8}
-                                onPress={() => {data.navigate === "DrawerNavigation" ? dispatch(closeDrawer()) : dispatch(closeDrawer()); navigation.navigate(data.navigate)}}
-                                key={index}
-                                style={[GlobalStyleSheet.flex,{
-                                    paddingVertical:5,
-                                    marginBottom:0,
-                                }]}
-                            >
+                            activeOpacity={0.8}
+                            // Verifica se o botão tem a função onPress e a executa antes de navegar
+                            onPress={async () => {
+                                if (data.onPress) {
+                                    await data.onPress(); // Executa a função onPress, se houver
+                                }
+                                dispatch(closeDrawer());
+                                navigation.navigate(data.navigate);
+                            }}
+                            key={index}
+                            style={[GlobalStyleSheet.flex,{
+                                paddingVertical:5,
+                                marginBottom:0,
+                            }]}
+                        >
                                 <View style={{flexDirection:'row',alignItems:'center',gap:20}}>
                                     <View style={{height:45,width:45,borderRadius:10,alignItems:'center',justifyContent:'center'}}>
                                         <Image

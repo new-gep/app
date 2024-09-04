@@ -34,6 +34,7 @@ type Props = {
     inputicon?:any,
     classStyles?:string,
     prop_mask?:any
+    editable?:boolean
 }
 
 const Input = ({
@@ -58,7 +59,8 @@ const Input = ({
     isFocused,
     inputicon,
     prop_mask,
-    classStyles
+    classStyles,
+    editable
 }: Props) => {
 
     const [showPass , setShowPass] = useState<boolean>(true);
@@ -94,7 +96,8 @@ const Input = ({
             }
             <MaskInput
                 className={`${classStyles}`}
-                mask={prop_mask == 'cpf' ? Masks.BRL_CPF : prop_mask == 'phone' ? Masks.BRL_PHONE : undefined}
+                mask={prop_mask == 'cpf' ? Masks.BRL_CPF : prop_mask == 'phone' ? Masks.BRL_PHONE : prop_mask == 'date' ? Masks.DATE_DDMMYYYY : undefined }
+                editable={ editable ? false : true}               
                 style={[styles.input,{
                     backgroundColor:backround ? colors.card :colors.input,
                     //borderColor:colors.,

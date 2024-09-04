@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { IMAGES } from '../../constants/Images';
 import Carousel from 'react-native-reanimated-carousel';
-import { Easing } from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const images = [
     IMAGES.completeProfile1,
@@ -23,9 +23,12 @@ type Props = {
 const ProfileCompletionModal = ({ visible, close }: Props) => {
     const navigation = useNavigation<RootStackParamList>();
 
-    const handleClick = () => {
-        navigation.navigate('Profile');
+    const handleClick = async () => {
+        const collaborator = await AsyncStorage.getItem('collaborator')
         close();
+        if(collaborator){
+            navigation.navigate('Profile');
+        }
     }
 
     return (
@@ -46,7 +49,7 @@ const ProfileCompletionModal = ({ visible, close }: Props) => {
                         </View>
                     </View>
                     <View className={`py-5 items-center w-full`}>
-                        <Text style={{...FONTS.fontRegular,}} className="text-xl font-bold text-dark mb-2">Complete seu Perfil</Text>
+                        <Text style={{...FONTS.fontRegular,}} className="text-xl font-bold text-dark mb-2">Acompanhe seu Perfil</Text>
                         <View className={`w-52 h-52 my-3`}>
                              <Carousel
                                 enabled={false}
@@ -65,14 +68,14 @@ const ProfileCompletionModal = ({ visible, close }: Props) => {
                                 )}
                             />
                         </View>
-                        <Text style={{...FONTS.fontRegular,}} className="text-center text-base text-gray-500 dark:text-gray-300">
-                            Para continuar utilizando o aplicativo, você precisa completar o seu cadastro.
+                        <Text style={{...FONTS.fontRegular,}} className="text-center text-base text-gray-500 dark:text-gray-300 px-2">
+                            Complete seu cadastro e aguarde a avaliação para continuar utilizando o aplicativo.
                         </Text>
                         <View className="flex-row mt-6">
                             <Button
                                 onPress={handleClick}
                                 text={COLORS.dark}
-                                title="Completar Perfil"
+                                title="Verificar Perfil"
                                 bg="bg-primary"
                                 style={{ borderRadius: 50 }}
                             />

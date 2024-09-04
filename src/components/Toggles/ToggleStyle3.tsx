@@ -1,66 +1,77 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { COLORS, FONTS, SIZES } from '../../constants/theme';
+import { COLORS, FONTS } from '../../constants/theme';
 
-const ToggleStyle3 = () => {
-    
-    const {colors} = useTheme();
+type Props = {
+    active: boolean; // Corrigido para "boolean" no lugar de "Boolean"
+    setActive: (value: boolean) => void;
+}
 
-    const [active , setActive] = useState(false);
+const ToggleStyle3 = ({ active, setActive }: Props) => {
+    const { colors } = useTheme();
 
-    const offset = useSharedValue(0);
-    const toggleStyle = useAnimatedStyle(() => { 
+    // Define o offset inicial com base no valor de "active"
+    const offset = useSharedValue(active ? 28 : 0);
+
+    const toggleStyle = useAnimatedStyle(() => {
         return {
             transform: [
-                { 
-                    translateX:  offset.value
-                }
+                {
+                    translateX: offset.value,
+                },
             ],
         };
     });
 
+    useEffect(() => {
+        // Atualiza o offset quando o valor de active muda
+        offset.value = active ? withSpring(28) : withSpring(0);
+    }, [active]);
+
     return (
         <>
             <TouchableOpacity
-                onPress={() => { 
+                onPress={() => {
                     setActive(!active);
-                    if(active){
-                        offset.value = withSpring(0)
-                    }else{
-                        offset.value = withSpring(28)
+                    if (active) {
+                        offset.value = withSpring(0);
+                    } else {
+                        offset.value = withSpring(28);
                     }
                 }}
                 style={[{
-                    height:32,
-                    width:65,
-                    backgroundColor : active ? COLORS.success : COLORS.danger,
+                    height: 32,
+                    width: 65,
+                    backgroundColor: active ? COLORS.success : COLORS.danger,
                 }]}
+                className={`rounded-3xl`}
             >
                 <View
                     style={{
-                        position:'absolute',
-                        height:'100%',
-                        width:'100%',
-                        flexDirection:'row',
-                        alignItems:'center',
-                        paddingHorizontal:4,
-                        justifyContent:'space-around',
+                        position: 'absolute',
+                        height: '100%',
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingHorizontal: 4,
+                        justifyContent: 'space-around',
                     }}
                 >
-                    <Text style={{...FONTS.font,...FONTS.fontMedium,fontSize:10,color:COLORS.white}}>ON</Text>
-                    <Text style={{...FONTS.font,...FONTS.fontMedium,fontSize:10,color:COLORS.white}}>OFF</Text>
+                    <Text style={{ ...FONTS.font, ...FONTS.fontMedium, fontSize: 10, color: COLORS.white }}>SIM</Text>
+                    <Text style={{ ...FONTS.font, ...FONTS.fontMedium, fontSize: 10, color: COLORS.white }}>NÃO</Text>
                 </View>
                 <Animated.View
-                    style={[toggleStyle,{
-                        height:24,
-                        width:26,
-                        backgroundColor:'#fff',
-                        top:4,
-                        left:4,
-                        right:4
+                    style={[toggleStyle, {
+                        height: 23,
+                        width: 25,
+                        backgroundColor: '#fff',
+                        top: 4,
+                        left: 4,
+                        right: 4,
                     }]}
+                    className={`rounded-3xl`}
                 />
             </TouchableOpacity>
         </>

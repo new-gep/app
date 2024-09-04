@@ -10,68 +10,50 @@ import Header from '../../layout/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadScreenSimple from '../../components/LoadScreen/Simple';
 import Mask from '../../utils/mask';
-import ListStyle1 from '../../components/List/ListStyle1';
 import CheckCadasterCollaboratorProfile from '../utils/checkCadasterCollaboratorProfile';
-import { AntDesign, SimpleLineIcons  } from '@expo/vector-icons';
+import useCollaborator from '../../utils/fetchCollaborator';
+
 type ProfileScreenProps = StackScreenProps<RootStackParamList, 'Profile'>;
-type propsCollaborator = {
-    name    :string
-    phone   :string
-    email   :string
-    zip_code:any
-    street  :any
-    district:any
-    uf      :any
-    city    :any
-    number  :any
-    complement?:any
-}
+
 const Profile = ({navigation} : ProfileScreenProps) => {
     const theme = useTheme();
     const { colors } : {colors : any} = theme;
-    const [waitProcess, setAwaitProcess] = useState(false)
-    const [collaborator, setCollaborator] = useState<propsCollaborator>({
-        name : '',
-        phone: '',
-        email: '',
-        zip_code:'',
-        street:'',
-        district:'',
-        uf:'',
-        city:'',
-        number:'',
-    })
+    const { collaborator, fetchCollaborator } = useCollaborator();
 
     const profileData = [
         {
             id:"1",
             image:IMAGES.call,
             title:'Celular',
-            subtitle: `+55 ${Mask('phone',collaborator.phone)}`
+            subtitle: collaborator && `+55 ${Mask('phone',collaborator.phone)}`
         },
         {
             id:"2",
             image:IMAGES.email,
             title:'E-mail',
-            subtitle:Mask('emailBreakLine',collaborator.email)
+            subtitle: collaborator && Mask('emailBreakLine',collaborator.email)
         },
         {
             id:"3",
             image:IMAGES.map,
             title:'Endereço',
-            subtitle:`${collaborator.zip_code ? '': 'Cadastro incompleto'}`
+            subtitle: collaborator && `${collaborator.zip_code ? '': 'Cadastro incompleto'}`
         },
         {
             id:"4",
             image:IMAGES.children,
             title:'Filhos',
-            subtitle:`${collaborator.zip_code ? '': 'Cadastro incompleto'}`
+            subtitle: collaborator ? collaborator.children === "0" ? 'Sem filhos' 
+                : collaborator.children && Object.keys(collaborator.children).length > 0 
+                  ? `${Object.keys(collaborator.children).length} Filhos` 
+                  : 'Cadastro incompleto'
+            : 'Cadastro incompleto'
         },
         {
             id:"5",
             image:IMAGES.ring,
             title:'Casamento',
-            subtitle:`${collaborator.zip_code ? '': 'Cadastro incompleto'}`
+            subtitle: collaborator && `${collaborator.zip_code ? '': 'Cadastro incompleto'}`
         },
     ];
 
@@ -91,54 +73,15 @@ const Profile = ({navigation} : ProfileScreenProps) => {
     
     ];
 
-    const fetchData = async () => {
-        try {
-            const storedData = await AsyncStorage.getItem('collaborator');
-            if (storedData) {
-                const collaboratorDates = JSON.parse(storedData) as {
-                    name?: string; 
-                    phone?: string; 
-                    email?: string;
-                    zip_code?: any;
-                    street?  : any;
-                    district?: any;
-                    uf?      : any;
-                    city?    : any;
-                    number?  : any;
-                    complement?: any;
-                  };
-                const { name, phone, email, zip_code, street, district, uf, city, number, complement } = collaboratorDates;
-                if (name && phone && email) {
-                    const props: propsCollaborator = { 
-                        name, 
-                        phone, 
-                        email, 
-                        zip_code, 
-                        street, 
-                        district, 
-                        uf, 
-                        city, 
-                        number, 
-                        complement 
-                      };
-                    setCollaborator(props)
-                    setAwaitProcess(false)
-                } else {
-                    console.log('Missing name, phone, or email in collaborator data.');
-                    
-                }
-            } else {
-                console.log('No collaborator data found.');
-                
-            }
-        } catch (error) {
-            
-        }
-    };
+    // useEffect(()=>{
+    //     fetchCollaborator()
+    // },[])
 
-    useEffect(()=>{
-        fetchData()
-    },[])
+    // useEffect(() => {
+    //     if (collaborator) {
+    //         console.log('children:',collaborator.children);
+    //     }
+    // }, [collaborator]);
 
   return (
     <View style={{backgroundColor:colors.card,flex:1}}>
@@ -147,44 +90,12 @@ const Profile = ({navigation} : ProfileScreenProps) => {
             leftIcon={'back'}
             rightIcon2={'Edit'}        
         />
-        { waitProcess ?
+        { !collaborator ?
             <LoadScreenSimple/>
             :
             <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{flexGrow:1,paddingBottom:50}}>
                 <View className={`px-5`}>
                     <CheckCadasterCollaboratorProfile/>
-                    {/* <View className={`bg-dark px-5 rounded-b-3xl`}>
-                        <View style={[GlobalStyleSheet.cardHeader,{borderBottomColor:COLORS.inputborder}]}>
-                            <Text className={`text-xl text-warning`} style={{...FONTS.fontMedium,}} >
-                                <AntDesign name="warning" size={24} color={COLORS.warning} />  Cadastro Incompleto 
-                            </Text>
-                            <Text className={`text-white text-xs mt-1`}>
-                                Seu cadastro está incompleto. Envie as informações abaixo que faltam 
-                                para liberar o uso da plataforma. 
-                            </Text>
-                        </View>
-                        <View className={`mt-3`}>
-                            <View>
-                                <Text className={`text-white font-semibold`}>Dados simples</Text>
-                            </View>
-                            <View style={GlobalStyleSheet.cardBody}>
-                                <ListStyle1 
-                                    onPress={()=>{navigation.navigate('EditProfile')}}
-                                    arrowRight 
-                                    icon={<AntDesign name={'user'} size={15} color={COLORS.warning} />}
-                                    title={'Foto de perfil'}
-                                />
-                                { !collaborator.zip_code &&
-                                    <ListStyle1 
-                                        onPress={()=>{navigation.navigate('EditProfile')}}
-                                        arrowRight 
-                                        icon={<SimpleLineIcons name={'location-pin'} size={15} color={COLORS.warning} />}
-                                        title={'Endereço'}
-                                    />
-                                }
-                            </View>
-                        </View>
-                    </View> */}
                 </View>
                 <View style={[GlobalStyleSheet.container,{alignItems:'center',marginTop:50,padding:0}]}>
                     <View
@@ -196,9 +107,9 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                             tintColor={`white`}
                         />
                     </View>
-                    <Text style={{...FONTS.fontSemiBold,fontSize:28,color:colors.title}}>{Mask('fullName',collaborator.name)}</Text>
+                    <Text style={{...FONTS.fontSemiBold,fontSize:28,color:colors.title}}>{collaborator && Mask('fullName',collaborator.name)}</Text>
                     <Text style={{...FONTS.fontRegular,fontSize:16,color:COLORS.primary}}>
-                        { collaborator.zip_code?
+                        { collaborator && collaborator.zip_code?
                         'London, England'
                         :
                         'Cadastro incompleto'
