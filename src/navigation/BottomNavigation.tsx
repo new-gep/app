@@ -41,6 +41,7 @@ const BottomNavigation = () => {
                 name='Profile'
                 component={ProfileScreen}
             />
+            
         </Tab.Navigator>
     )
 }

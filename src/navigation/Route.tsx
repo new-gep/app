@@ -1,13 +1,17 @@
 import React from 'react';
 import { ThemeContextProvider } from '../constants/ThemeContext';
-import { Text } from 'react-native';
 import StackNavigator from './StackNavigator';
-
+import { CollaboratorProvider } from '../context/CollaboratorContext';
+import ValidateCollaboratorAndBlock from '../screens/utils/validateCollaboratorAndBlock';
+import { Text } from 'react-native';
 const Route = () => {
 
 	return (
 		<ThemeContextProvider>
-			<StackNavigator/>
+			<CollaboratorProvider>
+				<ValidateCollaboratorAndBlock/>
+				<StackNavigator/>
+			</CollaboratorProvider>
 		</ThemeContextProvider>
 	)
   

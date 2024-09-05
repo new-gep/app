@@ -34,7 +34,7 @@ export default function App() {
           }}>
             <StatusBar style="dark" />
             <Provider store={store}>
-              <Route/>
+                <Route/>
             </Provider>
         </SafeAreaView>
     </SafeAreaProvider>

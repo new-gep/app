@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { View, Text,  ScrollView, Image, TouchableOpacity, StyleSheet, Platform } from 'react-native'
 import { useNavigation, useTheme } from '@react-navigation/native';
 import Header from '../../layout/Header';
@@ -11,22 +11,34 @@ import { COLORS, FONTS } from '../../constants/theme';
 import useCollaborator from '../../utils/fetchCollaborator';
 import Mask from '../../utils/mask';
 import ToggleStyle3 from '../../components/Toggles/ToggleStyle3';
-
+import UpdateCollaborator from '../../hooks/update/collaborator';
+import FindCep from '../../hooks/find/cep';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import DangerSheet from '../../components/BottomSheet/DangerSheet';
+import SuccessSheet from '../../components/BottomSheet/SuccessSheet';
+import ValidateCollaboratorAndBlock from '../utils/validateCollaboratorAndBlock';
+import { useCollaboratorContext } from '../../context/CollaboratorContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 type inputUpdateDates = {
     name :string,
     phone:string,
     email:string,
-    zip_code: string | null;
-    street  : string | null;
-    district: string | null;
-    city    : string | null;
-    uf      : string | null;
-    number  : string | null;
-    complement?: string | null;
+    marriage:string,
+    children: { [key: string]: { name: string; birth: string } } | 0;
+    zip_code: string;
+    street  : string;
+    district: string;
+    city    : string;
+    uf      : string;
+    number  : string;
+    complement?: string;
 }
-
+type ChildType = {
+    name: string;
+    birth: string;
+};
 const EditProfile = () => {
-
+    const refRBSheet = useRef<any>(null);
     const theme = useTheme();
     const { colors } : {colors : any} = theme;
     const navigation = useNavigation<any>();
@@ -35,15 +47,27 @@ const EditProfile = () => {
     const [isFocused1, setisFocused1] = useState(false)
     const [isFocused2, setisFocused2] = useState(false)
     const [isFocused3, setisFocused3] = useState(false)
+    const [isFocusedCep, setIsFocusedCep] = useState(false);
+    const [isFocusedStreet, setIsFocusedStreet] = useState(false);
+    const [isFocusedNumber, setIsFocusedNumber] = useState(false);
+    const [isFocusedComplement, setIsFocusedComplement] = useState(false);
+    const [isFocusedDistrict, setIsFocusedDistrict] = useState(false);
+    const [isFocusedCity, setIsFocusedCity] = useState(false);
+    const [isFocusedUf, setIsFocusedUf] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
     const [inputValue, setInputValue] = useState('');
+    const [messageSheet  , setMessageSheet] = useState(String);
+    const [activeSheet, setActiveSheet] = useState(String);
     const [hasAddressNumber, setHasAddressNumber] = useState(true);
     const [hasMarriage, setHasMarriage] = useState(false);
     const [hasChildren, setHasChildren] = useState(false);
-    const [ collaboratorUpdateDates, setCollaboratorUpdateDates] = useState <inputUpdateDates> ({
+    const [isCepUpdated, setIsCepUpdated] = useState(false);
+    const [collaboratorUpdateDates, setCollaboratorUpdateDates] = useState <inputUpdateDates> ({
         name :'',
         phone:'',
         email:'',
+        marriage:'0',
+        children:0,
         zip_code: '',
         street  : '',
         district: '',
@@ -52,25 +76,71 @@ const EditProfile = () => {
         number  : '',
     });
     const [children, setChildren] = useState([{ name: '', age: '' }]);
+    const { validateCollaborator, missingData } = useCollaboratorContext();
 
     const addChild = () => {
         setChildren([...children, { name: '', age: '' }]); // Adiciona um novo filho ao array
+    };
+
+    const Sheet = async () => {
+        await refRBSheet.current.open();
     };
     
     const updateChild = (index: number, field: 'name' | 'age', value: string) => {
         const updatedChildren = [...children];
         updatedChildren[index][field] = value;
         setChildren(updatedChildren); // Atualiza o estado com as mudanças
+        setCollaboratorUpdateDates((prev) => ({
+            ...prev,
+            children: convertChildrenToObject(updatedChildren)
+        }));
     };
 
     const removeChild = (index:any) => {
         const updatedChildren = children.filter((_, i) => i !== index); // Remove o filho pelo índice
         setChildren(updatedChildren);
+        setCollaboratorUpdateDates((prev) => ({
+            ...prev,
+            children: convertChildrenToObject(updatedChildren), // Atualiza o estado do colaborador com a nova lista de filhos
+        }));
     };
     
-    const handleChange = (text:any) => { 
-        const numericValue = text.replace(/[^0-9]/g, ""); 
-        setInputValue(numericValue); 
+    const convertChildrenToObject = (childrenArray: { name: string; age: string }[]) => {
+        const childrenObject: { [key: string]: { name: string; birth: string } } = {};
+        childrenArray.forEach((child, index) => {
+            childrenObject[`child${index + 1}`] = {
+                name: child.name,
+                birth: child.age, // Aqui você pode fazer uma conversão para "birth" se necessário
+            };
+        });
+        return childrenObject;
+    };
+
+    const handleZipCodeChange = (newZipCode:string) => {
+        setCollaboratorUpdateDates((prevState) => ({
+            ...prevState,
+            zip_code: newZipCode,
+        }));
+        setIsCepUpdated(true); // Marca que o usuário alterou o CEP
+    };
+
+    const handleUpdateProfile = async () => {
+        if(collaborator){
+            const response = await UpdateCollaborator(collaborator.CPF,collaboratorUpdateDates );
+            switch (response.status) {
+                case 200:
+                    await AsyncStorage.setItem('collaborator', JSON.stringify(response.collaborator.collaborator))
+                    setMessageSheet('Informações atualizadas')
+                    setActiveSheet('success')
+                    Sheet()
+                    validateCollaborator()
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+
     };
 
     // const handleImageSelect = () => {
@@ -90,26 +160,111 @@ const EditProfile = () => {
     //     }
     // }
 
-    useEffect(()=>{
-        fetchCollaborator()
-    },[])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchCollaborator(); 
+        });
+
+        return unsubscribe;
+    }, [navigation])
 
     useEffect(()=>{
         if(collaborator){
-            setCollaboratorUpdateDates({
-                name : collaborator.name   ,
-                phone: collaborator.phone ,
-                email: collaborator.email ,
-                zip_code: collaborator.zip_code || '',
-                street  : collaborator.street   || '',
-                district: collaborator.district || '',
-                city    : collaborator.city     || '',
-                uf      : collaborator.uf       || '',
-                number  : collaborator.number   || '',
-                complement : collaborator.complement || ''
-            });
+                setCollaboratorUpdateDates({
+                    name : collaborator.name  ,
+                    phone: collaborator.phone ,
+                    email: collaborator.email ,
+                    marriage: collaborator.marriage || '0' ,
+                    children: collaborator.children || 0,
+                    zip_code: collaborator.zip_code || '',
+                    street  : collaborator.street   || '',
+                    district: collaborator.district || '',
+                    city    : collaborator.city     || '',
+                    uf      : collaborator.uf       || '',
+                    number  : collaborator.number   || '',
+                    complement : collaborator.complement || ''
+                });
+                if (collaborator.children && typeof collaborator.children === 'object') {
+                    setHasChildren(true);
+            
+                    // Mapeia os filhos do objeto `collaborator.children`
+                    const childrenArray = Object.keys(collaborator.children).map((key) => {
+                        const child = (collaborator.children as { [key: string]: ChildType })[key]; // Faz um cast explícito
+                        return {
+                            name: child.name,
+                            age: child.birth, // Aqui você pode converter a data de nascimento para idade, se necessário
+                        };
+                    });
+            
+                    setChildren(childrenArray);
+                } else {
+                    setHasChildren(false);
+                    setChildren([{ name: '', age: '' }]); // Reseta o estado se não houver filhos
+                }
+                if(collaborator.marriage){
+                    if(collaborator.marriage == '1'){
+                        setHasMarriage(true)
+                    }else{
+                        setHasMarriage(false)
+                    }
+                }else{
+                    setHasMarriage(false)
+                }
         }
+
     },[collaborator])
+
+    useEffect(() => {
+        const fetchCepData = async () => {
+            if (collaboratorUpdateDates.zip_code.length === 8) {
+                const response = await FindCep(collaboratorUpdateDates.zip_code);
+                // Verifica se o CEP foi encontrado
+                if (response && !response.erro) {
+                    // Atualiza os dados do colaborador com os valores retornados pelo CEP
+                    setCollaboratorUpdateDates((prevState) => ({
+                        ...prevState,
+                        street: response.logradouro || prevState.street,
+                        district: response.bairro || prevState.district,
+                        city: response.localidade || prevState.city,
+                        uf: response.uf || prevState.uf,
+                        complement: response.complemento || prevState.complement
+                    }));
+                    
+                } else {
+                    // CEP não encontrado
+                    
+                }
+            }
+        };
+        if (isCepUpdated) {
+            fetchCepData(); 
+        }
+    }, [collaboratorUpdateDates.zip_code, isCepUpdated]);    
+
+    useEffect(()=>{
+        const toogleActions = () => {
+            setCollaboratorUpdateDates((prevState) => ({
+                ...prevState,
+                marriage: hasMarriage ? '1' : '0', 
+            }));
+            if(!hasAddressNumber){
+                setCollaboratorUpdateDates((prevState) => ({
+                    ...prevState,
+                    number:'S/N', 
+                }));
+            }
+            if(!hasChildren){
+                setCollaboratorUpdateDates((prevState) => ({
+                    ...prevState,
+                    children: 0 , 
+                }));
+                setChildren([{ name: '', age: '' }])
+            }
+
+        }
+        toogleActions()
+    },
+    [hasMarriage, hasChildren, hasAddressNumber])
 
     return (
        <View style={{backgroundColor:colors.background,flex:1}}>
@@ -118,6 +273,31 @@ const EditProfile = () => {
                 leftIcon='back'
                 titleRight
            />
+            <RBSheet
+                ref={refRBSheet}
+                closeOnDragDown={true}
+                height={215}
+                openDuration={100}
+                customStyles={{
+                    container: {
+                        backgroundColor: theme.dark ? colors.background : colors.cardBg,
+                    },
+                    draggableIcon: {
+                        marginTop: 10,
+                        marginBottom: 5,
+                        height: 5,
+                        width: 80,
+                        backgroundColor: colors.border,
+                    }
+                }}
+                >
+
+                { activeSheet === "success" ?
+                    <SuccessSheet message={messageSheet} />
+                    :
+                    <DangerSheet message={messageSheet} />
+                }
+            </RBSheet>
             <ScrollView contentContainerStyle={{flexGrow:1,paddingHorizontal:15,marginBottom:50}}>
                 <View style={[GlobalStyleSheet.container, {backgroundColor:theme.dark ? 'rgba(255,255,255,.1)':colors.card,marginTop:10,borderRadius:15}]}>
                     <View className={`w-full`} style={{flexDirection:'row',alignItems:'center',gap:20}}>
@@ -167,7 +347,7 @@ const EditProfile = () => {
                             onBlur={() => setisFocused(false)}
                             isFocused={isFocused}
                             value={collaboratorUpdateDates.name}
-                            onChangeText={(value) => console.log(value)}
+                            onChangeText={(value) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, name :value })}
                             backround={colors.card}
                             style={{borderRadius:48}}
                             inputicon
@@ -182,8 +362,8 @@ const EditProfile = () => {
                             onBlur={() => setisFocused1(false)}
                             isFocused={isFocused1}
                             value={collaboratorUpdateDates.phone}
-                            onChangeText={(value) => handleChange(value)}
-                            backround={colors.card}
+                            onChangeText={(value, noMask) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, phone :noMask || '' })}
+                            backround={colors.card} 
                             style={{borderRadius:48}}
                             keyboardType={'number-pad'}
                             inputicon
@@ -197,7 +377,7 @@ const EditProfile = () => {
                             onBlur={() => setisFocused2(false)}
                             isFocused={isFocused2}
                             value={collaboratorUpdateDates.email}
-                            onChangeText={(value) => console.log(value)}
+                            onChangeText={(value) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, email :value })}
                             backround={colors.card}
                             style={{borderRadius:48}}
                             inputicon
@@ -212,30 +392,31 @@ const EditProfile = () => {
                                 <Text className={`text-[#222222]`} style={FONTS.fontRegular}>Você é casado(a)?</Text>
                             </View>
                             <View className={`px-10`}>
-                                <ToggleStyle3 active={hasMarriage} setActive={setHasMarriage}/>
+                               
+                                <ToggleStyle3 active={hasMarriage} setActive={setHasMarriage} />
+                               
                             </View>
                         </View>
                     </View> 
                     <View style={{ marginBottom: 15 }}>
                         <View style={{ marginBottom: 15 }}>
-                        <View className={`mb-1`}>
-                            <View className={`flex-row items-end mb-2`}>
-                                <Image className={`mr-1`} source={IMAGES.childrenDuotone} style={[{ width: 24, height: 24 }]} />
-                                <Text className={`text-[#222222]`} style={FONTS.fontRegular}>Você tem filhos?</Text>
+                            <View className={`mb-1`}>
+                                <View className={`flex-row items-end mb-2`}>
+                                    <Image className={`mr-1`} source={IMAGES.childrenDuotone} style={[{ width: 24, height: 24 }]} />
+                                    <Text className={`text-[#222222]`} style={FONTS.fontRegular}>Você tem filhos?</Text>
+                                </View>
+                                <View className={`px-10`}>
+                                    <ToggleStyle3 active={hasChildren} setActive={setHasChildren} />
+                                </View>
                             </View>
-                            <View className={`px-10`}>
-                                <ToggleStyle3 active={hasChildren} setActive={setHasChildren} />
-                            </View>
-                        </View>
 
-                        {/* Se o toggle indicar que a pessoa tem filhos, exibe o formulário */}
                             {hasChildren && (
                                 <View className={`mt-5`}>
                                     {children.map((child, index) => (
                                         <View key={index} style={{ marginBottom: 10 }}>
                                             <View className={``}>
                                                 <View className={`items-center`}>
-                                                <Text style={FONTS.fontRegular}>Filho {index + 1}</Text>
+                                                    <Text style={FONTS.fontRegular}>Filho {index + 1}</Text>
                                                     <View className={`mb-3 w-3/4`}>
                                                         <Input
                                                             placeholder="Nome do filho"
@@ -286,135 +467,137 @@ const EditProfile = () => {
                             )}
                         </View>
                     </View>
-           
-        
-                <View>
+                    <View>
                         <View className={`flex-row items-end mb-1`}>
-                            <Image source={IMAGES.Pinduotone} style={[styles.icon,{tintColor:colors.title}]}/>
-                            <Text className={`text-[#222222]`} style={FONTS.fontRegular}>Endereço</Text>
+                                <Image source={IMAGES.Pinduotone} style={[styles.icon,{tintColor:colors.title}]}/>
+                                <Text className={`text-[#222222]`} style={FONTS.fontRegular}>Endereço</Text>
                         </View>
                         <View className={`px-5`} style={{ marginBottom: 15 }}>
-                            <View className={`mb-3`}>
-                                <Input  
-                                    onFocus={() => setisFocused3(true)}
-                                    onBlur={() => setisFocused3(false)}
-                                    isFocused={isFocused3}
-                                    onChangeText={(value) => console.log(value)}
-                                    backround={colors.card}
-                                    style={{borderRadius:48}}
-                                    inputicon
-                                    placeholder='CEP'
-                                    icon={<Image source={IMAGES.plusDuotone} style={[styles.icon,{tintColor:colors.title}]}/>}
-
-                                />
-                            </View>
-
-                            <View className={`mb-3`}>
-                                <Input  
-                                    onFocus={() => setisFocused3(true)}
-                                    onBlur={() => setisFocused3(false)}
-                                    isFocused={isFocused3}
-                                    onChangeText={(value) => console.log(value)}
-                                    backround={colors.card}
-                                    style={{borderRadius:48}}
-                                    inputicon
-                                    placeholder='Rua'
-                                    icon={<Image source={IMAGES.plusDuotone} style={[styles.icon,{tintColor:colors.title}]}/>}
-
-                                />
-                            </View>
-
-                            <View className={`mb-3 flex-row items-center justify-between`}>
-                                <View className={`w-2/4`}>
-                                    <Input  
-                                        onFocus={() => setisFocused3(true)}
-                                        onBlur={() => setisFocused3(false)}
-                                        isFocused={isFocused3}
-                                        value={hasAddressNumber ? '' : 'S/N'}
-                                        onChangeText={(value) => console.log(value)}
+                                <View className={`mb-3`}>
+                                    <Input
+                                        prop_mask={"cep"}
+                                        onFocus={() => setIsFocusedCep(true)}
+                                        onBlur={() => setIsFocusedCep(false)}
+                                        keyboardType={'numeric'}
+                                        isFocused={isFocusedCep}
+                                        value={collaboratorUpdateDates.zip_code}
+                                        onChangeText={(value,noMask) => handleZipCodeChange(noMask || '')}
                                         backround={colors.card}
-                                        style={{borderRadius:48}}
+                                        style={{ borderRadius: 48 }}
                                         inputicon
-                                        editable={!hasAddressNumber}
-                                        placeholder='Número'
-                                        icon={<Image source={IMAGES.plusDuotone} style={[styles.icon,{tintColor:colors.title}]}/>}
+                                        placeholder='CEP'
+                                        icon={<Image source={IMAGES.plusDuotone} style={[styles.icon, { tintColor: colors.title }]} />}
                                     />
                                 </View>
-                                <View>
-                                    <Text className={`text-[#222222] text-xs`} style={FONTS.fontRegular}>Tem número?</Text>
-                                    <ToggleStyle3 active={hasAddressNumber} setActive={setHasAddressNumber}/>
+
+                                <View className={`mb-3`}>
+                                    <Input
+                                        onFocus={() => setIsFocusedStreet(true)}
+                                        onBlur={() => setIsFocusedStreet(false)}
+                                        isFocused={isFocusedStreet}
+                                        value={collaboratorUpdateDates.street}
+                                        onChangeText={(value) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, street: value })}
+                                        backround={colors.card}
+                                        style={{ borderRadius: 48 }}
+                                        inputicon
+                                        placeholder='Rua'
+                                        icon={<Image source={IMAGES.plusDuotone} style={[styles.icon, { tintColor: colors.title }]} />}
+                                    />
                                 </View>
-                            </View>
 
-                            <View className={`mb-3`}>
-                                <Input  
-                                    onFocus={() => setisFocused3(true)}
-                                    onBlur={() => setisFocused3(false)}
-                                    isFocused={isFocused3}
-                                    onChangeText={(value) => console.log(value)}
-                                    backround={colors.card}
-                                    style={{borderRadius:48}}
-                                    inputicon
-                                    placeholder='Complemento (opcional)'
-                                    icon={<Image source={IMAGES.plusDuotone} style={[styles.icon,{tintColor:colors.title}]}/>}
+                                <View className={`mb-3 flex-row items-center justify-between`}>
+                                    <View className={`w-2/4`}>
+                                        <Input
+                                            onFocus={() => setIsFocusedNumber(true)}
+                                            onBlur={() => setIsFocusedNumber(false)}
+                                            isFocused={isFocusedNumber}
+                                            value={collaboratorUpdateDates.number}
+                                            onChangeText={(value) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, number: value })}
+                                            backround={colors.card}
+                                            style={{ borderRadius: 48 }}
+                                            inputicon
+                                            placeholder='Número'
+                                            icon={<Image source={IMAGES.plusDuotone} style={[styles.icon, { tintColor: colors.title }]} />}
+                                        />
+                                    </View>
+                                    <View>
+                                        <Text className={`text-[#222222] text-xs`} style={FONTS.fontRegular}>Tem número?</Text>
+                                        <ToggleStyle3 active={hasAddressNumber} setActive={setHasAddressNumber}/>
+                                    </View>
+                                </View>
 
-                                />
-                            </View>
+                                <View className={`mb-3`}>
+                                    <Input
+                                        onFocus={() => setIsFocusedComplement(true)}
+                                        onBlur={() => setIsFocusedComplement(false)}
+                                        isFocused={isFocusedComplement}
+                                        value={collaboratorUpdateDates.complement || ''}
+                                        onChangeText={(value) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, complement: value })}
+                                        backround={colors.card}
+                                        style={{ borderRadius: 48 }}
+                                        inputicon
+                                        placeholder='Complemento (opcional)'
+                                        icon={<Image source={IMAGES.plusDuotone} style={[styles.icon, { tintColor: colors.title }]} />}
+                                    />
+                                </View>
 
-                            <View className={`mb-3`}>
-                                <Input  
-                                    onFocus={() => setisFocused3(true)}
-                                    onBlur={() => setisFocused3(false)}
-                                    isFocused={isFocused3}
-                                    onChangeText={(value) => console.log(value)}
-                                    backround={colors.card}
-                                    style={{borderRadius:48}}
-                                    inputicon
-                                    placeholder='Bairro'
-                                    icon={<Image source={IMAGES.plusDuotone} style={[styles.icon,{tintColor:colors.title}]}/>}
+                                <View className={`mb-3`}>
+                                    <Input
+                                        onFocus={() => setIsFocusedDistrict(true)}
+                                        onBlur={() => setIsFocusedDistrict(false)}
+                                        isFocused={isFocusedDistrict}
+                                        value={collaboratorUpdateDates.district}
+                                        onChangeText={(value) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, district: value })}
+                                        backround={colors.card}
+                                        style={{ borderRadius: 48 }}
+                                        inputicon
+                                        placeholder='Bairro'
+                                        icon={<Image source={IMAGES.plusDuotone} style={[styles.icon, { tintColor: colors.title }]} />}
+                                    />
+                                </View>
 
-                                />
-                            </View>
+                                <View className={`mb-3`}>
+                                    <Input
+                                        onFocus={() => setIsFocusedCity(true)}
+                                        onBlur={() => setIsFocusedCity(false)}
+                                        isFocused={isFocusedCity}
+                                        value={collaboratorUpdateDates.city}
+                                        onChangeText={(value) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, city: value })}
+                                        backround={colors.card}
+                                        style={{ borderRadius: 48 }}
+                                        inputicon
+                                        placeholder='Cidade'
+                                        icon={<Image source={IMAGES.plusDuotone} style={[styles.icon, { tintColor: colors.title }]} />}
+                                    />
+                                </View>
 
-                            <View className={`mb-3`}>
-                                <Input  
-                                    onFocus={() => setisFocused3(true)}
-                                    onBlur={() => setisFocused3(false)}
-                                    isFocused={isFocused3}
-                                    onChangeText={(value) => console.log(value)}
-                                    backround={colors.card}
-                                    style={{borderRadius:48}}
-                                    inputicon
-                                    placeholder='Cidade'
-                                    icon={<Image source={IMAGES.plusDuotone} style={[styles.icon,{tintColor:colors.title}]}/>}
-
-                                />
-                            </View>
-
-                            <View className={`mb-3 w-1/2`}>
-                                <Input  
-                                    onFocus={() => setisFocused3(true)}
-                                    onBlur={() => setisFocused3(false)}
-                                    isFocused={isFocused3}
-                                    onChangeText={(value) => console.log(value)}
-                                    backround={colors.card}
-                                    style={{borderRadius:48}}
-                                    inputicon
-                                    placeholder='UF'
-                                    icon={<Image source={IMAGES.plusDuotone} style={[styles.icon,{tintColor:colors.title}]}/>}
-
-                                />
-                            </View>
+                                <View className={`mb-3 w-1/2`}>
+                                    <Input
+                                        classStyles='uppercase'
+                                        length={2}
+                                        onFocus={() => setIsFocusedUf(true)}
+                                        onBlur={() => setIsFocusedUf(false)}
+                                        isFocused={isFocusedUf}
+                                        value={collaboratorUpdateDates.uf}
+                                        onChangeText={(value) => setCollaboratorUpdateDates({ ...collaboratorUpdateDates, uf: value })}
+                                        backround={colors.card}
+                                        style={{ borderRadius: 48 }}
+                                        inputicon
+                                        placeholder='UF'
+                                        icon={<Image source={IMAGES.plusDuotone} style={[styles.icon, { tintColor: colors.title }]} />}
+                                    />
+                                </View>
                         </View>
+                    </View>
                 </View>
-            </View>
             </ScrollView>
+            
             <View style={[GlobalStyleSheet.container]}>
                 <Button
-                    title='Update Profile'
+                    title='Atualizar Perfil'
                     color={COLORS.primary}
                     text={ COLORS.card}
-                    onPress={() => navigation.navigate('Profile')}
+                    onPress={handleUpdateProfile}
                     style={{borderRadius:50}}
                 />
             </View> 
@@ -486,6 +669,5 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
     }
 })
-
 
 export default EditProfile

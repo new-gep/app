@@ -1,75 +1,51 @@
-import { useEffect, useState } from 'react';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import CheckAccountCompletion from "../../hooks/utils/CheckAccountCompletion";
-import ProfileCompletionModal from "../../components/Modal/ProfileLock";
-import { useNavigation } from '@react-navigation/native';
-
+import React, { useEffect, useState } from 'react';
+import { useCollaboratorContext  } from '../../context/CollaboratorContext';
+import ProfileCompletionModal from '../../components/Modal/ProfileLock';
+import DocumentCompletionModal from '../../components/Modal/DocumentLock';
 const ValidateCollaboratorAndBlock = () => {
-    const [modalAlertCadaster, setModalAlertCadaster] = useState(false);
-    const navigation = useNavigation(); // Obtém o objeto de navegação
+    const { validateCollaborator, missingData } = useCollaboratorContext ();
+    const [modalFieldsVisible, setModalFieldsVisible] = useState(false);
+    const [modalDocumentsVisible, setModalDocumentsVisible] = useState(false);
 
-    // Função de validação do colaborador e bloqueio
+    // Sempre que os dados faltantes forem atualizados, verificamos se o modal deve aparecer
     useEffect(() => {
-        const validateCollaborator = async () => {
-            try {
-                // Recupera os dados do colaborador do AsyncStorage
-                const storedData = await AsyncStorage.getItem('collaborator');
-                if (storedData) {
-                    const collaboratorData = JSON.parse(storedData) as {
-                        name: string;
-                        CPF: string;
-                    };
-
-                    const { CPF } = collaboratorData;
-
-                    // Verifica se o CPF está presente
-                    if (CPF) {
-                        const response = await CheckAccountCompletion(CPF);
-                        
-                        // Verifica se há campos ou documentos faltando
-                        const hasMissingFields = response.missingFields.length > 0;
-                        const hasMissingDocuments = response.files.missingDocuments.length > 0;
-
-                        if (hasMissingFields || hasMissingDocuments) {
-                            const dataToStore = {
-                                missingFields: response.missingFields,
-                                missingDocuments: response.files.missingDocuments,
-                                missingDocumentsChildren: response.files.missingDocumentsChildren,
-                            };
-
-                            // Armazena os dados de pendências no AsyncStorage
-                            await AsyncStorage.setItem('missingDates', JSON.stringify(dataToStore));
-
-                            // Exibe o modal de alerta de cadastro incompleto
-                            setModalAlertCadaster(true);
-                        } else {
-                            // Remove os dados de pendências se não houver mais falta de documentos
-                            await AsyncStorage.removeItem('missingDates');
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error("Erro ao validar colaborador:", error);
+        if (missingData) {
+            if (missingData.missingFields && missingData.missingFields.length > 0) {
+                setModalFieldsVisible(true); // Exibe o modal para os campos faltantes
+            } else 
+            if (missingData.missingDocuments && missingData.missingDocuments.length > 0) {
+                console.log('aqui')
+                setModalDocumentsVisible(true); // Exibe o modal para os documentos faltantes
+            } else {
+                setModalFieldsVisible(false);
+                setModalDocumentsVisible(false);
             }
-        };
-
-        // Adiciona o listener de foco
-        const unsubscribe = navigation.addListener('focus', validateCollaborator);
-
-        // Remove o listener de foco quando o componente for desmontado
-        return unsubscribe;
-    }, [navigation]); // O effect será disparado toda vez que a navegação for alterada
+        }
+    }, [missingData]);
 
     // Função para fechar o modal
-    const handleCloseModalAlertCadaster = () => {
-        setModalAlertCadaster(false);
+    const handleCloseFieldsModal = () => {
+        setModalFieldsVisible(false);
+    };
+
+    // Função para fechar o modal de documentos faltantes
+    const handleCloseDocumentsModal = () => {
+        setModalDocumentsVisible(false);
     };
 
     return (
-        <ProfileCompletionModal 
-            visible={modalAlertCadaster} 
-            close={handleCloseModalAlertCadaster} 
-        />
+        <>
+            <ProfileCompletionModal 
+                visible={modalFieldsVisible} 
+                close={handleCloseFieldsModal} 
+            />
+
+            <DocumentCompletionModal
+                visible={modalDocumentsVisible}
+                close={handleCloseDocumentsModal}
+            />
+        
+        </>
     );
 };
 

@@ -33,8 +33,9 @@ type Props = {
     isFocused?:any,
     inputicon?:any,
     classStyles?:string,
-    prop_mask?:any
-    editable?:boolean
+    prop_mask?:any,
+    editable?:boolean,
+    length ?: any
 }
 
 const Input = ({
@@ -60,7 +61,8 @@ const Input = ({
     inputicon,
     prop_mask,
     classStyles,
-    editable
+    editable,
+    length
 }: Props) => {
 
     const [showPass , setShowPass] = useState<boolean>(true);
@@ -96,7 +98,7 @@ const Input = ({
             }
             <MaskInput
                 className={`${classStyles}`}
-                mask={prop_mask == 'cpf' ? Masks.BRL_CPF : prop_mask == 'phone' ? Masks.BRL_PHONE : prop_mask == 'date' ? Masks.DATE_DDMMYYYY : undefined }
+                mask={prop_mask == 'cpf' ? Masks.BRL_CPF : prop_mask == 'phone' ? Masks.BRL_PHONE : prop_mask == 'date' ? Masks.DATE_DDMMYYYY : prop_mask == 'cep' ? Masks.ZIP_CODE : undefined }
                 editable={ editable ? false : true}               
                 style={[styles.input,{
                     backgroundColor:backround ? colors.card :colors.input,
@@ -135,6 +137,7 @@ const Input = ({
                 keyboardType={keyboardType}
                 onBlur={onBlur}
                 numberOfLines={numberOfLines}
+                maxLength={length}
                 placeholderTextColor={inputBorder ? COLORS.text :theme.dark ? 'rgba(255,255,255,.5)' : '#666666'}
             />
             {text &&

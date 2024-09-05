@@ -14,7 +14,7 @@ interface propsCollaborator {
             name: string;
             birth: string;
         };
-    } | null | '0';
+    } | null | 0;
     zip_code?: string | null;
     street?: string | null;
     district?: string | null;

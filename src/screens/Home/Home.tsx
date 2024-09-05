@@ -17,6 +17,7 @@ import ValidateCollaboratorAndBlock from '../utils/validateCollaboratorAndBlock'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mask from '../../utils/mask';
 import useCollaborator from '../../utils/fetchCollaborator';
+import { useCollaboratorContext } from '../../context/CollaboratorContext';
 const ArrivalData = [
     {
         id:"1",
@@ -126,6 +127,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     const theme = useTheme();
     const { colors }: { colors: any; } = theme;
     const { collaborator, fetchCollaborator } = useCollaborator();
+    const { validateCollaborator, missingData } = useCollaboratorContext();
 
     const addItemToWishList = (data: any) => {
         dispatch(addTowishList(data));
@@ -134,6 +136,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             fetchCollaborator()
+            validateCollaborator()
             const backHandlerSubscription = BackHandler.addEventListener('hardwareBackPress', () => {
                 return true;
             });
@@ -145,7 +148,6 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     
     return (
         <View style={{ backgroundColor: colors.card, flex: 1 }}>
-            {/* <ValidateCollaboratorAndBlock/> */}
             <View style={{}}>
                 <View style={[GlobalStyleSheet.container, { paddingHorizontal: 30,padding:0,paddingTop:30 }]}>
                     <View style={[GlobalStyleSheet.flex]}>

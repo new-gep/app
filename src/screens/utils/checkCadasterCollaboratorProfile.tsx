@@ -10,36 +10,36 @@ import { IMAGES } from "../../constants/Images"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 type MissingDatesStorage = {
-    missingDocuments: string[];
+    // missingDocuments: string[];
     missingFields: string[];
 } 
 
 type MissingDatesProps = {
     Picture  :boolean;
-    RG       :boolean;
-    Work_Card:boolean;
-    Address  :boolean;
-    School_History:boolean;
+    // RG       :boolean;
+    // Work_Card:boolean;
+    // Address  :boolean;
+    // School_History:boolean;
     AddresField   :boolean;
     Marriage      :boolean;
     Children      :boolean;
-    Marriage_Certificate: boolean;
-    Birth_Certificate:boolean;
+    // Marriage_Certificate: boolean;
+    // Birth_Certificate:boolean;
 }
 
 export default function CheckCadasterCollaboratorProfile() {
     const navigation = useNavigation<RootStackParamList>();
     const [missingDate, setMissingDate] = useState<MissingDatesProps>({
         Picture  :false,
-        RG       :false,
-        Work_Card:false,
-        Address  :false,
-        School_History:false,
+        // RG       :false,
+        // Work_Card:false,
+        // Address  :false,
+        // School_History:false,
         AddresField:false,
         Marriage:false,
         Children:false,
-        Marriage_Certificate:false,
-        Birth_Certificate:false
+        // Marriage_Certificate:false,
+        // Birth_Certificate:false
     });
     const [loading, setLoading] = useState(true); // Estado de carregamento
 
@@ -48,18 +48,24 @@ export default function CheckCadasterCollaboratorProfile() {
             const storedData = await AsyncStorage.getItem('missingDates');
             if (storedData) {
                 const parsedMissingDates: MissingDatesStorage = JSON.parse(storedData);
+        
+                // Garantir que missingDocuments e missingFields são arrays
+                // const missingDocuments = Array.isArray(parsedMissingDates.missingDocuments) ? parsedMissingDates.missingDocuments : [];
+                const missingFields    = Array.isArray(parsedMissingDates.missingFields) ? parsedMissingDates.missingFields : [];
+        
                 const newMissingDate = {
-                    Picture: parsedMissingDates.missingDocuments.includes("Picture"),
-                    RG: parsedMissingDates.missingDocuments.includes("RG"),
-                    Work_Card: parsedMissingDates.missingDocuments.includes("Work_Card"),
-                    Marriage_Certificate: parsedMissingDates.missingDocuments.includes("Marriage_Certificate"),
-                    Address: parsedMissingDates.missingDocuments.includes("Address"),
-                    School_History: parsedMissingDates.missingDocuments.includes("School_History"),
-                    Birth_Certificate: parsedMissingDates.missingDocuments.includes("Birth_Certificate"),
-                    AddresField: parsedMissingDates.missingFields.includes("address"),
-                    Marriage: parsedMissingDates.missingFields.includes("marriage"),
-                    Children: parsedMissingDates.missingFields.includes("children"),
+                    // RG: missingDocuments.includes("RG"),
+                    // Work_Card: missingDocuments.includes("Work_Card"),
+                    // Marriage_Certificate: missingDocuments.includes("Marriage_Certificate"),
+                    // Address: missingDocuments.includes("Address"),
+                    // School_History: missingDocuments.includes("School_History"),
+                    // Birth_Certificate: missingDocuments.includes("Birth_Certificate"),
+                    Picture: missingFields.includes("Picture"),
+                    AddresField: missingFields.includes("address"),
+                    Marriage: missingFields.includes("marriage"),
+                    Children: missingFields.includes("children"),
                 };
+        
                 setMissingDate(newMissingDate);
             }
         } catch (error) {
@@ -141,7 +147,7 @@ export default function CheckCadasterCollaboratorProfile() {
                             )}
                         </View>
                     </View>
-                    <View>
+                    {/* <View>
                         <View className={`mt-3`}>
                             <Text className={`text-white font-semibold`}>Documentação</Text>
                         </View>
@@ -195,7 +201,7 @@ export default function CheckCadasterCollaboratorProfile() {
                                 />
                             )}
                         </View>
-                    </View>
+                    </View> */}
                 </View>
             )}
         </>

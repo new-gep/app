@@ -35,25 +35,30 @@ const Profile = ({navigation} : ProfileScreenProps) => {
         },
         {
             id:"3",
-            image:IMAGES.map,
-            title:'Endereço',
-            subtitle: collaborator && `${collaborator.zip_code ? '': 'Cadastro incompleto'}`
-        },
-        {
-            id:"4",
             image:IMAGES.children,
             title:'Filhos',
-            subtitle: collaborator ? collaborator.children === "0" ? 'Sem filhos' 
+            subtitle: collaborator ? collaborator.children == 0 ? 'Sem filhos' 
                 : collaborator.children && Object.keys(collaborator.children).length > 0 
                   ? `${Object.keys(collaborator.children).length} Filhos` 
                   : 'Cadastro incompleto'
             : 'Cadastro incompleto'
         },
         {
-            id:"5",
+            id:"4",
             image:IMAGES.ring,
-            title:'Casamento',
-            subtitle: collaborator && `${collaborator.zip_code ? '': 'Cadastro incompleto'}`
+            title:'Casado(a)',
+            subtitle: collaborator && `${collaborator && collaborator.marriage ? collaborator.marriage == '1' ? 'Sim' : 'Não' : 'Cadastro incompleto'}`
+        },
+        {
+            id:"5",
+            image:IMAGES.map,
+            title:'Endereço',
+            subtitle: collaborator &&  
+            `${collaborator.zip_code && collaborator.street && collaborator.number && collaborator.district && collaborator.city && collaborator.uf ? 
+                `${collaborator.street} N° ${collaborator.number}, ${collaborator.district}, ${collaborator.city} - ${collaborator.uf}` 
+                : 
+                'Cadastro incompleto'
+            }`
         },
     ];
 
@@ -73,15 +78,14 @@ const Profile = ({navigation} : ProfileScreenProps) => {
     
     ];
 
-    // useEffect(()=>{
-    //     fetchCollaborator()
-    // },[])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchCollaborator(); 
+        });
 
-    // useEffect(() => {
-    //     if (collaborator) {
-    //         console.log('children:',collaborator.children);
-    //     }
-    // }, [collaborator]);
+        return unsubscribe;
+    }, [navigation])
+
 
   return (
     <View style={{backgroundColor:colors.card,flex:1}}>
@@ -109,8 +113,8 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                     </View>
                     <Text style={{...FONTS.fontSemiBold,fontSize:28,color:colors.title}}>{collaborator && Mask('fullName',collaborator.name)}</Text>
                     <Text style={{...FONTS.fontRegular,fontSize:16,color:COLORS.primary}}>
-                        { collaborator && collaborator.zip_code?
-                        'London, England'
+                        { collaborator && collaborator.city && collaborator.uf?
+                        `${collaborator.city}, ${collaborator.uf}`
                         :
                         'Cadastro incompleto'
                         }
@@ -134,9 +138,9 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                                             source={data.image}
                                         />
                                     </View>
-                                    <View>
+                                    <View className={`w-5/6 `}>
                                         <Text style={[styles.brandsubtitle2,{color:'#7D7D7D'}]}>{data.title}</Text>
-                                        <Text className={``} style={{...FONTS.fontMedium,fontSize:16,color:colors.title,marginTop:5}}>{data.subtitle}</Text>
+                                        <Text style={{...FONTS.fontMedium,fontSize:16,color:colors.title,marginTop:5}}>{data.subtitle}</Text>
                                     </View>
                                 </View>
                             )

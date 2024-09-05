@@ -6,14 +6,16 @@ type Props = {
     name    ?: string;
     password?: string;
     phone   ?: string;
-    terms   ?: string;
+    marriage?: string;
+    children: { [key: string]: { name: string; birth: string } } | 0;
+    terms    ?: string;
     zip_code ?:string;
     street   ?:string;
     district ?:string;
     city     ?:string;
     uf       ?:string;
     complement?:string;
-    number   ?:number;
+    number   ?:string;
     id_work  ?:string
  }
 
