@@ -1,202 +1,211 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { COLORS,FONTS } from '../../constants/theme'
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, Dimensions, Platform } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { COLORS, FONTS } from '../../constants/theme'
 import { IMAGES } from '../../constants/Images'
 import { GlobalStyleSheet } from '../../constants/StyleSheet'
 import { useTheme } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeFromwishList } from '../../redux/reducer/wishListReducer'
 import LikeBtn from '../LikeBtn'
+import { BlurView } from 'expo-blur';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import DocumentVisible from '../Modal/DocumentVisible'
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
+import { WebView } from 'react-native-webview';
 
 type Props = {
-    id : string;
-    title : string;
-    btntitle ?: string;
-    price : string;
-    brand ?: string;
-    image ?: any;
-    product ?: any;
-    Myorder ?: any;
-    completed ?: any;
-    countnumber ?: string;
-    onPress ?: (e : any) => void,
-    onPress2 ?: any,
-    onPress3 ?: (e : any) => void,
-    onPress4 ?: (e : any) => void,
-    onPress5 ?: (e : any) => void,
-}
+    documentName: string;
+    sendDocument: boolean;
+    typeDocument:string;
+    twoPicture:boolean;
+    statusDocument:string;
 
-const Cardstyle4 = ({id,title,image,countnumber,price,onPress,brand,product,onPress2,Myorder,btntitle,completed,onPress5,onPress3,onPress4} : Props) => {
+    image?: any;
+    pdf?:any
+};
 
+const Cardstyle4 = ({
+    documentName,
+    sendDocument,
+    typeDocument,
+    twoPicture,
+    statusDocument,
+    image,
+    pdf
+
+}: Props) => {
     const theme = useTheme();
-    const { colors } : {colors : any} = theme;
+    const { colors }: { colors: any } = theme;
+    const [isBlurred, setIsBlurred] = useState(true); // Controla o desfoque
+    const [viewingDocument, setViewingDocument] = useState(false);
+  
 
-    const [show, setshow] = useState(false)
+    const handlePress = () => {
+        setIsBlurred(!isBlurred); // Alterna entre desfocado e normal
+    };
 
-    const dispatch = useDispatch();
-
-    const wishList = useSelector((state:any) => state.wishList.wishList);
-
-    const inWishlist = () => {
-        var temp = [] as any;
-        wishList.forEach((data:any) => {
-            temp.push(data.id);
-        });
-        return temp;
-    }
-
-    const removeItemFromWishList = () => {
-        dispatch(removeFromwishList(id as any));
-    }
-
+    const handleCloseVisibleDocument = () => {
+        setViewingDocument(false) 
+    };
+    
     return (
-        <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={onPress} 
-            style={{flexDirection:'row',width:'100%',alignItems:'flex-start'}}
+        <View
+            style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}
         >
-            <View style={{width:'40%',alignItems:'center'}}>
-                <View 
-                    style={{
-                        height:undefined,
-                        width:'100%',
-                        backgroundColor:COLORS.primary,
-                        borderRadius:22,
-                        aspectRatio:1/1.2,
-                        alignItems:'center',
-                        justifyContent:'center',
-                        overflow:'hidden'
-                    }}
-                >
-                    <Image
-                        style={{height:undefined,width:'100%',aspectRatio:1/1.2,}}
-                        source={image}
-                    />
-                </View>
+            <DocumentVisible typeDocument={typeDocument} visible={viewingDocument} twoPicture={twoPicture} Image2={image} Image={image} PDF={pdf} close={handleCloseVisibleDocument}/>
+            <View style={{ width: '40%', alignItems: 'center' }}>
+            <TouchableOpacity onPress={handlePress}>
                 <View
                     style={{
-                        borderRadius:19,
-                        backgroundColor:'#FF8730',
-                        width:70,
-                        height:30,
-                        flexDirection:'row',
-                        alignItems:'center',
-                        justifyContent:'center',
-                        gap:10,
-                        position:'absolute',
-                        bottom:-15
+                        height: undefined,
+                        width: '100%',
+                        backgroundColor: COLORS.primary,
+                        borderRadius: 22,
+                        aspectRatio: 1 / 1.2,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        overflow: 'hidden',
+                        position: 'relative',
                     }}
                 >
-                        <Image
-                            style={{height:13,width:13}}
-                            source={IMAGES.Star4}
-                        />
-                        <Text style={[styles.brandsubtitle3,{fontSize:16,color:COLORS.card,lineHeight:34}]}>3.8</Text>
+                    {typeDocument === 'picture' ? (
+                        <>
+                            <Image
+                                style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
+                                source={image}
+                            />
+                            {isBlurred && (
+                                <BlurView
+                                    intensity={80}
+                                    tint="dark"
+                                    style={StyleSheet.absoluteFill}
+                                    experimentalBlurMethod="dimezisBlurView"
+                                />
+                            )}
+                            {isBlurred && (
+                                <FeatherIcon
+                                    style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -15 }] }}
+                                    color={COLORS.primary}
+                                    size={30}
+                                    name="eye-off"
+                                />
+                            )}
+                        </>
+                    ) : (
+             
+                      <>
+                           <WebView
+                               source={{ uri: 'https://docs.google.com/gview?embedded=true&url=https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }}
+                               style={styles.pdf}
+                               onError={() => console.log('Erro ao carregar PDF')}
+                           />
+                       {isBlurred && (
+                                <BlurView
+                                    intensity={80}
+                                    tint="dark"
+                                    style={StyleSheet.absoluteFill}
+                                    experimentalBlurMethod="dimezisBlurView"
+                                />)}
+                                {isBlurred && (
+                                <FeatherIcon
+                                    style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -15 }] }}
+                                    color={COLORS.primary}
+                                    size={30}
+                                    name="eye-off"
+                                />
+                            )}
+                      </>
+                    )}
                 </View>
+            </TouchableOpacity>
             </View>
-            <View 
+            <View
                 style={{
-                    width:'60%',
-                    paddingHorizontal:20,
-                    paddingRight:product ? 10 : 0
+                    width: '60%',
+                    paddingHorizontal: 20,
                 }}
             >
                 <View>
-                    <Text style={{...FONTS.fontMedium,fontSize:16,color:colors.title,paddingRight:40}}>{title}</Text>
-                    <Text style={{...FONTS.fontRegular,fontSize:12,color:theme.dark ? 'rgba(255,255,255,.7)':'#6A6A6A',marginTop:5}}>{brand}</Text>
+                    <Text style={{ ...FONTS.fontMedium, fontSize: 16, color: colors.title, paddingRight: 40 }}>{documentName}</Text>
+                    <Text style={{ ...FONTS.fontRegular, fontSize: 12, color: theme.dark ? 'rgba(255,255,255,.7)' : '#6A6A6A', marginTop: 5 }}>{typeDocument =='picture' ? 'Imagem' : 'PDF'}</Text>
                 </View>
-                <View style={[GlobalStyleSheet.flex,{marginTop:Myorder ? 45:30}]}>
-                    <Text style={{...FONTS.fontSemiBold,fontSize:18,color:colors.title}}>{price}</Text>
-                    {product ? 
-                        <TouchableOpacity
-                            activeOpacity={0.9}
-                            onPress={() => {setshow(!show) ; onPress2() }} 
-                            style={{
-                                padding:10,
-                                paddingHorizontal:25,
-                                backgroundColor:show ? COLORS.primary :'#E5F5F0',
-                                borderRadius:30,
-                                flexDirection:'row',
-                                alignItems:'center',
-                                justifyContent:'center',
-                                gap:10
-                            }}
-                        >
-                            <Image
-                                style={[GlobalStyleSheet.image2,{tintColor:show ?  COLORS.card : COLORS.primary,}]}
-                                source={IMAGES.shoppingbag}
-                            />
-                            <Text style={{...FONTS.fontMedium,fontSize:16,color:show ? COLORS.card : COLORS.primary}}>Buy</Text>
-                        </TouchableOpacity>
-                    :Myorder ?completed ? 
-                        <TouchableOpacity
-                            activeOpacity={0.8}
-                            onPress={onPress4}
-                            style={{
-                                padding:10,
-                                paddingHorizontal:15,
-                                backgroundColor:COLORS.primary,
-                                borderRadius:30,
-                                flexDirection:'row',
-                                alignItems:'center',
-                                justifyContent:'center',
-                                gap:10
-                            }}
-                        >
-                            <Text style={{...FONTS.fontMedium,fontSize:14,color:COLORS.card,lineHeight:21}}>{btntitle}</Text>
-                        </TouchableOpacity>
-                    : 
-                        <TouchableOpacity
-                            activeOpacity={0.8}
-                            onPress={onPress3}
-                            style={{
-                                padding:10,
-                                paddingHorizontal:20,
-                                backgroundColor:COLORS.primary,
-                                borderRadius:30,
-                                flexDirection:'row',
-                                alignItems:'center',
-                                justifyContent:'center',
-                                gap:10
-                            }}
-                        >
-                            <Text style={{...FONTS.fontMedium,fontSize:14,color:COLORS.card,lineHeight:21}}>{btntitle}</Text>
-                        </TouchableOpacity>
-                        :
-                        <Text style={{...FONTS.fontMedium,fontSize:18,color:COLORS.primary}}>{countnumber}</Text>
-                    }
-                </View>
-                {Myorder ?
-                    null
-                :
+                <View className={`flex-col flex gap-2`} >
+                    
                     <View
                         style={{
-                            position:'absolute',
-                            right:0,
-                            top:0,
+                            padding: 5,
+                            paddingHorizontal: 10,
+                            borderRadius: 30,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 10,
                         }}
                     >
-                        <LikeBtn
-                            onPress={inWishlist().includes(id) ? removeItemFromWishList : onPress5}
-                            id={id}
-                            inWishlist={inWishlist}
-                        />
+                        {/* <Image
+                            style={[GlobalStyleSheet.image2, { tintColor: show ? COLORS.card : COLORS.primary }]}
+                            source={IMAGES.shoppingbag}
+                        /> */}
+                        <Text style={{ ...FONTS.fontMedium, fontSize: 16, color: statusDocument == 'aproved' ? COLORS.success : statusDocument == 'aproved' ?  COLORS.danger :  COLORS.dark }}>{statusDocument == 'aproved' ? 'Aprovado' :  statusDocument == 'reproved' ? 'Reprovado' : 'Pendente'}</Text>
                     </View>
-                }
+                   
+                    { sendDocument &&
+                        <TouchableOpacity
+                                activeOpacity={0.8}
+                                style={{
+                                    padding: 10,
+                                    paddingHorizontal: 15,
+                                    backgroundColor: COLORS.primary,
+                                    borderRadius: 30,
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: 10,
+                                }}
+                            >
+                                <Text className={`text-dark`} style={{ ...FONTS.fontMedium, fontSize: 14, lineHeight: 21 }}>Enviar</Text>
+                        </TouchableOpacity>
+                    }
+                        
+                    <TouchableOpacity
+                        onPress={()=>setViewingDocument(true)}
+                        activeOpacity={0.8}
+                        style={{
+                                padding: 10,
+                                paddingHorizontal: 20,
+                                backgroundColor: COLORS.dark,
+                                borderRadius: 30,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 10,
+                        }}
+                    >
+                        <Text className={`text-white`} style={{ ...FONTS.fontMedium, fontSize: 14, lineHeight: 21}}>Visualizar</Text>
+                    </TouchableOpacity>
+                        
+                </View>
+            
+                
             </View>
-        </TouchableOpacity>
-    )
-}
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
-    brandsubtitle3:{
-        ...FONTS.fontMedium,
-        fontSize:12,
-        color:COLORS.title
+    eyeIcon: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: [{ translateX: -15 }, { translateY: -15 }],
+        zIndex: 10, // Coloca o ícone acima do BlurView
     },
-})
+    pdf: {
+        flex: 1,
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
+    }
+});
 
-
-
-export default Cardstyle4
-
+export default Cardstyle4;

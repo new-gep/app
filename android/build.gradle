@@ -7,9 +7,12 @@ buildscript {
         compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '34')
         targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '34')
         kotlinVersion = findProperty('android.kotlinVersion') ?: '1.8.10'
-
+        
         ndkVersion = "25.1.8937393"
+        pdfViewerVersion = "3.1.0-beta.1"
+        pdfViewerRepo = "com.github.mhiew"
     }
+    
     repositories {
         google()
         mavenCentral()

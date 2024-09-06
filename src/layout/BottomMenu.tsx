@@ -62,7 +62,6 @@ const BottomMenu = ({state, navigation, descriptors}: Props) => {
 
 
 
-
     return (
         <>
             <View
@@ -167,10 +166,10 @@ const BottomMenu = ({state, navigation, descriptors}: Props) => {
                                                 tintColor: isFocused ? theme.dark ? COLORS.card : colors.card : COLORS.primary ,
                                             }}
                                             source={
-                                                label === 'Home'    ?  IMAGES.Home:
+                                                label === 'Home'       ?  IMAGES.Home:
                                                 label === 'Wishlist'   ?  IMAGES.heart2:
-                                                label === 'MyCart'     ?  IMAGES.shopping:
-                                                label === 'Profile'  ?  IMAGES.user3 : IMAGES.Home
+                                                label === 'Documents'  ?  IMAGES.folder:
+                                                label === 'Profile'    ?  IMAGES.user3 : IMAGES.Home
                                             }
                                         />
                                     {/* </Animated.View> */}

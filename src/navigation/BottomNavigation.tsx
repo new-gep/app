@@ -5,6 +5,7 @@ import WishlistScreen from '../screens/Wishlist/Wishlist';
 import MyCartScreen from '../screens/MyCart/MyCart';
 import HomeScreen from '../screens/Home/Home';
 import ProfileScreen from '../screens/Profile/Profile';
+import DocumentsScreen from '../screens/Documents/Documents';
 import BottomMenu from '../layout/BottomMenu';
 import { useTheme } from '@react-navigation/native';
 
@@ -34,8 +35,8 @@ const BottomNavigation = () => {
                 component={WishlistScreen}
             />
             <Tab.Screen 
-                name='MyCart'
-                component={MyCartScreen}
+                name='Documents'
+                component={DocumentsScreen}
             />
             <Tab.Screen 
                 name='Profile'

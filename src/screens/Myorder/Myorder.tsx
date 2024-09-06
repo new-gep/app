@@ -187,7 +187,7 @@ const Myorder = ({navigation} : MyorderScreenProps) => {
                                                 brand={data.brand}
                                                 btntitle={data.btntitle}
                                                 completed={data.completed}
-                                                onPress={() => navigation.navigate('ProductsDetails')}
+                                                onPress ={() => navigation.navigate('ProductsDetails')}
                                                 onPress3={() => navigation.navigate('Trackorder')}
                                                 onPress4={() => navigation.navigate('Writereview')}                                          
                                             />

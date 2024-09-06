@@ -58,7 +58,8 @@
         {
           "initialOrientation": "DEFAULT"
         }
-      ]
+      ],
+      "expo-build-properties"
     ]
   }
 }

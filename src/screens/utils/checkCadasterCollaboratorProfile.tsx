@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, Children } from "react"
 import { AntDesign, SimpleLineIcons } from "@expo/vector-icons"
 import { View, Text, Image } from "react-native"
 import ListStyle1 from "../../components/List/ListStyle1"
@@ -98,7 +98,7 @@ export default function CheckCadasterCollaboratorProfile() {
                     <Text>Carregando...</Text>
                 </View>
             ) : (
-                <View className={`bg-dark px-5 rounded-b-3xl`}>
+                <View className={`bg-dark px-5 rounded-b-3xl ${[missingDate.Picture, missingDate.AddresField, missingDate.Marriage, missingDate.Children].every(Boolean) && 'hidden'}`}>
                     <View style={[GlobalStyleSheet.cardHeader, { borderBottomColor: COLORS.inputborder }]}>
                         <Text className={`text-xl text-primary`} style={{ ...FONTS.fontMedium }}>
                             <AntDesign name="warning" size={24} color={COLORS.primary} />  Cadastro Incompleto 

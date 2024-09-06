@@ -28,7 +28,7 @@ export const IMAGES = {
     ball: require('../assets/images/icons/bell2.png'),
     ball2: require('../assets/images/icons/bell.png'),
     close: require('../assets/images/icons/close.png'),
-    check: require('../assets/images/icons/check.png'),
+    check5: require('../assets/images/icons/check.png'),
     check2: require('../assets/images/icons/check2.png'),
     check3: require('../assets/images/icons/check3.png'),
     check4: require('../assets/images/icons/check4.png'),

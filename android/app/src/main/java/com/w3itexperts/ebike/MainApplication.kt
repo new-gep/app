@@ -1,5 +1,5 @@
 package com.w3itexperts.ombe
-
+import com.rumax.reactnative.pdfviewer.PDFViewPackage;
 import android.app.Application
 import android.content.res.Configuration
 import androidx.annotation.NonNull
@@ -15,7 +15,6 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.flipper.ReactNativeFlipper
 import com.facebook.soloader.SoLoader
-
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
@@ -27,7 +26,9 @@ class MainApplication : Application(), ReactApplication {
           override fun getPackages(): List<ReactPackage> {
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(new MyReactNativePackage());
+            packages.add(new PDFViewPackage())
             return PackageList(this).packages
+            
           }
 
           override fun getJSMainModuleName(): String = ".expo/.virtual-metro-entry"

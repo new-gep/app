@@ -10,6 +10,7 @@ export type RootStackParamList = {
     ChooseLanguage: undefined;
     QrCodeScanner: undefined;
     WelCome: undefined;
+    Document: undefined;
     SignUp: undefined;
     SingIn:undefined
     SignUpAuthentication: undefined;
