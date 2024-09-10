@@ -43,6 +43,7 @@ type TypePictureProps = {
     Marriage_Certificate: string | null;
     Birth_Certificate: string[] | null;
 };
+
 const Documents = () => {
     const navigation = useNavigation<any>();
     const { collaborator, fetchCollaborator } = useCollaborator();
@@ -119,8 +120,8 @@ const Documents = () => {
                             path: getPathDocument(documentKey),
                             DocumentName: getNameDocument(documentKey),
                             sendDocument: documentStatus.status != 'reproved' ? false : true,
-                            typeDocument: 'picture',
-                            twoPicture: null,
+                            typeDocument: getTypeDocument(documentKey),
+                            twoPicture: getTwoPictureDocument(documentKey),
                             statusDocument: documentStatus.status,
                         };
     
@@ -143,8 +144,8 @@ const Documents = () => {
                                     image: IMAGES.item3,
                                     DocumentName: `${getNameDocument(documentKey)} ${Mask('firstName',children)}`,
                                     sendDocument: true,
-                                    typeDocument: 'pendente',
-                                    twoPicture: null,
+                                    typeDocument: getTypeDocument(documentKey),
+                                    twoPicture: getTwoPictureDocument(documentKey),
                                     statusDocument: null,
                                 };
         
@@ -161,7 +162,7 @@ const Documents = () => {
                         DocumentName: getNameDocument(documentKey),
                         sendDocument: true,
                         typeDocument: getTypeDocument(documentKey),
-                        twoPicture: null,
+                        twoPicture: getTwoPictureDocument(documentKey),
                         statusDocument: null,
                     };
         
@@ -183,7 +184,6 @@ const Documents = () => {
     };
     
     const getNameDocument = (name: string ) => {
-        // console.log(Name)
         switch (name.toLowerCase()) { 
             case 'rg':
               return 'RG';
@@ -204,22 +204,43 @@ const Documents = () => {
         }
     };
 
+    const getTwoPictureDocument = (name: string ) => {
+        switch (name.toLowerCase()) { 
+            case 'rg':
+              return true;
+          case 'address':
+            return false;
+          case 'work_card':
+            return true;
+          case 'school_history':
+            return false;
+        case 'marriage_certificate':
+            return false;
+        case 'birth_certificate':
+            return false;
+        case 'cnh':
+            return true;
+          default:
+            return '?';
+        }
+    };
+
     const getPathDocument = (name:string) => {
         switch (name.toLowerCase()) { 
           case 'rg':
             return picturesPath.RG;
           case 'address':
-            return 'Comprovante de Endereço';
+            return picturesPath.Address
           case 'work_card':
-            return 'Carteira de Trabalho';
+            return picturesPath.Work_Card
           case 'school_history':
-            return 'Histórico Escolar';
+            return picturesPath.School_History
         case 'marriage_certificate':
-            return 'Certidão de Casamento';
+            return picturesPath.Marriage_Certificate
         case 'birth_certificate':
-            return 'Certidão de Nascimento';
+            return picturesPath.Birth_Certificate
         case 'cnh':
-            return 'CNH (opcional)';
+            return picturesPath.CNH
           default:
             return '?';
         }
@@ -230,17 +251,17 @@ const Documents = () => {
             case 'rg':
               return picturesType.RG;
             case 'address':
-              return 'Comprovante de Endereço';
+                return picturesType.Address
             case 'work_card':
-              return 'Carteira de Trabalho';
+                return picturesType.Work_Card
             case 'school_history':
-              return 'Histórico Escolar';
+                return picturesType.School_History
           case 'marriage_certificate':
-              return 'Certidão de Casamento';
+                return picturesType.Marriage_Certificate
           case 'birth_certificate':
-              return 'Certidão de Nascimento';
+                return picturesType.Birth_Certificate
           case 'cnh':
-              return 'CNH (opcional)';
+                return picturesType.CNH
             default:
               return '?';
           }

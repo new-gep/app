@@ -15,8 +15,9 @@ import * as FileSystem from 'expo-file-system';
 import { Buffer } from "buffer";
 import { WebView } from 'react-native-webview';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import DocumentSend from '../Modal/DocumentSend'
-import Pdf from 'react-native-pdf';
+
 type PathPictureProps = {
     CNH: string | string[] | null;
     RG: string | string[] | null;
@@ -93,7 +94,7 @@ const Cardstyle4 = ({
         <View
             style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}
         >
-            <DocumentSend setTypeDocument={setTypeDocument} setPath={setPath} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} />
+            <DocumentSend setTypeDocument={setTypeDocument} setPath={setPath} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
             <DocumentVisible documentName={documentName} setTypeDocument={setTypeDocument} path={path} typeDocument={typeDocument} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
             <View style={{ width: '40%', alignItems: 'center' }}>
             <TouchableOpacity onPress={handlePress}>
@@ -136,29 +137,12 @@ const Cardstyle4 = ({
                         :
                      typeDocument === 'pdf' ?
                             <>       
-                                <WebView
-     
-                                    style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
-                                    source={{ uri: `data:application/pdf;base64,${path}` }}
-      
-                                />
-                                <Pdf
-                                    style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
-                                    
-                                    source={{uri: `data:application/pdf;base64,${path}`}}
-
-                                    onLoadComplete={(numberOfPages,filePath) => {
-                                        console.log(`Number of pages: ${numberOfPages}`);
-                                    }}
-
-                                    onPageChanged={(page,numberOfPages) => {
-                                        console.log(`Current page: ${page}`);
-                                    }}
-                                    onError={(error) => {
-                                        console.log(error);
-                                    }}
-                                    
-                                />
+                                <View className={`w-full h-full items-center justify-center`}>
+                                    <MaterialCommunityIcons name="folder-remove" size={30} color="black" />
+                                    <Text style={{ ...FONTS.fontMedium }} className={`text-xs mt-3 text-center`}>
+                                        PDF não pode{"\n"} ser visto
+                                    </Text>
+                                </View>
                                 
                                 
                                 {isBlurred && 
@@ -243,7 +227,7 @@ const Cardstyle4 = ({
                         </TouchableOpacity>
                     }
                         
-                    { !sendDocument &&
+                    { !sendDocument && typeDocument != 'pdf' &&
                         <TouchableOpacity
                             onPress={()=>setViewingDocument(true)}
                             activeOpacity={0.8}
