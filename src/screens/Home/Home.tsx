@@ -15,9 +15,10 @@ import { openDrawer } from '../../redux/actions/drawerAction';
 import ProfileCompletionModal from '../../components/Modal/ProfileLock';
 import ValidateCollaboratorAndBlock from '../utils/validateCollaboratorAndBlock';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Mask from '../../utils/mask';
-import useCollaborator from '../../utils/fetchCollaborator';
+import Mask from '../../function/mask';
+import useCollaborator from '../../function/fetchCollaborator';
 import { useCollaboratorContext } from '../../context/CollaboratorContext';
+
 const ArrivalData = [
     {
         id:"1",
@@ -263,7 +264,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={[GlobalStyleSheet.container,{paddingHorizontal:30}]}>
+                {/* <View style={[GlobalStyleSheet.container,{paddingHorizontal:30}]}>
                     {CardStyleData.map((data:any, index:any) => {
                         return (
                             <View key={index} style={{marginBottom:40}}>
@@ -279,7 +280,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                             </View>
                         );
                     })}
-                </View>
+                </View> */}
             </ScrollView>
         </View>
     );

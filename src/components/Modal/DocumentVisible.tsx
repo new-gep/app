@@ -1,24 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TouchableOpacity, View, Text, Image, ActivityIndicator } from "react-native";
 import Modal from "react-native-modal";
 import { FONTS } from "../../constants/theme";
 import { IMAGES } from "../../constants/Images";
 import WebView from "react-native-webview";
 
+
+type TypePictureProps = {
+    CNH: string | null;
+    RG: string  | null;
+    Work_Card: string | null;
+    Address: string | null;
+    School_History: string | null;
+    Marriage_Certificate: string | null;
+    Birth_Certificate: string[] | null;
+};
+
 type Props = {
     typeDocument: string;
     twoPicture: boolean;
     visible: boolean;
-    Image: any;  // Imagem da frente
-    Image2?: any;  // Imagem do verso, opcional
-    PDF?: any;  // PDF, caso seja um documento PDF
+    path?: any
+    documentName:string
+    setTypeDocument: React.Dispatch<React.SetStateAction<TypePictureProps>>;
     close: () => void;
 };
 
-const DocumentVisible = ({ PDF,  Image2: imageSource2, Image: imageSource, twoPicture, typeDocument, visible, close }: Props) => {
+const DocumentVisible = ({ setTypeDocument, documentName, path, twoPicture, typeDocument, visible, close }: Props) => {
     // Define qual lado da imagem está sendo visualizado ou se deve mostrar as opções
     const [viewingSide, setViewingSide] = useState<'front' | 'back' | null>(null);
     const [loading, setLoading] = useState(true);
+    
+    
     return (
         <Modal
             isVisible={visible}
@@ -35,7 +48,10 @@ const DocumentVisible = ({ PDF,  Image2: imageSource2, Image: imageSource, twoPi
                 {typeDocument === 'picture' ? (
                     <>
                         {!twoPicture && (
-                            <Image className="w-full h-full object-contain" source={imageSource} />
+                            <Image 
+                                className="w-full h-full object-contain" 
+                                source={{ uri: path }}
+                            />
                         )}
                         {twoPicture && !viewingSide? (
                             <View className="items-center w-full bg-white rounded-t-3xl p-4">
@@ -61,12 +77,12 @@ const DocumentVisible = ({ PDF,  Image2: imageSource2, Image: imageSource, twoPi
                         ) : (
                             <>
                                 {/* Exibe a imagem da frente ou verso com base no estado */}
-                                {viewingSide === 'front' && imageSource && (
+                                {/* {viewingSide === 'front' && imageSource && (
                                     <Image className="w-full h-full object-contain" source={imageSource} />
                                 )}
                                 {viewingSide === 'back' && imageSource2 && (
                                     <Image className="w-full h-full object-contain" source={imageSource2} />
-                                )}
+                                )} */}
 
                                 {/* Botão para fechar ou voltar para escolher frente/verso */}
                                 <TouchableOpacity

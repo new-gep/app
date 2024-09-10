@@ -9,9 +9,9 @@ import { RootStackParamList } from '../../navigation/RootStackParamList';
 import Header from '../../layout/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadScreenSimple from '../../components/LoadScreen/Simple';
-import Mask from '../../utils/mask';
+import Mask from '../../function/mask';
 import CheckCadasterCollaboratorProfile from '../utils/checkCadasterCollaboratorProfile';
-import useCollaborator from '../../utils/fetchCollaborator';
+import useCollaborator from '../../function/fetchCollaborator';
 
 type ProfileScreenProps = StackScreenProps<RootStackParamList, 'Profile'>;
 

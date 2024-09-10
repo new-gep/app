@@ -13,6 +13,7 @@ interface CollaboratorContextType {
 interface MissingDataType {
     missingFields: any;
     missingDocuments: any;
+    missingDocumentsChildren:any
 }
 
 // Cria o contexto com um valor inicial undefined
@@ -48,19 +49,21 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
                 if (CPF) {
                     const response = await CheckAccountCompletion(CPF);
                     // Verifica se há campos ou documentos faltando
-                    const hasMissingFields = Array.isArray(response.missingFields) && response.missingFields.length > 0;
+                    const hasMissingFields    = Array.isArray(response.missingFields) && response.missingFields.length > 0;
                     const hasMissingDocuments = Array.isArray(response.files?.missingDocuments) && response.files.missingDocuments.length > 0;
-                    if (hasMissingFields || hasMissingDocuments) {
+                    const hasMissingChildren  = Array.isArray(response.files?.missingDocumentsChildren) && response.files.missingDocumentsChildren.length > 0;
+                    if (hasMissingFields || hasMissingDocuments || hasMissingChildren) {
                         const dataToStore: MissingDataType = {
                             missingFields: response.missingFields || [],
                             missingDocuments: response.files?.missingDocuments || [],
+                            missingDocumentsChildren: response.files?.missingDocumentsChildren || []
                         };
                         const collaborator = await AsyncStorage.getItem('collaborator');
                         const navigationState = navigation.getState();
                         if (navigationState) {
                             const currentRoute = navigationState.routes[navigationState.index].state?.routes[navigationState.routes[navigationState.index].state.index]?.name || navigationState.routes[navigationState.index].name;
                             // Não mostra o modal se estiver em telas específicas ou sem colaborador
-                            if (currentRoute === 'Profile' || currentRoute === 'EditProfile' || currentRoute === 'SignIn' || currentRoute === 'SignUp' || !collaborator) {
+                            if (currentRoute === 'Profile' || currentRoute === 'EditProfile' || currentRoute === 'SignIn' || currentRoute === 'SignUp' || currentRoute === 'Documents' || !collaborator) {
                                 return
                             }
                             await AsyncStorage.setItem('missingDates', JSON.stringify(dataToStore));
@@ -82,8 +85,8 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
     };
 
     useEffect(() => {
-        // Executa a validação inicial do colaborador
-        validateCollaborator();
+        // Executa a validação inicial do colaborador 
+        validateCollaborator() 
     }, []);
 
     return (

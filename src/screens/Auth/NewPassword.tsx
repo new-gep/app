@@ -7,7 +7,7 @@ import { Feather } from '@expo/vector-icons';
 import { StackScreenProps } from '@react-navigation/stack'
 import { RootStackParamList } from '../../navigation/RootStackParamList'
 import { IMAGES } from '../../constants/Images'
-import { FormValues, validateForm } from '../../utils/validateField'
+import { FormValues, validateForm } from '../../function/validateField'
 import Button from '../../components/Button/Button'
 import Input from '../../components/Input/Input'
 import RBSheet from 'react-native-raw-bottom-sheet'

@@ -11,7 +11,7 @@ import OTPInput from '../../components/Input/OTPInput'
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FormValues } from '../../utils/validateField'
+import { FormValues } from '../../function/validateField'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import DangerSheet from '../../components/BottomSheet/DangerSheet'
 import SendCodeByEmail from '../../hooks/utils/SendCodeByEmail'

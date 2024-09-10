@@ -13,7 +13,7 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import DangerSheet from '../../components/BottomSheet/DangerSheet'
 import CheckCollaborator from '../../hooks/utils/CheckCollaborator'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { FormValues, validateForm } from '../../utils/validateField'
+import { FormValues, validateForm } from '../../function/validateField'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 type SignUpScreenProps = StackScreenProps<RootStackParamList, 'SignUp'>;
 

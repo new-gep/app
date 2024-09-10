@@ -10,7 +10,7 @@ import Button from '../../components/Button/Button'
 import OTPInput from '../../components/Input/OTPInput'
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { FormValues } from '../../utils/validateField'
+import { FormValues } from '../../function/validateField'
 import SendCodeByEmail from '../../hooks/utils/SendCodeByEmail'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import SuccessSheet from '../../components/BottomSheet/SuccessSheet'
