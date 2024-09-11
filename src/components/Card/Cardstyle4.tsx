@@ -18,6 +18,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import DocumentSend from '../Modal/DocumentSend'
 
+
 type PathPictureProps = {
     CNH: string | string[] | null;
     RG: string | string[] | null;
@@ -38,6 +39,16 @@ type TypePictureProps = {
     Birth_Certificate: string[] | null;
 };
 
+type StatusPictureProps = {
+    CNH: string | null;
+    RG: string  | null;
+    Work_Card: string | null;
+    Address: string | null;
+    School_History: string | null;
+    Marriage_Certificate: string | null;
+    Birth_Certificate: string[] | null;
+};
+
 type Props = {
     documentName: string;
     sendDocument: boolean;
@@ -47,6 +58,7 @@ type Props = {
     path?:any;
     setPath: React.Dispatch<React.SetStateAction<PathPictureProps>>;
     setTypeDocument: React.Dispatch<React.SetStateAction<TypePictureProps>>;
+    setPicturesStatus: React.Dispatch<React.SetStateAction<StatusPictureProps>>;
 };
 
 const Cardstyle4 = ({
@@ -57,13 +69,16 @@ const Cardstyle4 = ({
     statusDocument,
     path,
     setTypeDocument,
-    setPath
+    setPath,
+    setPicturesStatus
 }: Props) => {
     const theme = useTheme();
     const { colors }: { colors: any } = theme;
     const [isBlurred, setIsBlurred] = useState(true); // Controla o desfoque
     const [viewingDocument, setViewingDocument] = useState(false);
     const [sendModalDocument, setSendModalDocument] = useState(false);
+
+    const [pathPicture, setPathPicture] = useState<any | boolean>(false)
 
     const handlePress = () => {
         setIsBlurred(!isBlurred); // Alterna entre desfocado e normal
@@ -78,23 +93,33 @@ const Cardstyle4 = ({
     };
 
     const loadPdfBase64 = async (pdfPath) => {
-    const pdfBase64 = await FileSystem.readAsStringAsync(pdfPath, {
-        encoding: FileSystem.EncodingType.Base64,
-    });
-    return `data:application/pdf;base64,${pdfBase64}`;
+        const pdfBase64 = await FileSystem.readAsStringAsync(pdfPath, {
+            encoding: FileSystem.EncodingType.Base64,
+        });
+        return `${pdfBase64}`;
     };
 
-
     useEffect(()=>{
-        console.log('mudou')
-    },[path, typeDocument])
+        const fetchData = async () => {
+            if(path){
+                if(path.length > 1){
+                    const pathImage = await loadPdfBase64(path[0])
+                    setPathPicture(pathImage)
+                }else{
+                    const pathImage = await loadPdfBase64(path)
+                    setPathPicture(pathImage)
+                }
+            }
+        }
+        fetchData()
+    },[statusDocument]);
 
     
     return (
         <View
             style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}
         >
-            <DocumentSend setTypeDocument={setTypeDocument} setPath={setPath} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
+            <DocumentSend setPicturesStatus={setPicturesStatus} setTypeDocument={setTypeDocument} setPath={setPath} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
             <DocumentVisible documentName={documentName} setTypeDocument={setTypeDocument} path={path} typeDocument={typeDocument} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
             <View style={{ width: '40%', alignItems: 'center' }}>
             <TouchableOpacity onPress={handlePress}>
@@ -115,7 +140,7 @@ const Cardstyle4 = ({
                             <>
                                 <Image
                                     style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
-                                    source={{ uri: `data:application/pdf;base64,${path}` }}
+                                    source={{ uri: `data:application/pdf;base64,${pathPicture}` }}
                                 />
                                 {isBlurred && (
                                     <BlurView

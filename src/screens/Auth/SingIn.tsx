@@ -90,7 +90,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                 break;
         };
         setWaitProcessSingIn(false)
-    }
+    };
 
     useFocusEffect(handleFocus);
 

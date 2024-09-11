@@ -14,6 +14,7 @@ import useCollaborator from '../../function/fetchCollaborator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mask from '../../function/mask';
 import Feather from '@expo/vector-icons/Feather';
+
 type PicturesProps = {
     CNH:{ status: string } | null;
     RG: { status: string } | null;
@@ -25,9 +26,9 @@ type PicturesProps = {
 };
 
 type PathPictureProps = {
-    CNH: string | string[] | null;
-    RG: string | string[] | null;
-    Work_Card: string | string[] | null;
+    CNH: string[] | null;
+    RG:  string[] | null;
+    Work_Card: string[] | null;
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
@@ -44,9 +45,22 @@ type TypePictureProps = {
     Birth_Certificate: string[] | null;
 };
 
+type StatusPictureProps = {
+    CNH: string | null;
+    RG: string  | null;
+    Work_Card: string | null;
+    Address: string | null;
+    School_History: string | null;
+    Marriage_Certificate: string | null;
+    Birth_Certificate: string[] | null;
+};
+
 const Documents = () => {
     const navigation = useNavigation<any>();
     const { collaborator, fetchCollaborator } = useCollaborator();
+    const [myDocsData, setMyDocsData] = useState<any[] | null>(null)
+    const [error, setError] = useState<boolean>(false)
+    const [process, setProcess] = useState<boolean>(false)
     const [picturesData, setPicturesData] = useState<PicturesProps>({
         RG: null,
         CNH:null,
@@ -74,8 +88,15 @@ const Documents = () => {
         Marriage_Certificate: null,
         Birth_Certificate: null
     });
-    const [myDocsData, setMyDocsData] = useState<any[] | null>(null)
-    const [error, setError] = useState<boolean>(false)
+    const [picturesStatus, setPicturesStatus] = useState<StatusPictureProps>({
+        CNH: null,
+        RG : null,
+        Work_Card: null,
+        Address  : null,
+        School_History: null,
+        Marriage_Certificate: null,
+        Birth_Certificate: null
+    });
 
     const Picture = async () => {
         try {
@@ -97,7 +118,7 @@ const Documents = () => {
                             updatedPicturesData[picture as keyof PicturesProps] = { status };
                         }
                     });
-                }
+                };
         
                 // Recuperar os dados das crianças antes da iteração
                 let dataToStore = await AsyncStorage.getItem('missingDates');
@@ -121,8 +142,8 @@ const Documents = () => {
                             DocumentName: getNameDocument(documentKey),
                             sendDocument: documentStatus.status != 'reproved' ? false : true,
                             typeDocument: getTypeDocument(documentKey),
-                            twoPicture: getTwoPictureDocument(documentKey),
-                            statusDocument: documentStatus.status,
+                            twoPicture  : getTwoPictureDocument(documentKey),
+                            statusDocument: setStatusDocument(documentKey, documentStatus.status),
                         };
     
                         // Adicionar ao objeto temporário, usando o nome do documento como chave
@@ -146,7 +167,7 @@ const Documents = () => {
                                     sendDocument: true,
                                     typeDocument: getTypeDocument(documentKey),
                                     twoPicture: getTwoPictureDocument(documentKey),
-                                    statusDocument: null,
+                                    statusDocument: setStatusDocument(documentKey, null),
                                 };
         
                                 // Garantir que não adicionamos duplicatas para os filhos
@@ -155,7 +176,7 @@ const Documents = () => {
                         }
                         return;
                     };
-        
+
                     // Caso geral para outros documentos
                     let document_params = {
                         path: getPathDocument(documentKey),
@@ -163,7 +184,7 @@ const Documents = () => {
                         sendDocument: true,
                         typeDocument: getTypeDocument(documentKey),
                         twoPicture: getTwoPictureDocument(documentKey),
-                        statusDocument: null,
+                        statusDocument: setStatusDocument(documentKey, null),
                     };
         
                     // Adicionar ao objeto temporário para evitar duplicatas
@@ -180,6 +201,8 @@ const Documents = () => {
             setError(true)
         } catch (error) {
             console.error('Erro ao buscar imagens:', error);
+        }finally{
+            setProcess(true)
         }
     };
     
@@ -232,7 +255,7 @@ const Documents = () => {
           case 'address':
             return picturesPath.Address
           case 'work_card':
-            return picturesPath.Work_Card
+            return picturesPath.Work_Card;
           case 'school_history':
             return picturesPath.School_History
         case 'marriage_certificate':
@@ -240,7 +263,7 @@ const Documents = () => {
         case 'birth_certificate':
             return picturesPath.Birth_Certificate
         case 'cnh':
-            return picturesPath.CNH
+            return picturesPath.CNH;
           default:
             return '?';
         }
@@ -264,7 +287,64 @@ const Documents = () => {
                 return picturesType.CNH
             default:
               return '?';
-          }
+        }
+    };
+
+    const setStatusDocument = (name:string, status:string) => {
+        switch (name.toLowerCase()) { 
+            case 'rg':
+                setPicturesStatus((prevState) => {
+                    return {
+                        ...prevState,
+                        RG: status,
+                    }
+                });
+                return picturesStatus.RG
+            case 'address':
+                setPicturesStatus((prevState) => {
+                    return {
+                        ...prevState,
+                        Address: status,
+                    }
+                });
+                return picturesStatus.Address
+            case 'work_card':
+                setPicturesStatus((prevState) => {
+                    return {
+                        ...prevState,
+                        Work_Card: status,
+                    }
+                });
+                return picturesStatus.Work_Card
+            case 'school_history':
+                setPicturesStatus((prevState) => {
+                    return {
+                        ...prevState,
+                        School_History: status,
+                    }
+                });
+                return picturesStatus.School_History;
+            case 'marriage_certificate':
+                setPicturesStatus((prevState) => {
+                    return {
+                        ...prevState,
+                        Marriage_Certificate: status,
+                    }
+                });
+                return picturesStatus.Marriage_Certificate;
+            case 'birth_certificate':
+               break
+            case 'cnh':
+                setPicturesStatus((prevState) => {
+                    return {
+                        ...prevState,
+                        CNH: status,
+                    }
+                });
+                return picturesStatus.CNH
+            default:
+              return '?';
+        }
     };
 
     useEffect(() => {
@@ -279,9 +359,14 @@ const Documents = () => {
     useEffect(()=>{
         if(collaborator){
             Picture()
-            console.log('mudou')
         }
-    },[collaborator, picturesPath, picturesType])
+    },[collaborator]);
+
+    useEffect(()=>{
+        if(collaborator){
+            Picture()
+        }
+    },[picturesPath, picturesType, process]);
 
     return(
         <>
@@ -332,6 +417,7 @@ const Documents = () => {
                                                                 path={data.path}
                                                                 setPath={setPicturesPath}
                                                                 setTypeDocument={setPicturesType}
+                                                                setPicturesStatus={setPicturesStatus}
                                                             />
                                                         </View>
                                                     )

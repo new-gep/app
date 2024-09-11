@@ -48,7 +48,6 @@ export default function CheckCadasterCollaboratorDocument() {
             const storedData = await AsyncStorage.getItem('missingDates');
             if (storedData) {
                 const parsedMissingDates: MissingDatesStorage = JSON.parse(storedData);
-                console.log(parsedMissingDates)
                 // Garantir que missingDocuments e missingFields são arrays
                 const missingDocuments = Array.isArray(parsedMissingDates.missingDocuments) ? parsedMissingDates.missingDocuments : [];
                 // const missingFields    = Array.isArray(parsedMissingDates.missingFields) ? parsedMissingDates.missingFields : [];
