@@ -96,16 +96,25 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
         };
 
         switch (documentName) {
+            case 'Carteira de Trabalho':
+                documentName = 'Work_Card'
+                break;
+            case 'CNH (opcional)':
+                documentName = 'CNH'
+                break
             case 'Comprovante de Endereço':
                 documentName = 'Address'
+                break
+            case 'Histórico Escolar':
+                documentName = 'School_History'
+                break
             default:
                 console.log(documentName)
                 break;
         };
 
-        console.log(path)
-
         const response = await UploadFile(path, documentName, 'complet', collaborator.CPF);
+        
         if (response.status === 400) {
             setActiveSheet('danger');
             setMessageSheet(`Documento inválido`);
@@ -123,15 +132,13 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
             setBack(null);
             setLoad(false)
             throw new Error('Erro interno no upload');
-        }
+        };
         const pictureParams: PropsCreateAvalidPicture = {
             picture: documentName,
             status: 'pending',
             cpf: collaborator.CPF,
         };
         const createResponse = await CreateAvalidPicture(pictureParams);
-    
-        // Lidar com a resposta do CreateAvalidPicture
         if (createResponse.status === 201) {
             switch (documentName) {
                 case 'RG':
@@ -245,7 +252,7 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
                     default:
                         console.log(documentName)
                         break;
-                }
+                };
                 try {
                     // Fazendo o upload dos arquivos front e back
                     await Promise.all(
@@ -356,7 +363,7 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
                     setMessageSheet('Algo deu errado, tente mais tarde');
                     Sheet();
                     setLoad(false)
-                }
+                };
             }
         };
     

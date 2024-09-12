@@ -11,14 +11,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadScreenSimple from '../../components/LoadScreen/Simple';
 import Mask from '../../function/mask';
 import CheckCadasterCollaboratorProfile from '../utils/checkCadasterCollaboratorProfile';
+import FindBucketCollaborator from '../../hooks/bucket/collaborator';
 import useCollaborator from '../../function/fetchCollaborator';
-
 type ProfileScreenProps = StackScreenProps<RootStackParamList, 'Profile'>;
 
 const Profile = ({navigation} : ProfileScreenProps) => {
     const theme = useTheme();
     const { colors } : {colors : any} = theme;
     const { collaborator, fetchCollaborator } = useCollaborator();
+    const [path, setPath] = useState<any | null>(null);
 
     const profileData = [
         {
@@ -78,8 +79,33 @@ const Profile = ({navigation} : ProfileScreenProps) => {
     
     ];
 
+    const getPicture = async () => {
+        try {
+          const savedPicture = await AsyncStorage.getItem('picture');
+          if (savedPicture !== null) {
+            const parsedPicture = JSON.parse(savedPicture);
+            setPath(parsedPicture.Picture); 
+          }
+
+          const response = await FindBucketCollaborator(collaborator.CPF, 'Picture')
+          if(response.status == 200){
+            setPath(response.path)
+            const existingData = await AsyncStorage.getItem('picture');
+            let pictureData = existingData ? JSON.parse(existingData) : {};
+            pictureData = {
+              ...pictureData, 
+              Picture:response.path,  
+            };
+            await AsyncStorage.setItem('picture', JSON.stringify(pictureData));
+          }
+        } catch (error) {
+          console.error('Erro ao resgatar a imagem:', error);
+        }
+    };
+
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
+            getPicture();
             fetchCollaborator(); 
         });
 
@@ -105,11 +131,20 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                     <View
                         className={`bg-neutral-300 rounded-full h-24 w-24 justify-center items-center `}
                     >
-                        <Image
-                            className={`w-14 h-14 rounded`}
-                            source={IMAGES.user2}
-                            tintColor={`white`}
-                        />
+                        
+                        { path ?
+                            <Image
+                                className={`w-full h-full rounded-full`}
+                                source={{uri: path}}
+                            />
+                            :
+                            <Image
+                                className={`w-14 h-14 rounded`}
+                                source={IMAGES.user2}
+                                tintColor={`white`}
+                            />
+                        }
+
                     </View>
                     <Text style={{...FONTS.fontSemiBold,fontSize:28,color:colors.title}}>{collaborator && Mask('fullName',collaborator.name)}</Text>
                     <Text style={{...FONTS.fontRegular,fontSize:16,color:COLORS.primary}}>

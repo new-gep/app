@@ -52,6 +52,7 @@ export const IMAGES = {
     Bag: require('../assets/images/icons/Bag.png'),
     plus: require('../assets/images/icons/plus.png'),
     plusDuotone: require('../assets/images/icons/plusDuotone.png'),
+    transgenderDuotone : require('../assets/images/icons/transgenderDuotone.png'),
     dollar: require('../assets/images/icons/dollar.png'),
     payment: require('../assets/images/icons/payment.png'),
     folder: require('../assets/images/icons/folder.png'),

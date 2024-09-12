@@ -13,7 +13,7 @@ import FindPicture from '../../hooks/findOne/picture';
 import useCollaborator from '../../function/fetchCollaborator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mask from '../../function/mask';
-import Feather from '@expo/vector-icons/Feather';
+import FindBucketCollaborator from '../../hooks/bucket/collaborator';
 
 type PicturesProps = {
     CNH:{ status: string } | null;
@@ -197,15 +197,15 @@ const Documents = () => {
                 setMyDocsData(picture_card);
                 return
             };
-
             setError(true)
         } catch (error) {
             console.error('Erro ao buscar imagens:', error);
         }finally{
             setProcess(true)
+            console.log('acabou')
         }
     };
-    
+
     const getNameDocument = (name: string ) => {
         switch (name.toLowerCase()) { 
             case 'rg':
@@ -248,43 +248,162 @@ const Documents = () => {
         }
     };
 
-    const getPathDocument = (name:string) => {
+    const getPathDocument = async (name:string) => {
+        let response: any;
         switch (name.toLowerCase()) { 
           case 'rg':
-            return picturesPath.RG;
+            response = await FindBucketCollaborator(collaborator.CPF, 'RG')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, RG: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, RG: response.path,};
+                });
+            return response.path;
           case 'address':
-            return picturesPath.Address
+                response = await FindBucketCollaborator(collaborator.CPF, 'Address')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Address: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Address: response.path,};
+                });
+            return response.path;
           case 'work_card':
-            return picturesPath.Work_Card;
+                response = await FindBucketCollaborator(collaborator.CPF, 'Work_Card')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Work_Card: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Work_Card: response.path,};
+                });
+            return response.path;
           case 'school_history':
-            return picturesPath.School_History
-        case 'marriage_certificate':
-            return picturesPath.Marriage_Certificate
-        case 'birth_certificate':
-            return picturesPath.Birth_Certificate
-        case 'cnh':
-            return picturesPath.CNH;
-          default:
-            return '?';
+                response = await FindBucketCollaborator(collaborator.CPF, 'School_History')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, School_History: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, School_History: response.path,};
+                });
+                return response.path;
+          case 'marriage_certificate':
+                response = await FindBucketCollaborator(collaborator.CPF, 'Marriage_Certificate')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Marriage_Certificate: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Marriage_Certificate: response.path,};
+                });
+                return response.path;
+          case 'birth_certificate':
+                return picturesPath.Birth_Certificate
+          case 'cnh':
+                response = await FindBucketCollaborator(collaborator.CPF, 'CNH')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, CNH: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, CNH: response.path,};
+                });
+                return response.path;
+            default:
+                return '?';
         }
     };
 
-    const getTypeDocument = (name:string) => {
+    const getTypeDocument = async (name:string) => {
+        let response:any;
         switch (name.toLowerCase()) { 
             case 'rg':
-              return picturesType.RG;
+                response = await FindBucketCollaborator(collaborator.CPF, 'RG')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, RG: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, RG: response.path,};
+                });
+                return response.type;
             case 'address':
-                return picturesType.Address
+                response = await FindBucketCollaborator(collaborator.CPF, 'Address')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Address: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Address: response.path,};
+                });
+                return response.type;
             case 'work_card':
-                return picturesType.Work_Card
+                response = await FindBucketCollaborator(collaborator.CPF, 'Work_Card')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Work_Card: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Work_Card: response.path,};
+                });
+                return response.type;
             case 'school_history':
-                return picturesType.School_History
-          case 'marriage_certificate':
-                return picturesType.Marriage_Certificate
-          case 'birth_certificate':
-                return picturesType.Birth_Certificate
-          case 'cnh':
-                return picturesType.CNH
+                response = await FindBucketCollaborator(collaborator.CPF, 'School_History')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, School_History: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, School_History: response.path,};
+                });
+                return response.type;
+            case 'marriage_certificate':
+                response = await FindBucketCollaborator(collaborator.CPF, 'Marriage_Certificate')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Marriage_Certificate: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Marriage_Certificate: response.path,};
+                });
+                return response.type;
+            case 'birth_certificate':
+                response = await FindBucketCollaborator(collaborator.CPF, 'Birth_Certificate')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Marriage_Certificate: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, Marriage_Certificate: response.path,};
+                });
+                return response.type;
+            case 'cnh':
+                response = await FindBucketCollaborator(collaborator.CPF, 'CNH')
+                setPicturesType((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, CNH: response.type};
+                });
+                setPicturesPath((prevState) => {
+                    // Aqui você garante que o novo estado depende do anterior
+                    return { ...prevState, CNH: response.path,};
+                });
+                return response.type;
             default:
               return '?';
         }
@@ -360,13 +479,8 @@ const Documents = () => {
         if(collaborator){
             Picture()
         }
-    },[collaborator]);
+    },[collaborator,process]);
 
-    useEffect(()=>{
-        if(collaborator){
-            Picture()
-        }
-    },[picturesPath, picturesType, process]);
 
     return(
         <>
@@ -404,7 +518,7 @@ const Documents = () => {
                                         showsVerticalScrollIndicator={false}
                                     >
                                         <View className={`px-2`}>
-                                            { myDocsData &&
+                                            { myDocsData && process &&
                                                 myDocsData.map((data:any, index) => {
                                                     return (
                                                         <View key={index} style={{marginBottom:30}}>
@@ -414,6 +528,7 @@ const Documents = () => {
                                                                 typeDocument={data.typeDocument}
                                                                 statusDocument={data.statusDocument}
                                                                 twoPicture={data.twoPicture}
+                                                                picturesPath={picturesPath}
                                                                 path={data.path}
                                                                 setPath={setPicturesPath}
                                                                 setTypeDocument={setPicturesType}

@@ -32,7 +32,7 @@ const DocumentVisible = ({ setTypeDocument, documentName, path, twoPicture, type
     const [loading, setLoading] = useState(true);
     const [pathFront, setPathFront] = useState<any>()
     const [pathBack , setPathBack]  = useState<any>()
-    const [pathOne , setPathOne]    = useState<any>()
+    const [pathOne  , setPathOne]    = useState<any>()
 
     const loadPdfBase64 = async (pdfPath:any) => {
         const pdfBase64 = await FileSystem.readAsStringAsync(pdfPath, {
@@ -43,20 +43,22 @@ const DocumentVisible = ({ setTypeDocument, documentName, path, twoPicture, type
     
     useEffect(()=>{
         const fetchData = async () => {
-            if(path){
-                if(path.length > 1){
-                    const pathImageFront = await loadPdfBase64(path[0]);
-                    const pathImageBack  = await loadPdfBase64(path[1]);
-                    setPathFront(pathImageFront)
+            if (path && typeDocument) {
+                if (Array.isArray(path) && path.length > 1) {
+                    const pathImageFront = path[0];
+                    const pathImageBack = path[1];
+                    setPathFront(pathImageFront);
                     setPathBack(pathImageBack)
-                }else{
-                    const pathImage = await loadPdfBase64(path)
-                    setPathOne(pathImage)
+                    return
+                } else {
+                    const pathImage = path; // Se for um único caminho
+                    // console.log('image', pathImage);
+                    setPathOne(pathImage);
                 }
             }
         }
         fetchData()
-    },[])
+    },[path])
     
     return (
         <Modal
@@ -104,10 +106,10 @@ const DocumentVisible = ({ setTypeDocument, documentName, path, twoPicture, type
                             <>
                                 {/* Exibe a imagem da frente ou verso com base no estado */}
                                 {viewingSide === 'front' && (
-                                    <Image className="w-full h-full object-contain" source={{ uri: `data:application/pdf;base64,${pathFront}` }}/>
+                                    <Image className="w-full h-full object-contain" source={{uri:pathFront}}/>
                                 )}
                                 {viewingSide === 'back'  && (
-                                    <Image className="w-full h-full object-contain" source={{ uri: `data:application/pdf;base64,${pathBack}` }}/>
+                                    <Image className="w-full h-full object-contain" source={{uri:pathBack}}/>
                                 )}
 
                                 {/* Botão para fechar ou voltar para escolher frente/verso */}

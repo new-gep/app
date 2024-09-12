@@ -17,6 +17,7 @@ import { WebView } from 'react-native-webview';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import DocumentSend from '../Modal/DocumentSend'
+import { ActivityIndicator } from 'react-native-paper'
 
 
 type PathPictureProps = {
@@ -55,7 +56,8 @@ type Props = {
     typeDocument:string;
     twoPicture:boolean;
     statusDocument:string;
-    path?:any;
+    picturesPath:PathPictureProps;
+    path:any
     setPath: React.Dispatch<React.SetStateAction<PathPictureProps>>;
     setTypeDocument: React.Dispatch<React.SetStateAction<TypePictureProps>>;
     setPicturesStatus: React.Dispatch<React.SetStateAction<StatusPictureProps>>;
@@ -70,15 +72,17 @@ const Cardstyle4 = ({
     path,
     setTypeDocument,
     setPath,
-    setPicturesStatus
+    setPicturesStatus,
+    picturesPath
 }: Props) => {
     const theme = useTheme();
     const { colors }: { colors: any } = theme;
     const [isBlurred, setIsBlurred] = useState(true); // Controla o desfoque
     const [viewingDocument, setViewingDocument] = useState(false);
     const [sendModalDocument, setSendModalDocument] = useState(false);
-
-    const [pathPicture, setPathPicture] = useState<any | boolean>(false)
+    const [typePicture, setTypePicture] = useState<string | null>(null)
+    const [pathPicture, setPathPicture] = useState<any | null>(null)
+    const [pathPictureSide, setPathPictureSide] = useState<any | null>(null)
 
     const handlePress = () => {
         setIsBlurred(!isBlurred); // Alterna entre desfocado e normal
@@ -99,20 +103,32 @@ const Cardstyle4 = ({
         return `${pdfBase64}`;
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         const fetchData = async () => {
-            if(path){
-                if(path.length > 1){
-                    const pathImage = await loadPdfBase64(path[0])
-                    setPathPicture(pathImage)
-                }else{
-                    const pathImage = await loadPdfBase64(path)
-                    setPathPicture(pathImage)
+            try{
+                const resolvedPath = await path; 
+                const resolvedType = await typeDocument
+                if (resolvedPath && resolvedType) {
+                    setTypePicture(resolvedType)
+                    setPathPictureSide(resolvedPath)
+                    
+                    if (Array.isArray(resolvedPath) && resolvedPath.length > 1) {
+                        const pathImage = resolvedPath[0];
+                        setPathPicture(pathImage);
+                        return
+                    } else {
+                        const pathImage = resolvedPath; // Se for um único caminho
+                        setPathPicture(pathImage);
+                    }
                 }
+            }catch(e){
+                console.log(e)
+            }finally{
             }
-        }
-        fetchData()
-    },[statusDocument]);
+        };
+    
+        fetchData();
+    }, [statusDocument, path, typeDocument]); // Dependendo da alteração em statusDocument
 
     
     return (
@@ -120,7 +136,7 @@ const Cardstyle4 = ({
             style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}
         >
             <DocumentSend setPicturesStatus={setPicturesStatus} setTypeDocument={setTypeDocument} setPath={setPath} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
-            <DocumentVisible documentName={documentName} setTypeDocument={setTypeDocument} path={path} typeDocument={typeDocument} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
+            <DocumentVisible documentName={documentName} setTypeDocument={setTypeDocument} path={pathPictureSide} typeDocument={typePicture} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
             <View style={{ width: '40%', alignItems: 'center' }}>
             <TouchableOpacity onPress={handlePress}>
                 <View
@@ -136,69 +152,81 @@ const Cardstyle4 = ({
                         position: 'relative',
                     }}
                 >
-                    {typeDocument === 'picture' ? 
-                            <>
-                                <Image
-                                    style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
-                                    source={{ uri: `data:application/pdf;base64,${pathPicture}` }}
-                                />
-                                {isBlurred && (
-                                    <BlurView
-                                        intensity={80}
-                                        tint="dark"
-                                        style={StyleSheet.absoluteFill}
-                                        experimentalBlurMethod="dimezisBlurView"
-                                    />
-                                )}
-                                {isBlurred && (
-                                    <FeatherIcon
-                                        style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -15 }] }}
-                                        color={COLORS.primary}
-                                        size={30}
-                                        name="eye-off"
-                                    />
-                                )}
-                            </>
-                        :
-                     typeDocument === 'pdf' ?
-                            <>       
-                                <View className={`w-full h-full items-center justify-center`}>
-                                    <MaterialCommunityIcons name="folder-remove" size={30} color="black" />
-                                    <Text style={{ ...FONTS.fontMedium }} className={`text-xs mt-3 text-center`}>
-                                        PDF não pode{"\n"} ser visto
-                                    </Text>
-                                </View>
-                                
-                                
-                                {isBlurred && 
-                                    (
-                                        <BlurView
-                                            intensity={80}
-                                                    tint="dark"
-                                                    style={StyleSheet.absoluteFill}
-                                                    experimentalBlurMethod="dimezisBlurView"
+                    { !statusDocument ||  (typePicture && pathPicture) ?
+                        <>
+                            {typePicture === 'picture' ? 
+                                    <>
+                                        <Image
+                                            style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
+                                            source={{ uri: pathPicture }} 
+                                            onError={(e) => console.log('Erro ao carregar a imagem:', e.nativeEvent.error)}
                                         />
-                                    )
-                                }
-                                {isBlurred && 
-                                    (
-                                        <FeatherIcon
-                                            style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -15 }] }}
-                                            color={COLORS.primary}
-                                            size={30}
-                                            name="eye-off"
-                                        />
-                                    )
-                                }
+                                        {isBlurred && (
+                                            <BlurView
+                                                intensity={80}
+                                                tint="dark"
+                                                style={StyleSheet.absoluteFill}
+                                                experimentalBlurMethod="dimezisBlurView"
+                                            />
+                                        )}
+                                        {isBlurred && (
+                                            <FeatherIcon
+                                                style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -15 }] }}
+                                                color={COLORS.primary}
+                                                size={30}
+                                                name="eye-off"
+                                            />
+                                        )}
+                                    </>
+                                :
+                                typePicture === 'pdf' ?
+                                    <>       
+                                        <View className={`w-full h-full items-center justify-center`}>
+                                            <MaterialCommunityIcons name="folder-remove" size={30} color="black" />
+                                            <Text style={{ ...FONTS.fontMedium }} className={`text-xs mt-3 text-center`}>
+                                                PDF não pode{"\n"} ser visto
+                                            </Text>
+                                        </View>
                                         
-                            </>
+                                        
+                                        {isBlurred && 
+                                            (
+                                                <BlurView
+                                                    intensity={80}
+                                                            tint="dark"
+                                                            style={StyleSheet.absoluteFill}
+                                                            experimentalBlurMethod="dimezisBlurView"
+                                                />
+                                            )
+                                        }
+                                        {isBlurred && 
+                                            (
+                                                <FeatherIcon
+                                                    style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -15 }] }}
+                                                    color={COLORS.primary}
+                                                    size={30}
+                                                    name="eye-off"
+                                                />
+                                            )
+                                        }
+                                                
+                                    </>
+                                :
+                                    <View className={`items-center px-5`}>
+                                        <Ionicons name="document-text-outline" size={30} color="black" />
+                                        <Text style={{ ...FONTS.fontMedium }} className={`text-xs mt-3 text-center`}>
+                                            Documento {"\n"} pendente
+                                        </Text>
+                                    </View>
+                            }
+                        
+                        </>
                         :
-                            <View className={`items-center px-5`}>
-                                <Ionicons name="document-text-outline" size={30} color="black" />
-                                <Text style={{ ...FONTS.fontMedium }} className={`text-xs mt-3 text-center`}>
-                                    Documento {"\n"} pendente
-                                </Text>
-                            </View>
+                        <View className={`items-center px-5`}>
+                            <ActivityIndicator 
+                                color={`#2f2f2f`}
+                            />
+                        </View>
                     }
                 </View>
             </TouchableOpacity>
@@ -211,7 +239,7 @@ const Cardstyle4 = ({
             >
                 <View>
                     <Text style={{ ...FONTS.fontMedium, fontSize: 16, color: colors.title, paddingRight: 40 }}>{documentName}</Text>
-                    <Text style={{ ...FONTS.fontRegular, fontSize: 12, color: theme.dark ? 'rgba(255,255,255,.7)' : '#6A6A6A', marginTop: 5 }}>{typeDocument =='picture' ? 'Imagem' : typeDocument =='picture' ? 'PDF' : 'Pendente'}</Text>
+                    <Text style={{ ...FONTS.fontRegular, fontSize: 12, color: theme.dark ? 'rgba(255,255,255,.7)' : '#6A6A6A', marginTop: 5 }}>{typePicture =='picture' ? 'Imagem' : typePicture =='pdf' ? 'PDF' : 'Pendente'}</Text>
                 </View>
                 <View className={`flex-col flex gap-2`} >
                     
@@ -252,7 +280,7 @@ const Cardstyle4 = ({
                         </TouchableOpacity>
                     }
                         
-                    { !sendDocument && typeDocument != 'pdf' &&
+                    { !sendDocument && typePicture != 'pdf' &&
                         <TouchableOpacity
                             onPress={()=>setViewingDocument(true)}
                             activeOpacity={0.8}

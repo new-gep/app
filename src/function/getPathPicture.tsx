@@ -3,13 +3,14 @@ import * as DocumentPicker from 'expo-document-picker';
 
 
 export default async function GetPathPicture(option:string){
+
     if(option === 'gallery'){
         let result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
             quality: 1,
         });
         return result.assets[0].uri
-    }
+    };
 
     if(option === 'camera'){
         const options = {
@@ -23,7 +24,7 @@ export default async function GetPathPicture(option:string){
         }catch(e){
             return 'cancel'
         }
-    }
+    };
 
     if(option === 'file'){
             const result = await DocumentPicker.getDocumentAsync({});
@@ -35,6 +36,7 @@ export default async function GetPathPicture(option:string){
                 option: 'file',
                 error : 'option no is pdf or size forbidden'
             };
-    }
+    };
+    
 }
 

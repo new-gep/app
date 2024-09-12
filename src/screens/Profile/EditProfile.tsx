@@ -19,6 +19,11 @@ import SuccessSheet from '../../components/BottomSheet/SuccessSheet';
 import ValidateCollaboratorAndBlock from '../utils/validateCollaboratorAndBlock';
 import { useCollaboratorContext } from '../../context/CollaboratorContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GetPathPicture from '../../function/getPathPicture';
+import * as FileSystem from 'expo-file-system';
+import UploadFile from '../../hooks/upload/picture';
+import FindBucketCollaborator from '../../hooks/bucket/collaborator';
+
 type inputUpdateDates = {
     name :string,
     phone:string,
@@ -32,17 +37,20 @@ type inputUpdateDates = {
     uf      : string;
     number  : string;
     complement?: string;
-}
+};
+
 type ChildType = {
     name: string;
     birth: string;
 };
+
 const EditProfile = () => {
     const refRBSheet = useRef<any>(null);
     const theme = useTheme();
     const { colors } : {colors : any} = theme;
     const navigation = useNavigation<any>();
     const { collaborator, fetchCollaborator } = useCollaborator();
+    const [path, setPath] = useState<any | null>(null);
     const [isFocused, setisFocused] = useState(false)
     const [isFocused1, setisFocused1] = useState(false)
     const [isFocused2, setisFocused2] = useState(false)
@@ -77,6 +85,20 @@ const EditProfile = () => {
     });
     const [children, setChildren] = useState([{ name: '', age: '' }]);
     const { validateCollaborator, missingData } = useCollaboratorContext();
+    
+    const convertToBase64 = async (fileUri:any) => {
+        try {
+          // Lê o arquivo e converte para Base64
+          const base64 = await FileSystem.readAsStringAsync(fileUri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+  
+          // Atualiza o estado com a string Base64
+          setPath(`data:image/jpeg;base64,${base64}`);
+        } catch (error) {
+          console.log('Erro ao converter imagem para Base64:', error);
+        }
+    };
 
     const addChild = () => {
         setChildren([...children, { name: '', age: '' }]); // Adiciona um novo filho ao array
@@ -143,22 +165,66 @@ const EditProfile = () => {
 
     };
 
-    // const handleImageSelect = () => {
-    //     if(Platform.OS == 'android'){
-    //         try {
-    //             ImagePicker.openPicker({
-    //                 width: 200,
-    //                 height: 200,
-    //                 cropping: true
-    //             }).then((image: { path: React.SetStateAction<string>; })  => {
-    //                 setImageUrl(image.path);
-    //             });
-    //         } catch (e) {
-    //             console.log(e);
-    //         }
-            
-    //     }
-    // }
+    const handleSendPicture = async () => {
+        const response = await GetPathPicture('camera');
+        convertToBase64(response);
+        if(typeof response === 'string'){
+            const fileUpload = await UploadFile(response, 'Picture', 'complet', collaborator.CPF);
+            switch (fileUpload.status) {
+                case 200:
+                    setMessageSheet('Foto Atualizada')
+                    setActiveSheet('success')
+                    Sheet()
+                    validateCollaborator()
+                    const existingData = await AsyncStorage.getItem('picture');
+                    let pictureData = existingData ? JSON.parse(existingData) : {};
+
+                    // Passo 2: Mesclar o novo dado com os existentes
+                    pictureData = {
+                      ...pictureData, // Preserva os dados existentes
+                      Picture:response,  // Sobrescreve ou adiciona novos dados
+                    };
+                
+                    // Passo 3: Salvar de volta o objeto atualizado no AsyncStorage
+                    await AsyncStorage.setItem('picture', JSON.stringify(pictureData));
+                    return
+                default:
+                    setMessageSheet('Algo deu errado')
+                    setActiveSheet('danger')
+                    Sheet()
+                    validateCollaborator()
+                    break;
+            }
+
+        };
+        setMessageSheet('Algo deu errado');
+        setActiveSheet('danger');
+        Sheet();
+    };
+
+    const getPicture = async () => {
+        try {
+          const savedPicture = await AsyncStorage.getItem('picture');
+          if (savedPicture !== null) {
+            const parsedPicture = JSON.parse(savedPicture);
+            setPath(parsedPicture.Picture); 
+          }
+
+          const response = await FindBucketCollaborator(collaborator.CPF, 'Picture')
+          if(response.status == 200){
+            setPath(response.path)
+            const existingData = await AsyncStorage.getItem('picture');
+            let pictureData = existingData ? JSON.parse(existingData) : {};
+            pictureData = {
+              ...pictureData, 
+              Picture:response.path,  
+            };
+            await AsyncStorage.setItem('picture', JSON.stringify(pictureData));
+          }
+        } catch (error) {
+          console.error('Erro ao resgatar a imagem:', error);
+        }
+    };
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -170,7 +236,7 @@ const EditProfile = () => {
 
     useEffect(()=>{
         if(collaborator){
-                setCollaboratorUpdateDates({
+            setCollaboratorUpdateDates({
                     name : collaborator.name  ,
                     phone: collaborator.phone ,
                     email: collaborator.email ,
@@ -183,8 +249,8 @@ const EditProfile = () => {
                     uf      : collaborator.uf       || '',
                     number  : collaborator.number   || '',
                     complement : collaborator.complement || ''
-                });
-                if (collaborator.children && typeof collaborator.children === 'object') {
+            });
+            if(collaborator.children && typeof collaborator.children === 'object') {
                     setHasChildren(true);
             
                     // Mapeia os filhos do objeto `collaborator.children`
@@ -197,21 +263,20 @@ const EditProfile = () => {
                     });
             
                     setChildren(childrenArray);
-                } else {
+            }else {
                     setHasChildren(false);
                     setChildren([{ name: '', age: '' }]); // Reseta o estado se não houver filhos
-                }
-                if(collaborator.marriage){
+            }if(collaborator.marriage){
                     if(collaborator.marriage == '1'){
                         setHasMarriage(true)
                     }else{
                         setHasMarriage(false)
                     }
-                }else{
+            }else{
                     setHasMarriage(false)
-                }
-        }
-
+            }
+            getPicture()
+        };
     },[collaborator])
 
     useEffect(() => {
@@ -260,7 +325,6 @@ const EditProfile = () => {
                 }));
                 setChildren([{ name: '', age: '' }])
             }
-
         }
         toogleActions()
     },
@@ -302,7 +366,14 @@ const EditProfile = () => {
                 <View style={[GlobalStyleSheet.container, {backgroundColor:theme.dark ? 'rgba(255,255,255,.1)':colors.card,marginTop:10,borderRadius:15}]}>
                     <View className={`w-full`} style={{flexDirection:'row',alignItems:'center',gap:20}}>
                         <View style={{}}>
-                            { 1 > 0 ?
+                            { path ?
+                                <View style={styles.imageborder}>
+                                    <Image
+                                        style={{ height: 82, width: 82, borderRadius: 50 }}
+                                        source={{uri: path}}
+                                    />
+                                </View>
+                                :
                                 <View className={`bg-neutral-300`} style={styles.imageborder}>
                                     <Image
                                         style={{ height: 60, width: 60 }}
@@ -310,17 +381,10 @@ const EditProfile = () => {
                                         tintColor={`white`}
                                     />
                                 </View>
-                                :
-                                <View style={styles.imageborder}>
-                                    <Image
-                                        style={{ height: 82, width: 82, borderRadius: 50 }}
-                                        source={IMAGES.small6}
-                                    />
-                                </View>
                             }
                             <TouchableOpacity
                                 activeOpacity={0.8}
-                                // onPress={handleImageSelect} 
+                                onPress={handleSendPicture} 
                                 style={[styles.WriteIconBackground,{ backgroundColor: colors.card }]}
                             >
                                 <View style={styles.WriteIcon}>
@@ -388,6 +452,19 @@ const EditProfile = () => {
                     <View style={{ marginBottom: 15 }}>
                         <View className={`mb-1`}>
                             <View className={`flex-row items-end mb-2`}>
+                                <Image source={IMAGES.transgenderDuotone} style={[styles.icon]}/>
+                                <Text className={`text-[#222222]`} style={FONTS.fontRegular}>Qual seu sexo?</Text>
+                            </View>
+                            <View className={`px-10`}>
+                               
+                                <ToggleStyle3 active={hasMarriage} setActive={setHasMarriage} />
+                               
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{ marginBottom: 15 }}>
+                        <View className={`mb-1`}>
+                            <View className={`flex-row items-end mb-2`}>
                                 <Image source={IMAGES.ringDuotone} style={[styles.icon]}/>
                                 <Text className={`text-[#222222]`} style={FONTS.fontRegular}>Você é casado(a)?</Text>
                             </View>
@@ -397,7 +474,7 @@ const EditProfile = () => {
                                
                             </View>
                         </View>
-                    </View> 
+                    </View>  
                     <View style={{ marginBottom: 15 }}>
                         <View style={{ marginBottom: 15 }}>
                             <View className={`mb-1`}>

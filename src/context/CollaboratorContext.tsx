@@ -63,10 +63,10 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
                         if (navigationState) {
                             const currentRoute = navigationState.routes[navigationState.index].state?.routes[navigationState.routes[navigationState.index].state.index]?.name || navigationState.routes[navigationState.index].name;
                             // Não mostra o modal se estiver em telas específicas ou sem colaborador
+                            await AsyncStorage.setItem('missingDates', JSON.stringify(dataToStore));
                             if (currentRoute === 'Profile' || currentRoute === 'EditProfile' || currentRoute === 'SignIn' || currentRoute === 'SignUp' || currentRoute === 'Documents' || !collaborator) {
                                 return
                             }
-                            await AsyncStorage.setItem('missingDates', JSON.stringify(dataToStore));
                             setMissingData(dataToStore); // Agora o tipo está correto
                             return;
                         }
