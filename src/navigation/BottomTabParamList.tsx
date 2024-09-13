@@ -5,4 +5,5 @@ export type BottomTabParamList = {
     Documents:undefined;
     Category: undefined;
     Profile: undefined;
+    Work:undefined;
 };

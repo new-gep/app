@@ -11,6 +11,7 @@ import { COLORS, FONTS } from '../../constants/theme';
 import useCollaborator from '../../function/fetchCollaborator';
 import Mask from '../../function/mask';
 import ToggleStyle3 from '../../components/Toggles/ToggleStyle3';
+import ToggleStyle4 from '../../components/Toggles/ToggleStyle4';
 import UpdateCollaborator from '../../hooks/update/collaborator';
 import FindCep from '../../hooks/findOne/cep';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -26,6 +27,7 @@ import FindBucketCollaborator from '../../hooks/bucket/collaborator';
 
 type inputUpdateDates = {
     name :string,
+    sex  :string,
     phone:string,
     email:string,
     marriage:string,
@@ -68,10 +70,12 @@ const EditProfile = () => {
     const [activeSheet, setActiveSheet] = useState(String);
     const [hasAddressNumber, setHasAddressNumber] = useState(true);
     const [hasMarriage, setHasMarriage] = useState(false);
+    const [hasSex, setHasSex] = useState(false);
     const [hasChildren, setHasChildren] = useState(false);
     const [isCepUpdated, setIsCepUpdated] = useState(false);
     const [collaboratorUpdateDates, setCollaboratorUpdateDates] = useState <inputUpdateDates> ({
         name :'',
+        sex  :'M',
         phone:'',
         email:'',
         marriage:'0',
@@ -240,6 +244,7 @@ const EditProfile = () => {
                     name : collaborator.name  ,
                     phone: collaborator.phone ,
                     email: collaborator.email ,
+                    sex : collaborator.sex || 'M' ,
                     marriage: collaborator.marriage || '0' ,
                     children: collaborator.children || 0,
                     zip_code: collaborator.zip_code || '',
@@ -325,10 +330,22 @@ const EditProfile = () => {
                 }));
                 setChildren([{ name: '', age: '' }])
             }
+            if(hasSex){
+                setCollaboratorUpdateDates((prevState) => ({
+                    ...prevState,
+                    sex:'F', 
+                }));
+            }else{
+                setCollaboratorUpdateDates((prevState) => ({
+                    ...prevState,
+                    sex:'M', 
+                }));
+            }
+
         }
         toogleActions()
     },
-    [hasMarriage, hasChildren, hasAddressNumber])
+    [hasMarriage, hasChildren, hasAddressNumber, hasSex])
 
     return (
        <View style={{backgroundColor:colors.background,flex:1}}>
@@ -457,7 +474,7 @@ const EditProfile = () => {
                             </View>
                             <View className={`px-10`}>
                                
-                                <ToggleStyle3 active={hasMarriage} setActive={setHasMarriage} />
+                                <ToggleStyle4 active={hasSex} setActive={setHasSex} />
                                
                             </View>
                         </View>

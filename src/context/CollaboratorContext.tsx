@@ -86,7 +86,7 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
 
     useEffect(() => {
         // Executa a validação inicial do colaborador 
-        validateCollaborator() 
+        // validateCollaborator() 
     }, []);
 
     return (

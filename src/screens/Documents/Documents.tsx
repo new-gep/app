@@ -22,6 +22,7 @@ type PicturesProps = {
     Address: { status: string } | null;
     School_History: { status: string } | null;
     Marriage_Certificate: { status: string } | null;
+    Military_Certificate: { status: string } | null;
     Birth_Certificate: { status: string } | null;
 };
 
@@ -32,6 +33,7 @@ type PathPictureProps = {
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
+    Military_Certificate:string | null;
     Birth_Certificate: string[] | null;
 };
 
@@ -42,6 +44,7 @@ type TypePictureProps = {
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
+    Military_Certificate:string | null;
     Birth_Certificate: string[] | null;
 };
 
@@ -52,6 +55,7 @@ type StatusPictureProps = {
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
+    Military_Certificate:string | null;
     Birth_Certificate: string[] | null;
 };
 
@@ -68,7 +72,8 @@ const Documents = () => {
         Address: null,
         School_History: null,
         Marriage_Certificate: null,
-        Birth_Certificate: null
+        Birth_Certificate: null,
+        Military_Certificate:null
     });
     const [picturesPath, setPicturesPath] = useState<PathPictureProps>({
         CNH: null,
@@ -77,7 +82,8 @@ const Documents = () => {
         Address: null,
         School_History: null,
         Marriage_Certificate: null,
-        Birth_Certificate: null
+        Birth_Certificate: null,
+        Military_Certificate:null
     });
     const [picturesType, setPicturesType] = useState<TypePictureProps>({
         CNH: null,
@@ -86,7 +92,8 @@ const Documents = () => {
         Address  : null,
         School_History: null,
         Marriage_Certificate: null,
-        Birth_Certificate: null
+        Birth_Certificate: null,
+        Military_Certificate: null
     });
     const [picturesStatus, setPicturesStatus] = useState<StatusPictureProps>({
         CNH: null,
@@ -95,7 +102,8 @@ const Documents = () => {
         Address  : null,
         School_History: null,
         Marriage_Certificate: null,
-        Birth_Certificate: null
+        Birth_Certificate: null,
+        Military_Certificate:null
     });
 
     const Picture = async () => {
@@ -202,19 +210,20 @@ const Documents = () => {
             console.error('Erro ao buscar imagens:', error);
         }finally{
             setProcess(true)
-            console.log('acabou')
         }
     };
 
     const getNameDocument = (name: string ) => {
         switch (name.toLowerCase()) { 
-            case 'rg':
-              return 'RG';
-          case 'address':
+        case 'rg':
+            return 'RG';
+        case 'military_certificate':
+            return 'Certificado Militar';
+        case 'address':
             return 'Comprovante de Endereço';
-          case 'work_card':
+        case 'work_card':
             return 'Carteira de Trabalho';
-          case 'school_history':
+        case 'school_history':
             return 'Histórico Escolar';
         case 'marriage_certificate':
             return 'Certidão de Casamento';
@@ -229,13 +238,13 @@ const Documents = () => {
 
     const getTwoPictureDocument = (name: string ) => {
         switch (name.toLowerCase()) { 
-            case 'rg':
-              return true;
-          case 'address':
-            return false;
-          case 'work_card':
+        case 'rg':
             return true;
-          case 'school_history':
+        case 'address':
+            return false;
+        case 'work_card':
+            return true;
+        case 'school_history':
             return false;
         case 'marriage_certificate':
             return false;
@@ -243,6 +252,8 @@ const Documents = () => {
             return false;
         case 'cnh':
             return true;
+        case 'military_certificate':
+            return false;
           default:
             return '?';
         }

@@ -27,6 +27,7 @@ type PathPictureProps = {
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
+    Military_Certificate:string | null;
     Birth_Certificate: string[] | null;
 };
 
@@ -38,6 +39,7 @@ type TypePictureProps = {
     School_History: string | null;
     Marriage_Certificate: string | null;
     Birth_Certificate: string[] | null;
+    Military_Certificate:string | null;
 };
 
 type StatusPictureProps = {
@@ -47,6 +49,7 @@ type StatusPictureProps = {
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
+    Military_Certificate:string | null;
     Birth_Certificate: string[] | null;
 };
 

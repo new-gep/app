@@ -2,6 +2,7 @@ import config from '../../../config.json';
 import axios from 'axios'
 type Props = {
     cpf     ?: string;
+    sex     ?: string;
     email   ?: string;
     name    ?: string;
     password?: string;

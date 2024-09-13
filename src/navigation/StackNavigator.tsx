@@ -56,6 +56,7 @@ import SwipeableScreen from '../screens/Components/Swipeable';
 import Tabs from '../screens/Components/Tabs';
 import Tables from '../screens/Components/Tables';
 import Toggles from '../screens/Components/Toggles';
+import Work from '../screens/Work/Work';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -98,10 +99,10 @@ const StackNavigator = () => {
 				<Stack.Screen name="Rewards" component={Rewards} />
 				<Stack.Screen name="Demo" component={Demo} />
 				<Stack.Screen name="Chat" component={Chat} />
-				 <Stack.Screen name="Singlechat" component={Singlechat} />
-				 <Stack.Screen name="Call" component={Call} /> 
-				 <Stack.Screen name="EditProfile" component={EditProfile} />
-				
+				<Stack.Screen name="Singlechat" component={Singlechat} />
+				<Stack.Screen name="Call" component={Call} /> 
+				<Stack.Screen name="EditProfile" component={EditProfile} />
+				<Stack.Screen name="Work" component={Work} />
 
 				<Stack.Screen name="Components" component={Components} />
 				<Stack.Screen name="Accordion" component={AccordionScreen} />

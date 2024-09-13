@@ -14,6 +14,7 @@ export const IMAGES = {
     facebook : require('../assets/images/icons/facebook.png'),
     Home: require('../assets/images/icons/home.png'),
     Home4: require('../assets/images/icons/home4.png'),
+    pasteWork: require('../assets/images/icons/pasteWork.png'),
     heart: require('../assets/images/icons/heart.png'),
     mycart: require('../assets/images/icons/shopping2.png'),
     Category: require('../assets/images/icons/document.png'),
@@ -198,5 +199,11 @@ export const IMAGES = {
 
     unique0: require('../assets/picture/unique/unique0.png'),
     unique1: require('../assets/picture/unique/unique1.png'),
+    unique8: require('../assets/picture/unique/unique9.png'),
+    unique9: require('../assets/picture/unique/unique8.png'),
+    unique10: require('../assets/picture/unique/unique10.png'),
+    unique11: require('../assets/picture/unique/unique11.png'),
+    unique12: require('../assets/picture/unique/unique12.png'),
 
+    gif0: require('../assets/picture/gif/unique0.gif')
 }

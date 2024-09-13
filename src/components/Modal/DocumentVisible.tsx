@@ -5,6 +5,7 @@ import { FONTS } from "../../constants/theme";
 import { IMAGES } from "../../constants/Images";
 import WebView from "react-native-webview";
 import * as FileSystem from 'expo-file-system';
+import React from "react";
 
 type TypePictureProps = {
     CNH: string | null;

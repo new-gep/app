@@ -84,7 +84,7 @@ const Header = ({title, leftIcon,iconSimple, leftAction,transparent,productId,ti
                             onPress={() => navigation.navigate('Search')}
                             style={[styles.actionBtn,{}]}
                         >
-                            <Feather size={20} color={colors.title} name={'search'} />
+                            <Feather size={20} color={colors.title} name={'briefcase'} />
                         </TouchableOpacity>
                     }
                     {rightIcon2 == "Edit" &&

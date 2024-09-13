@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode":"cover",
+      "resizeMode": "cover",
       "backgroundColor": "#70747D"
     },
     "assetBundlePatterns": [
@@ -29,7 +29,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.w3itexperts.ombe",
-      "permissions": ["ACCESS_FINE_LOCATION"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
       "config": {
         "googleMaps": {
           "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
@@ -39,16 +43,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "df01eda5-b046-4c48-9f97-6ea0e3e42927"
-      }
-    },
     "plugins": [
-      [
-        "@config-plugins/react-native-blob-util",
-        "@config-plugins/react-native-pdf"
-      ],
       [
         "expo-camera",
         {
@@ -63,7 +58,13 @@
           "initialOrientation": "DEFAULT"
         }
       ],
-      "expo-build-properties"
-    ]
+      "expo-build-properties",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "11fd64d1-cd50-47f8-99e6-46f829c70cd3"
+      }
+    }
   }
 }

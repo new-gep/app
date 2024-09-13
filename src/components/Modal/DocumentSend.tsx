@@ -11,6 +11,7 @@ import UploadFile from "../../hooks/upload/picture";
 import RBSheet from "react-native-raw-bottom-sheet";
 import SuccessSheet from "../BottomSheet/SuccessSheet";
 import DangerSheet from "../BottomSheet/DangerSheet";
+import React from "react";
 
 type PathPictureProps = {
     CNH: string | string[] | null;
@@ -19,6 +20,7 @@ type PathPictureProps = {
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
+    Military_Certificate:string | null;
     Birth_Certificate: string[] | null;
 };
 type TypePictureProps = {
@@ -28,7 +30,9 @@ type TypePictureProps = {
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
+    Military_Certificate:string | null;
     Birth_Certificate: string[] | null;
+    
 };
 type StatusPictureProps = {
     CNH: string | null;
@@ -37,6 +41,7 @@ type StatusPictureProps = {
     Address: string | null;
     School_History: string | null;
     Marriage_Certificate: string | null;
+    Military_Certificate:string | null;
     Birth_Certificate: string[] | null;
 };
 type PropsCreateAvalidPicture = {
@@ -77,129 +82,162 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
     };
 
     const sendPicture = async (option:string) => {
-        let path:any;
-        let type:any;
-
-        switch (option) {
-            case 'gallery':
-                path = await GetPathPicture('gallery');
-                type = 'picture'
-                break;
-            case 'camera':
-                path = await GetPathPicture('camera')
-                type = 'picture'
-                break;
-            case 'file':
-                path = await GetPathPicture('file')
-                type = 'pdf'
-                break;
-        };
-
-        switch (documentName) {
-            case 'Carteira de Trabalho':
-                documentName = 'Work_Card'
-                break;
-            case 'CNH (opcional)':
-                documentName = 'CNH'
-                break
-            case 'Comprovante de Endereço':
-                documentName = 'Address'
-                break
-            case 'Histórico Escolar':
-                documentName = 'School_History'
-                break
-            default:
-                console.log(documentName)
-                break;
-        };
-
-        const response = await UploadFile(path, documentName, 'complet', collaborator.CPF);
-        
-        if (response.status === 400) {
-            setActiveSheet('danger');
-            setMessageSheet(`Documento inválido`);
-            Sheet();
-            setFront(null);
-            setBack(null);
-            setLoad(false)
-            throw new Error('Documento inválido');
-        } else if (response.status !== 200) {
-            setNoRepeat(true);
-            setActiveSheet('danger');
-            setMessageSheet(`Erro interno`);
-            Sheet();
-            setFront(null);
-            setBack(null);
-            setLoad(false)
-            throw new Error('Erro interno no upload');
-        };
-        const pictureParams: PropsCreateAvalidPicture = {
-            picture: documentName,
-            status: 'pending',
-            cpf: collaborator.CPF,
-        };
-        const createResponse = await CreateAvalidPicture(pictureParams);
-        if (createResponse.status === 201) {
+        try{
+            setLoad(true)
+            let path:any;
+            let type:any;
+            switch (option) {
+                case 'gallery':
+                    path = await GetPathPicture('gallery');
+                    type = 'picture'
+                    break;
+                case 'camera':
+                    path = await GetPathPicture('camera')
+                    type = 'picture'
+                    break;
+                case 'file':
+                    path = await GetPathPicture('file')
+                    type = 'pdf'
+                    break;
+            };
+    
             switch (documentName) {
-                case 'RG':
-                    setTypeDocument((prevState) => ({
-                        ...prevState,
-                        RG: 'picture',
-                    }));
-                    setPicturesStatus((prevState) => ({
-                        ...prevState,
-                        RG: 'pending',
-                    }));
-                    setPath((prevState) => ({
-                        ...prevState,
-                        RG: [front, back],
-                    }));
+                case 'Carteira de Trabalho':
+                    documentName = 'Work_Card'
                     break;
-                case 'CNH':
-                    setTypeDocument((prevState) => ({
-                        ...prevState,
-                        CNH: 'picture',
-                    }));
-                    setPicturesStatus((prevState) => ({
-                        ...prevState,
-                        CNH: 'pending',
-                    }));
-                    setPath((prevState) => ({
-                        ...prevState,
-                        CNH: [front, back],
-                    }));
-                    break;
-                case 'Work_Card':
-                    setTypeDocument((prevState) => ({
-                        ...prevState,
-                        Work_Card: 'picture',
-                    }));
-                    setPicturesStatus((prevState) => ({
-                        ...prevState,
-                        Work_Card: 'pending',
-                    }));
-                    setPath((prevState) => ({
-                        ...prevState,
-                        Work_Card: [front, back],
-                    }));
-                    break;
+                case 'CNH (opcional)':
+                    documentName = 'CNH'
+                    break
+                case 'Comprovante de Endereço':
+                    documentName = 'Address'
+                    break
+                case 'Histórico Escolar':
+                    documentName = 'School_History'
+                    break
+                case 'Certificado Militar':
+                    documentName = 'Military_Certificate'
+                    break
+                case 'Certidão de Casamento':
+                    documentName = 'Birth_Certificate'
+                    break
                 default:
+                    console.log(documentName)
                     break;
+            };
+    
+            const response = await UploadFile(path, documentName, 'complet', collaborator.CPF);
+            
+            if (response.status === 400) {
+                setActiveSheet('danger');
+                setMessageSheet(`Documento inválido`);
+                Sheet();
+                setFront(null);
+                setBack(null);
+                setLoad(false)
+                throw new Error('Documento inválido');
+            } else if (response.status !== 200) {
+                setNoRepeat(true);
+                setActiveSheet('danger');
+                setMessageSheet(`Erro interno`);
+                Sheet();
+                setFront(null);
+                setBack(null);
+                setLoad(false)
+                throw new Error('Erro interno no upload');
+            };
+            const pictureParams: PropsCreateAvalidPicture = {
+                picture: documentName,
+                status: 'pending',
+                cpf: collaborator.CPF,
+            };
+            const createResponse = await CreateAvalidPicture(pictureParams);
+            if (createResponse.status === 201) {
+                switch (documentName) {
+                    case 'RG':
+                        setTypeDocument((prevState) => ({
+                            ...prevState,
+                            RG: type,
+                        }));
+                        setPicturesStatus((prevState) => ({
+                            ...prevState,
+                            RG: 'pending',
+                        }));
+                        setPath((prevState) => ({
+                            ...prevState,
+                            RG: path,
+                        }));
+                        break;
+                    case 'CNH':
+                        setTypeDocument((prevState) => ({
+                            ...prevState,
+                            CNH: type,
+                        }));
+                        setPicturesStatus((prevState) => ({
+                            ...prevState,
+                            CNH: 'pending',
+                        }));
+                        setPath((prevState) => ({
+                            ...prevState,
+                            CNH: path,
+                        }));
+                        break;
+                    case 'Work_Card':
+                        setTypeDocument((prevState) => ({
+                            ...prevState,
+                            Work_Card: type,
+                        }));
+                        setPicturesStatus((prevState) => ({
+                            ...prevState,
+                            Work_Card: 'pending',
+                        }));
+                        setPath((prevState) => ({
+                            ...prevState,
+                            Work_Card: path,
+                        }));
+                        break;
+                    case 'School_History':
+                        break
+                    case 'Military_Certificate':
+                        setTypeDocument((prevState) => ({
+                            ...prevState,
+                            Military_Certificate: type,
+                        }));
+                        setPicturesStatus((prevState) => ({
+                            ...prevState,
+                            CNH: 'pending',
+                        }));
+                        setPath((prevState) => ({
+                            ...prevState,
+                            Military_Certificate: path,
+                        }));
+                        break
+                    case '':
+                        break
+                    case '':
+                        break
+                    default:
+                        break;
+                }
+                setActiveSheet('success');
+                setMessageSheet(`Documentos salvos`);
+                Sheet();
+                setLoad(false)
+                close()
+            } else if (createResponse.status === 409) {
+                setActiveSheet('danger');
+                setMessageSheet('Imagem já existe');
+                Sheet();
+            } else {
+                setActiveSheet('danger');
+                setMessageSheet('Erro ao salvar imagem');
+                Sheet();
             }
-            setActiveSheet('success');
-            setMessageSheet(`Documentos salvos`);
-            Sheet();
-            setLoad(false)
-            close()
-        } else if (createResponse.status === 409) {
-            setActiveSheet('danger');
-            setMessageSheet('Imagem já existe');
-            Sheet();
-            setLoad(false)
-        } else {
+        }catch(e){
+            console.log(e)
             setActiveSheet('danger');
             setMessageSheet('Erro ao salvar imagem');
             Sheet();
+        }finally{
             setLoad(false)
         }
     };

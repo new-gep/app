@@ -105,12 +105,17 @@ const Profile = ({navigation} : ProfileScreenProps) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            getPicture();
             fetchCollaborator(); 
         });
 
         return unsubscribe;
     }, [navigation])
+
+    useEffect(()=>{
+        if(collaborator){
+            getPicture()
+        }
+    },[collaborator])
 
 
   return (

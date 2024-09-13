@@ -107,7 +107,7 @@ const BottomMenu = ({state, navigation, descriptors}: Props) => {
                                     height:40,
                                     width:40,
                                     borderRadius:50,
-                                    backgroundColor:COLORS.primary,
+                                    backgroundColor:COLORS.dark,
                                 }}
                             />
                         </View>
@@ -163,11 +163,11 @@ const BottomMenu = ({state, navigation, descriptors}: Props) => {
                                                 height:20,
                                                 width:20,
                                                 resizeMode:'contain',
-                                                tintColor: isFocused ? theme.dark ? COLORS.card : colors.card : COLORS.primary ,
+                                                tintColor: isFocused ? theme.dark ? COLORS.card : COLORS.primary : COLORS.dark ,
                                             }}
                                             source={
                                                 label === 'Home'       ?  IMAGES.Home:
-                                                label === 'Wishlist'   ?  IMAGES.heart2:
+                                                label === 'Work'   ?  IMAGES.pasteWork:
                                                 label === 'Documents'  ?  IMAGES.folder:
                                                 label === 'Profile'    ?  IMAGES.user3 : IMAGES.Home
                                             }
