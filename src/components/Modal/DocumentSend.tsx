@@ -12,55 +12,28 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import SuccessSheet from "../BottomSheet/SuccessSheet";
 import DangerSheet from "../BottomSheet/DangerSheet";
 import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type PathPictureProps = {
-    CNH: string | string[] | null;
-    RG: string | string[] | null;
-    Work_Card: string | string[] | null;
-    Address: string | null;
-    School_History: string | null;
-    Marriage_Certificate: string | null;
-    Military_Certificate:string | null;
-    Birth_Certificate: string[] | null;
-};
-type TypePictureProps = {
-    CNH: string | null;
-    RG: string  | null;
-    Work_Card: string | null;
-    Address: string | null;
-    School_History: string | null;
-    Marriage_Certificate: string | null;
-    Military_Certificate:string | null;
-    Birth_Certificate: string[] | null;
-    
-};
-type StatusPictureProps = {
-    CNH: string | null;
-    RG: string  | null;
-    Work_Card: string | null;
-    Address: string | null;
-    School_History: string | null;
-    Marriage_Certificate: string | null;
-    Military_Certificate:string | null;
-    Birth_Certificate: string[] | null;
-};
+
+
 type PropsCreateAvalidPicture = {
     picture :string
     status  :string
     cpf     :string
 };
+
 type Props = {
     documentName: string;
     visible: boolean;
     twoPicture:boolean;
-    setPath: React.Dispatch<React.SetStateAction<PathPictureProps>>;
-    setTypeDocument: React.Dispatch<React.SetStateAction<TypePictureProps>>;
-    setPicturesStatus: React.Dispatch<React.SetStateAction<StatusPictureProps>>
     close  : () => void;
+    setTypeDocument:any;
+    setSendPicture:any;
+    setPath:any;
 };
 
 
-const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocument, visible, close, setPath }: Props) => {
+const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close }: Props) => {
     const navigation = useNavigation<any>();
     const [front,setFront] = useState<any | null>(null)
     const [back ,setBack]  = useState<any | null>(null)
@@ -74,18 +47,34 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
     const theme = useTheme();
     const { colors }: { colors : any} = theme;
     
-    const pathToBase64 = async (uri : any) => {
-        const base64String = await FileSystem.readAsStringAsync(uri, {
-            encoding: FileSystem.EncodingType.Base64,
-        });
-        return base64String;
-    };
+    
+    
+    const uploadPictureStorage = async (path:any, type:string, document:string) => {
+        const existingData = await AsyncStorage.getItem('picture');
+        let pictureData = existingData ? JSON.parse(existingData) : {};
 
+        // Passo 2: Mesclar o novo dado com os existentes
+        pictureData = {
+            ...pictureData, // Preserva os dados existentes
+            [document]:{
+                path:path,
+                type:type
+            },     
+        };
+                
+        // Passo 3: Salvar de volta o objeto atualizado no AsyncStorage
+        await AsyncStorage.setItem('picture', JSON.stringify(pictureData));
+        return
+    }
+    
+    
     const sendPicture = async (option:string) => {
         try{
             setLoad(true)
             let path:any;
             let type:any;
+            let doc :string = 'complet';
+
             switch (option) {
                 case 'gallery':
                     path = await GetPathPicture('gallery');
@@ -101,31 +90,39 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
                     break;
             };
     
-            switch (documentName) {
-                case 'Carteira de Trabalho':
-                    documentName = 'Work_Card'
+            switch (true) { // Usamos `true` para que cada `case` seja uma condição
+                case documentName.includes('Carteira de Trabalho'):
+                    documentName = 'Work_Card';
                     break;
-                case 'CNH (opcional)':
-                    documentName = 'CNH'
-                    break
-                case 'Comprovante de Endereço':
-                    documentName = 'Address'
-                    break
-                case 'Histórico Escolar':
-                    documentName = 'School_History'
-                    break
-                case 'Certificado Militar':
-                    documentName = 'Military_Certificate'
-                    break
-                case 'Certidão de Casamento':
-                    documentName = 'Birth_Certificate'
-                    break
+                case documentName.includes('RG'):
+                    documentName = 'RG';
+                    break;
+                case documentName.includes('CNH (opcional)'):
+                    documentName = 'CNH';
+                    break;
+                case documentName.includes('Comprovante de Endereço'):
+                    documentName = 'Address';
+                    break;
+                case documentName.includes('Histórico Escolar'):
+                    documentName = 'School_History';
+                    break;
+                case documentName.includes('Certificado Militar'):
+                    documentName = 'Military_Certificate';
+                    break;
+                case documentName.includes('Certidão de Casamento'):
+                    documentName = 'Marriage_Certificate';
+                    break;
+                case documentName.includes('Certidão de Nascimento'):
+                    let children = extractNameChildren(documentName)
+                    doc = `Birth_Certificate_${children}`;
+                    documentName = `Birth_Certificate_${children}`;
+                    break;
                 default:
-                    console.log(documentName)
-                    break;
+                    console.log(`Documento não identificado: ${documentName}`);
+                    return;
             };
-    
-            const response = await UploadFile(path, documentName, 'complet', collaborator.CPF);
+            
+            const response = await UploadFile(path, documentName, doc, collaborator.CPF);
             
             if (response.status === 400) {
                 setActiveSheet('danger');
@@ -135,7 +132,8 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
                 setBack(null);
                 setLoad(false)
                 throw new Error('Documento inválido');
-            } else if (response.status !== 200) {
+            }
+            else if (response.status !== 200) {
                 setNoRepeat(true);
                 setActiveSheet('danger');
                 setMessageSheet(`Erro interno`);
@@ -145,89 +143,31 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
                 setLoad(false)
                 throw new Error('Erro interno no upload');
             };
+
             const pictureParams: PropsCreateAvalidPicture = {
                 picture: documentName,
                 status: 'pending',
                 cpf: collaborator.CPF,
             };
             const createResponse = await CreateAvalidPicture(pictureParams);
+
             if (createResponse.status === 201) {
-                switch (documentName) {
-                    case 'RG':
-                        setTypeDocument((prevState) => ({
-                            ...prevState,
-                            RG: type,
-                        }));
-                        setPicturesStatus((prevState) => ({
-                            ...prevState,
-                            RG: 'pending',
-                        }));
-                        setPath((prevState) => ({
-                            ...prevState,
-                            RG: path,
-                        }));
-                        break;
-                    case 'CNH':
-                        setTypeDocument((prevState) => ({
-                            ...prevState,
-                            CNH: type,
-                        }));
-                        setPicturesStatus((prevState) => ({
-                            ...prevState,
-                            CNH: 'pending',
-                        }));
-                        setPath((prevState) => ({
-                            ...prevState,
-                            CNH: path,
-                        }));
-                        break;
-                    case 'Work_Card':
-                        setTypeDocument((prevState) => ({
-                            ...prevState,
-                            Work_Card: type,
-                        }));
-                        setPicturesStatus((prevState) => ({
-                            ...prevState,
-                            Work_Card: 'pending',
-                        }));
-                        setPath((prevState) => ({
-                            ...prevState,
-                            Work_Card: path,
-                        }));
-                        break;
-                    case 'School_History':
-                        break
-                    case 'Military_Certificate':
-                        setTypeDocument((prevState) => ({
-                            ...prevState,
-                            Military_Certificate: type,
-                        }));
-                        setPicturesStatus((prevState) => ({
-                            ...prevState,
-                            CNH: 'pending',
-                        }));
-                        setPath((prevState) => ({
-                            ...prevState,
-                            Military_Certificate: path,
-                        }));
-                        break
-                    case '':
-                        break
-                    case '':
-                        break
-                    default:
-                        break;
-                }
+                uploadPictureStorage(path, type, documentName)
+                setPath(path)
+                setTypeDocument(type)
                 setActiveSheet('success');
                 setMessageSheet(`Documentos salvos`);
                 Sheet();
                 setLoad(false)
+                setSendPicture(false)
                 close()
-            } else if (createResponse.status === 409) {
+            } 
+            else if (createResponse.status === 409) {
                 setActiveSheet('danger');
                 setMessageSheet('Imagem já existe');
                 Sheet();
-            } else {
+            } 
+            else {
                 setActiveSheet('danger');
                 setMessageSheet('Erro ao salvar imagem');
                 Sheet();
@@ -274,134 +214,97 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
 
     useEffect(() => {
         const fetchData = async () => {
-            if (front && back && noRepeat) {
-                // Impede re-execução
-                setNoRepeat(false);
-                setLoad(true)
-                const paths = [front, back];
-                switch (documentName) {
-                    case 'CNH (opcional)':
-                        documentName = 'CNH'
-                        break;
-                    case 'Carteira de Trabalho':
-                        documentName = 'Work_Card'
-                        break;
-                
-                    default:
-                        console.log(documentName)
-                        break;
-                };
-                try {
-                    // Fazendo o upload dos arquivos front e back
-                    await Promise.all(
-                        paths.map(async (path, index) => {
-                            let side = index === 0 ? 'front' : 'back';
-                            
-                            // Fazendo o upload do arquivo
-                            const response = await UploadFile(path, documentName, side, collaborator.CPF);
-    
-                            // Verificando o status do upload
-                            if (response.status === 400) {
-                                setActiveSheet('danger');
-                                setMessageSheet(`Documento inválido`);
-                                Sheet();
-                                setFront(null);
-                                setBack(null);
-                                setLoad(false)
-                                throw new Error('Documento inválido');
-                            } else if (response.status !== 200) {
-                                setNoRepeat(true);
-                                setActiveSheet('danger');
-                                setMessageSheet(`Erro interno`);
-                                Sheet();
-                                setFront(null);
-                                setBack(null);
-                                setLoad(false)
-                                throw new Error('Erro interno no upload');
-                            }
-                        })
-                    );
-    
-                    // Se todos os uploads forem bem-sucedidos, chamar CreateAvalidPicture
-                    const pictureParams: PropsCreateAvalidPicture = {
-                        picture: documentName,
-                        status: 'pending',
-                        cpf: collaborator.CPF,
+            try{
+                if (front && back && noRepeat) {
+                    // Impede re-execução
+                    setNoRepeat(false);
+                    setLoad(true)
+                    const paths = [front, back];
+                    switch (documentName) {
+                        case 'CNH (opcional)':
+                            documentName = 'CNH'
+                            break;
+                        case 'Carteira de Trabalho':
+                            documentName = 'Work_Card'
+                            break;
+                    
+                        default:
+                            // console.log(documentName)
+                            break;
                     };
-    
-                    const createResponse = await CreateAvalidPicture(pictureParams);
-    
-                    // Lidar com a resposta do CreateAvalidPicture
-                    if (createResponse.status === 201) {
-                        switch (documentName) {
-                            case 'RG':
-                                setTypeDocument((prevState) => ({
-                                    ...prevState,
-                                    RG: 'picture',
-                                }));
-                                setPicturesStatus((prevState) => ({
-                                    ...prevState,
-                                    RG: 'pending',
-                                }));
-                                setPath((prevState) => ({
-                                    ...prevState,
-                                    RG: [front, back],
-                                }));
-                                break;
-                            case 'CNH':
-                                setTypeDocument((prevState) => ({
-                                    ...prevState,
-                                    CNH: 'picture',
-                                }));
-                                setPicturesStatus((prevState) => ({
-                                    ...prevState,
-                                    CNH: 'pending',
-                                }));
-                                setPath((prevState) => ({
-                                    ...prevState,
-                                    CNH: [front, back],
-                                }));
-                                break;
-                            case 'Work_Card':
-                                setTypeDocument((prevState) => ({
-                                    ...prevState,
-                                    Work_Card: 'picture',
-                                }));
-                                setPicturesStatus((prevState) => ({
-                                    ...prevState,
-                                    Work_Card: 'pending',
-                                }));
-                                setPath((prevState) => ({
-                                    ...prevState,
-                                    Work_Card: [front, back],
-                                }));
-                                break;
-                            default:
-                                break;
+                    try {
+                        // Fazendo o upload dos arquivos front e back
+                        await Promise.all(
+                            paths.map(async (path, index) => {
+                                let side = index === 0 ? 'front' : 'back';
+                                
+                                // Fazendo o upload do arquivo
+                                const response = await UploadFile(path, documentName, side, collaborator.CPF);
+        
+                                // Verificando o status do upload
+                                if (response.status === 400) {
+                                    setActiveSheet('danger');
+                                    setMessageSheet(`Documento inválido`);
+                                    Sheet();
+                                    setFront(null);
+                                    setBack(null);
+                                    setLoad(false)
+                                    throw new Error('Documento inválido');
+                                } else if (response.status !== 200) {
+                                    setNoRepeat(true);
+                                    setActiveSheet('danger');
+                                    setMessageSheet(`Erro interno`);
+                                    Sheet();
+                                    setFront(null);
+                                    setBack(null);
+                                    setLoad(false)
+                                    throw new Error('Erro interno no upload');
+                                }
+                            })
+                        );
+        
+                        // Se todos os uploads forem bem-sucedidos, chamar CreateAvalidPicture
+                        const pictureParams: PropsCreateAvalidPicture = {
+                            picture: documentName,
+                            status: 'pending',
+                            cpf: collaborator.CPF
+                        };
+        
+                        const createResponse = await CreateAvalidPicture(pictureParams);
+
+                        // Lidar com a resposta do CreateAvalidPicture
+                        if (createResponse.status === 201) {
+                            fetchCollaborator()
+                            setSendPicture(false)
+                            setPath([front,back])
+                            setTypeDocument('picture')
+                            setActiveSheet('success');
+                            setMessageSheet(`Documentos salvos`);
+                            Sheet();
+                            setLoad(false)
+                            close()
+                        } else if (createResponse.status === 409) {
+                            setActiveSheet('danger');
+                            setMessageSheet('Imagem já existe');
+                            Sheet();
+                            setLoad(false)
+                        } else {
+                            setActiveSheet('danger');
+                            setMessageSheet('Erro ao salvar imagem');
+                            Sheet();
+                            setLoad(false)
                         }
-                        setActiveSheet('success');
-                        setMessageSheet(`Documentos salvos`);
-                        Sheet();
-                        setLoad(false)
-                        close()
-                    } else if (createResponse.status === 409) {
+                    } catch (error) {
+                        console.error('Erro durante o processo:', error);
                         setActiveSheet('danger');
-                        setMessageSheet('Imagem já existe');
+                        setMessageSheet('Algo deu errado, tente mais tarde');
                         Sheet();
                         setLoad(false)
-                    } else {
-                        setActiveSheet('danger');
-                        setMessageSheet('Erro ao salvar imagem');
-                        Sheet();
-                        setLoad(false)
-                    }
-                } catch (error) {
-                    console.error('Erro durante o processo:', error);
-                    setActiveSheet('danger');
-                    setMessageSheet('Algo deu errado, tente mais tarde');
-                    Sheet();
-                    setLoad(false)
+                    };
                 };
+            }catch(e){
+                setLoad(false)
+                console.log(e)
             }
         };
     
@@ -541,6 +444,14 @@ const DocumentSend = ({ documentName, twoPicture, setPicturesStatus, setTypeDocu
     );
 };
 
+const extractNameChildren = (str: string): string | null => {
+    const regex = /\(([^)]+)\)/;  // Expressão regular para capturar o texto entre parênteses
+    const match = str.match(regex);
+    
+    return match ? match[1] : null;  // Se houver correspondência, retorna o valor entre parênteses
+};
+  
+  
 
 
 export default DocumentSend;

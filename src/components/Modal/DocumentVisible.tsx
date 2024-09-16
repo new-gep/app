@@ -7,15 +7,6 @@ import WebView from "react-native-webview";
 import * as FileSystem from 'expo-file-system';
 import React from "react";
 
-type TypePictureProps = {
-    CNH: string | null;
-    RG: string  | null;
-    Work_Card: string | null;
-    Address: string | null;
-    School_History: string | null;
-    Marriage_Certificate: string | null;
-    Birth_Certificate: string[] | null;
-};
 
 type Props = {
     typeDocument: string;
@@ -23,11 +14,10 @@ type Props = {
     visible: boolean;
     path?: any
     documentName:string
-    setTypeDocument: React.Dispatch<React.SetStateAction<TypePictureProps>>;
     close: () => void;
 };
 
-const DocumentVisible = ({ setTypeDocument, documentName, path, twoPicture, typeDocument, visible, close }: Props) => {
+const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Props) => {
     // Define qual lado da imagem está sendo visualizado ou se deve mostrar as opções
     const [viewingSide, setViewingSide] = useState<'front' | 'back' | null>(null);
     const [loading, setLoading] = useState(true);
@@ -35,16 +25,10 @@ const DocumentVisible = ({ setTypeDocument, documentName, path, twoPicture, type
     const [pathBack , setPathBack]  = useState<any>()
     const [pathOne  , setPathOne]    = useState<any>()
 
-    const loadPdfBase64 = async (pdfPath:any) => {
-        const pdfBase64 = await FileSystem.readAsStringAsync(pdfPath, {
-            encoding: FileSystem.EncodingType.Base64,
-        });
-        return `${pdfBase64}`;
-    };
     
     useEffect(()=>{
         const fetchData = async () => {
-            if (path && typeDocument) {
+            if (path) {
                 if (Array.isArray(path) && path.length > 1) {
                     const pathImageFront = path[0];
                     const pathImageBack = path[1];
@@ -53,7 +37,6 @@ const DocumentVisible = ({ setTypeDocument, documentName, path, twoPicture, type
                     return
                 } else {
                     const pathImage = path; // Se for um único caminho
-                    // console.log('image', pathImage);
                     setPathOne(pathImage);
                 }
             }
@@ -79,7 +62,7 @@ const DocumentVisible = ({ setTypeDocument, documentName, path, twoPicture, type
                         {!twoPicture && (
                             <Image 
                                 className="w-full h-full object-contain" 
-                                source={{ uri: path }}
+                                source={{ uri: pathOne }}
                             />
                         )}
                         {twoPicture && !viewingSide? (

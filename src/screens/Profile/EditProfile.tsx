@@ -466,7 +466,7 @@ const EditProfile = () => {
                             icon={<Image source={IMAGES.email2} style={[styles.icon,{tintColor:colors.title}]}/>}
                         />
                     </View>
-                    <View style={{ marginBottom: 15 }}>
+                    <View className={`mt-2`} style={{ marginBottom: 15 }}>
                         <View className={`mb-1`}>
                             <View className={`flex-row items-end mb-2`}>
                                 <Image source={IMAGES.transgenderDuotone} style={[styles.icon]}/>
