@@ -83,11 +83,9 @@ const ImageSwiper = ({ data } : any) => {
                   />
                 </View>
                 <View style={{paddingHorizontal:25}}>
-                  <Text style={{...FONTS.fontSemiBold,fontSize:16,color:COLORS.card,}}>{item.title}</Text>
+                  <Text style={{...FONTS.fontSemiBold,fontSize:20,color:COLORS.dark,}}>{item.title}</Text>
                   <View style={{flexDirection:'row',alignItems:'flex-start',gap:5,marginTop:10}}>
-                      <Text style={{...FONTS.fontSemiBold,fontSize:14,color:COLORS.card,}}>$</Text>
-                      <Text style={{...FONTS.fontSemiBold,fontSize:24,color:COLORS.card,lineHeight:32}}>{item.price}</Text>
-                      <Text style={{...FONTS.fontMedium,fontSize:16,color:'#6CAE97',textDecorationLine:'line-through'}}>{item.discount}</Text>
+                      <Text style={{...FONTS.fontMedium,fontSize:12,color:COLORS.dark,}}>{item.subtitle}</Text>
                   </View>
                 </View>
               </TouchableOpacity>

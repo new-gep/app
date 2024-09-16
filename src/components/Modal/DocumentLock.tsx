@@ -27,7 +27,7 @@ const DocumentCompletionModal = ({ visible, close }: Props) => {
         const collaborator = await AsyncStorage.getItem('collaborator')
         close();
         if(collaborator){
-            navigation.navigate('Profile');
+            navigation.navigate('Documents');
         }
     }
 

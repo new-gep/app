@@ -25,6 +25,7 @@ type MissingDatesProps = {
     School_History:boolean;
     Marriage_Certificate: boolean;
     Birth_Certificate:boolean;
+    Military_Certificate:boolean;
 }
 
 export default function CheckCadasterCollaboratorDocument() {
@@ -39,7 +40,8 @@ export default function CheckCadasterCollaboratorDocument() {
         Address  :false,
         School_History:false,
         Marriage_Certificate:false,
-        Birth_Certificate:false
+        Birth_Certificate:false,
+        Military_Certificate:false
     });
     const [loading, setLoading] = useState(true); // Estado de carregamento
 
@@ -58,11 +60,13 @@ export default function CheckCadasterCollaboratorDocument() {
                     Address: missingDocuments.includes("Address"),
                     School_History: missingDocuments.includes("School_History"),
                     Birth_Certificate: missingDocuments.includes("Birth_Certificate"),
+                    Military_Certificate: missingDocuments.includes("Military_Certificate"),
                     // Picture: missingFields.includes("Picture"),
                     // AddresField: missingFields.includes("address"),
                     // Marriage: missingFields.includes("marriage"),
                     // Children: missingFields.includes("children"),
                 };
+                console.log(missingDocuments)
                 
                 setMissingDate(newMissingDate);
             }
@@ -96,7 +100,7 @@ export default function CheckCadasterCollaboratorDocument() {
                     <Text>Carregando...</Text>
                 </View>
             ) : (
-                <View className={`bg-dark px-5 rounded-b-3xl ${[!missingDate.Address, !missingDate.Birth_Certificate, !missingDate.Marriage_Certificate, !missingDate.RG, !missingDate.School_History, !missingDate.Work_Card].every(Boolean) && 'hidden'}`}>
+                <View className={`bg-dark px-5 rounded-b-3xl ${[!missingDate.Address, !missingDate.Birth_Certificate, !missingDate.Marriage_Certificate, !missingDate.RG, !missingDate.School_History, !missingDate.Military_Certificate, !missingDate.Work_Card].every(Boolean) && 'hidden'}`}>
                     <View style={[GlobalStyleSheet.cardHeader, { borderBottomColor: COLORS.inputborder }]}>
                         <Text className={`text-xl text-primary`} style={{ ...FONTS.fontMedium }}>
                             <AntDesign name="warning" size={24} color={COLORS.primary} />  Cadastro Incompleto 
@@ -157,6 +161,14 @@ export default function CheckCadasterCollaboratorDocument() {
                                     arrowRight 
                                     icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
                                     title={'Certidão de Casamento'}
+                                />
+                            )}
+                            {missingDate.Military_Certificate && (
+                                <ListStyle1 
+                                    onPress={() => { navigation.navigate('EditProfile') }}
+                                    arrowRight 
+                                    icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
+                                    title={'Certificado Militar'}
                                 />
                             )}
                         </View>

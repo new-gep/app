@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomTabParamList } from './BottomTabParamList';
 import WishlistScreen from '../screens/Wishlist/Wishlist';
 import MyCartScreen from '../screens/MyCart/MyCart';
+import WorkScreen from '../screens/Work/Work';
 import HomeScreen from '../screens/Home/Home';
 import ProfileScreen from '../screens/Profile/Profile';
 import DocumentsScreen from '../screens/Documents/Documents';
@@ -31,8 +32,8 @@ const BottomNavigation = () => {
                 component={HomeScreen}
             />
             <Tab.Screen 
-                name='Wishlist'
-                component={WishlistScreen}
+                name='Work'
+                component={WorkScreen}
             />
             <Tab.Screen 
                 name='Documents'

@@ -18,31 +18,31 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mask from '../../function/mask';
 import useCollaborator from '../../function/fetchCollaborator';
 import { useCollaboratorContext } from '../../context/CollaboratorContext';
-
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 const ArrivalData = [
     {
         id:"1",
-        title: "Beverages",
-        subtitle:"41 Menus",
-        image:IMAGES.cup
+        title: "Ponto",
+        subtitle:"Atalho",
+        image:IMAGES.order
     },
     {
         id:"2",
-        title: "Foods",
-        subtitle:"37 Menus",
-        image:IMAGES.hamburger
+        title: "Holerite",
+        subtitle:"Atalho",
+        image:IMAGES.payment
     },
     {
         id:"3",
-        title: "Beverages",
-        subtitle:"41 Menus",
-        image:IMAGES.cup
+        title: "Vagas",
+        subtitle:"Atalho",
+        image:IMAGES.send
     },
     {
         id:"4",
-        title: "Foods",
-        subtitle:"37 Menus",
-        image:IMAGES.hamburger
+        title: "Ausência",
+        subtitle:"Atalho",
+        image:IMAGES.chat
     },
 
 ];
@@ -71,54 +71,37 @@ const CardStyleData =[
     },
 ];
 
-const SwiperData = [
-    {
-        id:"1",
-        image:IMAGES.item11,
-        title:"Creamy Ice Coffe",
-        price:"5.8",
-        discount:"$8.0"
-    },
-    {
-        id:"2",
-        image:IMAGES.item12,
-        title:"Creamy Ice Coffe",
-        price:"5.8",
-        discount:"$8.0"
-    },
-    {
-        id:"3",
-        image:IMAGES.item11,
-        title:"Creamy Ice Coffe",
-        price:"5.8",
-        discount:"$8.0"
-    },
-    {
-        id:"4",
-        image:IMAGES.item12,
-        title:"Creamy Ice Coffe",
-        price:"5.8",
-        discount:"$8.0"
-    },
-    {
-        id:"5",
-        image:IMAGES.item11,
-        title:"Creamy Ice Coffe",
-        price:"5.8",
-        discount:"$8.0"
-    },
-    {
-        id:"6",
-        image:IMAGES.item12,
-        title:"Creamy Ice Coffe",
-        price:"5.8",
-        discount:"$8.0"
-    },
-];
 
 type HomeScreenProps = StackScreenProps<RootStackParamList, 'Home'>
 
 export const Home = ({ navigation }: HomeScreenProps) => {
+    const SwiperData = [
+        {
+            id:"1",
+            image:IMAGES.unique8,
+            title:"Vagas",
+            subtitle: "Encontre sua vaga"
+        },
+        {
+            id:"2",
+            image:IMAGES.unique10,
+            title:"Holerite",
+            subtitle: "Assine e cheque seu pagamento"
+        },
+        {
+            id:"2",
+            image:IMAGES.unique11,
+            title:"Ausência",
+            subtitle: "Envia seu atestado e justificativas"
+        },
+        {
+            id:"3",
+            image:IMAGES.unique12,
+            title:"Ponto",
+            subtitle: "Assine e cheque seu ponto"
+        },
+
+    ];
 
     // const wishList = useSelector((state:any) => state.wishList.wishList);
     // console.log(wishList);
@@ -153,7 +136,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                 <View style={[GlobalStyleSheet.container, { paddingHorizontal: 30,padding:0,paddingTop:30 }]}>
                     <View style={[GlobalStyleSheet.flex]}>
                         <View>
-                            <Text style={{ ...FONTS.fontRegular, fontSize: 14, color: colors.title }}>Good Morning</Text>
+                            <Text style={{ ...FONTS.fontRegular, fontSize: 14, color: colors.title }}>Bem-Vindo(a) !</Text>
                             <Text style={{ ...FONTS.fontSemiBold, fontSize: 24, color: colors.title }}>{collaborator && Mask('firstName', collaborator.name)}</Text>
                         </View>
                         <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -200,7 +183,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                 <View style={[GlobalStyleSheet.container,{padding:0,paddingHorizontal:30,paddingTop:15}]}>
                     <View>
                         <TextInput
-                            placeholder='Search Best items for You'
+                            placeholder='Qual a Busca de Hoje'
                             style={[styles.TextInput, { color: COLORS.title,backgroundColor:'#FAFAFA' }]}
                             placeholderTextColor={'#929292'} />
                         <View style={{ position: 'absolute', top: 15, right: 20 }}>
@@ -217,7 +200,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                 </View>
                 <View style={[GlobalStyleSheet.container,{paddingHorizontal:0,paddingTop:0}]}>
                     <View style={[GlobalStyleSheet.flex,{paddingHorizontal:30}]}>
-                        <Text style={[styles.brandsubtitle3,{fontSize: 18,color:colors.title}]}>Categories</Text>
+                        <Text style={[styles.brandsubtitle3,{fontSize: 18,color:colors.title}]}>Categorias</Text>
                     </View>
                     <View style={{ marginHorizontal: -15, paddingHorizontal: 15, paddingTop: 25 }}>
                         <ScrollView
@@ -241,7 +224,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                                                 <Image
                                                     style={[GlobalStyleSheet.image3]}
                                                     source={data.image}
-                                                />
+                                                    tintColor={`#2f2f2f`}                                                />
                                                 <View>
                                                     <Text style={{ ...FONTS.fontMedium, fontSize: 16, color:  colors.title }}>{data.title}</Text>
                                                     <Text style={{ ...FONTS.fontRegular, fontSize: 14, color:COLORS.primary }}>{data.subtitle}</Text>
@@ -254,7 +237,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                         </ScrollView>
                     </View>
                 </View>
-                <View style={[GlobalStyleSheet.container, { paddingHorizontal: 0, paddingTop: 0, paddingBottom: 10 }]}>
+                {/* <View style={[GlobalStyleSheet.container, { paddingHorizontal: 0, paddingTop: 0, paddingBottom: 10 }]}>
                     <View style={[GlobalStyleSheet.flex, { paddingHorizontal: 30 }]}>
                         <Text style={[styles.brandsubtitle3, { fontSize: 18, color: colors.title }]}>Featured Beverages</Text>
                         <TouchableOpacity
@@ -263,7 +246,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                             <Text style={[styles.brandsubtitle3, { fontSize: 16, color:COLORS.primary }]}>More</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View> */}
                 {/* <View style={[GlobalStyleSheet.container,{paddingHorizontal:30}]}>
                     {CardStyleData.map((data:any, index:any) => {
                         return (

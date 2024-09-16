@@ -8,6 +8,7 @@ interface propsCollaborator {
     email: string;
     phone: string;
     terms?: string | null;
+    sex?: string | null;
     marriage?: string | null;
     children?: {
         [key: string]: {
