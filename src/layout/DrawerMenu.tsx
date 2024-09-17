@@ -73,7 +73,6 @@ const MenuItems = [
         onPress: async () => {
             // Lógica de logout
             await AsyncStorage.clear();
-            console.log("Usuário deslogado");
         } // Adicionando função onPress customizada para o logout
     },
 ]

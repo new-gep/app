@@ -14,7 +14,6 @@ const ValidateCollaboratorAndBlock = () => {
                 setModalFieldsVisible(true); // Exibe o modal para os campos faltantes
             } else 
             if (missingData.missingDocuments && missingData.missingDocuments.length > 0) {
-                console.log('aqui')
                 setModalDocumentsVisible(true); // Exibe o modal para os documentos faltantes
             } else {
                 setModalFieldsVisible(false);

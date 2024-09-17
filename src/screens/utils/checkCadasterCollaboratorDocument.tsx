@@ -66,7 +66,6 @@ export default function CheckCadasterCollaboratorDocument() {
                     // Marriage: missingFields.includes("marriage"),
                     // Children: missingFields.includes("children"),
                 };
-                console.log(missingDocuments)
                 
                 setMissingDate(newMissingDate);
             }

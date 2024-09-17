@@ -15,16 +15,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mask from '../../function/mask';
 import FindBucketCollaborator from '../../hooks/bucket/collaborator';
 
-type PicturesProps = {
-    CNH:{ status: string } | null;
-    RG: { status: string } | null;
-    Work_Card: { status: string } | null;
-    Address: { status: string } | null;
-    School_History: { status: string } | null;
-    Marriage_Certificate: { status: string } | null;
-    Military_Certificate: { status: string } | null;
-    Birth_Certificate: { status: string } | null;
-};
 
 const Documents = () => {
     const navigation = useNavigation<any>();
@@ -32,20 +22,7 @@ const Documents = () => {
     const [myDocsData, setMyDocsData] = useState<any[] | null>(null)
     const [error, setError] = useState<boolean>(false)
     const [process, setProcess] = useState<boolean>(false)
-    const [picturesData, setPicturesData] = useState<PicturesProps>({
-        RG: null,
-        CNH:null,
-        Work_Card: null,
-        Address: null,
-        Military_Certificate:null,
-        School_History: null,
-        Marriage_Certificate: null,
-        Birth_Certificate: null,
-    });
 
-    const PictureStorage = async () => {
-
-    };
 
     const Picture = async () => {
         try {
@@ -53,21 +30,13 @@ const Documents = () => {
             if(response.status != 500){
                 setError(false)
                 const picturesFromAPI = response.pictures;
-                // Objeto temporário para garantir unicidade
+
                 let tempPictureCard: { [key: string]: any } = {};
-                
-                // Novo estado baseado nas imagens encontradas
-                const updatedPicturesData = { ...picturesData };
-        
-                // Atualizando o estado com os documentos da API
-                if(picturesFromAPI && picturesFromAPI.length > 0){
-                    picturesFromAPI.forEach((pictureObj: { picture: string; status: string }) => {
-                        const { picture, status } = pictureObj;
-                        if (updatedPicturesData.hasOwnProperty(picture)) {
-                            updatedPicturesData[picture as keyof PicturesProps] = { status };
-                        }
-                    });
-                };
+             
+                const picturesWithStatus = picturesFromAPI.map(item => ({
+                    picture: item.picture,
+                    status: item.status
+                }));
         
                 // Recuperar os dados das crianças antes da iteração
                 let dataToStore = await AsyncStorage.getItem('missingDates');
@@ -77,20 +46,15 @@ const Documents = () => {
                     : [];
         
                 // Iterando sobre os documentos
-                Object.entries(updatedPicturesData).forEach((picture) => {
-                    const documentKey    = picture[0]; // Nome do documento (RG, Work_Card, etc.)
-                    const documentStatus = picture[1]; // Status do documento
+                picturesWithStatus.forEach((picture:any) => {
+                    const documentKey    = picture.picture;
+                    const documentStatus = picture.status;  
                     
                     // Se houver um status válido, cria um card para o documento
                     
                     if (documentStatus) {
                         let document_params : {};
-    
-                       console.log(documentKey)
                             
-                            
-                             
-
                         document_params = {
                             path: getPathDocument(documentKey),
                             DocumentName: getNameDocument(documentKey),
@@ -155,25 +119,28 @@ const Documents = () => {
     };
 
     const getNameDocument = (name: string ) => {
-        switch (name.toLowerCase()) { 
-        case 'rg':
-            return 'RG';
-        case 'military_certificate':
-            return 'Certificado Militar';
-        case 'address':
-            return 'Comprovante de Endereço';
-        case 'work_card':
-            return 'Carteira de Trabalho';
-        case 'school_history':
-            return 'Histórico Escolar';
-        case 'marriage_certificate':
-            return 'Certidão de Casamento';
-        case 'birth_certificate':
-            return 'Certidão de Nascimento';
-        case 'cnh':
-            return 'CNH (opcional)';
-          default:
-            return '?';
+        if(name.toLowerCase().includes('birth_certificate')){
+                const parts = name.split('_');
+                return `Certidão de Nascimento (${parts[2]})`
+        }else{
+            switch (name.toLowerCase()) { 
+            case 'rg':
+                return 'RG';
+            case 'military_certificate':
+                return 'Certificado Militar';
+            case 'address':
+                return 'Comprovante de Endereço';
+            case 'work_card':
+                return 'Carteira de Trabalho';
+            case 'school_history':
+                return 'Histórico Escolar';
+            case 'marriage_certificate':
+                return 'Certidão de Casamento';
+            case 'cnh':
+                return 'CNH (opcional)';
+              default:
+                return '?';
+            }
         }
     };
 

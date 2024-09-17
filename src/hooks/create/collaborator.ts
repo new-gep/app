@@ -20,7 +20,6 @@ export default async function CreateCollaborator(props: Props){
         password:password,
         terms:'1' 
     }
-    console.log(`${config.API_URL}collaborator`)
     const response = await axios.post(`${config.API_URL}collaborator`, propsCollaborator)
     return response.data
 }
