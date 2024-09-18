@@ -18,7 +18,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import DocumentSend from '../Modal/DocumentSend'
 import { ActivityIndicator } from 'react-native-paper'
-
+import Pdf from 'react-native-pdf';
 
 type Props = {
     documentName: string;
@@ -154,12 +154,23 @@ const Cardstyle4 = ({
                                     :
                                     typePicture === 'pdf' ?
                                         <>       
-                                            <View className={`w-full h-full items-center justify-center`}>
-                                                <MaterialCommunityIcons name="folder-remove" size={30} color="black" />
-                                                <Text style={{ ...FONTS.fontMedium }} className={`text-xs mt-3 text-center`}>
-                                                    PDF não pode{"\n"} ser visto
-                                                </Text>
-                                            </View>
+                                             <Pdf
+                                                trustAllCerts={false}
+                                                source={{ uri: 'https://tourism.gov.in/sites/default/files/2019-04/dummy-pdf_2.pdf', cache: true }}
+                                                onLoadComplete={(numberOfPages,filePath) => {
+                                                    console.log(`Number of pages: ${numberOfPages}`);
+                                                }}
+                                                onPageChanged={(page,numberOfPages) => {
+                                                    console.log(`Current page: ${page}`);
+                                                }}
+                                                onError={(error) => {
+                                                    console.log(error);
+                                                }}
+                                                onPressLink={(uri) => {
+                                                    console.log(`Link pressed: ${uri}`);
+                                                }}
+                                                style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
+                                            />
                                             
                                             
                                             {isBlurred && 
@@ -253,7 +264,7 @@ const Cardstyle4 = ({
                         </TouchableOpacity>
                     }
                         
-                    { !sendPicture && typePicture != 'pdf' &&
+                    { !sendPicture &&
                         <TouchableOpacity
                             onPress={()=>setViewingDocument(true)}
                             activeOpacity={0.8}

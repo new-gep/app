@@ -6,6 +6,7 @@ import { IMAGES } from "../../constants/Images";
 import WebView from "react-native-webview";
 import * as FileSystem from 'expo-file-system';
 import React from "react";
+import Pdf from "react-native-pdf";
 
 
 type Props = {
@@ -115,12 +116,24 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                     // Exibição do PDF (placeholder, você pode usar um componente de visualização de PDF real aqui)
                     <View className={`w-full h-full`}>
 
-                            <WebView
-                                source={{uri: 'https://docs.google.com/gview?embedded=true&url=https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }}
-                                    className="w-full h-full " 
-                                    onError={() => console.log('Erro ao carregar PDF')}
-                               
-                             />
+                                            <Pdf
+                                                trustAllCerts={false}
+                                                enableDoubleTapZoom={true}
+                                                source={{ uri: 'https://tourism.gov.in/sites/default/files/2019-04/dummy-pdf_2.pdf', cache: true }}
+                                                onLoadComplete={(numberOfPages,filePath) => {
+                                                    console.log(`Number of pages: ${numberOfPages}`);
+                                                }}
+                                                onPageChanged={(page,numberOfPages) => {
+                                                    console.log(`Current page: ${page}`);
+                                                }}
+                                                onError={(error) => {
+                                                    console.log(error);
+                                                }}
+                                                onPressLink={(uri) => {
+                                                    console.log(`Link pressed: ${uri}`);
+                                                }}
+                                                className="w-full h-full object-contain"
+                                            />
                         
                         <TouchableOpacity
                             className="absolute top-5 right-5 bg-primary p-2 rounded-lg w-8 h-8 itens-center" 
