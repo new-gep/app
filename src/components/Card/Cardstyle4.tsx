@@ -1,18 +1,15 @@
+import * as React from 'react';
+import { useState,useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, Dimensions, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { COLORS, FONTS } from '../../constants/theme'
 import { IMAGES } from '../../constants/Images'
 import { GlobalStyleSheet } from '../../constants/StyleSheet'
 import { useTheme } from '@react-navigation/native'
-import { useDispatch, useSelector } from 'react-redux'
-import { removeFromwishList } from '../../redux/reducer/wishListReducer'
-import LikeBtn from '../LikeBtn'
 import { BlurView } from 'expo-blur';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import DocumentVisible from '../Modal/DocumentVisible'
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
-import { Buffer } from "buffer";
 import { WebView } from 'react-native-webview';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -154,6 +151,7 @@ const Cardstyle4 = ({
                                     :
                                     typePicture === 'pdf' ?
                                         <>       
+<<<<<<< HEAD
                                              <Pdf
                                                 trustAllCerts={false}
                                                 source={{ uri: 'https://tourism.gov.in/sites/default/files/2019-04/dummy-pdf_2.pdf', cache: true }}
@@ -171,15 +169,27 @@ const Cardstyle4 = ({
                                                 }}
                                                 style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
                                             />
+=======
+                                        {
+                                            pathPicture &&
+                                            <WebView
+                                                originWhitelist={['*']}
+                                                source={{ uri: pathPicture}}
+                                                javaScriptEnabled={true}
+                                                scalesPageToFit={true}
+                                                style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
+                                            />
+                                        }
+>>>>>>> 9f20875ebf07d0fb097c927b42ddcbcfa5b10f0e
                                             
                                             
                                             {isBlurred && 
                                                 (
                                                     <BlurView
                                                         intensity={80}
-                                                                tint="dark"
-                                                                style={StyleSheet.absoluteFill}
-                                                                experimentalBlurMethod="dimezisBlurView"
+                                                        tint="dark"
+                                                        style={StyleSheet.absoluteFill}
+                                                        experimentalBlurMethod="dimezisBlurView"
                                                     />
                                                 )
                                             }
@@ -264,7 +274,11 @@ const Cardstyle4 = ({
                         </TouchableOpacity>
                     }
                         
+<<<<<<< HEAD
                     { !sendPicture &&
+=======
+                    { !sendPicture && 
+>>>>>>> 9f20875ebf07d0fb097c927b42ddcbcfa5b10f0e
                         <TouchableOpacity
                             onPress={()=>setViewingDocument(true)}
                             activeOpacity={0.8}

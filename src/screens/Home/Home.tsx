@@ -103,9 +103,6 @@ export const Home = ({ navigation }: HomeScreenProps) => {
 
     ];
 
-    // const wishList = useSelector((state:any) => state.wishList.wishList);
-    // console.log(wishList);
-
     const dispatch = useDispatch();
 
     const theme = useTheme();
@@ -113,9 +110,6 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     const { collaborator, fetchCollaborator } = useCollaborator();
     const { validateCollaborator, missingData } = useCollaboratorContext();
 
-    const addItemToWishList = (data: any) => {
-        dispatch(addTowishList(data));
-    };
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {

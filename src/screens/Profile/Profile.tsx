@@ -81,11 +81,9 @@ const Profile = ({navigation} : ProfileScreenProps) => {
 
     const getPicture = async () => {
         try {
-
           const response = await FindBucketCollaborator(collaborator.CPF, 'Picture')
           if(response.status == 200){
             setPath(response.path)
-           
           }
         } catch (error) {
           console.error('Erro ao resgatar a imagem:', error);
