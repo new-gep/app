@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView,  } from 'react-native';
-import Header from '../../layout/Header';
+import * as React from 'react';
+import { useState,useEffect } from 'react';
+import { View, Text, ScrollView, Image, Dimensions } from 'react-native';
 import { IMAGES } from '../../constants/Images';
 import { COLORS, FONTS } from '../../constants/theme';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
 import Cardstyle4 from '../../components/Card/Cardstyle4';
-import { useEffect } from 'react';
 import { useCollaboratorContext } from '../../context/CollaboratorContext';
 import CheckCadasterCollaboratorDocument from '../utils/checkCadasterCollaboratorDocument';
 import { useNavigation } from '@react-navigation/native';
@@ -14,6 +13,7 @@ import useCollaborator from '../../function/fetchCollaborator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mask from '../../function/mask';
 import FindBucketCollaborator from '../../hooks/bucket/collaborator';
+import Header from '../../layout/Header';
 
 
 const Documents = () => {
@@ -22,7 +22,7 @@ const Documents = () => {
     const [myDocsData, setMyDocsData] = useState<any[] | null>(null)
     const [error, setError] = useState<boolean>(false)
     const [process, setProcess] = useState<boolean>(false)
-
+    const { width, height } = Dimensions.get('window');
 
     const Picture = async () => {
         try {
@@ -35,7 +35,7 @@ const Documents = () => {
              
                 const picturesWithStatus = picturesFromAPI.map(item => ({
                     picture: item.picture,
-                    status: item.status
+                    status : item.status
                 }));
         
                 // Recuperar os dados das crianças antes da iteração
@@ -44,6 +44,16 @@ const Documents = () => {
                 let missingDocumentsChildren = Array.isArray(missingDates.missingDocumentsChildren) 
                     ? missingDates.missingDocumentsChildren 
                     : [];
+
+
+                if(missingDates.missingDocuments && missingDates.missingDocuments.length > 0){
+                    missingDates.missingDocuments.forEach(missingDoc => {
+                        picturesWithStatus.push({
+                            picture: missingDoc,
+                            status: null
+                        })
+                    });
+                }
         
                 // Iterando sobre os documentos
                 picturesWithStatus.forEach((picture:any) => {
@@ -76,7 +86,7 @@ const Documents = () => {
                             missingDocumentsChildren.forEach((children: string) => {
                                 let document_params = {
                                     image: getPathDocument(`${documentKey}_${Mask('firstName',children)}`),
-                                    DocumentName: `${getNameDocument(documentKey)} (${Mask('firstName',children)})`,
+                                    DocumentName: `${getNameDocument(`${documentKey}_${Mask('firstName',children)}`)}`,
                                     sendDocument: true,
                                     typeDocument: getTypeDocument(`${documentKey}_${Mask('firstName',children)}`),
                                     twoPicture: getTwoPictureDocument(documentKey),
@@ -120,8 +130,8 @@ const Documents = () => {
 
     const getNameDocument = (name: string ) => {
         if(name.toLowerCase().includes('birth_certificate')){
-                const parts = name.split('_');
-                return `Certidão de Nascimento (${parts[2]})`
+            const parts = name.split('_');
+            return `Certidão de Nascimento (${parts[2]})`
         }else{
             switch (name.toLowerCase()) { 
             case 'rg':
@@ -281,6 +291,29 @@ const Documents = () => {
                             <View className={`px-5`}>
                                 <CheckCadasterCollaboratorDocument/>
                             </View>
+                            <View className={`p-3`}>
+                                <View className={`mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-between`}>
+                                    <View className={`w-2/4`}>
+                                        <Text className={`absolute w-44`} style={{...FONTS.fontSemiBold,fontSize:24,color:COLORS.dark,marginTop:-38}}>
+                                            Organização
+                                        </Text>
+                                        <Text className={`mt-2`} style={{...FONTS.font,fontSize:14}}>
+                                        Aqui organizamos seus documentos para que as empresas possam acessá-los facilmente.
+                                        </Text>
+                                    </View>
+                                    <View className={`w-2/4`}>
+                                        <Image 
+                                            source={IMAGES.unique14}
+                                            style={{ 
+                                                height: height * 0.3,  // Ajuste dinâmico para altura
+                                                width: width * 0.5,    // Ajuste dinâmico para largura
+                                                resizeMode: 'contain',
+                                                marginTop: -120
+                                            }}
+                                        />
+                                    </View>
+                                </View>       
+                            </View>
                             <View style={[GlobalStyleSheet.container, { paddingTop: 20,paddingHorizontal:10 }]}>
                                 <View style={{marginTop:50}}>
                                     <ScrollView
@@ -303,6 +336,13 @@ const Documents = () => {
                                                     )
                                                 })
                                             }
+                                        </View>
+                                        <View className={`w-full h-72 items-center justify-center`}>
+                                            <Image 
+                                                source={IMAGES.unique13}
+                                                resizeMode='contain'
+                                                className={`h-full w-full`}
+                                            />
                                         </View>
                                     </ScrollView>
                                 </View>

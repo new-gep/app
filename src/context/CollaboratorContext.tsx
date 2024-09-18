@@ -60,6 +60,7 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
                         };
                         const collaborator = await AsyncStorage.getItem('collaborator');
                         const navigationState = navigation.getState();
+
                         if (navigationState) {
                             const currentRoute = navigationState.routes[navigationState.index].state?.routes[navigationState.routes[navigationState.index].state.index]?.name || navigationState.routes[navigationState.index].name;
                             // Não mostra o modal se estiver em telas específicas ou sem colaborador

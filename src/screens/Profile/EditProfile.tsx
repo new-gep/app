@@ -208,22 +208,9 @@ const EditProfile = () => {
 
     const getPicture = async () => {
         try {
-          const savedPicture = await AsyncStorage.getItem('picture');
-          if (savedPicture !== null) {
-            const parsedPicture = JSON.parse(savedPicture);
-            setPath(parsedPicture.Picture); 
-          }
-
           const response = await FindBucketCollaborator(collaborator.CPF, 'Picture')
           if(response.status == 200){
             setPath(response.path)
-            const existingData = await AsyncStorage.getItem('picture');
-            let pictureData = existingData ? JSON.parse(existingData) : {};
-            pictureData = {
-              ...pictureData, 
-              Picture:response.path,  
-            };
-            await AsyncStorage.setItem('picture', JSON.stringify(pictureData));
           }
         } catch (error) {
           console.error('Erro ao resgatar a imagem:', error);

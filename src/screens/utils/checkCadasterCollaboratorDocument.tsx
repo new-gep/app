@@ -116,7 +116,7 @@ export default function CheckCadasterCollaboratorDocument() {
                         <View style={GlobalStyleSheet.cardBody}>
                             {missingDate.RG && (
                                 <ListStyle1 
-                                    onPress={() => { navigation.navigate('EditProfile') }}
+                                    
                                     arrowRight 
                                     icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
                                     title={'RG'}
@@ -124,7 +124,7 @@ export default function CheckCadasterCollaboratorDocument() {
                             )}
                             {missingDate.Work_Card && (
                                 <ListStyle1 
-                                    onPress={() => { navigation.navigate('EditProfile') }}
+                                    
                                     arrowRight 
                                     icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
                                     title={'Carteira de Trabalho'}
@@ -132,7 +132,7 @@ export default function CheckCadasterCollaboratorDocument() {
                             )}
                             {missingDate.Address && (
                                 <ListStyle1 
-                                    onPress={() => { navigation.navigate('EditProfile') }}
+                                    
                                     arrowRight 
                                     icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
                                     title={'Comprovante de Endereço'}
@@ -140,7 +140,7 @@ export default function CheckCadasterCollaboratorDocument() {
                             )}
                             {missingDate.School_History && (
                                 <ListStyle1 
-                                    onPress={() => { navigation.navigate('EditProfile') }}
+                                    
                                     arrowRight 
                                     icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
                                     title={'Histórico Escolar'}
@@ -148,7 +148,7 @@ export default function CheckCadasterCollaboratorDocument() {
                             )}
                             {missingDate.Birth_Certificate && (
                                 <ListStyle1 
-                                    onPress={() => { navigation.navigate('EditProfile') }}
+                                    
                                     arrowRight 
                                     icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
                                     title={'Certidão de Nascimento'}
@@ -156,7 +156,7 @@ export default function CheckCadasterCollaboratorDocument() {
                             )}
                             {missingDate.Marriage_Certificate && (
                                 <ListStyle1 
-                                    onPress={() => { navigation.navigate('EditProfile') }}
+                                    
                                     arrowRight 
                                     icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
                                     title={'Certidão de Casamento'}
@@ -164,7 +164,7 @@ export default function CheckCadasterCollaboratorDocument() {
                             )}
                             {missingDate.Military_Certificate && (
                                 <ListStyle1 
-                                    onPress={() => { navigation.navigate('EditProfile') }}
+                                    
                                     arrowRight 
                                     icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
                                     title={'Certificado Militar'}

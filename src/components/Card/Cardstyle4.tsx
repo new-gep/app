@@ -1,18 +1,15 @@
+import * as React from 'react';
+import { useState,useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, Dimensions, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { COLORS, FONTS } from '../../constants/theme'
 import { IMAGES } from '../../constants/Images'
 import { GlobalStyleSheet } from '../../constants/StyleSheet'
 import { useTheme } from '@react-navigation/native'
-import { useDispatch, useSelector } from 'react-redux'
-import { removeFromwishList } from '../../redux/reducer/wishListReducer'
-import LikeBtn from '../LikeBtn'
 import { BlurView } from 'expo-blur';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import DocumentVisible from '../Modal/DocumentVisible'
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
-import { Buffer } from "buffer";
 import { WebView } from 'react-native-webview';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -154,21 +151,25 @@ const Cardstyle4 = ({
                                     :
                                     typePicture === 'pdf' ?
                                         <>       
-                                            <View className={`w-full h-full items-center justify-center`}>
-                                                <MaterialCommunityIcons name="folder-remove" size={30} color="black" />
-                                                <Text style={{ ...FONTS.fontMedium }} className={`text-xs mt-3 text-center`}>
-                                                    PDF não pode{"\n"} ser visto
-                                                </Text>
-                                            </View>
+                                        {
+                                            pathPicture &&
+                                            <WebView
+                                                originWhitelist={['*']}
+                                                source={{ uri: pathPicture}}
+                                                javaScriptEnabled={true}
+                                                scalesPageToFit={true}
+                                                style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
+                                            />
+                                        }
                                             
                                             
                                             {isBlurred && 
                                                 (
                                                     <BlurView
                                                         intensity={80}
-                                                                tint="dark"
-                                                                style={StyleSheet.absoluteFill}
-                                                                experimentalBlurMethod="dimezisBlurView"
+                                                        tint="dark"
+                                                        style={StyleSheet.absoluteFill}
+                                                        experimentalBlurMethod="dimezisBlurView"
                                                     />
                                                 )
                                             }
@@ -253,7 +254,7 @@ const Cardstyle4 = ({
                         </TouchableOpacity>
                     }
                         
-                    { !sendPicture && typePicture != 'pdf' &&
+                    { !sendPicture && 
                         <TouchableOpacity
                             onPress={()=>setViewingDocument(true)}
                             activeOpacity={0.8}

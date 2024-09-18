@@ -1,14 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 // import FeatherIcon from 'react-native-vector-icons/Feather';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useTheme } from '@react-navigation/native';
 import { COLORS, FONTS, SIZES } from '../../constants/theme';
 import { IMAGES } from '../../constants/Images';
+import FindBucketCollaborator from '../../hooks/bucket/collaborator';
+import useCollaborator from '../../function/fetchCollaborator';
 
 const HeaderStyle3 = () => {
-
     const {colors}:{colors : any} = useTheme();
+    const [path, setPath] = useState<any | null>(null);
+    const { collaborator, fetchCollaborator } = useCollaborator();
+    
+    const getPicture = async () => {
+        try {
+          const response = await FindBucketCollaborator(collaborator.CPF, 'Picture')
+          if(response.status == 200){
+            setPath(response.path)
+          }
+        } catch (error) {
+          console.error('Erro ao resgatar a imagem:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCollaborator(); 
+    }, [])
+
+    useEffect(()=>{
+        if(collaborator){
+            getPicture()
+        }
+    },[])
 
     return (
         <>
@@ -19,18 +43,17 @@ const HeaderStyle3 = () => {
                 paddingHorizontal:15,
             }}>
                 <View style={{flex:1,flexDirection:'row',alignItems:'center'}}>
-                    <Image
-                        source={IMAGES.user}
-                        style={{
-                            height:45,
-                            width:45,
-                            borderRadius:45,
-                            marginRight:12,
-                        }}
-                    />
+                        <Image
+                            source={{uri: path}}
+                            style={{
+                                height:45,
+                                width:45,
+                                borderRadius:45,
+                                marginRight:12,
+                            }}
+                        />
                     <View>
-                        <Text style={{...FONTS.fontXs,...FONTS.fontMedium,color:colors.text,marginBottom:2}}>Hello, John</Text>
-                        <Text style={{...FONTS.font,...FONTS.fontRegular,color:colors.title}}>Thursday, 10 Sep</Text>
+                        <Text>Documentos</Text>
                     </View>
                 </View>
                 <TouchableOpacity

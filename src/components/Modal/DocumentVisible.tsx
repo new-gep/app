@@ -116,7 +116,7 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                     <View className={`w-full h-full`}>
 
                             <WebView
-                                source={{uri: 'https://docs.google.com/gview?embedded=true&url=https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }}
+                                source={{uri: pathOne }}
                                     className="w-full h-full " 
                                     onError={() => console.log('Erro ao carregar PDF')}
                                

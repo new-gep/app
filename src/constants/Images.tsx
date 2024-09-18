@@ -204,6 +204,8 @@ export const IMAGES = {
     unique10: require('../assets/picture/unique/unique10.png'),
     unique11: require('../assets/picture/unique/unique11.png'),
     unique12: require('../assets/picture/unique/unique12.png'),
+    unique13: require('../assets/picture/unique/unique13.png'),
+    unique14: require('../assets/picture/unique/unique14.png'),
 
     gif0: require('../assets/picture/gif/unique0.gif')
 }
