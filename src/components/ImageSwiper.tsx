@@ -3,14 +3,17 @@ import { View, Image, useWindowDimensions,TouchableOpacity, Text } from 'react-n
 import Animated, { interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { COLORS, FONTS } from '../constants/theme';
 import { useNavigation } from '@react-navigation/native';
+import DevelopmentModal from './Modal/Development';
+
 
 const ImageSwiper = ({ data } : any) => {
+  const [isShowDevelopment,setIsShowDevelopment] = useState<boolean>(false)
   const [newData] = useState([
     { key: 'space-left' },
     ...data,
     { key: 'space-right' },
   ]);
-
+  
   const { width } = useWindowDimensions();
   const SIZE = width * 0.6;
   const SPACER = (width - SIZE) / 2;
@@ -21,6 +24,10 @@ const ImageSwiper = ({ data } : any) => {
   };
 
   const navigation = useNavigation<any>();
+
+  const closeDevelopment = () => {
+    setIsShowDevelopment(false)
+  }
   
   return (
     <Animated.ScrollView
@@ -49,18 +56,19 @@ const ImageSwiper = ({ data } : any) => {
                 { scale },
               ],
             };
-          });
+        });
           
-          if (!item.image) {
-            return <View style={{ width: SPACER}} key={index} />;
-          }
+        if (!item.image) {
+          return <View style={{ width: SPACER}} key={index} />;
+        }
 
         return (
           <View key={index} style={{ width: SIZE,}}>
+            <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/>
             <Animated.View style={[style]}>
               <TouchableOpacity
                 activeOpacity={.9}
-                onPress={() => navigation.navigate('ProductsDetails')}
+                onPress={() => setIsShowDevelopment(true)}
                 style={{ 
                   height: 222, 
                   width: 206, 
@@ -68,12 +76,12 @@ const ImageSwiper = ({ data } : any) => {
                   borderRadius: 31,
                   shadowColor: "#025135",
                   shadowOffset: {
-                      width: 0,
-                      height: 15,
+                    width: 0,
+                    height: 15,
                   },
-                  shadowOpacity: 0.34,
-                  shadowRadius: 31.27,
-                  elevation: 8, 
+                  shadowOpacity: 0.34 ,
+                  shadowRadius : 31.27,
+                  elevation    : 8
                 }}
               >
                 <View style={{alignItems:'center'}}>

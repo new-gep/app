@@ -75,6 +75,7 @@ const CardStyleData =[
 type HomeScreenProps = StackScreenProps<RootStackParamList, 'Home'>
 
 export const Home = ({ navigation }: HomeScreenProps) => {
+    
     const SwiperData = [
         {
             id:"1",
@@ -215,7 +216,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                                     return (
                                         <TouchableOpacity
                                             activeOpacity={0.8}
-                                            onPress={() => {navigation.navigate('Products'); }}
+                                            onPress={() => setIsShowDevelopment(true)}
                                             key={index}
                                             style={[styles.arrivaldata,{
                                                 backgroundColor:theme.dark ? colors.background :colors.card,

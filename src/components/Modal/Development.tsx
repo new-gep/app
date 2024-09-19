@@ -21,15 +21,6 @@ type Props = {
 }
 
 const DevelopmentModal = ({ visible, close }: Props) => {
-    const navigation = useNavigation<RootStackParamList>();
-
-    const handleClick = async () => {
-        const collaborator = await AsyncStorage.getItem('collaborator')
-        close();
-        if(collaborator){
-            navigation.navigate('Documents');
-        }
-    }
 
     return (
         <Modal
@@ -38,6 +29,7 @@ const DevelopmentModal = ({ visible, close }: Props) => {
             animationOut="slideOutDown"
             animationInTiming={300}
             animationOutTiming={300}
+            onBackdropPress={close}
             backdropOpacity={0.8} // Opacidade do fundo
             useNativeDriver={true} // Melhor performance na animação
             className={`justify-end p-0 m-0 `}
