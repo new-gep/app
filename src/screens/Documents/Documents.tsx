@@ -15,6 +15,11 @@ import Mask from '../../function/mask';
 import FindBucketCollaborator from '../../hooks/bucket/collaborator';
 import Header from '../../layout/Header';
 
+type PicturesProps = {
+    CNH:{ status: string } | null;
+    Voter_Registration:{ status: string } | null;
+    [key: string]: { status: string | null } | null;
+};
 
 const Documents = () => {
     const navigation = useNavigation<any>();
@@ -22,6 +27,10 @@ const Documents = () => {
     const [myDocsData, setMyDocsData] = useState<any[] | null>(null)
     const [error, setError] = useState<boolean>(false)
     const [process, setProcess] = useState<boolean>(false)
+    const [picturesData, setPicturesData] = useState<PicturesProps | {}>({
+        Voter_Registration:null,
+        CNH:null
+    });
     const { width, height } = Dimensions.get('window');
 
     const Picture = async () => {
@@ -32,39 +41,67 @@ const Documents = () => {
                 const picturesFromAPI = response.pictures;
 
                 let tempPictureCard: { [key: string]: any } = {};
-             
-                const picturesWithStatus = picturesFromAPI.map(item => ({
-                    picture: item.picture,
-                    status : item.status
-                }));
-        
+
+                const updatedPicturesData = { ...picturesData };
+
+                if (picturesFromAPI && picturesFromAPI.length > 0) {
+                    picturesFromAPI.forEach((pictureObj: { picture: string; status: string }) => {
+                        const { picture, status } = pictureObj;
+
+                        updatedPicturesData[picture as keyof PicturesProps] = { status };
+                      
+                    });
+                };
+
                 // Recuperar os dados das crianças antes da iteração
                 let dataToStore = await AsyncStorage.getItem('missingDates');
                 let missingDates = dataToStore ? JSON.parse(dataToStore) : {};
-                let missingDocumentsChildren = Array.isArray(missingDates.missingDocumentsChildren) 
-                    ? missingDates.missingDocumentsChildren 
-                    : [];
+                let missingDocumentsChildren = Array.isArray(missingDates.missingDocumentsChildren) ? missingDates.missingDocumentsChildren : [];
 
+                if(missingDocumentsChildren && missingDocumentsChildren.length > 0){
+                    missingDocumentsChildren.map((children:any)=>{
+                        setPicturesData(prevData => {
+                            const key = `Birth_Certificate_${children}`;  // Criar chave dinâmica
+                        
+                            // Verifica se a chave já existe no objeto
+                            if (!prevData[key]) {
+                                return {
+                                    [key]:  null,   // Se não existir, adiciona o novo campo
+                                    ...prevData,
+                                };
+                            }
+                        
+                            return prevData;  // Se já existir, retorna o estado anterior sem modificações
+                        });
+                        
+                    })
+                };
 
                 if(missingDates.missingDocuments && missingDates.missingDocuments.length > 0){
-                    missingDates.missingDocuments.forEach(missingDoc => {
-                        picturesWithStatus.push({
-                            picture: missingDoc,
-                            status: null
-                        })
-                    });
-                }
-        
+                    missingDates.missingDocuments.map((document:any)=>{
+                        if(document == 'Birth_Certificate'){
+                            return
+                        };
+                        setPicturesData(prevData => {
+                            // Verifica se a chave já existe no objeto
+                            if (!prevData[document]) {
+                                return {
+                                    [document]:  null ,  // Se não existir, adiciona o novo campo
+                                    ...prevData,
+                                };
+                            };
+                            return prevData;  // Se já existir, retorna o estado anterior sem modificações
+                        });
+                    })
+                };
                 // Iterando sobre os documentos
-                picturesWithStatus.forEach((picture:any) => {
-                    const documentKey    = picture.picture;
-                    const documentStatus = picture.status;  
+                const documentPromise = Object.entries(updatedPicturesData).forEach(([documentKey, documentStatus]) => {
                     
                     // Se houver um status válido, cria um card para o documento
                     
                     if (documentStatus) {
                         let document_params : {};
-                            
+                        
                         document_params = {
                             path: getPathDocument(documentKey),
                             DocumentName: getNameDocument(documentKey),
@@ -73,33 +110,13 @@ const Documents = () => {
                             twoPicture  : getTwoPictureDocument(documentKey),
                             statusDocument: documentStatus.status,
                         };
-    
+                        
                         // Adicionar ao objeto temporário, usando o nome do documento como chave
                         tempPictureCard[getNameDocument(documentKey)] = document_params;
                         
                         return
                     };
-        
-                    // Tratamento especial para Certidão de Nascimento (filhos)
-                    if (documentKey === 'Birth_Certificate') {
-                        if (missingDocumentsChildren.length > 0) {
-                            missingDocumentsChildren.forEach((children: string) => {
-                                let document_params = {
-                                    image: getPathDocument(`${documentKey}_${Mask('firstName',children)}`),
-                                    DocumentName: `${getNameDocument(`${documentKey}_${Mask('firstName',children)}`)}`,
-                                    sendDocument: true,
-                                    typeDocument: getTypeDocument(`${documentKey}_${Mask('firstName',children)}`),
-                                    twoPicture: getTwoPictureDocument(documentKey),
-                                    statusDocument: documentStatus ? documentStatus : null,
-                                };
-        
-                                // Garantir que não adicionamos duplicatas para os filhos
-                                tempPictureCard[`${getNameDocument(documentKey)} ${children}`] = document_params;
-                            });
-                        }
-                        return;
-                    };
-
+                    
                     // Caso geral para outros documentos
                     let document_params = {
                         path: getPathDocument(documentKey),
@@ -113,6 +130,7 @@ const Documents = () => {
                     // Adicionar ao objeto temporário para evitar duplicatas
                     tempPictureCard[getNameDocument(documentKey)] = document_params;
                 });
+
         
                 // Converter o objeto temporário de volta para um array
                 let picture_card = Object.values(tempPictureCard);
@@ -127,7 +145,7 @@ const Documents = () => {
             setProcess(true)
         }
     };
-
+    
     const getNameDocument = (name: string ) => {
         if(name.toLowerCase().includes('birth_certificate')){
             const parts = name.split('_');
@@ -148,6 +166,8 @@ const Documents = () => {
                 return 'Certidão de Casamento';
             case 'cnh':
                 return 'CNH (opcional)';
+            case 'voter_registration':
+                return 'Titulo de Eleitor (opcional)';
               default:
                 return '?';
             }
@@ -155,26 +175,32 @@ const Documents = () => {
     };
 
     const getTwoPictureDocument = (name: string ) => {
-        switch (name.toLowerCase()) { 
-        case 'rg':
-            return true;
-        case 'address':
-            return false;
-        case 'work_card':
-            return true;
-        case 'school_history':
-            return false;
-        case 'marriage_certificate':
-            return false;
-        case 'birth_certificate':
-            return false;
-        case 'cnh':
-            return true;
-        case 'military_certificate':
-            return false;
-          default:
-            return '?';
-        }
+        if(name.toLowerCase().includes('birth_certificate')){
+            return false
+        }else{
+            switch (name.toLowerCase()) { 
+            case 'rg':
+                return true;
+            case 'address':
+                return false;
+            case 'work_card':
+                return true;
+            case 'school_history':
+                return false;
+            case 'marriage_certificate':
+                return false;
+            case 'birth_certificate':
+                return false;
+            case 'cnh':
+                return true;
+            case 'military_certificate':
+                return false;
+            case 'voter_registration':
+                return true;
+            default:
+                return '?';
+            }
+        };
     };
 
     const getPathDocument = async (name:string) => {
@@ -202,8 +228,11 @@ const Documents = () => {
             case 'marriage_certificate':
                 response = await FindBucketCollaborator(collaborator.CPF, 'Marriage_Certificate')
                 return response.path;
-              case 'cnh':
+            case 'cnh':
                 response = await FindBucketCollaborator(collaborator.CPF, 'CNH')
+                return response.path;
+            case 'voter_registration':
+                response = await FindBucketCollaborator(collaborator.CPF, 'Voter_Registration')
                 return response.path;
                 default:
                     return '?';
@@ -223,11 +252,9 @@ const Documents = () => {
                     return response.type;
                 case 'address':
                     response = await FindBucketCollaborator(collaborator.CPF, 'Address')
-                    
                     return response.type;
                 case 'work_card':
                     response = await FindBucketCollaborator(collaborator.CPF, 'Work_Card')
-                  
                     return response.type;
                 case 'school_history':
                     response = await FindBucketCollaborator(collaborator.CPF, 'School_History')
@@ -240,6 +267,9 @@ const Documents = () => {
                     return response.type;
                 case 'military_certificate':
                     response = await FindBucketCollaborator(collaborator.CPF, 'Military_Certificate')
+                    return response.type;
+                case 'voter_registration':
+                    response = await FindBucketCollaborator(collaborator.CPF, 'Voter_Registration')
                     return response.type;
                 default:
                   return '?';
@@ -321,9 +351,9 @@ const Documents = () => {
                                     >
                                         <View className={`px-2`}>
                                             { myDocsData && process &&
-                                                myDocsData.map((data:any, index) => {
+                                                myDocsData.map((data:any) => {
                                                     return (
-                                                        <View key={index} style={{marginBottom:30}}>
+                                                        <View key={data.DocumentName} style={{marginBottom:30}}>
                                                             <Cardstyle4
                                                                 documentName={data.DocumentName}
                                                                 sendDocument={data.sendDocument}

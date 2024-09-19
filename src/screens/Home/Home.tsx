@@ -18,7 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mask from '../../function/mask';
 import useCollaborator from '../../function/fetchCollaborator';
 import { useCollaboratorContext } from '../../context/CollaboratorContext';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+
 const ArrivalData = [
     {
         id:"1",
@@ -126,6 +126,8 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     
     return (
         <View style={{ backgroundColor: colors.card, flex: 1 }}>
+            <View>
+            </View>
             <View style={{}}>
                 <View style={[GlobalStyleSheet.container, { paddingHorizontal: 30,padding:0,paddingTop:30 }]}>
                     <View style={[GlobalStyleSheet.flex]}>
@@ -133,7 +135,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                             <Text style={{ ...FONTS.fontRegular, fontSize: 14, color: colors.title }}>Bem-Vindo(a) !</Text>
                             <Text style={{ ...FONTS.fontSemiBold, fontSize: 24, color: colors.title }}>{collaborator && Mask('firstName', collaborator.name)}</Text>
                         </View>
-                        <View style={{flexDirection:'row',alignItems:'center'}}>
+                        {/* <View style={{flexDirection:'row',alignItems:'center'}}>
                             <TouchableOpacity
                                 onPress={() => navigation.navigate('Notification')}
                                 activeOpacity={0.5}
@@ -169,13 +171,13 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                                     source={IMAGES.grid6} 
                                 />
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
                 </View>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={[GlobalStyleSheet.container,{padding:0,paddingHorizontal:30,paddingTop:15}]}>
-                    <View>
+                    {/* <View>
                         <TextInput
                             placeholder='Qual a Busca de Hoje'
                             style={[styles.TextInput, { color: COLORS.title,backgroundColor:'#FAFAFA' }]}
@@ -183,7 +185,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
                         <View style={{ position: 'absolute', top: 15, right: 20 }}>
                             <Feather name='search' size={24} color={'#C9C9C9'} />
                         </View>
-                    </View>
+                    </View> */}
                 </View>
                 <View style={{alignItems:'center'}}>
                     <View style={[GlobalStyleSheet.container,{padding:0,}]}>
@@ -345,7 +347,20 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.34,
         shadowRadius: 18.27,
         elevation: 4, 
-    }
+    },
+    wave1: {
+        height: 200,
+        borderBottomLeftRadius: 50, // Arredonda para criar o efeito de onda
+        borderBottomRightRadius: 50,
+        transform: [{ rotate: '-15deg' }],
+      },
+      wave2: {
+        height: 150,
+        borderTopLeftRadius: 100,
+        borderTopRightRadius: 100,
+        marginTop: -50, // Sobreposição para criar profundidade
+        transform: [{ rotate: '10deg' }],
+      },
 })
 
 export default Home;

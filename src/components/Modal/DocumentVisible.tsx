@@ -115,12 +115,10 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                 ) : (
                     // Exibição do PDF (placeholder, você pode usar um componente de visualização de PDF real aqui)
                     <View className={`w-full h-full`}>
-
-<<<<<<< HEAD
                                             <Pdf
                                                 trustAllCerts={false}
                                                 enableDoubleTapZoom={true}
-                                                source={{ uri: 'https://tourism.gov.in/sites/default/files/2019-04/dummy-pdf_2.pdf', cache: true }}
+                                                source={{ uri: pathOne, cache: true }}
                                                 onLoadComplete={(numberOfPages,filePath) => {
                                                     console.log(`Number of pages: ${numberOfPages}`);
                                                 }}
@@ -135,15 +133,6 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                                                 }}
                                                 className="w-full h-full object-contain"
                                             />
-=======
-                            <WebView
-                                source={{uri: pathOne }}
-                                    className="w-full h-full " 
-                                    onError={() => console.log('Erro ao carregar PDF')}
-                               
-                             />
->>>>>>> 9f20875ebf07d0fb097c927b42ddcbcfa5b10f0e
-                        
                         <TouchableOpacity
                             className="absolute top-5 right-5 bg-primary p-2 rounded-lg w-8 h-8 itens-center" 
                             onPress={() => twoPicture ? typeDocument === 'picture'  ? setViewingSide(null) : close() : close()}    

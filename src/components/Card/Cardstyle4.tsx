@@ -78,8 +78,6 @@ const Cardstyle4 = ({
                 };
             }catch(e){
                 console.log(e)
-            }finally{
-
             }
         };
     
@@ -105,7 +103,7 @@ const Cardstyle4 = ({
         <View
             style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}
         >
-            <DocumentSend setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
+            <DocumentSend statusDocument={statusDocument} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
             <DocumentVisible documentName={documentName}  path={pathPictureSide} typeDocument={typePicture} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
             <View style={{ width: '40%', alignItems: 'center' }}>
                 <TouchableOpacity onPress={handlePress}>
@@ -151,15 +149,14 @@ const Cardstyle4 = ({
                                     :
                                     typePicture === 'pdf' ?
                                         <>       
-<<<<<<< HEAD
                                              <Pdf
                                                 trustAllCerts={false}
-                                                source={{ uri: 'https://tourism.gov.in/sites/default/files/2019-04/dummy-pdf_2.pdf', cache: true }}
+                                                source={{ uri: pathPicture, cache: true }}
                                                 onLoadComplete={(numberOfPages,filePath) => {
-                                                    console.log(`Number of pages: ${numberOfPages}`);
+                                                    // console.log(`Number of pages: ${numberOfPages}`);
                                                 }}
                                                 onPageChanged={(page,numberOfPages) => {
-                                                    console.log(`Current page: ${page}`);
+                                                    // console.log(`Current page: ${page}`);
                                                 }}
                                                 onError={(error) => {
                                                     console.log(error);
@@ -169,20 +166,7 @@ const Cardstyle4 = ({
                                                 }}
                                                 style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
                                             />
-=======
-                                        {
-                                            pathPicture &&
-                                            <WebView
-                                                originWhitelist={['*']}
-                                                source={{ uri: pathPicture}}
-                                                javaScriptEnabled={true}
-                                                scalesPageToFit={true}
-                                                style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
-                                            />
-                                        }
->>>>>>> 9f20875ebf07d0fb097c927b42ddcbcfa5b10f0e
-                                            
-                                            
+
                                             {isBlurred && 
                                                 (
                                                     <BlurView
@@ -274,11 +258,9 @@ const Cardstyle4 = ({
                         </TouchableOpacity>
                     }
                         
-<<<<<<< HEAD
-                    { !sendPicture &&
-=======
+
+
                     { !sendPicture && 
->>>>>>> 9f20875ebf07d0fb097c927b42ddcbcfa5b10f0e
                         <TouchableOpacity
                             onPress={()=>setViewingDocument(true)}
                             activeOpacity={0.8}

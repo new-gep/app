@@ -13,7 +13,7 @@ import SuccessSheet from "../BottomSheet/SuccessSheet";
 import DangerSheet from "../BottomSheet/DangerSheet";
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import UpdatePicture from "../../hooks/update/picture";
 
 
 type PropsCreateAvalidPicture = {
@@ -22,18 +22,24 @@ type PropsCreateAvalidPicture = {
     cpf     :string
 };
 
+type PropsUpdateAvalidPicture = {
+    picture :string
+    status  :string
+};
+
 type Props = {
     documentName: string;
     visible: boolean;
     twoPicture:boolean;
     close  : () => void;
+    statusDocument:any;
     setTypeDocument:any;
     setSendPicture:any;
     setPath:any;
 };
 
 
-const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close }: Props) => {
+const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close }: Props) => {
     const navigation = useNavigation<any>();
     const [front,setFront] = useState<any | null>(null)
     const [back ,setBack]  = useState<any | null>(null)
@@ -65,8 +71,7 @@ const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocumen
         // Passo 3: Salvar de volta o objeto atualizado no AsyncStorage
         await AsyncStorage.setItem('picture', JSON.stringify(pictureData));
         return
-    }
-    
+    };
     
     const sendPicture = async (option:string) => {
         try{
@@ -86,6 +91,12 @@ const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocumen
                     break;
                 case 'file':
                     path = await GetPathPicture('file')
+                    if(path.error){
+                        setActiveSheet('danger');
+                        setMessageSheet(`Arquivo muito grande ou inválido`);
+                        Sheet();
+                        return
+                    }
                     type = 'pdf'
                     break;
             };
@@ -99,6 +110,9 @@ const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocumen
                     break;
                 case documentName.includes('CNH (opcional)'):
                     documentName = 'CNH';
+                    break;
+                case documentName.includes('Titulo de Eleitor (opcional)'):
+                    documentName = 'Voter_Registration';
                     break;
                 case documentName.includes('Comprovante de Endereço'):
                     documentName = 'Address';
@@ -144,34 +158,73 @@ const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocumen
                 throw new Error('Erro interno no upload');
             };
 
-            const pictureParams: PropsCreateAvalidPicture = {
-                picture: documentName,
-                status: 'pending',
-                cpf: collaborator.CPF,
+            if(statusDocument == 'reproved'){
+                const pictureUpdateParams: PropsUpdateAvalidPicture = {
+                    picture: documentName,
+                    status: 'pending',
+                };
+                const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
+                switch (update.status) {
+                    case 200:
+                        fetchCollaborator()
+                        setSendPicture(false)
+                        setPath(path)
+                        setTypeDocument(type)
+                        setActiveSheet('success');
+                        setMessageSheet(`Documento Atualizado`);
+                        Sheet();
+                        setLoad(false)
+                        close()
+                        break;
+                    case 400:
+                        setActiveSheet('danger');
+                        setMessageSheet(`Documento não encontrado`);
+                        setLoad(false)
+                        Sheet();
+                        setNoRepeat(true);
+                        setFront(null);
+                        setBack(null);
+                        break
+                    default:
+                        setActiveSheet('danger');
+                        setMessageSheet('Erro, tente novamente!');
+                        Sheet();
+                        setNoRepeat(true);
+                        setFront(null);
+                        setBack(null);
+                        setLoad(false)
+                        break;
+                }
+            }else{
+                const pictureParams: PropsCreateAvalidPicture = {
+                    picture: documentName,
+                    status: 'pending',
+                    cpf: collaborator.CPF,
+                };
+                const createResponse = await CreateAvalidPicture(pictureParams);
+    
+                if(createResponse.status === 201){
+                    setPath(path)
+                    setTypeDocument(type)
+                    setActiveSheet('success');
+                    setMessageSheet(`Documentos salvos`);
+                    Sheet();
+                    setLoad(false)
+                    setSendPicture(false)
+                    close()
+                } 
+                else if (createResponse.status === 409) {
+                    setActiveSheet('danger');
+                    setMessageSheet('Imagem já existe');
+                    Sheet();
+                } 
+                else {
+                    setActiveSheet('danger');
+                    setMessageSheet('Erro ao salvar imagem');
+                    Sheet();
+                }
             };
-            const createResponse = await CreateAvalidPicture(pictureParams);
 
-            if (createResponse.status === 201) {
-                uploadPictureStorage(path, type, documentName)
-                setPath(path)
-                setTypeDocument(type)
-                setActiveSheet('success');
-                setMessageSheet(`Documentos salvos`);
-                Sheet();
-                setLoad(false)
-                setSendPicture(false)
-                close()
-            } 
-            else if (createResponse.status === 409) {
-                setActiveSheet('danger');
-                setMessageSheet('Imagem já existe');
-                Sheet();
-            } 
-            else {
-                setActiveSheet('danger');
-                setMessageSheet('Erro ao salvar imagem');
-                Sheet();
-            }
         }catch(e){
             console.log(e)
             setActiveSheet('danger');
@@ -179,7 +232,7 @@ const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocumen
             Sheet();
         }finally{
             setLoad(false)
-        }
+        };
     };
 
     const handleSelectPictureSide = async (side:string) => {
@@ -211,7 +264,6 @@ const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocumen
         await refRBSheet.current.open();
     };
 
-
     useEffect(() => {
         const fetchData = async () => {
             try{
@@ -221,13 +273,15 @@ const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocumen
                     setLoad(true)
                     const paths = [front, back];
                     switch (documentName) {
-                        case 'CNH (opcional)':
-                            documentName = 'CNH'
-                            break;
                         case 'Carteira de Trabalho':
                             documentName = 'Work_Card'
                             break;
-                    
+                        case 'CNH (opcional)':
+                            documentName = 'CNH'
+                            break;
+                        case 'Titulo de Eleitor (opcional)':
+                            documentName = 'Voter_Registration';
+                            break;
                         default:
                             // console.log(documentName)
                             break;
@@ -240,66 +294,120 @@ const DocumentSend = ({setSendPicture , documentName, twoPicture, setTypeDocumen
                                 
                                 // Fazendo o upload do arquivo
                                 const response = await UploadFile(path, documentName, side, collaborator.CPF);
-        
-                                // Verificando o status do upload
-                                if (response.status === 400) {
-                                    setActiveSheet('danger');
-                                    setMessageSheet(`Documento inválido`);
-                                    Sheet();
-                                    setFront(null);
-                                    setBack(null);
-                                    setLoad(false)
-                                    throw new Error('Documento inválido');
-                                } else if (response.status !== 200) {
-                                    setNoRepeat(true);
-                                    setActiveSheet('danger');
-                                    setMessageSheet(`Erro interno`);
-                                    Sheet();
-                                    setFront(null);
-                                    setBack(null);
-                                    setLoad(false)
-                                    throw new Error('Erro interno no upload');
+
+                                switch (response.status) {
+                                    case 400:
+                                        setActiveSheet('danger');
+                                        setMessageSheet(`Documento inválido`);
+                                        Sheet();
+                                        setFront(null);
+                                        setBack(null);
+                                        setLoad(false);
+                                        return;
+                                    default:
+                                        console.log(response)
+                                        setActiveSheet('danger');
+                                        setMessageSheet(`Erro desconhecido`);
+                                        Sheet();
+                                        setNoRepeat(true);
+                                        setFront(null);
+                                        setBack(null);
+                                        setLoad(false)
+                                        return;
                                 }
+        
                             })
                         );
-        
-                        // Se todos os uploads forem bem-sucedidos, chamar CreateAvalidPicture
-                        const pictureParams: PropsCreateAvalidPicture = {
-                            picture: documentName,
-                            status: 'pending',
-                            cpf: collaborator.CPF
-                        };
-        
-                        const createResponse = await CreateAvalidPicture(pictureParams);
-
-                        // Lidar com a resposta do CreateAvalidPicture
-                        if (createResponse.status === 201) {
-                            fetchCollaborator()
-                            setSendPicture(false)
-                            setPath([front,back])
-                            setTypeDocument('picture')
-                            setActiveSheet('success');
-                            setMessageSheet(`Documentos salvos`);
-                            Sheet();
-                            setLoad(false)
-                            close()
-                        } else if (createResponse.status === 409) {
-                            setActiveSheet('danger');
-                            setMessageSheet('Imagem já existe');
-                            Sheet();
-                            setLoad(false)
-                        } else {
-                            setActiveSheet('danger');
-                            setMessageSheet('Erro ao salvar imagem');
-                            Sheet();
-                            setLoad(false)
+    
+                        
+                        console.log(statusDocument)
+                        if(statusDocument == 'reproved'){
+                            const pictureUpdateParams: PropsUpdateAvalidPicture = {
+                                picture: documentName,
+                                status: 'pending',
+                            };
+                            const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
+                            console.log(update)
+                            switch (update.status) {
+                                case 200:
+                                    fetchCollaborator()
+                                    setSendPicture(false)
+                                    setPath([front,back])
+                                    setTypeDocument('picture')
+                                    setActiveSheet('success');
+                                    setMessageSheet(`Documento Atualizado`);
+                                    Sheet();
+                                    setLoad(false)
+                                    close()
+                                    break;
+                                case 400:
+                                    setActiveSheet('danger');
+                                    setMessageSheet(`Documento não encontrado`);
+                                    setLoad(false)
+                                    Sheet();
+                                    setNoRepeat(true);
+                                    setFront(null);
+                                    setBack(null);
+                                    break
+                                default:
+                                    setActiveSheet('danger');
+                                    setMessageSheet('Erro, tente novamente!');
+                                    Sheet();
+                                    setNoRepeat(true);
+                                    setFront(null);
+                                    setBack(null);
+                                    setLoad(false)
+                                    break;
+                            }
+                        }else{
+                            const pictureParams: PropsCreateAvalidPicture = {
+                                    picture: documentName,
+                                    status: 'pending',
+                                    cpf: collaborator.CPF
+                            };
+                
+                            const createResponse = await CreateAvalidPicture(pictureParams);
+                            switch (createResponse.status) {
+                                case 201:
+                                    fetchCollaborator()
+                                    setSendPicture(false)
+                                    setPath([front,back])
+                                    setTypeDocument('picture')
+                                    setActiveSheet('success');
+                                    setMessageSheet(`Documento salvo`);
+                                    Sheet();
+                                    setLoad(false)
+                                    close()
+                                        break;
+                                case 409:
+                                        setActiveSheet('danger');
+                                        setMessageSheet('Imagem já existe');
+                                        Sheet();
+                                        setLoad(false)
+                                        setNoRepeat(true);
+                                        setFront(null);
+                                        setBack(null);
+                                        break
+                                default:
+                                        setActiveSheet('danger');
+                                        setMessageSheet('Erro, tente novamente!');
+                                        Sheet();
+                                        setNoRepeat(true);
+                                        setFront(null);
+                                        setBack(null);
+                                        setLoad(false)
+                                        break;
+                            };
                         }
                     } catch (error) {
                         console.error('Erro durante o processo:', error);
                         setActiveSheet('danger');
-                        setMessageSheet('Algo deu errado, tente mais tarde');
+                        setMessageSheet('Algo deu errado, tente novamente');
                         Sheet();
                         setLoad(false)
+                        setNoRepeat(true);
+                        setFront(null);
+                        setBack(null);
                     };
                 };
             }catch(e){

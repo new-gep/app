@@ -6,6 +6,8 @@ import ValidateCollaboratorAndBlock from '../screens/utils/validateCollaboratorA
 import { Text } from 'react-native';
 const Route = () => {
 
+
+
 	return (
 		<ThemeContextProvider>
 			<CollaboratorProvider>
@@ -16,5 +18,6 @@ const Route = () => {
 	)
   
 }
+
 
 export default Route;

@@ -1,4 +1,7 @@
 {
+  "cli":{
+    "requireCommit": true
+  },
   "build": {
     "development": {
       "developmentClient": true,
@@ -14,9 +17,10 @@
         "gradleCommand": ":app:assembleRelease"
       }
     },
-    "preview3": {
-      "developmentClient": true
-    },
-    "production": {}
+    "production": {
+      "android": {
+        "buildType": "apk"
+      }
+    }
   }
 }

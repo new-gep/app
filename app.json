@@ -1,10 +1,9 @@
 {
   "expo": {
-    "name": "new_gep",
-    "slug": "new_gep",
+    "name": "New Gep",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/adaptive-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -26,13 +25,17 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffec01"
       },
       "package": "com.w3itexperts.ombe",
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION",
+        "android.permission.ACCESS_NETWORK_STATE"
       ],
       "config": {
         "googleMaps": {
@@ -44,10 +47,10 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-     [
-      "@config-plugins/react-native-blob-util",
-      "@config-plugins/react-native-pdf"
-     ],
+      [
+        "@config-plugins/react-native-blob-util",
+        "@config-plugins/react-native-pdf"
+      ],
       [
         "expo-camera",
         {
@@ -67,7 +70,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "11fd64d1-cd50-47f8-99e6-46f829c70cd3"
+        "projectId": "0779fcaf-40a3-4b05-99c0-537e94323c66"
       }
     }
   }
