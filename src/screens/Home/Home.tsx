@@ -104,7 +104,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     ];
 
     const dispatch = useDispatch();
-    const [isShowDevelopment,setIsShowDevelopment] = useState<boolean>(true)
+    const [isShowDevelopment,setIsShowDevelopment] = useState<boolean>(false)
 
     const theme = useTheme();
     const { colors }: { colors: any; } = theme;
