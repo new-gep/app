@@ -18,7 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Mask from '../../function/mask';
 import useCollaborator from '../../function/fetchCollaborator';
 import { useCollaboratorContext } from '../../context/CollaboratorContext';
-
+import DevelopmentModal from '../../components/Modal/Development';
 const ArrivalData = [
     {
         id:"1",
@@ -104,11 +104,16 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     ];
 
     const dispatch = useDispatch();
+    const [isShowDevelopment,setIsShowDevelopment] = useState<boolean>(true)
 
     const theme = useTheme();
     const { colors }: { colors: any; } = theme;
     const { collaborator, fetchCollaborator } = useCollaborator();
     const { validateCollaborator, missingData } = useCollaboratorContext();
+
+    const closeDevelopment = () => {
+        setIsShowDevelopment(false)
+    }
 
 
     useEffect(() => {
@@ -126,6 +131,7 @@ export const Home = ({ navigation }: HomeScreenProps) => {
     
     return (
         <View style={{ backgroundColor: colors.card, flex: 1 }}>
+            <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/>
             <View>
             </View>
             <View style={{}}>
