@@ -38,7 +38,7 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
     // O estado missingData agora aceita null ou um objeto do tipo MissingDataType
     const [missingData, setMissingData] = useState<MissingDataType | null>(null);
     const navigation = useNavigation();
-
+    
     // Função para validar o colaborador
     const validateCollaborator = async () => {
         try {
@@ -48,6 +48,7 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
                 const { CPF } = collaboratorData;
                 if (CPF) {
                     const response = await CheckAccountCompletion(CPF);
+                    
                     // Verifica se há campos ou documentos faltando
                     const hasMissingFields    = Array.isArray(response.missingFields) && response.missingFields.length > 0;
                     const hasMissingDocuments = Array.isArray(response.files?.missingDocuments) && response.files.missingDocuments.length > 0;
@@ -58,22 +59,12 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
                             missingDocuments: response.files?.missingDocuments || [],
                             missingDocumentsChildren: response.files?.missingDocumentsChildren || []
                         };
-                        const collaborator = await AsyncStorage.getItem('collaborator');
-                        const navigationState = navigation.getState();
-
-                        if (navigationState) {
-                            const currentRoute = navigationState.routes[navigationState.index].state?.routes[navigationState.routes[navigationState.index].state.index]?.name || navigationState.routes[navigationState.index].name;
-                            // Não mostra o modal se estiver em telas específicas ou sem colaborador
-                            await AsyncStorage.setItem('missingDates', JSON.stringify(dataToStore));
-                            if (currentRoute === 'Profile' || currentRoute === 'EditProfile' || currentRoute === 'SignIn' || currentRoute === 'SignUp' || currentRoute === 'Documents' || !collaborator) {
-                                return
-                            }
-                            setMissingData(dataToStore); // Agora o tipo está correto
-                            return;
-                        }
-                        await AsyncStorage.removeItem('missingDates');
-                        setMissingData(null); // Nenhum dado pendente
+                        console.log('documento do storage',dataToStore.missingDocuments)
+                        await AsyncStorage.setItem('missingDates', JSON.stringify(dataToStore));
+                        setMissingData(dataToStore); // Agora o tipo está correto
+                        return;
                     } else {
+                        console.log('sobrou o ultimo e jaera, deletado')
                         // Remove os dados de pendências se não houver mais falta de documentos
                         await AsyncStorage.removeItem('missingDates');
                         setMissingData(null); // Nenhum dado pendente

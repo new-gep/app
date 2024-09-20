@@ -13,12 +13,14 @@ import Mask from '../../function/mask';
 import CheckCadasterCollaboratorProfile from '../utils/checkCadasterCollaboratorProfile';
 import FindBucketCollaborator from '../../hooks/bucket/collaborator';
 import useCollaborator from '../../function/fetchCollaborator';
+import DevelopmentModal from '../../components/Modal/Development';
 type ProfileScreenProps = StackScreenProps<RootStackParamList, 'Profile'>;
 
 const Profile = ({navigation} : ProfileScreenProps) => {
     const theme = useTheme();
     const { colors } : {colors : any} = theme;
     const { collaborator, fetchCollaborator } = useCollaborator();
+    const [isShowDevelopment,setIsShowDevelopment] = useState<boolean>(false)
     const [path, setPath] = useState<any | null>(null);
 
     const profileData = [
@@ -90,6 +92,11 @@ const Profile = ({navigation} : ProfileScreenProps) => {
         }
     };
 
+    const closeDevelopment = () => {
+        setIsShowDevelopment(false)
+    };
+
+
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             fetchCollaborator(); 
@@ -116,6 +123,7 @@ const Profile = ({navigation} : ProfileScreenProps) => {
             <LoadScreenSimple/>
             :
             <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{flexGrow:1,paddingBottom:50}}>
+                <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/>
                 <View className={`px-5`}>
                     <CheckCadasterCollaboratorProfile/>
                 </View>
@@ -189,7 +197,7 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                                         return (
                                             <TouchableOpacity
                                                 activeOpacity={0.8}
-                                                onPress={() => navigation.navigate('ProductsDetails')}      
+                                                onPress={() => setIsShowDevelopment(true)}      
                                                 key={index}
                                                 style={[styles.arrivaldata,{
                                                     backgroundColor:COLORS.dark,

@@ -8,6 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { IMAGES } from "../../constants/Images"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useCollaboratorContext } from "../../context/CollaboratorContext"
+import useCollaborator from "../../function/fetchCollaborator"
 
 type MissingDatesStorage = {
     missingDocuments: string[];
@@ -44,15 +46,17 @@ export default function CheckCadasterCollaboratorDocument() {
         Military_Certificate:false
     });
     const [loading, setLoading] = useState(true); // Estado de carregamento
-
+    const { collaborator, fetchCollaborator } = useCollaborator();
     const checkCadasterCollaborator = async () => {
         try {
             const storedData = await AsyncStorage.getItem('missingDates');
+            console.log('revisitando check')
             if (storedData) {
                 const parsedMissingDates: MissingDatesStorage = JSON.parse(storedData);
                 // Garantir que missingDocuments e missingFields são arrays
                 const missingDocuments = Array.isArray(parsedMissingDates.missingDocuments) ? parsedMissingDates.missingDocuments : [];
                 // const missingFields    = Array.isArray(parsedMissingDates.missingFields) ? parsedMissingDates.missingFields : [];
+                console.log(missingDocuments)
                 const newMissingDate = {
                     RG: missingDocuments.includes("RG"),
                     Work_Card: missingDocuments.includes("Work_Card"),
@@ -66,7 +70,22 @@ export default function CheckCadasterCollaboratorDocument() {
                     // Marriage: missingFields.includes("marriage"),
                     // Children: missingFields.includes("children"),
                 };
-                
+                console.log(newMissingDate)
+                setMissingDate(newMissingDate);
+            }else{
+                const newMissingDate = {
+                    RG: false,
+                    Work_Card: false,
+                    Marriage_Certificate: false,
+                    Address: false,
+                    School_History:false,
+                    Birth_Certificate: false,
+                    Military_Certificate: false,
+                    // Picture: missingFields.includes("Picture"),
+                    // AddresField: missingFields.includes("address"),
+                    // Marriage: missingFields.includes("marriage"),
+                    // Children: missingFields.includes("children"),
+                };
                 setMissingDate(newMissingDate);
             }
         } catch (error) {
@@ -76,7 +95,10 @@ export default function CheckCadasterCollaboratorDocument() {
         }
     };
 
+    const { validateCollaborator, missingData } = useCollaboratorContext ();
+
     useEffect(() => {
+        console.log('missing alterou')
         // Chama a função na montagem do componente
         checkCadasterCollaborator();
 
@@ -90,7 +112,7 @@ export default function CheckCadasterCollaboratorDocument() {
         return () => {
             unsubscribe();  // Chama a função para remover o listener
         };
-    }, [navigation]);
+    }, [navigation, missingData]);
     
     return (
         <>

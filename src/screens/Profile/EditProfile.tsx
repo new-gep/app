@@ -266,6 +266,8 @@ const EditProfile = () => {
                     }
             }else{
                     setHasMarriage(false)
+            }if(collaborator.sex == 'F'){
+                setHasSex(true)
             }
             getPicture()
         };

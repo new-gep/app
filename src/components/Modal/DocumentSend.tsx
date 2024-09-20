@@ -14,6 +14,7 @@ import DangerSheet from "../BottomSheet/DangerSheet";
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UpdatePicture from "../../hooks/update/picture";
+import { useCollaboratorContext } from "../../context/CollaboratorContext";
 
 
 type PropsCreateAvalidPicture = {
@@ -45,6 +46,7 @@ const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture
     const [back ,setBack]  = useState<any | null>(null)
     const [selection ,setSelection]  = useState<String | null>(null)
     const { collaborator, fetchCollaborator } = useCollaborator();
+    const { validateCollaborator, missingData } = useCollaboratorContext();
     const [messageSheet, setMessageSheet] = useState(String);
     const [activeSheet, setActiveSheet]   = useState(String);
     const [noRepeat, setNoRepeat]   = useState(true);
@@ -166,7 +168,7 @@ const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture
                 const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
                 switch (update.status) {
                     case 200:
-                        fetchCollaborator()
+                        validateCollaborator()
                         setSendPicture(false)
                         setPath(path)
                         setTypeDocument(type)
@@ -211,6 +213,7 @@ const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture
                     Sheet();
                     setLoad(false)
                     setSendPicture(false)
+                    validateCollaborator()
                     close()
                 } 
                 else if (createResponse.status === 409) {
@@ -330,7 +333,7 @@ const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture
                             console.log(update)
                             switch (update.status) {
                                 case 200:
-                                    fetchCollaborator()
+                                    validateCollaborator()
                                     setSendPicture(false)
                                     setPath([front,back])
                                     setTypeDocument('picture')
@@ -369,7 +372,7 @@ const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture
                             const createResponse = await CreateAvalidPicture(pictureParams);
                             switch (createResponse.status) {
                                 case 201:
-                                    fetchCollaborator()
+                                    validateCollaborator()
                                     setSendPicture(false)
                                     setPath([front,back])
                                     setTypeDocument('picture')

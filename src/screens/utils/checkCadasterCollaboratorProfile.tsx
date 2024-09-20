@@ -8,6 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { IMAGES } from "../../constants/Images"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useCollaboratorContext } from "../../context/CollaboratorContext"
+
 
 type MissingDatesStorage = {
     // missingDocuments: string[];
@@ -28,6 +30,7 @@ type MissingDatesProps = {
 }
 
 export default function CheckCadasterCollaboratorProfile() {
+    const { validateCollaborator, missingData } = useCollaboratorContext ();
     const navigation = useNavigation<RootStackParamList>();
     const [missingDate, setMissingDate] = useState<MissingDatesProps>({
         Picture  :false,
@@ -67,6 +70,21 @@ export default function CheckCadasterCollaboratorProfile() {
                 };
         
                 setMissingDate(newMissingDate);
+            }else{
+                const newMissingDate = {
+                    // RG: missingDocuments.includes("RG"),
+                    // Work_Card: missingDocuments.includes("Work_Card"),
+                    // Marriage_Certificate: missingDocuments.includes("Marriage_Certificate"),
+                    // Address: missingDocuments.includes("Address"),
+                    // School_History: missingDocuments.includes("School_History"),
+                    // Birth_Certificate: missingDocuments.includes("Birth_Certificate"),
+                    Picture: false,
+                    AddresField: false,
+                    Marriage: false,
+                    Children: false,
+                };
+        
+                setMissingDate(newMissingDate);
             }
         } catch (error) {
             console.error('Error retrieving or parsing missingDates:', error);
@@ -89,7 +107,7 @@ export default function CheckCadasterCollaboratorProfile() {
         return () => {
             unsubscribe();  // Chama a função para remover o listener
         };
-    }, [navigation]);
+    }, [navigation, missingData]);
     
     return (
         <>

@@ -23,6 +23,7 @@ type PicturesProps = {
 
 const Documents = () => {
     const navigation = useNavigation<any>();
+    const { validateCollaborator, missingData } = useCollaboratorContext();
     const { collaborator, fetchCollaborator } = useCollaborator();
     const [myDocsData, setMyDocsData] = useState<any[] | null>(null)
     const [error, setError] = useState<boolean>(false)
@@ -98,6 +99,22 @@ const Documents = () => {
                 const documentPromise = Object.entries(updatedPicturesData).forEach(([documentKey, documentStatus]) => {
                     
                     // Se houver um status válido, cria um card para o documento
+
+                    const checkDocument = documentKey
+                    switch (checkDocument) {
+                        case 'Military_Certificate':
+                            console.log('aq')
+                            if(collaborator.sex == 'F'){
+                                return
+                            }
+                            break;
+                        case 'Marriage_Certificate':
+                            if(collaborator.marriage == '0'){
+                                return
+                            }
+                            break;
+                    
+                    }
                     
                     if (documentStatus) {
                         let document_params : {};
@@ -116,6 +133,7 @@ const Documents = () => {
                         
                         return
                     };
+                    
                     
                     // Caso geral para outros documentos
                     let document_params = {
@@ -282,13 +300,13 @@ const Documents = () => {
             fetchCollaborator()
         });
         return unsubscribe;
-    }, [navigation]);
+    }, [navigation, missingData]);
 
     useEffect(()=>{
         if(collaborator){
             Picture()
         }
-    },[collaborator,process]);
+    },[collaborator,process, missingData]);
 
 
     return(
@@ -321,7 +339,7 @@ const Documents = () => {
                             <View className={`px-5`}>
                                 <CheckCadasterCollaboratorDocument/>
                             </View>
-                            <View className={`p-3`}>
+                            <View className={`p-3 mt-5`}>
                                 <View className={`mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-between`}>
                                     <View className={`w-2/4`}>
                                         <Text className={`absolute w-44`} style={{...FONTS.fontSemiBold,fontSize:24,color:COLORS.dark,marginTop:-38}}>
