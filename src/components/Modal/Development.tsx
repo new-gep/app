@@ -11,9 +11,9 @@ import Carousel from 'react-native-reanimated-carousel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const images = [
-    IMAGES.completeDocument1,
-    IMAGES.completeDocument2,
-    IMAGES.completeDocument3,
+    IMAGES.unique15,
+    IMAGES.unique16,
+    IMAGES.unique17,
 ];
 type Props = {
     visible: boolean;
