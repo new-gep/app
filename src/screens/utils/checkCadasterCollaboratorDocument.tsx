@@ -50,7 +50,6 @@ export default function CheckCadasterCollaboratorDocument() {
     const checkCadasterCollaborator = async () => {
         try {
             const storedData = await AsyncStorage.getItem('missingDates');
-            console.log('revisitando check')
             if (storedData) {
                 const parsedMissingDates: MissingDatesStorage = JSON.parse(storedData);
                 // Garantir que missingDocuments e missingFields são arrays
@@ -98,7 +97,6 @@ export default function CheckCadasterCollaboratorDocument() {
     const { validateCollaborator, missingData } = useCollaboratorContext ();
 
     useEffect(() => {
-        console.log('missing alterou')
         // Chama a função na montagem do componente
         checkCadasterCollaborator();
 

@@ -159,10 +159,10 @@ const Cardstyle4 = ({
                                                     // console.log(`Current page: ${page}`);
                                                 }}
                                                 onError={(error) => {
-                                                    console.log(error);
+                                                    // console.log(error);
                                                 }}
                                                 onPressLink={(uri) => {
-                                                    console.log(`Link pressed: ${uri}`);
+                                                    // console.log(`Link pressed: ${uri}`);
                                                 }}
                                                 style={{ height: undefined, width: '100%', aspectRatio: 1 / 1.2 }}
                                             />

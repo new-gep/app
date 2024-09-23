@@ -64,7 +64,6 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
                         setMissingData(dataToStore); // Agora o tipo está correto
                         return;
                     } else {
-                        console.log('sobrou o ultimo e jaera, deletado')
                         // Remove os dados de pendências se não houver mais falta de documentos
                         await AsyncStorage.removeItem('missingDates');
                         setMissingData(null); // Nenhum dado pendente

@@ -120,16 +120,16 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                                                 enableDoubleTapZoom={true}
                                                 source={{ uri: pathOne, cache: true }}
                                                 onLoadComplete={(numberOfPages,filePath) => {
-                                                    console.log(`Number of pages: ${numberOfPages}`);
+                                                    // console.log(`Number of pages: ${numberOfPages}`);
                                                 }}
                                                 onPageChanged={(page,numberOfPages) => {
-                                                    console.log(`Current page: ${page}`);
+                                                    // console.log(`Current page: ${page}`);
                                                 }}
                                                 onError={(error) => {
-                                                    console.log(error);
+                                                    // console.log(error);
                                                 }}
                                                 onPressLink={(uri) => {
-                                                    console.log(`Link pressed: ${uri}`);
+                                                    // console.log(`Link pressed: ${uri}`);
                                                 }}
                                                 className="w-full h-full object-contain"
                                             />
