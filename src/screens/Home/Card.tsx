@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, Text } from "react-native";
+import { Dimensions, Image, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
@@ -7,68 +7,78 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { runOnJS } from "react-native-reanimated";
+import Tabs from "./Tabs";
+import { AbstractPicture } from "../../constants/abstract";
 
 const { width, height } = Dimensions.get("window");
-const SWIPE_THRESHOLD = width * 0.55; // 80% da largura da tela
-const MAX_VERTICAL_TRANSLATION = height * 0.2; // Limite da translação vertical
-const MAX_ROTATION_ANGLE = 10; // Ângulo máximo de rotação
+const SWIPE_THRESHOLD = width * 0.55;
+const MAX_ROTATION_ANGLE = 8; // Ângulo de rotação sutil
+const MAX_VERTICAL_TRANSLATION = height * 0.1; // Movimento vertical limitado
 
-const Card = ({ data, onSwipe }) => {
+const Card = ({ data, onSwipe, isTopCard }) => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const rotate = useSharedValue(0); // Variável para controlar a rotação
+  const rotate = useSharedValue(0);
 
   const gesture = Gesture.Pan()
-  .onUpdate(({ translationX, translationY }) => {
-    translateX.value = translationX;
-
-    // Permite movimento vertical, mas ignora para rotação
-    translateY.value = translationY;
-
-    // Rotação proporcional e simétrica para os dois lados
-    rotate.value = (translationX / width) * MAX_ROTATION_ANGLE;
-  })
-  .onEnd(() => {
-    if (Math.abs(translateX.value) > SWIPE_THRESHOLD) {
-      // Swipe horizontal
-      translateX.value = withSpring(
-        translateX.value > 0 ? width : -width,
-        {},
-        () => {
-          runOnJS(onSwipe)();
-        }
+    .enabled(isTopCard) // O card só é arrastável se for o topo
+    .onUpdate(({ translationX, translationY }) => {
+      translateX.value = translationX;
+      translateY.value = Math.min(
+        Math.max(translationY, -MAX_VERTICAL_TRANSLATION),
+        MAX_VERTICAL_TRANSLATION
       );
-    } else {
-      // Voltar à posição inicial
-      translateX.value = withSpring(0);
-      translateY.value = withSpring(0);
-      rotate.value = withSpring(0); // Retorna a rotação para 0
-    }
-  });
-
+      rotate.value = (translationX / width) * MAX_ROTATION_ANGLE;
+    })
+    .onEnd(() => {
+      if (Math.abs(translateX.value) > SWIPE_THRESHOLD) {
+        const direction = translateX.value > 0 ? 1 : -1;
+        translateX.value = withSpring(
+          direction * width * 1.5, // Move completamente o card para fora da tela
+          { damping: 15, stiffness: 120 },
+          () => {
+            runOnJS(onSwipe)(); // Chama a função de swipe do pai para remover o card
+          }
+        );
+      } else {
+        // Volta o card ao centro se não ultrapassar o limite
+        translateX.value = withSpring(0, { damping: 15, stiffness: 120 });
+        translateY.value = withSpring(0, { damping: 15, stiffness: 120 });
+        rotate.value = withSpring(0, { damping: 15, stiffness: 120 });
+      }
+    });
 
   const animatedStyle = useAnimatedStyle(() => ({
     //@ts-ignore
     transform: [
       { translateX: translateX.value },
-      {
-        translateY: Math.min(
-          Math.max(translateY.value, -MAX_VERTICAL_TRANSLATION),
-          MAX_VERTICAL_TRANSLATION
-        ),
-      },
-      { rotateZ: `${rotate.value}deg` }, // Aplica a rotação apenas na horizontal
+      { translateY: translateY.value },
+      { rotateZ: `${rotate.value}deg` },
     ],
+    zIndex: isTopCard ? 1 : 0,
   }));
 
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View
-        className="absolute w-full h-3/4 rounded-lg bg-gray-300 justify-center items-center"
-        style={animatedStyle}
-      >
-        <Text className="text-xl font-bold">{data.title}</Text>
-      </Animated.View>
+  className="absolute w-full h-[80%] rounded-3xl bg-dark shadow-lg overflow-hidden"
+  style={animatedStyle}
+>
+  <Image
+    source={AbstractPicture[data.image]}
+    resizeMode="contain"
+    className="w-full h-[50%] self-center"
+  />
+  <View className="p-4 justify-end">
+    <Tabs
+      companyName={data.companyName}
+      image={data.image}
+      position={data.position}
+      time={data.time}
+      contract={data.contract}
+    />
+  </View>
+</Animated.View>
     </GestureDetector>
   );
 };
