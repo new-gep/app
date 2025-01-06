@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Definindo a interface para o colaborador
 interface propsCollaborator {
+    PCD: string;
     name: string;
     CPF: string;
     email: string;

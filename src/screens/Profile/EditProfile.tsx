@@ -28,6 +28,7 @@ import FindBucketCollaborator from '../../hooks/bucket/collaborator';
 type inputUpdateDates = {
     name :string,
     sex  :string,
+    PCD  :string;
     phone:string,
     email:string,
     marriage:string,
@@ -70,6 +71,7 @@ const EditProfile = () => {
     const [activeSheet, setActiveSheet] = useState(String);
     const [hasAddressNumber, setHasAddressNumber] = useState(true);
     const [hasMarriage, setHasMarriage] = useState(false);
+    const [hasPcd, setHasPcd] = useState(false);
     const [hasSex, setHasSex] = useState(false);
     const [hasChildren, setHasChildren] = useState(false);
     const [isCepUpdated, setIsCepUpdated] = useState(false);
@@ -78,6 +80,7 @@ const EditProfile = () => {
         sex  :'M',
         phone:'',
         email:'',
+        PCD: '0',
         marriage:'0',
         children:0,
         zip_code: '',
@@ -230,6 +233,7 @@ const EditProfile = () => {
             setCollaboratorUpdateDates({
                     name : collaborator.name  ,
                     phone: collaborator.phone ,
+                    PCD: collaborator.PCD || '0',
                     email: collaborator.email ,
                     sex : collaborator.sex || 'M' ,
                     marriage: collaborator.marriage || '0' ,
@@ -265,7 +269,15 @@ const EditProfile = () => {
                         setHasMarriage(false)
                     }
             }else{
-                    setHasMarriage(false)
+                setHasMarriage(false)
+            }if(collaborator.PCD){
+                        if(collaborator.PCD == '1'){
+                            setHasPcd(true)
+                        }else{
+                            setHasPcd(false)
+                        }
+            }else{
+                setHasPcd(false)
             }if(collaborator.sex == 'F'){
                 setHasSex(true)
             }
@@ -330,11 +342,22 @@ const EditProfile = () => {
                     sex:'M', 
                 }));
             }
+            if(hasPcd){
+                setCollaboratorUpdateDates((prevState) => ({
+                    ...prevState,
+                    PCD:'1', 
+                }));
+            }else{
+                setCollaboratorUpdateDates((prevState) => ({
+                    ...prevState,
+                    PCD:'0', 
+                }));
+            }
 
         }
         toogleActions()
     },
-    [hasMarriage, hasChildren, hasAddressNumber, hasSex])
+    [hasMarriage, hasChildren, hasAddressNumber, hasSex, hasPcd])
 
     return (
        <View style={{backgroundColor:colors.background,flex:1}}>
@@ -480,7 +503,20 @@ const EditProfile = () => {
                                
                             </View>
                         </View>
-                    </View>  
+                    </View>
+                    <View style={{ marginBottom: 15 }}>
+                        <View className={`mb-1`}>
+                            <View className={`flex-row items-end mb-2`}>
+                                <Image source={IMAGES.WheelchairDuoTone} style={[styles.icon]}/>
+                                <Text className={`text-[#222222]`} style={FONTS.fontRegular}>Você é PCD?</Text>
+                            </View>
+                            <View className={`px-10`}>
+                               
+                                <ToggleStyle3 active={hasPcd} setActive={setHasPcd} />
+                               
+                            </View>
+                        </View>
+                    </View>    
                     <View style={{ marginBottom: 15 }}>
                         <View style={{ marginBottom: 15 }}>
                             <View className={`mb-1`}>

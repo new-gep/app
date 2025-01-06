@@ -53,6 +53,12 @@ const Profile = ({navigation} : ProfileScreenProps) => {
             subtitle: collaborator && `${collaborator && collaborator.marriage ? collaborator.marriage == '1' ? 'Sim' : 'Não' : 'Cadastro incompleto'}`
         },
         {
+            id:"6",
+            image:IMAGES.WheelchairDuoTone,
+            title:'PCD',
+            subtitle: collaborator && `${collaborator && collaborator.PCD ? collaborator.PCD == '1' ? 'Sim' : 'Não' : 'Cadastro incompleto'}`
+        },
+        {
             id:"5",
             image:IMAGES.map,
             title:'Endereço',

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { Dimensions, Text, View } from "react-native";
+import React, { useRef } from "react";
+import { Dimensions, Text, View, ScrollView } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
@@ -30,10 +30,6 @@ const Tabs = ({ data }) => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(data);
-  // },[]); teste para ver se os dados estão chegando
-
   return (
     <>
       <View className="pb-4">
@@ -56,34 +52,73 @@ const Tabs = ({ data }) => {
         contentContainerStyle={{ width: width * buttons.length }}
       >
         {/* Tab 1: Vaga */}
-        <View className="flex-1 justify-center items-start px-7 w-full mt-5 gap-3">
-            <Text className="text-white text-lg font-semibold">Cargo: {data.function}         
+        <View style={{ width }}>
+          <Animated.ScrollView
+            nestedScrollEnabled
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ padding: 16, paddingBottom: 30 }}
+          >
+            <Text className="text-white text-lg font-semibold">
+              Empresa: {data.company.company_name || "Não informado"}
             </Text>
-            <Text className="text-white text-lg font-semibold">Empresa: {data.company.company_name}</Text>
             <View className="flex-row items-center">
               <MaterialIcons name="attach-money" size={25} color="#f5f5f5" />
-              <Text className="text-white text-lg ml-1">Salário: {data.salary}</Text>
+              <Text className="text-white text-lg ml-1">
+                Salário: {data.salary || "Não informado"}
+              </Text>
             </View>
-          </View>
-
-        {/* Tab 2: Empresa */}
-        <View className="flex-1 justify-center items-start px-7 w-full mt-5 gap-3">
-          <Text className="text-white text-lg font-semibold">
-            Nome empresa: {data.company.company_name}
-          </Text>
-          <Text className="text-white text-lg font-semibold">Telefone: {data.company.phone}</Text>
-          <Text className="text-white text-lg font-semibold">Email: {data.company.email}</Text>
-          <Text className="text-white text-lg font-semibold">Endereço: {data.company.street}</Text>
+            <Text className="text-white text-lg font-semibold">
+              Tipo de Contratação: {data.contract_type || "Não informado"}
+            </Text>
+            <Text className="text-white text-lg font-semibold">
+              Descrição: {data.description || "Não informado"}
+            </Text>
+          </Animated.ScrollView>
         </View>
 
-        {/* Tab 3: Detalhes */} 
-        <View className="flex-1 justify-center items-start px-7 w-full mt-5 gap-3">
-          <Text className="text-white text-lg font-semibold">
-            Carga horária:
-          </Text>
-          <Text className="text-white text-lg font-semibold">Benefícios: {data.benefics}</Text>
-          <Text className="text-white text-lg font-semibold">Obrigações: {data.obligations}</Text>
-          <Text className="text-white text-lg font-semibold">Detalhes: {data.details}</Text>
+        {/* Tab 2: Empresa */}
+        <View style={{ width }}>
+          <Animated.ScrollView
+            nestedScrollEnabled
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ padding: 16, paddingBottom: 30 }}
+          >
+            <Text className="text-white text-lg font-semibold">
+              Telefone: {data.company.phone || "Não informado"}
+            </Text>
+            <Text className="text-white text-lg font-semibold">
+              E-mail: {data.company.email || "Não informado"}
+            </Text>
+            <Text className="text-white text-lg font-semibold">
+              Endereço:{" "}
+              {`${data.company.street || ""}, ${data.company.number || ""} - ${
+                data.company.district || ""
+              }, ${data.company.city || ""} - ${data.company.uf || ""}`}
+            </Text>
+            <Text className="text-white text-lg font-semibold">
+              CEP: {data.company.zip_code || "Não informado"}
+            </Text>
+          </Animated.ScrollView>
+        </View>
+
+        {/* Tab 3: Detalhes */}
+        <View  style={{ width }}>
+          <ScrollView
+            className="p-4 h-40 w-full"
+          >
+            <Text className="text-white text-lg font-semibold">
+              Carga Horária: {data.workload || "Não informado"}
+            </Text>
+            <Text className="text-white text-lg font-semibold">
+              Benefícios: {data.benefics || "Não informado"}
+            </Text>
+            <Text className="text-white text-lg font-semibold">
+              Obrigações: {data.obligations || "Não informado"}
+            </Text>
+            <Text className="text-white text-lg font-semibold">
+              Detalhes Adicionais: {data.details || "Não informadoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"}
+            </Text>
+          </ScrollView>
         </View>
       </Animated.ScrollView>
     </>

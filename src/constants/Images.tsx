@@ -1,6 +1,7 @@
 export const IMAGES = {
     
     user : require('../assets/images/user.png'),
+    WheelchairDuoTone : require('../assets/images/icons/WheelchairDuoTone.png'),
     card : require('../assets/images/card.png'),
     card1 : require('../assets/images/card1.png'),
     Vector : require('../assets/images/Vector.png'),
