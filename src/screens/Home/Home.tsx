@@ -1,31 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import Card from "./Card";
+import GetAllJob from "../../hooks/get/job/all";
 
 const Home = () => {
-  const [cards, setCards] = useState([
-    { id: 1, title: "Card 1", companyName: "New Gep", image: 'infinity', position: "Desenvolvedor Senior", time: { time: "50", journey: "6x1" }, contract: "PJ" },
-    { id: 2, title: "Card 2", companyName: "Pimpolho", image: 'diamond', position: "RH", time: { time: "40", journey: "5x2" }, contract: "PJ" },
-    { id: 3, title: "Card 3", companyName: "New Drip", image: 'disc', position: "Desenvolvedor", time: { time: "50", journey: "6x1" }, contract: "PJ" },
-  ]);
+  const [cards, setCards] = useState([]);
 
   const handleSwipe = () => {
     setCards((prevCards) => prevCards.slice(1)); // Remove o primeiro card da lista
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await GetAllJob();
+      if (response.status !== 200) {
+        console.error("Erro ao buscar os cards:", response.message);
+        return;
+      }
+      setCards(response.job);
+    };
+    fetchData();
+  }, []);
+
   return (
-    <View style={{ flex: 1 }}>
-      {cards.length > 0 ? (
-        <>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      {Array.isArray(cards) && cards.length > 0 ? (
+        <View style={{ flex: 1, width: "100%" }}>
           {cards.map((card, index) => (
             <Card
               key={card.id}
               data={card}
               onSwipe={handleSwipe} // Remove o card ao ser swipado
-              isTopCard={index === 0} // Apenas o card do topo é arrastável
+              isTopCard={index === 0} // Apenas o primeiro card é arrastável
+              zIndex={cards.length - index} // Maior zIndex para o topo
             />
           ))}
-        </>
+        </View>
       ) : (
         <Text style={{ textAlign: "center", marginTop: 20, fontSize: 18 }}>
           Sem mais cards!

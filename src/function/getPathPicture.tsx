@@ -18,6 +18,7 @@ export default async function GetPathPicture(option:string){
         };
         try{
             const result = await ImagePicker.launchCameraAsync(options);
+            //@ts-ignore
             if (!result.assets.cancelled) {
                 return result.assets[0].uri
             }
