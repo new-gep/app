@@ -32,7 +32,7 @@ const Tabs = ({ data }) => {
 
   return (
     <>
-      <View className="pb-4">
+      <View>
         <TabButtonStyle1
           buttons={buttons}
           onClick={clickable}
@@ -46,7 +46,7 @@ const Tabs = ({ data }) => {
         decelerationRate="fast"
         horizontal
         pagingEnabled
-        scrollEventThrottle={16}
+        scrollEventThrottle={14}
         showsHorizontalScrollIndicator={false}
         onScroll={scrollHandler}
         contentContainerStyle={{ width: width * buttons.length }}
@@ -116,7 +116,7 @@ const Tabs = ({ data }) => {
               Obrigações: {data.obligations || "Não informado"}
             </Text>
             <Text className="text-white text-lg font-semibold">
-              Detalhes Adicionais: {data.details || "Não informadoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"}
+              Detalhes Adicionais: {data.details || "Não informadooooooooooooooooooooooooooooooooooooooooooOOOOOO  oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo              oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo              oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"}
             </Text>
           </ScrollView>
         </View>

@@ -3,7 +3,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { COLORS, FONTS, SIZES } from "../../constants/theme";
 import { useTheme } from "@react-navigation/native";
-import { grey300 } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 type Props = {
   buttons?: any;
@@ -14,30 +13,19 @@ type Props = {
 const TabButtonStyle1 = ({ buttons, onClick, scrollX }: Props) => {
   const { colors } = useTheme();
   const [btnContainerWidth, setWidth] = useState(0);
+
   const btnWidth = btnContainerWidth / buttons.length;
 
   // Estilo animado para a barra de seleção
   const animatedStyle = useAnimatedStyle(() => {
     const translateX = interpolate(
       scrollX.value,
-      [0, SIZES.width - 60],
+      [0, SIZES.width],
       [0, btnWidth]
     );
 
     return {
       transform: [{ translateX }],
-    };
-  });
-
-  const animatedOppositeStyle = useAnimatedStyle(() => {
-    const translateXOpposit = interpolate(
-      scrollX.value,
-      [0, SIZES.width - 60],
-      [0, -btnWidth]
-    );
-
-    return {
-      transform: [{ translateX: translateXOpposit }],
     };
   });
 
@@ -51,44 +39,32 @@ const TabButtonStyle1 = ({ buttons, onClick, scrollX }: Props) => {
       onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
     >
       {buttons.map((btn: any, i: any) => (
-        <TouchableOpacity key={btn} style={styles.btn} onPress={() => onClick(i)}>
-          <Text style={{ ...FONTS.font, ...FONTS.fontMedium, color:'#e0e0e0'}}>
+        <TouchableOpacity
+          key={btn}
+          style={styles.btn}
+          onPress={() => onClick(i)}
+        >
+          <Text
+            style={{
+              ...FONTS.font,
+              ...FONTS.fontMedium,
+              color: scrollX.value / SIZES.width === i ? COLORS.primary : "#e0e0e0",
+              fontWeight: scrollX.value / SIZES.width === i ? "bold" : "normal",
+            }}
+          >
             {btn}
           </Text>
         </TouchableOpacity>
       ))}
 
+      {/* Barra de seleção fixa abaixo do texto */}
       <Animated.View
         style={[
-          styles.animatedBtnContainer,
+          styles.selectionBar,
           { width: btnWidth },
-          animatedStyle, // Aplicando o estilo animado
+          animatedStyle,
         ]}
-      >
-        {buttons.map((btn: any) => (
-          <Animated.View
-            key={btn}
-            style={[
-              styles.animatedBtn,
-              { width: btnWidth },
-              animatedOppositeStyle, // Estilo animado inverso
-            ]}
-          >
-            <Text style={{ ...FONTS.font, ...FONTS.fontMedium, color: COLORS.primary }}>
-              {btn}
-            </Text>
-            <View
-              style={{
-                height: 3,
-                width: btnWidth,
-                backgroundColor: COLORS.primary,
-                position: "absolute",
-                bottom: 0,
-              }}
-            />
-          </Animated.View>
-        ))}
-      </Animated.View>
+      />
     </View>
   );
 };
@@ -104,20 +80,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  animatedBtnContainer: {
-    height: 45,
-    flexDirection: "row",
+  selectionBar: {
+    height: 3,
+    backgroundColor: COLORS.primary, // Cor amarela fixa na barra
     position: "absolute",
-    overflow: "hidden",
-  },
-  animatedBtn: {
-    height: 45,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  btnTextActive: {
-    color: "#fff",
-    fontWeight: "bold",
+    bottom: 0,
   },
 });
 

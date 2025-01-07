@@ -19,6 +19,8 @@ import Mask from '../../function/mask';
 import useCollaborator from '../../function/fetchCollaborator';
 import { useCollaboratorContext } from '../../context/CollaboratorContext';
 import DevelopmentModal from '../../components/Modal/Development';
+import FindOneJob from '../../hooks/get/job/findOne';
+
 const ArrivalData = [
     {
         id:"1",
