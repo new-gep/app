@@ -22,12 +22,15 @@ const Headers = () => {
                  />
                 <ScrollView>
                     <View style={{paddingVertical:30}}>
+                        
                         <View style={{marginBottom:25}}>
                             <HeaderStyle1 title={'Home'}/>
                         </View>
+
                         <View style={{marginBottom:25}}>
                             <HeaderStyle2 title={'Home'}/>
                         </View>
+
                         <View style={{marginBottom:25}}>
                             <View
                                 style={{
@@ -46,6 +49,7 @@ const Headers = () => {
                                 <HeaderStyle3/>
                             </View>
                         </View>
+
                         <View style={{marginBottom:25}}>
                             <Header  
                             leftIcon={'back'} 
@@ -53,6 +57,7 @@ const Headers = () => {
                             titleRight
                             />
                         </View>
+
                     </View>
                 </ScrollView>
             </View>

@@ -13,7 +13,10 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FindOneJob from "../../hooks/get/job/findOne";
 import UpdateJobDefault from "../../hooks/update/job/default";
-import useCollaborator from '../../function/fetchCollaborator';
+import useCollaborator from "../../function/fetchCollaborator";
+import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
+import Header from "../../layout/Header";
+
 const Home = () => {
   const { collaborator } = useCollaborator();
   const [cards, setCards] = useState([]);
@@ -40,43 +43,42 @@ const Home = () => {
         const cpfExists = response.job.candidates.some(
           (entry: { cpf: string }) => entry.cpf === collaborator.CPF
         );
-  
+
         if (cpfExists) {
           console.log("O colaborador já está cadastrado na vaga.");
           return; // Interrompe a execução se o CPF já existir
         } else {
           // Atualização do array de candidatos com o novo colaborador
-          candidates = [...response.job.candidates, candidate]; // Adiciona o novo candidato ao array existente
-          const props = {
-            candidates: JSON.stringify(candidates),
-          };
-  
-          // Atualiza a vaga com o array de candidatos atualizado
-          let formattedCandidates = [];
+          const formattedCandidates = await response.job.candidates.map(
+            (candidate) => {
+              // Desestrutura as propriedades desejadas e coleta o restante
+              const { cpf, step, status, verify, observation } = candidate;
 
-          candidates.forEach((candidate) => {
-            formattedCandidates.push({
-              cpf: candidate.cpf,
-              step: candidate.step || 0,
-              status: candidate.status || false,
-              verify: candidate.verify || false,
-              observation: candidate.observation || null,
-            });
-          });
-        
-          // Adiciona o novo colaborador ao array
+              // Retorna um novo objeto apenas com as propriedades desejadas
+              return {
+                cpf,
+                step: step || 0,
+                status: status || false,
+                verify: verify || false,
+                observation: observation || null,
+              };
+            }
+          );
           formattedCandidates.push(candidate);
-        
-          console.log(formattedCandidates);
-          return;
+
+          const props = {
+            candidates: JSON.stringify(formattedCandidates),
+          };
+
           const updateResponse = await UpdateJobDefault(id, props);
           console.log("Vaga atualizada com sucesso!", updateResponse);
+          return;
         }
-        candidates = [candidate]
       }
+
       const props = {
-        candidates: JSON.stringify(candidates)
-      } 
+        candidates: JSON.stringify([candidate]),
+      };
       const updateResponse = await UpdateJobDefault(id, props);
       console.log(updateResponse);
     }
@@ -128,8 +130,9 @@ const Home = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="py-4 bg-white shadow-md">
-        <Text className="text-center text-2xl text-black font-bold">Vagas</Text>
+      
+      <View>
+        <HeaderStyle1 title={"Home"} />
       </View>
 
       <View className="flex-1 justify-center bg-white">
