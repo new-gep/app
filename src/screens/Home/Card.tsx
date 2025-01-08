@@ -16,7 +16,7 @@ const { width } = Dimensions.get("window");
 const SWIPE_THRESHOLD = width * 0.6;
 const MAX_ROTATION_ANGLE = 8;
 
-const Card = ({ data, onSwipe, isTopCard, zIndex }) => {
+const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex }) => {
   const translateX = useSharedValue(0);
   const rotate = useSharedValue(0);
 
@@ -42,7 +42,11 @@ const Card = ({ data, onSwipe, isTopCard, zIndex }) => {
           direction * width * 1.5,
           { damping: 15, stiffness: 120 },
           () => {
-            runOnJS(onSwipe)(); // Remove o card após a animação
+            if (direction === 1) {
+              runOnJS(onSwipeRight)(data.id); // Swipe para a direita (Like)
+            } else {
+              runOnJS(onSwipeLeft)(); // Swipe para a esquerda (Dislike)
+            }
           }
         );
       } else {
@@ -128,7 +132,7 @@ const Card = ({ data, onSwipe, isTopCard, zIndex }) => {
               <Text className="text-white text-lg font-semibold">
                 {data.function}
               </Text>
-              {data.PCD === '1' ? (
+              {data.PCD === "1" ? (
                 <FontAwesome name="wheelchair-alt" size={24} color="white" />
               ) : null}
             </View>

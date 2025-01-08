@@ -1,28 +1,25 @@
 import config from '../../../../config.json';
 import axios from 'axios'
 type Props = {
-    cpf     ?: string;
-    sex     ?: string;
-    email   ?: string;
+    obligations?: string;
+    benefits?: string;
+    details ?: string;
+    image   ?: string;
+    function?: string;
+    contract?: string;
+    salary  ?: string;
     PCD     ?: string;
-    name    ?: string;
-    password?: string;
-    phone   ?: string;
-    marriage?: string;
-    children: { [key: string]: { name: string; birth: string } } | 0;
-    terms    ?: string;
-    zip_code ?:string;
-    street   ?:string;
-    district ?:string;
-    city     ?:string;
-    uf       ?:string;
-    complement?:string;
-    number   ?:string;
-    id_work  ?:string
- }
+    time    ?: any;
+    demission?:string;
+    candidates?:any
+    user_edit ?:string;
+    update_at ?:string;
+    CPF_collaborator?:string;
+    transportation_voucher?:string;
+}
 
-export default async function UpdateCollaborator(cpf:string, props: Props){
+export default async function UpdateJobDefault(id:string, props: Props){
 
-    const response = await axios.patch(`${config.API_URL}collaborator/${cpf}`, props)
+    const response = await axios.patch(`${config.API_URL}job/${id}`, props)
     return response.data
 }
