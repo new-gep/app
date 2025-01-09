@@ -20,6 +20,8 @@ import useCollaborator from '../../function/fetchCollaborator';
 import { useCollaboratorContext } from '../../context/CollaboratorContext';
 import DevelopmentModal from '../../components/Modal/Development';
 import FindOneJob from '../../hooks/get/job/findOne';
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
 
 const ArrivalData = [
     {
@@ -49,17 +51,12 @@ const ArrivalData = [
 
 ];
 
-type HomeScreenProps = StackScreenProps<RootStackParamList, 'Home'>
-export default function HomeWork({ navigation }: HomeScreenProps) {
+
+export default function HomeWork() {
     const SwiperData = [
+        
         {
             id:"1",
-            image:IMAGES.unique8,
-            title:"Vagas",
-            subtitle: "Encontre sua vaga"
-        },
-        {
-            id:"2",
             image:IMAGES.unique10,
             title:"Holerite",
             subtitle: "Assine e cheque seu pagamento"
@@ -72,16 +69,16 @@ export default function HomeWork({ navigation }: HomeScreenProps) {
         },
         {
             id:"3",
-            image:IMAGES.unique12,
+            image4:IMAGES.unique12,
             title:"Ponto",
-            subtitle: "Assine e cheque seu ponto"
+            sule: "Assine e cheque seu ponto"
         },
 
     ];
 
     const dispatch = useDispatch();
     const [isShowDevelopment,setIsShowDevelopment] = useState<boolean>(false)
-
+    const navigation = useNavigation<NavigationProp<any>>();
     const theme = useTheme();
     const { colors }: { colors: any; } = theme;
     const { collaborator, fetchCollaborator } = useCollaborator();

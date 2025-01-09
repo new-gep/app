@@ -8,6 +8,7 @@ interface propsCollaborator {
     CPF: string;
     email: string;
     phone: string;
+    id_work: string;
     terms?: string | null;
     sex?: string | null;
     marriage?: string | null;
