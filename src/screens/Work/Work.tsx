@@ -25,14 +25,11 @@ const Work = ({ navigation }: WishlistScreenProps) => {
 
   const wishList = useSelector((state: any) => state.wishList.wishList);
   const dispatch = useDispatch();
-
   const theme = useTheme();
   const { colors }: { colors: any } = theme;
-
   const addItemToCart = (data: any) => {
     dispatch(addToCart(data));
   };
-
   const removeItemFromWishList = (data: any) => {
     dispatch(removeFromwishList(data));
   };

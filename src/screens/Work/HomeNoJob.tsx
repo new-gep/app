@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   StyleSheet,
   BackHandler,
 } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
 import { IMAGES } from "../../constants/Images";
 import { COLORS, FONTS } from "../../constants/theme";
@@ -93,41 +93,47 @@ export default function HomeNoWork() {
   const { colors }: { colors: any } = theme;
   const { collaborator, fetchCollaborator } = useCollaborator();
   const { validateCollaborator, missingData } = useCollaboratorContext();
+
+
   const [jobConected, setJobConected ] = useState<any>(null);
+  const [processAdmission, setProcessAdmission ] = useState<boolean>(false);
 
   const closeDevelopment = () => {
     setIsShowDevelopment(false);
-  };
+  }
 
-  // useEffect(() => {
-  //     const unsubscribe = navigation.addListener('focus', () => {
-  //         fetchCollaborator()
-  //         validateCollaborator()
-  //         const backHandlerSubscription = BackHandler.addEventListener('hardwareBackPress', () => {
-  //             return true;
-  //         });
-  //         return () => backHandlerSubscription.remove();
-  //     });
-  //     return unsubscribe;
-  // },[])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      if (collaborator) {
-          const response = await FindAplicateInJob(collaborator.CPF);
-          
-          if (response.status !== 200) {
-            console.error("Erro ao buscar os cards:", response.message);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        setIsLoading(true);
+        if (collaborator) {
+          try {
+            const response = await FindAplicateInJob(collaborator.CPF);
+            console.log(response.processAdmission)
+            if (response.status !== 200) {
+              console.error("Erro ao buscar os cards:", response.message);
+              setIsLoading(false);
+              return;
+            }
+            setProcessAdmission(response.processAdmission)
+            setJobConected(response.jobs);
+          } catch (error) {
+            console.error("Erro ao buscar os cards:", error);
+          } finally {
             setIsLoading(false);
-            return;
           }
-          jobConected(response.job);
-          setIsLoading(false);
         }
-      }
-    fetchData();
-  }, [collaborator]);
+      };
+  
+      fetchData();
+  
+      // Opcionalmente, se necessário, um cleanup pode ser adicionado
+      return () => {
+        setJobConected([]); // Exemplo de limpeza
+      };
+    }, [collaborator])
+  );
 
   return (
     <View style={{ backgroundColor: colors.card, flex: 1 }}>
@@ -166,11 +172,11 @@ export default function HomeNoWork() {
       </View>
       <ScrollView>
         {
-            jobConected?
+            jobConected ?
             jobConected.map((job)=>{
-                return 
+                return <CardHistory key={job.id} job = {job}/>
             } )  
-            : <Text>Cem vagas registradas</Text>
+            : <Text>Sem vagas registradas</Text>
         }
       </ScrollView>
     </View>
