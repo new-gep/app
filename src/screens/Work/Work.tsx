@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useTheme } from "@react-navigation/native";
-import { View, ScrollView, Image, Text } from "react-native";
+import {
+  NavigationProp,
+  useNavigation,
+  useTheme,
+} from "@react-navigation/native";
+import { View, ScrollView, Image, Text, BackHandler } from "react-native";
 import Header from "../../layout/Header";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
 import { IMAGES } from "../../constants/Images";
@@ -16,13 +20,17 @@ import useCollaborator from "../../function/fetchCollaborator";
 import FindCollaborator from "../../hooks/findOne/collaborator";
 import HomeWork from "./Home";
 import HomeNoWork from "./HomeNoJob";
+import { useCollaboratorContext } from "../../context/CollaboratorContext";
+//import HomeAdmission from "./HomeAdmission";
 
 type WishlistScreenProps = StackScreenProps<RootStackParamList, "Work">;
 
-const Work = ({ navigation }: WishlistScreenProps) => {
-  const { collaborator, fetchCollaborator } = useCollaborator();
+const Work = () => {
+  const [titleWork, setTitleWork] = useState<string>('');
   const [hasWork, setHaswork] = useState<boolean>(false);
-
+  const { collaborator, fetchCollaborator } = useCollaborator();
+  const { validateCollaborator, missingData } = useCollaboratorContext();
+  const navigation = useNavigation<NavigationProp<any>>();
   const wishList = useSelector((state: any) => state.wishList.wishList);
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -33,6 +41,21 @@ const Work = ({ navigation }: WishlistScreenProps) => {
   const removeItemFromWishList = (data: any) => {
     dispatch(removeFromwishList(data));
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchCollaborator();
+      validateCollaborator();
+      const backHandlerSubscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        () => {
+          return true;
+        }
+      );
+      return () => backHandlerSubscription.remove();
+    });
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,7 +74,7 @@ const Work = ({ navigation }: WishlistScreenProps) => {
   return (
     <View style={{ backgroundColor: colors.background, flex: 1 }}>
       <Header
-        title={hasWork ? "Meu Trabalho" : "Vagas aplicadas"}
+        title={titleWork}
         leftIcon={hasWork ? "back" : "back"} // Exemplo de alternar o ícone esquerdo
         rightIcon1={hasWork ? "search" : "search"} // Exemplo de alternar o ícone direito
         // titleLeft, se precisar
@@ -64,7 +87,7 @@ const Work = ({ navigation }: WishlistScreenProps) => {
           justifyContent: wishList.length === 0 ? "center" : "flex-start",
         }}
       >
-        {hasWork ? <HomeWork /> : <HomeNoWork />}
+        {hasWork ? <HomeWork setTitleWork={setTitleWork}/> : <HomeNoWork setTitleWork={setTitleWork}/>}
       </ScrollView>
     </View>
   );

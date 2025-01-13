@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Modal,
+  BackHandler,
 } from "react-native";
 import Card from "./Card";
 import GetAllJob from "../../hooks/get/job/all";
@@ -16,14 +17,20 @@ import UpdateJobDefault from "../../hooks/update/job/default";
 import useCollaborator from "../../function/fetchCollaborator";
 import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
 import Header from "../../layout/Header";
+import { useCollaboratorContext } from "../../context/CollaboratorContext";
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
 
 const Home = () => {
-  const { collaborator } = useCollaborator();
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [previousCards, setPreviousCards] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const { collaborator, fetchCollaborator } = useCollaborator();
+  const { validateCollaborator, missingData } = useCollaboratorContext();
+  const navigation = useNavigation<NavigationProp<any>>();
+
   const handleSwipeRight = async (id) => {
     let response = await FindOneJob(id);
     setPreviousCards((prev) => [...prev, cards[0]]);
@@ -128,9 +135,23 @@ const Home = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchCollaborator();
+      validateCollaborator();
+      const backHandlerSubscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        () => {
+          return true;
+        }
+      );
+      return () => backHandlerSubscription.remove();
+    });
+    return unsubscribe;
+  }, []);
+
   return (
     <SafeAreaView className="flex-1 bg-white">
-      
       <View>
         <HeaderStyle1 title={"Home"} />
       </View>
@@ -220,4 +241,5 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Home
+

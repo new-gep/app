@@ -33,6 +33,8 @@ import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp } from "@react-navigation/native";
 import FindAplicateInJob from "../../hooks/get/job/findAplicateJob";
 import CardHistory from "./CardHistoryJobCadastrate";
+import fetchCollaborator from "../../function/fetchCollaborator";
+import HomeAdmission from "./HomeAdmission";
 
 const ArrivalData = [
   {
@@ -61,7 +63,8 @@ const ArrivalData = [
   },
 ];
 
-export default function HomeNoWork() {
+export default function HomeNoWork({setTitleWork}) {
+  const navigation = useNavigation<NavigationProp<any>>();
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [previousCards, setPreviousCards] = useState([]);
@@ -88,98 +91,103 @@ export default function HomeNoWork() {
 
   const dispatch = useDispatch();
   const [isShowDevelopment, setIsShowDevelopment] = useState<boolean>(false);
-  const navigation = useNavigation<NavigationProp<any>>();
   const theme = useTheme();
   const { colors }: { colors: any } = theme;
   const { collaborator, fetchCollaborator } = useCollaborator();
   const { validateCollaborator, missingData } = useCollaboratorContext();
 
-
-  const [jobConected, setJobConected ] = useState<any>(null);
-  const [processAdmission, setProcessAdmission ] = useState<boolean>(false);
+  const [jobConected, setJobConected] = useState<any>(null);
+  const [processAdmission, setProcessAdmission] = useState<boolean>(false);
 
   const closeDevelopment = () => {
     setIsShowDevelopment(false);
-  }
-
+  };
 
   useFocusEffect(
     useCallback(() => {
+      let isActive = true;
+
       const fetchData = async () => {
         setIsLoading(true);
         if (collaborator) {
           try {
             const response = await FindAplicateInJob(collaborator.CPF);
-            console.log(response.processAdmission)
-            if (response.status !== 200) {
-              console.error("Erro ao buscar os cards:", response.message);
-              setIsLoading(false);
-              return;
+
+            if (isActive) {
+              if (response.status !== 200) {
+                console.error("Erro ao buscar os cards:", response.message);
+                return;
+              }
+              setProcessAdmission(response.processAdmission);
+              setJobConected(response.jobs);
+              if(response.processAdmission){
+                setTitleWork('Processo admissional')
+              }else{
+                setTitleWork('Vagas aplicadas')
+              }
             }
-            setProcessAdmission(response.processAdmission)
-            setJobConected(response.jobs);
           } catch (error) {
             console.error("Erro ao buscar os cards:", error);
           } finally {
-            setIsLoading(false);
+            if (isActive) {
+              setIsLoading(false);
+            }
           }
         }
       };
-  
+
       fetchData();
-  
-      // Opcionalmente, se necessário, um cleanup pode ser adicionado
+
       return () => {
-        setJobConected([]); // Exemplo de limpeza
+        isActive = false;
       };
     }, [collaborator])
   );
 
   return (
     <View style={{ backgroundColor: colors.card, flex: 1 }}>
-      <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment} />
-      <View></View>
-      <View style={{}}>
-        <View
-          style={[
-            GlobalStyleSheet.container,
-            { paddingHorizontal: 30, padding: 0, paddingTop: 30 },
-          ]}
-        >
-          <View style={[GlobalStyleSheet.flex]}>
-            <View>
-              <Text
-                style={{
-                  ...FONTS.fontRegular,
-                  fontSize: 14,
-                  color: colors.title,
-                }}
-              >
-                Bem-Vindo(a) !
-              </Text>
-              <Text
-                style={{
-                  ...FONTS.fontSemiBold,
-                  fontSize: 24,
-                  color: colors.title,
-                }}
-              >
-                {collaborator && Mask("firstName", collaborator.name)}
-              </Text>
-            </View>
-          </View>
+  {!processAdmission ? (
+    <>
+      <DevelopmentModal
+        close={closeDevelopment}
+        visible={isShowDevelopment}
+      />
+      <View style={{ paddingHorizontal: 30, padding: 0, paddingTop: 30 }}>
+        <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+          <Text
+            style={{
+              ...FONTS.fontRegular,
+              fontSize: 14,
+              color: colors.title,
+            }}
+          >
+            Bem-Vindo(a)!
+          </Text>
+          <Text
+            style={{
+              ...FONTS.fontSemiBold,
+              fontSize: 24,
+              color: colors.title,
+            }}
+          >
+            {collaborator && Mask("firstName", collaborator.name)}
+          </Text>
         </View>
       </View>
-      <ScrollView>
-        {
-            jobConected ?
-            jobConected.map((job)=>{
-                return <CardHistory key={job.id} job = {job}/>
-            } )  
-            : <Text>Sem vagas registradas</Text>
-        }
+      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+        {jobConected && jobConected.length > 0 ? (
+          jobConected.map((job) => <CardHistory key={job.id} job={job} />)
+        ) : (
+          <Text style={{ textAlign: "center", marginTop: 20 }}>
+            Sem vagas registradas
+          </Text>
+        )}
       </ScrollView>
-    </View>
+    </>
+  ) : (
+      <HomeAdmission  jobConected={jobConected}/>
+  )}
+</View>
   );
 }
 
@@ -278,3 +286,6 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "10deg" }],
   },
 });
+function validateCollaborator() {
+  throw new Error("Function not implemented.");
+}

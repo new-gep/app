@@ -52,7 +52,7 @@ const ArrivalData = [
 ];
 
 
-export default function HomeWork() {
+export default function HomeWork({setTitleWork}) {
     const SwiperData = [
         
         {
@@ -87,19 +87,6 @@ export default function HomeWork() {
     const closeDevelopment = () => {
         setIsShowDevelopment(false)
     }
-
-
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            fetchCollaborator()
-            validateCollaborator()
-            const backHandlerSubscription = BackHandler.addEventListener('hardwareBackPress', () => {
-                return true;
-            });
-            return () => backHandlerSubscription.remove();
-        });
-        return unsubscribe;
-    },[])
 
     
     return (

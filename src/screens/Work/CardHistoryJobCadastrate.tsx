@@ -5,15 +5,7 @@ import { AbstractPicture } from "../../constants/abstract";
 export default function CardHistory({ job }) {
   //     nome variavel    seta na variavel                 tipagem       inicia como null
   const [candidateStatus, setCandidateStatus] = useState<any | null>("start");
-  useEffect(() => {
-    const candidate = JSON.parse(job.candidates);
-    setCandidateStatus(candidate[0]);
 
-    // console.log("Conteúdo de job.candidates[0]:", job.candidates[0]); // Diagnóstico
-  }, []);
-
-
-const [stepStatus, setStepStatus] = useState<any | null>("start");
   useEffect(() => {
     const candidate = JSON.parse(job.candidates);
     setCandidateStatus(candidate[0]);

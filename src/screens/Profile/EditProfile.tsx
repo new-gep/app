@@ -95,6 +95,7 @@ const EditProfile = () => {
     
     const convertToBase64 = async (fileUri:any) => {
         try {
+            console.log(fileUri)
           // Lê o arquivo e converte para Base64
           const base64 = await FileSystem.readAsStringAsync(fileUri, {
             encoding: FileSystem.EncodingType.Base64,
@@ -173,7 +174,12 @@ const EditProfile = () => {
     };
 
     const handleSendPicture = async () => {
-        const response = await GetPathPicture('camera');
+        let response = await GetPathPicture('camera');
+        console.log(response)
+        if(response == 'cancel'){
+            alert('Permissões de câmera permanentemente negadas. Altere as permissões nas configurações do aplicativo.');
+            return
+        }
         convertToBase64(response);
         if(typeof response === 'string'){
             const fileUpload = await UploadFile(response, 'Picture', 'complet', collaborator.CPF);
@@ -212,6 +218,7 @@ const EditProfile = () => {
     const getPicture = async () => {
         try {
           const response = await FindBucketCollaborator(collaborator.CPF, 'Picture')
+          console.log(response)
           if(response.status == 200){
             setPath(response.path)
           }
