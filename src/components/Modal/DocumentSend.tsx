@@ -15,6 +15,7 @@ import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UpdatePicture from "../../hooks/update/picture";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
+import JobPicture from "../../hooks/upload/job";
 
 
 type PropsCreateAvalidPicture = {
@@ -37,10 +38,11 @@ type Props = {
     setTypeDocument:any;
     setSendPicture:any;
     setPath:any;
+    jobId:any;
 };
 
 
-const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close }: Props) => {
+const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close }: Props) => {
     const navigation = useNavigation<any>();
     const [front,setFront] = useState<any | null>(null)
     const [back ,setBack]  = useState<any | null>(null)
@@ -133,36 +135,58 @@ const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture
                     doc = `Birth_Certificate_${children}`;
                     documentName = `Birth_Certificate_${children}`;
                     break;
+                case documentName.includes('Exame Admissional'):
+                        documentName = 'medical'
+                        const propsDocument = {
+                            file:path,
+                            name: "medical",
+                            id  :jobId,
+                            signature:false
+                        }
+                        const response = await JobPicture(propsDocument);
+                        if (response.status !== 200) {
+                            setNoRepeat(true);
+                            setActiveSheet('danger');
+                            setMessageSheet(`Erro interno`);
+                            Sheet();
+                            setFront(null);
+                            setBack(null);
+                            setLoad(false)
+                            throw new Error('Erro interno no upload');
+                        };
+                    break;
                 default:
                     console.log(`Documento não identificado: ${documentName}`);
                     return;
             };
-            
-            const response = await UploadFile(path, documentName, doc, collaborator.CPF);
-            
-            if (response.status === 400) {
-                setActiveSheet('danger');
-                setMessageSheet(`Documento inválido`);
-                Sheet();
-                setFront(null);
-                setBack(null);
-                setLoad(false)
-                throw new Error('Documento inválido');
+
+            if(documentName != 'medical'){
+                const response = await UploadFile(path, documentName, doc, collaborator.CPF);
+                if (response.status === 400) {
+                    setActiveSheet('danger');
+                    setMessageSheet(`Documento inválido`);
+                    Sheet();
+                    setFront(null);
+                    setBack(null);
+                    setLoad(false)
+                    throw new Error('Documento inválido');
+                }
+                else if (response.status !== 200) {
+                    setNoRepeat(true);
+                    setActiveSheet('danger');
+                    setMessageSheet(`Erro interno`);
+                    Sheet();
+                    setFront(null);
+                    setBack(null);
+                    setLoad(false)
+                    throw new Error('Erro interno no upload');
+                };
             }
-            else if (response.status !== 200) {
-                setNoRepeat(true);
-                setActiveSheet('danger');
-                setMessageSheet(`Erro interno`);
-                Sheet();
-                setFront(null);
-                setBack(null);
-                setLoad(false)
-                throw new Error('Erro interno no upload');
-            };
+            
 
             if(statusDocument == 'reproved'){
                 const pictureUpdateParams: PropsUpdateAvalidPicture = {
-                    picture: documentName,
+                    picture: documentName == 'medical' ? 'Medical_Examination' : documentName,
                     status: 'pending',
                 };
                 const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
@@ -199,7 +223,7 @@ const DocumentSend = ({statusDocument ,setSendPicture , documentName, twoPicture
                 }
             }else{
                 const pictureParams: PropsCreateAvalidPicture = {
-                    picture: documentName,
+                    picture: documentName == 'medical' ? 'Medical_Examination' : documentName,
                     status: 'pending',
                     cpf: collaborator.CPF,
                 };

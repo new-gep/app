@@ -11,16 +11,14 @@ import FindPicture from "../../hooks/findOne/picture";
 
 type Props = {
   jobConected: any;
-};
-type PicturesProps = {
-  CNH: { status: string } | null;
-  Voter_Registration: { status: string } | null;
-  [key: string]: { status: string | null } | null;
+  CPF: any;
 };
 
-const JobAdmissionScreen: React.FC<Props> = (jobConected) => {
+
+const JobAdmissionScreen: React.FC<Props> = ({jobConected, CPF}) => {
+
   useEffect(() => {
-    console.log(jobConected);
+    //console.log("CPF usuadhIFHS",CPF);
   }, []);
   
 
@@ -51,20 +49,7 @@ const JobAdmissionScreen: React.FC<Props> = (jobConected) => {
               </View>
               <View className={`p-3`}>
                 <View className={""}>
-                  <Timeline />
-                </View>
-              </View>
-
-              <View style={{ marginTop: 50 }}>
-                <View style={{ marginBottom: 30 }}>
-                  <Cardstyle4
-                    documentName={"mediacalExamination"}
-                    sendDocument={true}
-                    typeDocument={null}
-                    statusDocument={null}
-                    twoPicture={false}
-                    path={null}
-                  />
+                  <Timeline CPF={CPF} jobConected={jobConected} />
                 </View>
               </View>
             </ScrollView>

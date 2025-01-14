@@ -24,6 +24,7 @@ type Props = {
     statusDocument:string;
     typeDocument: any;
     path:any
+    jobId:number;
 };
 
 const Cardstyle4 = ({
@@ -32,7 +33,8 @@ const Cardstyle4 = ({
     typeDocument,
     twoPicture,
     statusDocument,
-    path
+    path,
+    jobId
 }: Props) => {
     const theme = useTheme();
     const { colors }: { colors: any } = theme;
@@ -103,7 +105,7 @@ const Cardstyle4 = ({
         <View
             style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}
         >
-            <DocumentSend statusDocument={statusDocument} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
+            <DocumentSend statusDocument={statusDocument} jobId={jobId} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
             <DocumentVisible documentName={documentName}  path={pathPictureSide} typeDocument={typePicture} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
             <View style={{ width: '40%', alignItems: 'center' }}>
                 <TouchableOpacity onPress={handlePress}>
@@ -212,7 +214,7 @@ const Cardstyle4 = ({
             <View
                 style={{
                     width: '60%',
-                    paddingHorizontal: 20,
+                    paddingHorizontal: 10,
                 }}
             >
                 <View>

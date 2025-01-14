@@ -184,8 +184,8 @@ export default function HomeNoWork({setTitleWork}) {
         )}
       </ScrollView>
     </>
-  ) : (
-      <HomeAdmission  jobConected={jobConected}/>
+  ) : collaborator &&(
+      <HomeAdmission  jobConected={jobConected} CPF={collaborator.CPF}/>
   )}
 </View>
   );

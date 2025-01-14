@@ -117,6 +117,7 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                     <View className={`w-full h-full`}>
                                             <Pdf
                                                 trustAllCerts={false}
+                                                //@ts-ignore
                                                 enableDoubleTapZoom={true}
                                                 source={{ uri: pathOne, cache: true }}
                                                 onLoadComplete={(numberOfPages,filePath) => {
