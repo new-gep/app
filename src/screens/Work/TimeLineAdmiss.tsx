@@ -1,30 +1,41 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  View,
-  Text,
-  Animated,
-  StyleSheet,
-  ActivityIndicator,
-  Image,
-} from "react-native";
+import { View, Text, Animated, ActivityIndicator, Dimensions } from "react-native";
 import { COLORS, FONTS } from "../../constants/theme";
 import AdmissionalExam from "./StepAdmission/admissionalExam";
-import JobAdmissionScreen from "./HomeAdmission";
-import Signature from "./StepAdmission/admissionalContract";
+import AdmissionalContract from "./StepAdmission/admissionalContract";
+import ButtonOutline from "../../components/Button/ButtonOutline"; // Ajuste o caminho do botão
 
 type Props = {
-    jobConected: any;
-    CPF: any;
-}
+  jobConected: any;
+  CPF: any;
+};
 
-const Timeline = ({jobConected, CPF}: Props) => {
+const Timeline = ({ jobConected, CPF }: Props) => {
   const steps = ["Exames", "Documentação", "Assinatura"];
   const [currentStep, setCurrentStep] = useState(null); // Estado do passo atual
   const [isLoading, setIsLoading] = useState(true); // Controle de carregamento
   const lineAnim = useRef(new Animated.Value(0)).current;
-  const [signatureDataUrl, setSignatureDataUrl] = useState<any>(null);
 
-  // Função para buscar o passo atual do banco de dados
+  const [screenWidth, setScreenWidth] = useState(Dimensions.get("window").width);
+  const [screenHeight, setScreenHeight] = useState(Dimensions.get("window").height);
+
+  useEffect(() => {
+    // Função para atualizar dimensões
+    const handleOrientationChange = () => {
+      const { width, height } = Dimensions.get("window");
+      setScreenWidth(width);
+      setScreenHeight(height);
+    };
+
+    // Adiciona o listener para mudanças de orientação
+    const subscription = Dimensions.addEventListener("change", handleOrientationChange);
+
+    return () => {
+      // Remove o listener corretamente
+      subscription?.remove();
+    };
+  }, []);
+
   const fetchCurrentStep = async () => {
     try {
       setIsLoading(true);
@@ -35,15 +46,13 @@ const Timeline = ({jobConected, CPF}: Props) => {
     }
   };
 
-  // Executa ao montar o componente e atualiza quando o `currentStep` mudar
   useEffect(() => {
     fetchCurrentStep(); // Busca o passo ao carregar a tela
     if (jobConected) {
-      //console.log(JSON.parse(jobConected[0].candidates)[0].step) 
-      setCurrentStep(JSON.parse(jobConected[0].candidates)[0].step);     
+      setCurrentStep(JSON.parse(jobConected[0].candidates)[0].step);
     }
     Animated.timing(lineAnim, {
-      toValue: (currentStep) / (steps.length - 1), // Progresso baseado no passo atual
+      toValue: currentStep / (steps.length - 1), // Progresso baseado no passo atual
       duration: 500,
       useNativeDriver: false,
     }).start();
@@ -53,20 +62,13 @@ const Timeline = ({jobConected, CPF}: Props) => {
     return (
       <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" color="#505663" />
-        <Text className="mt-4 text-lg text-gray-500">
-          Carregando informações...
-        </Text>
+        <Text className="text-lg">Carregando informações...</Text>
       </View>
     );
   }
 
-  function handleSaveSignature(signatureDataUrl: string): void {
-    console.log(signatureDataUrl)
-    throw new Error("Function not implemented.");
-  }
-
   return (
-    <View className="">
+    <View className="h-full">
       {/* Timeline */}
       <View className="flex-row justify-between items-center">
         {steps.map((step, index) => (
@@ -90,40 +92,22 @@ const Timeline = ({jobConected, CPF}: Props) => {
             >
               {step}
             </Text>
-
-            {/* Linha de conexão */}
-            {index < steps.length - 1 && (
-              <View className="absolute left-10 top-5 h-1 w-full bg-gray-300">
-                <Animated.View
-                  style={[
-                    styles.animatedLine,
-                    {
-                      width: lineAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ["0%", "100%"],
-                      }),
-                    },
-                  ]}
-                />
-              </View>
-            )}
           </View>
         ))}
       </View>
 
-      {/* Mensagem com base no passo atual */}
-      <View className=" bg-white rounded-lg shadow-md">
+      {/* Conteúdo baseado no passo atual */}
+      <View className="flex justify-center items-center rounded-lg shadow-md w-full h-full">
         {currentStep === 1 && (
-          
-            <AdmissionalExam CPF={CPF} jobConected={jobConected}/>
+          <AdmissionalExam CPF={CPF} jobConected={jobConected} />
         )}
         {currentStep === 2 && (
           <View
-            className={`mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-between`}
+            className="mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-center"
           >
-            <View className={`w-1/2 flex-1  p-4"`}>
+            <View className="w-1/2 flex-1 p-4">
               <Text
-                className={`absolute w-44`}
+                className="absolute w-44"
                 style={{
                   ...FONTS.fontSemiBold,
                   fontSize: 24,
@@ -133,37 +117,21 @@ const Timeline = ({jobConected, CPF}: Props) => {
               >
                 Em espera
               </Text>
-              <Text className={`mt-2`} style={{ ...FONTS.font, fontSize: 14 }}>
-              Estamos preparando seu kit admissional. Por favor, aguarde enquanto finalizamos os últimos detalhes. Retornaremos em breve.
+              <Text className="mt-2" style={{ ...FONTS.font, fontSize: 14 }}>
+                Estamos preparando seu kit admissional. Por favor, aguarde
+                enquanto finalizamos os últimos detalhes. Retornaremos em breve.
               </Text>
             </View>
           </View>
         )}
         {currentStep === 3 && (
-          <View>
-            <Signature />
-          {signatureDataUrl ? (
-            <View >
-              <Image
-                source={{ uri: signatureDataUrl }}
-              />
-                
-            </View>
-          ) : (
-            <Text >Assinatura ainda não salva.</Text>
+          <>
+          <AdmissionalContract jobConected={jobConected} CPF={CPF} />
+          </>
           )}
-        </View>
-        )}
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  animatedLine: {
-    height: 2,
-    backgroundColor: "#2563eb",
-  },
-});
 
 export default Timeline;

@@ -1,10 +1,9 @@
 import config from '../../../../config.json';
 import axios from "axios";
 
-const GetAllJob = async () => {
-    console.log(`${config.API_URL}job`)
+const CheckDocumentAdmissional = async (id: any) => {
     try {
-        const response = await axios.get(`${config.API_URL}job`);
+        const response = await axios.get(`${config.API_URL}job/admissional/check/${id}`);
         return response.data;
     } catch (error) {
         console.error("Erro ao fazer a requisição:", error);
@@ -15,4 +14,4 @@ const GetAllJob = async () => {
     }
 }
 
-export default GetAllJob;
+export default CheckDocumentAdmissional;

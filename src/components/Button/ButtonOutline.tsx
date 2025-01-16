@@ -11,6 +11,7 @@ type Props = {
     size ?: any;
     badge ?: any;
     text ?: any;
+    disabled ?: boolean;
 }
 
 const ButtonOutline = ({title,color,onPress,style,size,badge,text} : Props) => {

@@ -39,16 +39,16 @@ const JobAdmissionScreen: React.FC<Props> = ({jobConected, CPF}) => {
         </View>
       ) : (
         <View style={{ backgroundColor: COLORS.background, flex: 1 }}>
-          <View>
+          <View className={'h-full'}>
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
+              contentContainerStyle={{ flexGrow: 1}}
             >
               <View className={`px-5`}>
                 <CheckCadasterCollaboratorDocument />
               </View>
-              <View className={`p-3`}>
-                <View className={""}>
+              <View className={`p-3 h-full`}>
+                <View className={"h-full"}>
                   <Timeline CPF={CPF} jobConected={jobConected} />
                 </View>
               </View>
