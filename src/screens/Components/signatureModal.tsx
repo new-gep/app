@@ -12,19 +12,17 @@ const DrawingModal = ({ visible, onClose, signature, setSignature }) => {
   const [screenHeight, setScreenHeight] = useState(Dimensions.get('window').height);
 
   useEffect(() => {
-    
     const handleOrientationChange = () => {
       const { width, height } = Dimensions.get('window');
       setScreenWidth(width);
       setScreenHeight(height);
     };
-
-    // Adiciona um listener para detectar mudanças na orientação
-    Dimensions.addEventListener('change', handleOrientationChange);
-
+  
+    // Adiciona um listener para mudanças de dimensão
+    const subscription = Dimensions.addEventListener('change', handleOrientationChange);
+  
     // Cleanup: Remove o listener ao desmontar o componente
-    //@ts-ignore
-    return () => Dimensions.removeEventListener('change', handleOrientationChange);
+    return () => subscription?.remove();
   }, []);
 
   const panResponder = PanResponder.create({
@@ -50,17 +48,11 @@ const DrawingModal = ({ visible, onClose, signature, setSignature }) => {
 
   const saveCanvas = () => {
     if (paths.length === 0) {
-      Alert.alert('Atenção', 'Você precisa assinar antes de salvar.');
+      Alert.alert("Atenção", "Você precisa assinar antes de salvar.");
       return;
     }
-
+  
     try {
-      const svgElement = svgRef.current;
-      if (!svgElement) {
-        Alert.alert('Erro', 'Não foi possível capturar a assinatura.');
-        return;
-      }
-
       const svgContent = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${screenWidth}" height="${screenHeight}" viewBox="0 0 ${screenWidth} ${screenHeight}">
           ${paths
@@ -69,19 +61,34 @@ const DrawingModal = ({ visible, onClose, signature, setSignature }) => {
                 `<path d="${path}" stroke="black" stroke-width="2" fill="none" />`
             )
             .join('')}
-          ${currentPath ? `<path d="${currentPath}" stroke="black" stroke-width="2" fill="none" />` : ''}
         </svg>
       `;
-
+  
+      // Converte o conteúdo SVG em base64
       const base64SVG = `data:image/svg+xml;base64,${btoa(svgContent)}`;
-      console.log('Base64 SVG:', base64SVG); // Log para ver o conteúdo
-      Alert.alert('Desenho salvo!', 'A assinatura foi salva com sucesso.');
-      onClose(); // Fecha o modal após salvar
+  
+      // Verifica se está gerando o base64 corretamente
+      console.log("Base64 da assinatura gerado:", base64SVG);
+  
+      // Atualiza o estado do componente pai
+      if (setSignature) {
+        setSignature(base64SVG); // Envia o base64 para o pai
+      } else {
+        console.warn("setSignature não está definido.");
+      }
+  
+      Alert.alert("Desenho salvo!", "A assinatura foi salva com sucesso.");
+      onClose(); // Fecha o modal
     } catch (error) {
       console.error(error);
-      Alert.alert('Erro', 'Não foi possível salvar a assinatura.');
+      Alert.alert("Erro", "Não foi possível salvar a assinatura.");
     }
   };
+  
+  
+  
+  
+  
 
   return (
     <Modal visible={visible} animationType="slide" transparent={false}>

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 import CheckDocumentAdmissional from "../../../hooks/get/job/checkSignaure";
+import AdmissionalCard from "./AdmissionalCard";
+import FindFile from "../../../hooks/get/job/findDocsAdmission";
+import DocumentVisible from "../../../components/Modal/DocumentVisible";
 
 type Props = {
   jobConected: any;
@@ -8,27 +11,69 @@ type Props = {
 };
 
 const AdmissionalContract = ({ jobConected, CPF }: Props) => {
-  const [data, setData] = useState<any>(null);
-  const [obligation, setObligation] = useState({});
-  const [dynamic, setDynamic] = useState({});
+  const [data, setData] = useState({
+    medical: false,
+    registration: false,
+    experience: false,
+    extension: false,
+    compensation: false,
+    voucherDocument: false,
+    signature: false,
+  });
+
+  const [obligation, setObligation] = useState(null);
+  const [dynamics, setDynamic] = useState(null);
+
+  const [files, setFiles] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await CheckDocumentAdmissional(jobConected.id);
+      if (jobConected) {
+        const files = {};
+        try {
+          const response = await CheckDocumentAdmissional(jobConected.id);
 
-        if (response.status === 200) {
-          console.log(response.date.obligation);
-          console.log(response.date.dynamic);
+          const obligations = response.date.obligation;
+          const dynamics = response.date.dynamic.document;
+          setObligation(obligations);
+          setDynamic(dynamics);
 
-          // Atualiza os estados com os dados recebidos
-          setObligation(response.date.obligation);
-          setDynamic(response.date.dynamic);
-        } else {
-          console.warn('Algo deu errado:', response.status, response.statusText);
+          if (response.status === 200) {
+            setData({
+              medical: response.date.medical,
+              registration: response.date.registration,
+              experience: response.date.experience,
+              extension: response.date.extension,
+              compensation: response.date.compensation,
+              voucherDocument: response.date.voucherDocument,
+              signature: response.date.signature,
+            });
+
+            // console.log(jobConected[0].id)
+
+            const files = {};
+
+            await Promise.all(
+              Object.entries(obligations).map(async ([key, value], index) => {
+                //console.log(`Index: ${index}, Obligation: ${key}, Status: ${value}`);
+                const response = await FindFile(jobConected[0].id, key, "0");
+                //console.log(response)
+                files[key] = response; // Salva a resposta no objeto `files`
+              })
+            );
+
+            //console.log("Arquivos encontrados:", files);
+            return files;
+          } else {
+            console.warn(
+              "Algo deu errado:",
+              response.status,
+              response.statusText
+            );
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados:", error);
         }
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error);
       }
     };
 
@@ -36,30 +81,26 @@ const AdmissionalContract = ({ jobConected, CPF }: Props) => {
   }, [jobConected, CPF]);
 
   return (
-    <ScrollView className="p-4 bg-gray-100">
-      <View className="mb-6">
-        <Text className="text-xl font-bold text-gray-800 mb-4">Obligation</Text>
-        {Object.entries(obligation).map(([key, value]) => (
-          <View key={key} className="flex-row justify-between py-2 px-4 bg-white rounded-md mb-2 shadow-sm">
-            <Text className="text-gray-700 font-medium">{key}</Text>
-            <Text className="text-gray-500">{value ? 'Yes' : 'No'}</Text>
-          </View>
-        ))}
-      </View>
+    <ScrollView className="p-4 w-full bg-gray-100">
+      <AdmissionalCard title="Exame admissional" status={data.medical} />
+      <AdmissionalCard title="Registro" status={data.registration} />
+      <AdmissionalCard title="Experiencia" status={data.experience} />
+      <AdmissionalCard title="Extensão" status={data.extension} />
+      <AdmissionalCard title="Compensação" status={data.compensation} />
+      <AdmissionalCard
+        title="Carteira de trabalho"
+        status={data.voucherDocument}
+      />
 
-      <View>
-        <Text className="text-xl font-bold text-gray-800 mb-4">Dynamic</Text>
-        {Object.entries(dynamic).map(([key, value]) => (
-          <View key={key} className="flex-row justify-between py-2 px-4 bg-white rounded-md mb-2 shadow-sm">
-            <Text className="text-gray-700 font-medium">{key}</Text>
-            <Text className="text-gray-500">{JSON.stringify(value)}</Text>
-          </View>
-        ))}
-      </View>
+      {obligation && typeof obligation === "object" &&
+      Object.entries(obligation).map(async ([key, value], index) => {
+        //console.log(`Index: ${index}, Obligation: ${key}, Status: ${value}`);
+        const response = await FindFile(jobConected[0].id, key, "0");
+        //console.log(response)
+        files[key] = response; // Salva a resposta no objeto `files`
+      })}
     </ScrollView>
   );
 };
 
 export default AdmissionalContract;
-
-
