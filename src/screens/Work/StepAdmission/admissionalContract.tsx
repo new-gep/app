@@ -92,13 +92,13 @@ const AdmissionalContract = ({ jobConected, CPF }: Props) => {
         status={data.voucherDocument}
       />
 
-      {obligation && typeof obligation === "object" &&
+      {/* {obligation && typeof obligation === "object" &&
       Object.entries(obligation).map(async ([key, value], index) => {
         //console.log(`Index: ${index}, Obligation: ${key}, Status: ${value}`);
         const response = await FindFile(jobConected[0].id, key, "0");
         //console.log(response)
         files[key] = response; // Salva a resposta no objeto `files`
-      })}
+      })} */}
     </ScrollView>
   );
 };
