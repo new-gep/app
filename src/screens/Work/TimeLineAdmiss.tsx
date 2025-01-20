@@ -1,9 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Text, Animated, ActivityIndicator, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Animated,
+  ActivityIndicator,
+  Dimensions,
+} from "react-native";
 import { COLORS, FONTS } from "../../constants/theme";
 import AdmissionalExam from "./StepAdmission/admissionalExam";
 import AdmissionalContract from "./StepAdmission/admissionalContract";
+import DrawingModal from "../Components/signatureModal";
 import ButtonOutline from "../../components/Button/ButtonOutline"; // Ajuste o caminho do botão
+import Button from "../../components/Button/Button";
+import { ScrollView } from "react-native-gesture-handler";
 
 type Props = {
   jobConected: any;
@@ -11,13 +20,27 @@ type Props = {
 };
 
 const Timeline = ({ jobConected, CPF }: Props) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const steps = ["Exames", "Documentação", "Assinatura"];
   const [currentStep, setCurrentStep] = useState(null); // Estado do passo atual
   const [isLoading, setIsLoading] = useState(true); // Controle de carregamento
   const lineAnim = useRef(new Animated.Value(0)).current;
+  const [signature, setSignature] = useState<string | undefined>(undefined);
 
-  const [screenWidth, setScreenWidth] = useState(Dimensions.get("window").width);
-  const [screenHeight, setScreenHeight] = useState(Dimensions.get("window").height);
+  const [screenWidth, setScreenWidth] = useState(
+    Dimensions.get("window").width
+  );
+  const [screenHeight, setScreenHeight] = useState(
+    Dimensions.get("window").height
+  );
+
+  const handleOpenModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
 
   useEffect(() => {
     // Função para atualizar dimensões
@@ -28,7 +51,10 @@ const Timeline = ({ jobConected, CPF }: Props) => {
     };
 
     // Adiciona o listener para mudanças de orientação
-    const subscription = Dimensions.addEventListener("change", handleOrientationChange);
+    const subscription = Dimensions.addEventListener(
+      "change",
+      handleOrientationChange
+    );
 
     return () => {
       // Remove o listener corretamente
@@ -49,6 +75,7 @@ const Timeline = ({ jobConected, CPF }: Props) => {
   useEffect(() => {
     fetchCurrentStep(); // Busca o passo ao carregar a tela
     if (jobConected) {
+      console.log("connect: ", JSON.parse(jobConected[0].candidates)[0].step);
       setCurrentStep(JSON.parse(jobConected[0].candidates)[0].step);
     }
     Animated.timing(lineAnim, {
@@ -98,13 +125,11 @@ const Timeline = ({ jobConected, CPF }: Props) => {
 
       {/* Conteúdo baseado no passo atual */}
       <View className="flex justify-center items-center rounded-lg shadow-md w-full h-full">
-        {currentStep === 1 && (
+        {currentStep === 0 && (
           <AdmissionalExam CPF={CPF} jobConected={jobConected} />
         )}
         {currentStep === 2 && (
-          <View
-            className="mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-center"
-          >
+          <View className="mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-center">
             <View className="w-1/2 flex-1 p-4">
               <Text
                 className="absolute w-44"
@@ -126,9 +151,26 @@ const Timeline = ({ jobConected, CPF }: Props) => {
         )}
         {currentStep === 3 && (
           <>
-          <AdmissionalContract jobConected={jobConected} CPF={CPF} />
+            <ScrollView className={"flex w-full "}>
+              <AdmissionalContract jobConected={jobConected} CPF={CPF} />
+
+              <Button
+                title={"Assinar"}
+                style={{ marginRight: 8, marginBottom: 8 }}
+                text={COLORS.title}
+                color={COLORS.primary}
+                onPress={handleOpenModal}
+              />
+
+              <DrawingModal
+                visible={modalVisible}
+                onClose={handleCloseModal}
+                setSignature={setSignature} // Passa a função para atualizar a assinatura em base64
+                signature={signature}
+              />
+            </ScrollView>
           </>
-          )}
+        )}
       </View>
     </View>
   );

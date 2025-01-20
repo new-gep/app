@@ -47,7 +47,8 @@ const ForgotPassword = ({navigation} :ForgotPasswordScreenProps) => {
             setWaitProcess(false)
             return
         };
-        const dates = await FindCollaborator(formValues);
+        const dates = await FindCollaborator(formValues.cpf);
+        console.log(dates)
         switch (dates.status) {
                 case 200:
                     let email = dates.collaborator.email
