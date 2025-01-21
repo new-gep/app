@@ -1,29 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import CheckDocumentAdmissional from "../../../hooks/get/job/checkSignaure";
 import AdmissionalCard from "./AdmissionalCard";
 import FindFile from "../../../hooks/get/job/findDocsAdmission";
 import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { Title } from "react-native-paper";
 
+
 type Props = {
   jobConected: any;
   CPF: any;
+  setLockSignature: (any) => void;
+  lockSignature: any;
 };
 
-const AdmissionalContract = ({ jobConected, CPF }: Props) => {
-  const [data, setData] = useState({
-    medical: false,
-    registration: false,
-    experience: false,
-    extension: false,
-    compensation: false,
-    voucherDocument: false,
-    signature: false,
-  });
+const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature }: Props) => {
 
-  const [obligation, setObligation] = useState(null);
-  const [dynamics, setDynamic] = useState(null);
+  const [obligations, setObligations] = useState(null);
+  const [dynamics, setDynamics] = useState({}); // Pode começar vazio
+  const [combined, setCombined] = useState(false);
+  const [allCompleted, setAllCompleted] = useState(false);
+  
+
 
   const [files, setFiles] = useState<any>(null);
 
@@ -36,8 +34,10 @@ const AdmissionalContract = ({ jobConected, CPF }: Props) => {
 
           const obligations = response.date.obligation;
           const dynamics = response.date.dynamic.document;
-          setObligation(obligations);
-          setDynamic(dynamics);
+          setObligations(obligations);
+          setDynamics(dynamics);
+          // console.log("Obligations", obligations)
+          // console.log("dynamics", dynamics)
 
           if (response.status === 200) {
             // console.log(jobConected[0].id)
@@ -48,7 +48,9 @@ const AdmissionalContract = ({ jobConected, CPF }: Props) => {
               Object.entries(obligations).map(async ([key, value], index) => {
                 //console.log(`Index: ${index}, Obligation: ${key}, Status: ${value}`);
                 const response = await FindFile(jobConected[0].id, key, "0");
-                //console.log(response)
+                const combined = { ...obligations, ...dynamics };
+                delete combined.medical;
+                setLockSignature(combined)
                 files[key] = response; // Salva a resposta no objeto `files`
               })
             );
@@ -73,19 +75,30 @@ const AdmissionalContract = ({ jobConected, CPF }: Props) => {
 
   return (
     <ScrollView className="p-4 w-full bg-gray-100">
-      {obligation &&
+      {obligations &&
         files &&
-        Object.entries(obligation).map(([key, value], index) => {
+        Object.entries(obligations).map(([key, value], index) => {
+          if (key === "medical") {
+            return;
+          }
           // console.log(`Index: ${index}, Obligation: ${key}, Status: ${value}`);
           //console.log(response)
           // files[key] = response; // Salva a resposta no objeto `files`
           return (
-            <AdmissionalCard
-              status={value}
-              title={key}
-              path={files[key].path}
-              typeDocument={files[key].typeDocument}
-            />
+            <>
+              <AdmissionalCard
+                key={key}
+                status={value}
+                title={key}
+                path={files[key].path}
+                typeDocument={files[key].typeDocument}
+                setLockSignature={setLockSignature}
+                lockSignature={lockSignature}
+              />
+              <View>
+
+              </View>
+            </>
           );
         })}
     </ScrollView>

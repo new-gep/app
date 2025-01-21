@@ -3,13 +3,15 @@ import { View, Modal, Dimensions, PanResponder, Alert } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import ButtonOutline from '../../components/Button/ButtonOutline'; // Ajuste o caminho do ButtonOutline
 import CheckDocumentAdmissional from '../../hooks/get/job/checkSignaure';
+import AdmissionalCard from '../Work/StepAdmission/AdmissionalCard';
 
-const DrawingModal = ({ visible, onClose, signature, setSignature }) => {
+const DrawingModal = ({ visible, onClose}) => {
   const [paths, setPaths] = useState([]); // Armazena todos os caminhos desenhados
   const [currentPath, setCurrentPath] = useState(''); // Armazena o caminho atual
   const svgRef = useRef(null); // Referência para o componente Svg
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
   const [screenHeight, setScreenHeight] = useState(Dimensions.get('window').height);
+  
 
   useEffect(() => {
     const handleOrientationChange = () => {
@@ -69,17 +71,20 @@ const DrawingModal = ({ visible, onClose, signature, setSignature }) => {
   
       // Verifica se está gerando o base64 corretamente
       console.log("Base64 da assinatura gerado:", base64SVG);
+      
+      
+
   
       // Atualiza o estado do componente pai
-      if (setSignature) {
-        setSignature(base64SVG); // Envia o base64 para o pai
-      } else {
-        console.warn("setSignature não está definido.");
-      }
+      const savedSignature = base64SVG;
   
+      // Exibe o alerta confirmando que o desenho foi salvo
       Alert.alert("Desenho salvo!", "A assinatura foi salva com sucesso.");
-      onClose(); // Fecha o modal
+      
+      // Fecha o modal após o sucesso
+      onClose();
     } catch (error) {
+      // Caso ocorra um erro, exibe o alerta de erro
       console.error(error);
       Alert.alert("Erro", "Não foi possível salvar a assinatura.");
     }
@@ -135,8 +140,8 @@ const DrawingModal = ({ visible, onClose, signature, setSignature }) => {
             disabled={paths.length === 0} // Botão desabilitado se não houver caminhos
           />
           <ButtonOutline
-            onPress={onClose}
-            color="white"
+            onPress={ () => {onClose(false)}}
+            color="gray"
             title="Fechar"
             size="sm"
           />

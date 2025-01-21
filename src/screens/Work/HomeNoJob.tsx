@@ -63,7 +63,7 @@ const ArrivalData = [
   },
 ];
 
-export default function HomeNoWork({setTitleWork}) {
+export default function HomeNoWork({ setTitleWork }) {
   const navigation = useNavigation<NavigationProp<any>>();
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -97,7 +97,9 @@ export default function HomeNoWork({setTitleWork}) {
   const { validateCollaborator, missingData } = useCollaboratorContext();
 
   const [jobConected, setJobConected] = useState<any>(null);
-  const [processAdmission, setProcessAdmission] = useState<boolean>(false);
+  const [processAdmission, setProcessAdmission] = useState<any>(null); 
+
+  const [process, setAdmission] = useState<any>(null); 
 
   const closeDevelopment = () => {
     setIsShowDevelopment(false);
@@ -105,89 +107,88 @@ export default function HomeNoWork({setTitleWork}) {
 
   useFocusEffect(
     useCallback(() => {
-      let isActive = true;
-
       const fetchData = async () => {
         setIsLoading(true);
         if (collaborator) {
           try {
             const response = await FindAplicateInJob(collaborator.CPF);
-
-            if (isActive) {
-              if (response.status !== 200) {
-                console.error("Erro ao buscar os cards:", response.message);
-                return;
-              }
-              setProcessAdmission(response.processAdmission);
-              setJobConected(response.jobs);
-              if(response.processAdmission){
-                setTitleWork('Processo admissional')
-              }else{
-                setTitleWork('Vagas aplicadas')
-              }
+            if (response.status !== 200) {
+              console.error("Erro ao buscar os cards:", response.message);
+              return;
             }
+
+            setJobConected(response.jobs);
+            if (response.processAdmission) {
+              setAdmission(true);
+              setTitleWork("Processo admissional");
+            } else {
+              setAdmission(false);
+              setTitleWork("Vagas aplicadas");
+            }
+
+            // if (response.processAdmission && response.processAdmission) {
+            //   setProcessAdmission(response.processAdmission);
+
+            // } 
+            return;
+
           } catch (error) {
             console.error("Erro ao buscar os cards:", error);
           } finally {
-            if (isActive) {
               setIsLoading(false);
-            }
+
           }
         }
       };
 
       fetchData();
 
-      return () => {
-        isActive = false;
-      };
+      
     }, [collaborator])
   );
 
   return (
     <View style={{ backgroundColor: colors.card, flex: 1 }}>
-  {!processAdmission ? (
-    <>
-      <DevelopmentModal
-        close={closeDevelopment}
-        visible={isShowDevelopment}
-      />
-      <View style={{ paddingHorizontal: 30, padding: 0, paddingTop: 30 }}>
-        <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
-          <Text
-            style={{
-              ...FONTS.fontRegular,
-              fontSize: 14,
-              color: colors.title,
-            }}
-          >
-            Bem-Vindo(a)!
-          </Text>
-          <Text
-            style={{
-              ...FONTS.fontSemiBold,
-              fontSize: 24,
-              color: colors.title,
-            }}
-          >
-            {collaborator && Mask("firstName", collaborator.name)}
-          </Text>
-        </View>
-      </View>
-      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-        {jobConected && jobConected.length > 0 ? (
-          jobConected.map((job) => <CardHistory key={job.id} job={job} />)
-        ) : (
-          <Text style={{ textAlign: "center", marginTop: 20 }}>
-            Sem vagas registradas
-          </Text>
-        )}
-      </ScrollView>
-    </>
-  ) : collaborator &&(
-      <HomeAdmission  jobConected={jobConected} CPF={collaborator.CPF}/>
-  )}
-</View>
+      {!process ? (
+        <>
+          <View style={{ paddingHorizontal: 30, padding: 0, paddingTop: 30 }}>
+            <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+              <Text
+                style={{
+                  ...FONTS.fontRegular,
+                  fontSize: 14,
+                  color: colors.title,
+                }}
+              >
+                Bem-Vindo(a)!
+              </Text>
+              <Text
+                style={{
+                  ...FONTS.fontSemiBold,
+                  fontSize: 24,
+                  color: colors.title,
+                }}
+              >
+                {collaborator && Mask("firstName", collaborator.name)}
+              </Text>
+            </View>
+          </View>
+          <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+            {jobConected && jobConected.length > 0 ? (
+              jobConected.map((job) => <CardHistory key={job.id} job={job} />)
+            ) : (
+              <Text style={{ textAlign: "center", marginTop: 20 }}>
+                Sem vagas registradas
+              </Text>
+            )}
+          </ScrollView>
+        </>
+      ) : (
+        collaborator && (
+          <HomeAdmission jobConected={jobConected} CPF={collaborator.CPF} />
+        )
+      )}
+    </View>
   );
 }
 

@@ -122,16 +122,24 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
-      const response = await GetAllJob();
-      if (response.status !== 200) {
-        console.error("Erro ao buscar os cards:", response.message);
-        setIsLoading(false);
-        return;
+      try {
+        setIsLoading(true); // Ativar estado de carregamento antes da requisição
+        
+        const response = await GetAllJob(); // Chamar a função de busca
+        
+        if (response.status !== 200) {
+          throw new Error(response.message || "Erro ao buscar os."); // Forçar erro para o catch
+        }
+        
+        setCards(response.job); // Atualizar o estado com os dados recebidos
+      } catch (error) {
+        console.error("Ocorreu um erro ao buscar os jobs:", error.message); // Log do erro
+        alert("Erro ao buscar os jobs. Por favor, tente novamente."); // Mensagem para o usuário
+      } finally {
+        setIsLoading(false); // Garantir que o carregamento será desativado
       }
-      setCards(response.job);
-      setIsLoading(false);
     };
+  
     fetchData();
   }, []);
 

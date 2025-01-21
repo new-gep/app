@@ -10,16 +10,23 @@ type CardProps = {
   status: any;
   path: any;
   typeDocument: string;
+  setLockSignature:  (any) => void;
+  lockSignature: any;
 };
 
-const AdmissionalCard = ({ title, status, path, typeDocument }: CardProps) => {
+const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, lockSignature }: CardProps) => {
   const [signature, setSignature] = useState<string | null>(null); // Estado para armazenar a assinatura em base64
   const [modalVisibleDoc, setModalVisibleDoc] = useState(false);
 
-  
-
   const handleOpenModalDoc = () => {
     setModalVisibleDoc(!modalVisibleDoc);
+    console.log('title', title);
+    console.log('lockSignature', lockSignature);
+    const test = {
+      ...lockSignature, // Copia todas as propriedades do estado atual
+      [title]: true, // Atualiza apenas a propriedade 'title'
+    };
+    setLockSignature(test)
   };
 
   const Mask = (type, value) => {
@@ -49,35 +56,14 @@ const AdmissionalCard = ({ title, status, path, typeDocument }: CardProps) => {
       default:
         break;
     }
-  }
+  };
 
-  useEffect(() =>{
-    switch (title) {
-      case 'registration':
-      title = "Ficha de Registro"
-        break;
-    case 'cxperience':
-      title = "Contrato de Experiência"
-      break;
-      case 'cxtension':
-      title = "Acordo de Prorrogação de Horas"
-      break;
-      case 'compensation':
-      title = "Acordo de Compensação de Horas"
-      break;
-      case 'voucher':
-      title = "Solicitação de Vale Transporte"
-      break;
-      default:
-        break;
-    }
-  },[title])
 
   return (
     <>
       <View className="p-4 bg-white w-full rounded-2xl shadow-md mb-4">
         <DocumentVisible
-        path={path}
+          path={path}
           typeDocument={typeDocument}
           twoPicture={false}
           visible={modalVisibleDoc}
