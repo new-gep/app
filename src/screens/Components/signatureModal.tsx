@@ -120,19 +120,19 @@ const DrawingModal = ({ visible, onClose, onSaveSignature}) => {
     Alert.alert("Desenho salvo!", "A assinatura foi salva com sucesso.");
 
 // encaminhando assinatura para o banco atraves do hook uploadFile
-    try{
+    // try{
 
-      const uploadFile = await onSaveSignature({
-        file: base64SVG,
-        name: 'assinatura',
-        id: 1,
-        signature: true
-      }
-      );
-      console.log("positivo capitão",uploadFile)
-    }catch(e){
-      console.log('erro ao salvar assinatura: ',e)
-    }
+    //   const uploadFile = await onSaveSignature({
+    //     file: base64SVG,
+    //     name: 'assinatura',
+    //     id: 1,
+    //     signature: true
+    //   }
+    //   );
+    //   console.log("positivo capitão",uploadFile)
+    // }catch(e){
+    //   console.log('erro ao salvar assinatura: ',e)
+    // }
 
 
     onClose();
