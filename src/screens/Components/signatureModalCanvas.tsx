@@ -1,8 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Modal, PanResponder, Dimensions, Alert } from "react-native";
 import Canvas from "react-native-canvas";
 import ButtonOutline from "../../components/Button/ButtonOutline";
 import uploadFile from "../../hooks/upload/job";
+import WaitingIndicator from "../Work/StepAdmission/admissionalWaitingIndicator";
+
+
 const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -72,6 +75,27 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id }) => {
       };
       const response = await uploadFile(props); // Passando o caminho do arquivo para o backend
       console.log(response)
+      
+      
+      const ParentComponent = () => {
+  const [isWaiting, setIsWaiting] = useState(false);
+
+  // Função para mostrar o indicador
+  const startWaiting = () => {
+    setIsWaiting(true);
+    
+    // Simula uma operação assíncrona
+    setTimeout(() => {
+      stopWaiting();
+    }, 3000);
+  };
+
+  // Função para esconder o indicador
+  const stopWaiting = () => {
+    setIsWaiting(false);
+  };
+
+      }
 
       Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
         {
@@ -81,8 +105,6 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id }) => {
           },
         },
       ]);
-
-      
 
       onClose(false)
     }

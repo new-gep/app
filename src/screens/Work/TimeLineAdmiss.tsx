@@ -17,6 +17,8 @@ import DrawingModal from "../Components/signatureModal";
 import AdmissionalContract from "./StepAdmission/admissionalContract";
 import AdmissionalExam from "./StepAdmission/admissionalExam";
 import SignatureModalCanvas from "../Components/signatureModalCanvas";
+import CreateAvalidPicture from "../../hooks/create/pictures";
+import FindPicture from "../../hooks/findOne/picture";
 const Timeline = ({ jobConected, CPF }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [signature, setSignature] = useState<string | undefined>(undefined);
@@ -41,12 +43,15 @@ const Timeline = ({ jobConected, CPF }) => {
     setModalVisible(false);
   };
 
+  
   useEffect(() => {
-    if (signature) {
-      console.log("Assinatura:", signature);
+    const fetchData = async () => {
+      const response  = await FindPicture(CPF);
+      console.log(response);
     }
-  }, [signature]);
-
+    fetchData();
+  }, []);
+  
   useEffect(() => {
     if (lockSignature) {
       const allTrue = Object.values(lockSignature).every(
