@@ -135,7 +135,7 @@ const DrawingModal = ({ visible, onClose, onSaveSignature, id }) => {
       try {
         const props = {
           file: base64SVG,
-          name: "signature_admission",
+          name: "Admission_Signature",
           id: id,
           signature: true,
         };

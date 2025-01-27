@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from "react-native";
 import { COLORS, FONTS } from "../../constants/theme";
-import { WebView } from 'react-native-webview';
+import { WebView } from "react-native-webview";
 import ButtonOutline from "../../components/Button/ButtonOutline";
 import DrawingModal from "../Components/signatureModal";
 import AdmissionalContract from "./StepAdmission/admissionalContract";
@@ -19,7 +19,15 @@ import AdmissionalExam from "./StepAdmission/admissionalExam";
 import SignatureModalCanvas from "../Components/signatureModalCanvas";
 import CreateAvalidPicture from "../../hooks/create/pictures";
 import FindPicture from "../../hooks/findOne/picture";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import AdmissionalCard from "./StepAdmission/AdmissionalCard";
+import WaitingIndicator from "./StepAdmission/admissionalWaitingIndicator";
+import HomeWork from "./Home";
+import { BottomTabParamList } from "../../navigation/BottomTabParamList";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 const Timeline = ({ jobConected, CPF }) => {
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [signature, setSignature] = useState<string | undefined>(undefined);
   const steps = ["Exames", "Documentação", "Assinatura"];
@@ -28,6 +36,8 @@ const Timeline = ({ jobConected, CPF }) => {
   const lineAnim = useRef(new Animated.Value(0)).current;
   const [lockSignature, setLockSignature] = useState(null);
   const [keySignature, setKeySignature] = useState(false);
+  const [signatureFound, setSignatureFound] = useState<any>(null);
+  const Tab = createBottomTabNavigator<BottomTabParamList>();
 
   const handleOpenModal = () => {
     // if (!keySignature) {
@@ -43,15 +53,14 @@ const Timeline = ({ jobConected, CPF }) => {
     setModalVisible(false);
   };
 
-  
   useEffect(() => {
     const fetchData = async () => {
-      const response  = await FindPicture(CPF);
+      const response = await FindPicture(CPF);
       console.log(response);
-    }
+    };
     fetchData();
   }, []);
-  
+
   useEffect(() => {
     if (lockSignature) {
       const allTrue = Object.values(lockSignature).every(
@@ -72,23 +81,52 @@ const Timeline = ({ jobConected, CPF }) => {
     }).start();
   }, [currentStep, jobConected]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        const response = await FindPicture(CPF);
+        console.log(response);
+      };
+      fetchData();
+    }, [CPF])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        const response = await FindPicture(CPF);
+        if (response?.status === 200) {
+          const signatureFound = response.pictures.find(
+            (pic) => pic.picture === "Admission_Signature"
+          );
+          console.log("response do signatureFound", signatureFound.status);
+          setSignatureFound(signatureFound);
+        } else {
+          console.log("Erro ao buscar assinatura");
+        }
+      };
+      fetchData();
+    }, [CPF])
+  );
+
   return (
     <>
       <ScrollView className="h-3/4">
-      {currentStep === 1 && (
+        {currentStep === 1 && (
           <AdmissionalExam CPF={CPF} jobConected={jobConected} />
         )}
-                {currentStep === 2 && (
-          <View
-            className="mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-center"
-          >
+        {currentStep === 2 && (
+          <View className="mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-center">
             <View className="w-1/2 flex-1 p-4">
               <Text
                 className="absolute w-44"
                 style={{
                   ...FONTS.fontSemiBold,
                   fontSize: 24,
-                }}>Em espera</Text>
+                }}
+              >
+                Em espera
+              </Text>
               <Text className="mt-2" style={{ ...FONTS.font, fontSize: 14 }}>
                 Estamos preparando seu kit admissional. Por favor, aguarde
                 enquanto finalizamos os últimos detalhes. Retornaremos em breve.
@@ -98,36 +136,69 @@ const Timeline = ({ jobConected, CPF }) => {
         )}
         {currentStep === 3 && (
           <>
-            <View className="flex w-full">
-              <AdmissionalContract
-                CPF={CPF}
-                jobConected={jobConected}
-                setLockSignature={setLockSignature}
-                lockSignature={lockSignature}
-              />
-            </View>
-            {signature ? (
-              <View className="flex justify-center items-center min-h-min ">
-                <Text className="text-lg font-semibold mb-5 mt-5">
-                  Assinatura Salva:
-                </Text>
-                <WebView
-                  style={{ width: 200, height: 200 }}
-                  originWhitelist={['*']}
-                  source={{ html: atob(signature.split(',')[1]) }}
-                />
+            {signatureFound && signatureFound?.status === "approved" ? (
+              <Text>Assinatura aprovada</Text>
+            ) : signatureFound?.status === "pending" ? (
+
+              <View className=" w-full h-full">
+                <Text>Aguardando retorno da documentação</Text>
+                <WaitingIndicator visible={true} status={"pending"}/>
               </View>
+
+            ) : signatureFound?.status === "reproved" ? (
+              <>
+                <AdmissionalContract
+                  CPF={CPF}
+                  jobConected={jobConected}
+                  setLockSignature={setLockSignature}
+                  lockSignature={lockSignature}
+                  
+                />
+                <TouchableOpacity
+                  className="bg-red-500 py-3 px-6 rounded-lg items-center"
+                  onPress={handleOpenModal}
+                >
+                  <Text className="text-white text-lg font-semibold">
+                    Assinar
+                  </Text>
+                </TouchableOpacity>
+              </>
             ) : (
-              <Text className="text-lg text-center mt-4">
-                Nenhuma assinatura salva ainda.
-              </Text>
+              <View
+                className={`flex w-full`}
+              >
+                <AdmissionalContract
+                  CPF={CPF}
+                  jobConected={jobConected}
+                  setLockSignature={setLockSignature}
+                  lockSignature={lockSignature}
+                />
+                {signature ? (
+                  <View className="flex justify-center items-center min-h-min ">
+                    <Text className="text-lg font-semibold mb-5 mt-5">
+                      Assinatura Salva:
+                    </Text>
+                    <WebView
+                      style={{ width: 200, height: 200 }}
+                      originWhitelist={["*"]}
+                      source={{ html: atob(signature.split(",")[1]) }}
+                    />
+                  </View>
+                ) : (
+                  <Text className="text-lg text-center mt-4">
+                    Nenhuma assinatura salva ainda.
+                  </Text>
+                )}
+                <TouchableOpacity
+                  className="bg-red-500 py-3 px-6 rounded-lg items-center"
+                  onPress={handleOpenModal}
+                >
+                  <Text className="text-white text-lg font-semibold">
+                    Assinar
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
-            <TouchableOpacity
-              className="bg-red-500 py-3 px-6 rounded-lg items-center"
-              onPress={handleOpenModal}
-            >
-              <Text className="text-white text-lg font-semibold">Assinar</Text>
-            </TouchableOpacity>
           </>
         )}
       </ScrollView>
@@ -139,7 +210,13 @@ const Timeline = ({ jobConected, CPF }) => {
         id={jobConected[0].id}
       /> */}
 
-      <SignatureModalCanvas visible={modalVisible} onClose={handleCloseModal} onSaveSignature={setSignature} id={jobConected[0].id}/>
+      <SignatureModalCanvas
+        visible={modalVisible}
+        onClose={handleCloseModal}
+        onSaveSignature={setSignature}
+        cpf={CPF}
+        id={jobConected[0].id}
+      />
     </>
   );
 };

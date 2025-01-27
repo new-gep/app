@@ -4,9 +4,11 @@ import Canvas from "react-native-canvas";
 import ButtonOutline from "../../components/Button/ButtonOutline";
 import uploadFile from "../../hooks/upload/job";
 import WaitingIndicator from "../Work/StepAdmission/admissionalWaitingIndicator";
+import CreateAvalidPicture from "../../hooks/create/pictures";
+import UpdatePicture from "../../hooks/update/picture";
 
 
-const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id }) => {
+const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const isDrawing = useRef(false);
@@ -18,7 +20,7 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id }) => {
       const ctx = canvas.getContext("2d");
 
       // Configurações de estilo do contexto
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 4;
       ctx.strokeStyle = "black";
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
@@ -65,49 +67,60 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id }) => {
   };
 
   const saveCanvas = async () => {
-    if (canvasRef.current) {
-      const base64Data = await canvasRef.current.toDataURL();
-      // Enviar para o backend
-      const props = {
-        file: base64Data,
-        id:id,
-        name: "signature_admission",
-      };
-      const response = await uploadFile(props); // Passando o caminho do arquivo para o backend
-      console.log(response)
-      
-      
-      const ParentComponent = () => {
-  const [isWaiting, setIsWaiting] = useState(false);
-
-  // Função para mostrar o indicador
-  const startWaiting = () => {
-    setIsWaiting(true);
-    
-    // Simula uma operação assíncrona
-    setTimeout(() => {
-      stopWaiting();
-    }, 3000);
-  };
-
-  // Função para esconder o indicador
-  const stopWaiting = () => {
-    setIsWaiting(false);
-  };
-
+    try {
+      if (canvasRef.current) {
+        const base64Data = await canvasRef.current.toDataURL();
+        // Enviar para o backend
+        const props = {
+          file: base64Data,
+          id: id,
+          name: "Admission_Signature",
+        };
+        const response = await uploadFile(props);
+        console.log("response:", response);
+        if (response?.status === 200) {
+          console.log("Upload realizado com sucesso!");
+        } else {
+          alert("Ocorreu um erro ao enviar o arquivo. Tente novamente.");
+        }
       }
-
-      Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
-        {
-          text: "OK",
-          onPress: () => {
-            // Nada acontece ao pressionar OK
-          },
-        },
-      ]);
-
-      onClose(false)
+    } catch (error) {
+      console.error("Erro ao enviar o arquivo:", error);
+      alert("Ocorreu um erro inesperado. Verifique sua conexão e tente novamente.");
     }
+
+    const props = {
+      picture :'Admission_Signature',
+      status  :'pending',
+      cpf     : cpf
+    }
+    const response = await CreateAvalidPicture(props)
+    console.log("response:", response);
+    
+    if(response.status === 409) {
+      const response = await UpdatePicture(cpf, props)
+      console.log("response atualizado:", response);
+      if(response.status === 200) {
+        Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
+          {
+            text: "OK",
+          },
+        ]);
+        onClose(false)
+      }
+      return;
+    }
+
+    Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
+      {
+        text: "OK",
+        onPress: () => {
+          // Nada acontece ao pressionar OK
+        },
+      },
+    ]);
+
+    onClose(false)
   };
 
   return (

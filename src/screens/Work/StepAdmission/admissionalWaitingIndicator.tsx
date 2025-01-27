@@ -1,19 +1,35 @@
 import React from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, Image } from 'react-native';
 
 type WaitingIndicatorProps = {
   visible: boolean;
+  status?: 'approved' | 'pending';
 };
 
-const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible }) => {
-  if (!visible) return null;
+const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status }) => {
+
+
+  const getMessage = () => {
+    switch (status) {
+      case 'approved':
+        return 'Seus documentos foram aprovados';
+      case 'pending':
+        return 'Seus documentos estão em análise';
+      default:
+        return 'Aguardando retorno da documentação';
+    }
+  };
 
   return (
-    <View className="flex-1 justify-center items-center bg-gray-100 absolute inset-0 z-50">
-      <View className="bg-white p-8 rounded-lg shadow-lg items-center">
-        <ActivityIndicator size="large" color="#3B82F6" />
-        <Text className="text-gray-800 text-lg mt-4 font-semibold">
-          Por favor, aguarde...
+    <View className="">
+      <View className="items-center">
+        <Image 
+          source={require('../../../assets/images/gif/Timemanagement.gif')}
+          className="h-48 w-44"
+          resizeMode="contain"
+        />
+        <Text className="text-gray-800 text-xl mt-6 font-bold text-center">
+          {/* {getMessage()} */}
         </Text>
       </View>
     </View>
