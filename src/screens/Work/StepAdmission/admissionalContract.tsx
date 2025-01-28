@@ -37,7 +37,7 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
           setObligations(obligations);
           setDynamics(dynamics);
           // console.log("Obligations", obligations)
-          // console.log("dynamics", dynamics)
+          console.log("dynamics", dynamics)
 
           if (response.status === 200) {
             // console.log(jobConected[0].id)

@@ -56,7 +56,7 @@ const Timeline = ({ jobConected, CPF }) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await FindPicture(CPF);
-      console.log(response);
+      // console.log(response);
     };
     fetchData();
   }, []);
@@ -85,7 +85,7 @@ const Timeline = ({ jobConected, CPF }) => {
     React.useCallback(() => {
       const fetchData = async () => {
         const response = await FindPicture(CPF);
-        console.log(response);
+        // console.log(response);
       };
       fetchData();
     }, [CPF])
@@ -99,7 +99,7 @@ const Timeline = ({ jobConected, CPF }) => {
           const signatureFound = response.pictures.find(
             (pic) => pic.picture === "Admission_Signature"
           );
-          console.log("response do signatureFound", signatureFound.status);
+          // console.log("response do signatureFound", signatureFound.status);
           setSignatureFound(signatureFound);
         } else {
           console.log("Erro ao buscar assinatura");
@@ -141,7 +141,6 @@ const Timeline = ({ jobConected, CPF }) => {
             ) : signatureFound?.status === "pending" ? (
 
               <View className=" w-full h-full">
-                <Text>Aguardando retorno da documentação</Text>
                 <WaitingIndicator visible={true} status={"pending"}/>
               </View>
 

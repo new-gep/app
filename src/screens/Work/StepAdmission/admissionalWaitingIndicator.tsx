@@ -21,15 +21,15 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status }) 
   };
 
   return (
-    <View className="">
+    <View className="flex h-full justify-center items-center">
       <View className="items-center">
         <Image 
           source={require('../../../assets/images/gif/Timemanagement.gif')}
-          className="h-48 w-44"
+          className="h-96 w-96"
           resizeMode="contain"
         />
         <Text className="text-gray-800 text-xl mt-6 font-bold text-center">
-          {/* {getMessage()} */}
+          {getMessage()}
         </Text>
       </View>
     </View>
