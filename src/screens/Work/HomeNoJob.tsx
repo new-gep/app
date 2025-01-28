@@ -112,6 +112,7 @@ export default function HomeNoWork({ setTitleWork }) {
         if (collaborator) {
           try {
             const response = await FindAplicateInJob(collaborator.CPF);
+            console.log(response);
             if (response.status !== 200) {
               console.error("Erro ao buscar os cards:", response.message);
               return;

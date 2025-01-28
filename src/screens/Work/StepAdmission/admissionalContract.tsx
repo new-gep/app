@@ -30,28 +30,26 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
       if (jobConected) {
         const files = {};
         try {
-          const response = await CheckDocumentAdmissional(jobConected.id);
-
+          const response = await CheckDocumentAdmissional(jobConected[0].id);
           const obligations = response.date.obligation;
           const dynamics = response.date.dynamic.document;
           setObligations(obligations);
           setDynamics(dynamics);
           // console.log("Obligations", obligations)
-          console.log("dynamics", dynamics)
+          // console.log("dynamics", dynamics)
 
           if (response.status === 200) {
             // console.log(jobConected[0].id)
 
             const files = {};
+            const combined = { ...obligations, ...dynamics };
+            delete combined.medical;
+            setLockSignature(combined);
 
             await Promise.all(
-              Object.entries(obligations).map(async ([key, value], index) => {
-                //console.log(`Index: ${index}, Obligation: ${key}, Status: ${value}`);
+              Object.entries(combined).map(async ([key, value]) => {
                 const response = await FindFile(jobConected[0].id, key, "0");
-                const combined = { ...obligations, ...dynamics };
-                delete combined.medical;
-                setLockSignature(combined)
-                files[key] = response; // Salva a resposta no objeto `files`
+                files[key] = response;
               })
             );
 
@@ -76,31 +74,52 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
   return (
     <ScrollView className="p-4 w-full bg-gray-100">
       {obligations &&
-        files &&
-        Object.entries(obligations).map(([key, value], index) => {
-          if (key === "medical") {
-            return;
-          }
-          // console.log(`Index: ${index}, Obligation: ${key}, Status: ${value}`);
-          //console.log(response)
-          // files[key] = response; // Salva a resposta no objeto `files`
-          return (
-            <>
-              <AdmissionalCard
-                key={key}
-                status={value}
-                title={key}
-                path={files[key].path}
-                typeDocument={files[key].typeDocument}
-                setLockSignature={setLockSignature}
-                lockSignature={lockSignature}
-              />
-              <View>
-
-              </View>
-            </>
-          );
-        })}
+        dynamics &&
+        files && (
+          <>
+            {/* Renderiza os documentos obrigatórios */}
+            {Object.entries(obligations).map(([key, value]) => {
+              if (key === "medical") return null;
+              return (
+                <View key={`obligation-${key}`}>
+                  <AdmissionalCard
+                    status={value}
+                    title={key}
+                    path={files[key]?.path}
+                    typeDocument={files[key]?.typeDocument}
+                    setLockSignature={setLockSignature}
+                    lockSignature={lockSignature}
+                  />
+                </View>
+              );
+            })}
+            
+            {/* Renderiza os documentos dinâmicos */}
+            {Object.entries(dynamics).map(([key, value]) => {
+              // Separa as palavras por letras maiúsculas e capitaliza a primeira letra
+              const formattedTitle = typeof value === 'string' 
+                ? value.replace(/([A-Z])/g, ' $1')
+                    .trim()
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')
+                : String(value);
+              // console.log('Formatted title:', formattedTitle, key);
+              return (
+                <View key={`dynamic-${key}`}>
+                  <AdmissionalCard
+                    status={key}
+                    title={formattedTitle}
+                    path={files[key]?.path}
+                    typeDocument={files[key]?.typeDocument}
+                    setLockSignature={setLockSignature}
+                    lockSignature={lockSignature}
+                  />
+                </View>
+              );
+            })}
+          </>
+        )}
     </ScrollView>
   );
 };

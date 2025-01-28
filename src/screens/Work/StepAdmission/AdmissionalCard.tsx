@@ -32,29 +32,24 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
   const Mask = (type, value) => {
     switch (type) {
       case 'title':
+        // Primeiro verifica se é um dos casos especiais
         switch (value) {
           case 'registration':
-          return "Ficha de Registro"
-            break;
-        case 'experience':
-          return "Contrato de Experiência"
-          break;
+            return "Ficha de Registro";
+          case 'experience':
+            return "Contrato de Experiência";
           case 'extension':
-          return "Acordo de Prorrogação de Horas"
-          break;
+            return "Acordo de Prorrogação de Horas";
           case 'compensation':
-          return "Acordo de Compensação de Horas"
-          break;
+            return "Acordo de Compensação de Horas";
           case 'voucher':
-          return "Solicitação de Vale Transporte"
-          break;
+            return "Solicitação de Vale Transporte";
           default:
-            break;
+            // Se não for um caso especial, retorna o valor formatado
+            return value;
         }
-        break;
-    
       default:
-        break;
+        return value;
     }
   };
 

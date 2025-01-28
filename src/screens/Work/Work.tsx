@@ -62,6 +62,7 @@ const Work = () => {
       if (collaborator) {
         const response = await FindCollaborator(collaborator.CPF);
         if (response.status == 200) {
+          console.log(response.jobs);
           if (response.collaborator.id_work) {
             setHaswork(true);
           }
