@@ -5,6 +5,7 @@ import AdmissionalCard from "./AdmissionalCard";
 import FindFile from "../../../hooks/get/job/findDocsAdmission";
 import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { Title } from "react-native-paper";
+import AdmissionalCarousel from './AdmissionalCarousel';
 
 
 type Props = {
@@ -24,43 +25,51 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
 
 
   const [files, setFiles] = useState<any>(null);
+  const [obligationDocs, setObligationDocs] = useState([]);
+  const [dynamicDocs, setDynamicDocs] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       if (jobConected) {
-        const files = {};
         try {
           const response = await CheckDocumentAdmissional(jobConected[0].id);
           const obligations = response.date.obligation;
           const dynamics = response.date.dynamic.document;
           setObligations(obligations);
           setDynamics(dynamics);
-          // console.log("Obligations", obligations)
-          // console.log("dynamics", dynamics)
 
           if (response.status === 200) {
-            // console.log(jobConected[0].id)
-
-            const files = {};
             const combined = { ...obligations, ...dynamics };
             delete combined.medical;
             setLockSignature(combined);
 
+            // Preparar documentos obrigatórios
+            const obligationDocuments = Object.keys(obligations).map(key => ({
+              title: key,
+              status: true,
+              path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/${key}.pdf`,
+              typeDocument: "pdf",
+            }));
+            setObligationDocs(obligationDocuments);
+
+            // Preparar documentos dinâmicos
+            const dynamicDocuments = Object.entries(dynamics).map(([key, value]) => ({
+              title: value,
+              status: key,
+              path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/${value}.pdf`,
+              typeDocument: "pdf",
+            }));
+            setDynamicDocs(dynamicDocuments);
+
+            // Buscar arquivos
+            const files = {};
             await Promise.all(
               Object.entries(combined).map(async ([key, value]) => {
-                const response = await FindFile(jobConected[0].id, key, "0");
+                const response = await FindFile(jobConected[0].id, key, value);
                 files[key] = response;
               })
             );
-
-            // console.log("Arquivos encontrados:", files);
             setFiles(files);
-          } else {
-            console.warn(
-              "Algo deu errado:",
-              response.status,
-              response.statusText
-            );
           }
         } catch (error) {
           console.error("Erro ao buscar dados:", error);
@@ -71,56 +80,67 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
     fetchData();
   }, [jobConected, CPF]);
 
+  // const documents = [
+  //   {
+  //     title: "registration",
+  //     status: true,
+  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/registration.pdf`,
+  //     typeDocument: "pdf",
+  //   },
+  //   {
+  //     title: "experience",
+  //     status: true,
+  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/experience.pdf`,
+  //     typeDocument: "pdf",
+  //   },
+  //   {
+  //     title: "extension",
+  //     status: true,
+  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/extension.pdf`,
+  //     typeDocument: "pdf",
+  //   },
+  //   {
+  //     title: "compensation",
+  //     status: true,
+  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/compensation.pdf`,
+  //     typeDocument: "pdf",
+  //   },
+  //   {
+  //     title: "voucher",
+  //     status: true,
+  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/voucher.pdf`,
+  //     typeDocument: "pdf",
+  //   },
+  // ];
+
   return (
-    <ScrollView className="p-4 w-full bg-gray-100">
-      {obligations &&
-        dynamics &&
-        files && (
-          <>
-            {/* Renderiza os documentos obrigatórios */}
-            {Object.entries(obligations).map(([key, value]) => {
-              if (key === "medical") return null;
-              return (
-                <View key={`obligation-${key}`}>
-                  <AdmissionalCard
-                    status={value}
-                    title={key}
-                    path={files[key]?.path}
-                    typeDocument={files[key]?.typeDocument}
-                    setLockSignature={setLockSignature}
-                    lockSignature={lockSignature}
-                  />
-                </View>
-              );
-            })}
-            
-            {/* Renderiza os documentos dinâmicos */}
-            {Object.entries(dynamics).map(([key, value]) => {
-              // Separa as palavras por letras maiúsculas e capitaliza a primeira letra
-              const formattedTitle = typeof value === 'string' 
-                ? value.replace(/([A-Z])/g, ' $1')
-                    .trim()
-                    .split(' ')
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ')
-                : String(value);
-              // console.log('Formatted title:', formattedTitle, key);
-              return (
-                <View key={`dynamic-${key}`}>
-                  <AdmissionalCard
-                    status={key}
-                    title={formattedTitle}
-                    path={files[key]?.path}
-                    typeDocument={files[key]?.typeDocument}
-                    setLockSignature={setLockSignature}
-                    lockSignature={lockSignature}
-                  />
-                </View>
-              );
-            })}
-          </>
-        )}
-    </ScrollView>
+    <View className="flex-row flex-wrap">
+      {/* Documentos Obrigatórios */}
+      {obligationDocs.map((doc, index) => (
+        <AdmissionalCard
+          key={`obligation-${index}`}
+          title={doc.title}
+          status={doc.status}
+          path={doc.path}
+          typeDocument={doc.typeDocument}
+          setLockSignature={setLockSignature}
+          lockSignature={lockSignature}
+        />
+      ))}
+
+      {/* Documentos Dinâmicos */}
+      {dynamicDocs.map((doc, index) => (
+        <AdmissionalCard
+          key={`dynamic-${index}`}
+          title={doc.title}
+          status={doc.status}
+          path={doc.path}
+          typeDocument={doc.typeDocument}
+          setLockSignature={setLockSignature}
+          lockSignature={lockSignature}
+        />
+      ))}
+    </View>
   );
 };
 

@@ -17,16 +17,16 @@ type CardProps = {
 const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, lockSignature }: CardProps) => {
   const [signature, setSignature] = useState<string | null>(null); // Estado para armazenar a assinatura em base64
   const [modalVisibleDoc, setModalVisibleDoc] = useState(false);
+  const [isViewed, setIsViewed] = useState(false);
 
   const handleOpenModalDoc = () => {
     setModalVisibleDoc(!modalVisibleDoc);
-    console.log('title', title);
-    console.log('lockSignature', lockSignature);
+    setIsViewed(true);
     const test = {
-      ...lockSignature, // Copia todas as propriedades do estado atual
-      [title]: true, // Atualiza apenas a propriedade 'title'
+      ...lockSignature,
+      [title]: true,
     };
-    setLockSignature(test)
+    setLockSignature(test);
   };
 
   const Mask = (type, value) => {
@@ -56,7 +56,7 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
 
   return (
     <>
-      <View className="p-4 bg-white w-full rounded-2xl shadow-md mb-4">
+      <View className="p-4 bg-white w-screen rounded-2xl shadow-md">
         <DocumentVisible
           path={path}
           typeDocument={typeDocument}
@@ -89,8 +89,8 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
         <Button
           title={"Visualizar"}
           style={{ marginRight: 8, marginBottom: 8 }}
-          text={COLORS.title}
-          color={COLORS.primary}
+          text={'#000000'}
+          color={isViewed ? '#28a745' : '#007bff'}
           onPress={handleOpenModalDoc}
         />
       </View>

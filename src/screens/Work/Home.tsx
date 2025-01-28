@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
             height:16,
             width:16,
             borderRadius:16,
-            backgroundColor:COLORS.card,
+            // backgroundColor:COLORS.card,
             alignItems:'center',
             justifyContent:'center',
             position:'absolute',
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
         brandsubtitle2:{
             ...FONTS.fontSemiBold,
             fontSize:12,
-            color:COLORS.card
+            // color:COLORS.card   
         },
         brandsubtitle3:{
             ...FONTS.fontMedium,
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
             textAlign:'center'
         },
         arrivaldata:{
-            backgroundColor:COLORS.card,
+            // backgroundColor:COLORS.card,
             borderRadius: 18,
             width:199,
             paddingHorizontal: 10,

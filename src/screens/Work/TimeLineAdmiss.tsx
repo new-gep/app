@@ -10,7 +10,7 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { COLORS, FONTS } from "../../constants/theme";
+import { COLORS } from "../../constants/theme";
 import { WebView } from "react-native-webview";
 import ButtonOutline from "../../components/Button/ButtonOutline";
 import DrawingModal from "../Components/signatureModal";
@@ -120,14 +120,11 @@ const Timeline = ({ jobConected, CPF }) => {
             <View className="w-1/2 flex-1 p-4">
               <Text
                 className="absolute w-44"
-                style={{
-                  ...FONTS.fontSemiBold,
-                  fontSize: 24,
-                }}
+                style={{ fontWeight: '600', fontSize: 24 }}
               >
                 Em espera
               </Text>
-              <Text className="mt-2" style={{ ...FONTS.font, fontSize: 14 }}>
+              <Text className="mt-2" style={{ fontSize: 14 }}>
                 Estamos preparando seu kit admissional. Por favor, aguarde
                 enquanto finalizamos os últimos detalhes. Retornaremos em breve.
               </Text>
@@ -139,41 +136,60 @@ const Timeline = ({ jobConected, CPF }) => {
             {signatureFound && signatureFound?.status === "approved" ? (
               <Text>Assinatura aprovada</Text>
             ) : signatureFound?.status === "pending" ? (
-
-              <View className=" w-full h-full">
+              <View className="w-full h-full">
                 <WaitingIndicator visible={true} status={"pending"}/>
               </View>
-
             ) : signatureFound?.status === "reproved" ? (
               <>
-                <AdmissionalContract
-                  CPF={CPF}
-                  jobConected={jobConected}
-                  setLockSignature={setLockSignature}
-                  lockSignature={lockSignature}
-                  
-                />
-                <TouchableOpacity
-                  className="bg-red-500 py-3 px-6 rounded-lg items-center"
-                  onPress={handleOpenModal}
-                >
-                  <Text className="text-white text-lg font-semibold">
-                    Assinar
+                <Text className="text-2xl font-bold text-center mb-6">Revisar documentação</Text>
+                <View className="w-full">
+                  <ScrollView 
+                    horizontal 
+                    showsHorizontalScrollIndicator={false}
+                    pagingEnabled
+                    snapToAlignment="center"
+                    className="w-full"
+                  >
+                    <AdmissionalContract
+                      CPF={CPF}
+                      jobConected={jobConected}
+                      setLockSignature={setLockSignature}
+                      lockSignature={lockSignature}
+                    />
+                  </ScrollView>
+                  <Text className="text-center text-gray-600 mt-4 mb-2 px-4">
+                    Para assinar é necessário visualizar todos os documentos
                   </Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    className="bg-red-500 py-3 px-6 rounded-lg items-center mt-2 mx-4"
+                    onPress={handleOpenModal}
+                  >
+                    <Text className="text-white text-lg font-semibold">
+                      Assinar
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </>
             ) : (
-              <View
-                className={`flex w-full`}
-              >
-                <AdmissionalContract
-                  CPF={CPF}
-                  jobConected={jobConected}
-                  setLockSignature={setLockSignature}
-                  lockSignature={lockSignature}
-                />
+              <View className="flex w-full">
+                <Text className="text-2xl font-bold text-center mb-6">Revisar documentação</Text>
+                <ScrollView 
+                  horizontal 
+                  showsHorizontalScrollIndicator={false}
+                  pagingEnabled
+                  snapToAlignment="center"
+                  className="w-full"
+                >
+                  <AdmissionalContract
+                    CPF={CPF}
+                    jobConected={jobConected}
+                    setLockSignature={setLockSignature}
+                    lockSignature={lockSignature}
+                  />
+                </ScrollView>
+                
                 {signature ? (
-                  <View className="flex justify-center items-center min-h-min ">
+                  <View className="flex justify-center items-center min-h-min">
                     <Text className="text-lg font-semibold mb-5 mt-5">
                       Assinatura Salva:
                     </Text>
@@ -184,18 +200,20 @@ const Timeline = ({ jobConected, CPF }) => {
                     />
                   </View>
                 ) : (
-                  <Text className="text-lg text-center mt-4">
-                    Nenhuma assinatura salva ainda.
-                  </Text>
+                  <>
+                    <Text className="text-center text-gray-600 mt-4 mb-2 px-4">
+                      Para assinar é necessário visualizar todos os documentos
+                    </Text>
+                    <TouchableOpacity
+                      className="bg-red-500 py-3 px-6 rounded-lg items-center mt-2 mx-4"
+                      onPress={handleOpenModal}
+                    >
+                      <Text className="text-white text-lg font-semibold">
+                        Assinar
+                      </Text>
+                    </TouchableOpacity>
+                  </>
                 )}
-                <TouchableOpacity
-                  className="bg-red-500 py-3 px-6 rounded-lg items-center"
-                  onPress={handleOpenModal}
-                >
-                  <Text className="text-white text-lg font-semibold">
-                    Assinar
-                  </Text>
-                </TouchableOpacity>
               </View>
             )}
           </>
