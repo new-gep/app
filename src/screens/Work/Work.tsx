@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 import {
   NavigationProp,
   useNavigation,
@@ -20,12 +21,18 @@ import FindCollaborator from "../../hooks/findOne/collaborator";
 import HomeWork from "./Home";
 import HomeNoWork from "./HomeNoJob";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
+import DismissalHome from "./Dismissal/DismissalHome";
+import PayStub from "./PayStub";
+import TimeClock from "./TimeClock";
+import Absence from "./Absence";
 //import HomeAdmission from "./HomeAdmission";
 
 type WishlistScreenProps = StackScreenProps<RootStackParamList, "Work">;
 
-const Work = () => {
-  const [titleWork, setTitleWork] = useState<string>('');
+const Stack = createStackNavigator();
+
+const WorkContent = () => {
+  const [titleWork, setTitleWork] = useState<string>("");
   const [hasWork, setHaswork] = useState<boolean>(false);
   const { collaborator, fetchCollaborator } = useCollaborator();
   const { validateCollaborator, missingData } = useCollaboratorContext();
@@ -75,9 +82,8 @@ const Work = () => {
     <View style={{ backgroundColor: colors.background, flex: 1 }}>
       <Header
         title={titleWork}
-        leftIcon={hasWork ? "back" : "back"} // Exemplo de alternar o ícone esquerdo
-        rightIcon1={hasWork ? "search" : "search"} // Exemplo de alternar o ícone direito
-        // titleLeft, se precisar
+        leftIcon={hasWork ? "back" : "back"}
+        rightIcon1={hasWork ? "search" : "search"}
       />
 
       <ScrollView
@@ -87,9 +93,49 @@ const Work = () => {
           justifyContent: wishList.length === 0 ? "center" : "flex-start",
         }}
       >
-        {hasWork ? <HomeWork setTitleWork={setTitleWork}/> : <HomeNoWork setTitleWork={setTitleWork}/>}
+        {hasWork ? (
+          <HomeWork setTitleWork={setTitleWork} navigation={navigation} />
+        ) : (
+          <HomeNoWork setTitleWork={setTitleWork} />
+        )}
       </ScrollView>
     </View>
+  );
+};
+
+const Work = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="WorkContent" component={WorkContent} />
+      <Stack.Screen
+        name="DismissalHome"
+        component={DismissalHome}
+        options={{
+          title: "Solicitação de Demissão",
+        }}
+      />
+      <Stack.Screen
+        name="PayStub"
+        component={PayStub}
+        options={{
+          title: "Holerite",
+        }}
+      />
+      <Stack.Screen
+        name="TimeClock"
+        component={TimeClock}
+        options={{
+          title: "Ponto",
+        }}
+      />
+      <Stack.Screen
+        name="Absence"
+        component={Absence}
+        options={{
+          title: "Justificar Ausência",
+        }}
+      />
+    </Stack.Navigator>
   );
 };
 

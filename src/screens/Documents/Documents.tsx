@@ -364,7 +364,7 @@ const Documents = () => {
           </View>
         </View>
       ) : (
-        <View style={{ backgroundColor: COLORS.background, flex: 1 }}>
+        <View style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
           <Header
             title="Documentos"
             leftIcon="back"
@@ -388,7 +388,7 @@ const Documents = () => {
                       style={{
                         ...FONTS.fontSemiBold,
                         fontSize: 24,
-                        color: COLORS.dark,
+                        color: '#000000',
                         marginTop: -38,
                       }}
                     >
@@ -396,7 +396,7 @@ const Documents = () => {
                     </Text>
                     <Text
                       className={`mt-2`}
-                      style={{ ...FONTS.font, fontSize: 14 }}
+                      style={{ ...FONTS.fontRegular, fontSize: 14 }}
                     >
                       Aqui organizamos seus documentos para que as empresas
                       possam acessá-los facilmente.
@@ -438,8 +438,7 @@ const Documents = () => {
                                 typeDocument={data.typeDocument}
                                 statusDocument={data.statusDocument}
                                 twoPicture={data.twoPicture}
-                                path={data.path}
-                              />
+                                path={data.path} jobId={0}                              />
                             </View>
                           );
                         })}

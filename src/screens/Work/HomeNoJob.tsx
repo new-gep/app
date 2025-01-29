@@ -174,7 +174,7 @@ export default function HomeNoWork({ setTitleWork }) {
               </Text>
             </View>
           </View>
-          <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+          <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
             {jobConected && jobConected.length > 0 ? (
               jobConected.map((job) => <CardHistory key={job.id} job={job} />)
             ) : (
@@ -183,111 +183,52 @@ export default function HomeNoWork({ setTitleWork }) {
               </Text>
             )}
           </ScrollView>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.dismissButton}
+              onPress={() => setIsShowDevelopment(true)}
+            >
+              <Text style={styles.dismissButtonText}>Solicitar demissão</Text>
+            </TouchableOpacity>
+          </View>
         </>
       ) : (
         collaborator && (
           <HomeAdmission jobConected={jobConected} CPF={collaborator.CPF} />
         )
       )}
+      <DevelopmentModal
+        visible={isShowDevelopment}
+        close={closeDevelopment}
+      />
     </View>
   );
 }
 
-// const styles = StyleSheet.create({
-//   notifactioncricle: {
-//     height: 16,
-//     width: 16,
-//     borderRadius: 16,
-//     // backgroundColor: COLORS.card,
-//     alignItems: "center",
-//     justifyContent: "center",
-//     position: "absolute",
-//     top: 2,
-//     right: 2,
-//   },
-//   flex: {
-//     flexDirection: "row",
-//     alignItems: "flex-start",
-//     justifyContent: "center",
-//   },
-//   TextInput: {
-//     ...FONTS.fontRegular,
-//     fontSize: 16,
-//     color: COLORS.title,
-//     height: 60,
-//     borderRadius: 61,
-//     paddingHorizontal: 40,
-//     paddingLeft: 30,
-//     borderWidth: 1,
-//     borderColor: "#EBEBEB",
-//     backgroundColor: "#FAFAFA",
-//   },
-//   brandsubtitle2: {
-//     ...FONTS.fontSemiBold,
-//     fontSize: 12,
-//     // color: COLORS.card,
-//   },
-//   brandsubtitle3: {
-//     ...FONTS.fontMedium,
-//     fontSize: 12,
-//     color: COLORS.title,
-//   },
-//   title1: {
-//     ...FONTS.fontBold,
-//     fontSize: 28,
-//     color: COLORS.title,
-//   },
-//   title2: {
-//     ...FONTS.fontRegular,
-//     fontSize: 12,
-//     color: COLORS.title,
-//   },
-//   title3: {
-//     ...FONTS.fontSemiBold,
-//     fontSize: 24,
-//     color: "#8ABE12",
-//     //textAlign:'right'
-//   },
-//   colorCard: {},
-//   colorCardTitle: {
-//     ...FONTS.fontMedium,
-//     fontSize: 12,
-//     color: COLORS.title,
-//     lineHeight: 20,
-//     textAlign: "center",
-//   },
-//   arrivaldata: {
-//     // backgroundColor: COLORS.card,
-//     borderRadius: 18,
-//     width: 199,
-//     paddingHorizontal: 10,
-//     paddingLeft: 25,
-//     paddingVertical: 15,
-//     borderWidth: 1,
-//     borderColor: "#EFEFEF",
-//     shadowColor: "rgba(4,118,78,.6)",
-//     shadowOffset: {
-//       width: 0,
-//       height: 4,
-//     },
-//     shadowOpacity: 0.34,
-//     shadowRadius: 18.27,
-//     elevation: 4,
-//   },
-//   wave1: {
-//     height: 200,
-//     borderBottomLeftRadius: 50, // Arredonda para criar o efeito de onda
-//     borderBottomRightRadius: 50,
-//     transform: [{ rotate: "-15deg" }],
-//   },
-//   wave2: {
-//     height: 150,
-//     borderTopLeftRadius: 100,
-//     borderTopRightRadius: 100,
-//     marginTop: -50, // Sobreposição para criar profundidade
-//     transform: [{ rotate: "10deg" }],
-//   },
-// });
+const styles = StyleSheet.create({
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  dismissButton: {
+    backgroundColor: '#FF4B4B',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    width: '100%',
+    alignItems: 'center',
+  },
+  dismissButtonText: {
+    color: '#FFFFFF',
+    ...FONTS.fontSemiBold,
+    fontSize: 16,
+  },
+});
+
 function validateCollaborator() {
   throw new Error("Function not implemented.");
 }

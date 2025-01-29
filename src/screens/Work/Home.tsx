@@ -22,44 +22,54 @@ import DevelopmentModal from '../../components/Modal/Development';
 import FindOneJob from '../../hooks/get/job/findOne';
 import { useNavigation } from '@react-navigation/native';
 import type { NavigationProp } from '@react-navigation/native';
+import Header from '../../layout/Header';
 
 const ArrivalData = [
     {
         id:"1",
         title: "Ponto",
         subtitle:"Atalho",
-        image:IMAGES.order
+        image:IMAGES.order,
+        route: "TimeClock"
     },
     {
         id:"2",
         title: "Holerite",
         subtitle:"Atalho",
-        image:IMAGES.payment
+        image:IMAGES.payment,
+        route: "PayStub"
     },
-    {
-        id:"3",
-        title: "Vagas",
-        subtitle:"Atalho",
-        image:IMAGES.send
-    },
+    // {
+    //     id:"3",
+    //     title: "Vagas",
+    //     subtitle:"Atalho",
+    //     image:IMAGES.send
+    // },
     {
         id:"4",
         title: "Ausência",
         subtitle:"Atalho",
-        image:IMAGES.chat
+        image:IMAGES.chat,
+        route: "Absence"
     },
-
+    {
+        id:"5",
+        title: "Demissão",
+        subtitle:"Atalho",
+        image:IMAGES.chat,
+        route: "DismissalHome"
+    },
 ];
 
 
-export default function HomeWork({setTitleWork}) {
+export default function HomeWork({ setTitleWork, navigation }) {
     const SwiperData = [
-        
         {
-            id:"1",
-            image:IMAGES.unique10,
-            title:"Holerite",
-            subtitle: "Assine e cheque seu pagamento"
+            id: "1",
+            image: IMAGES.unique10,
+            title: "Holerite",
+            subtitle: "Assine e cheque seu pagamento",
+            route: "PayStub"
         },
         {
             id:"2",
@@ -71,14 +81,14 @@ export default function HomeWork({setTitleWork}) {
             id:"3",
             image4:IMAGES.unique12,
             title:"Ponto",
-            sule: "Assine e cheque seu ponto"
+            subtitle: "Assine e cheque seu ponto",
+            route: "TimeClock"
         },
 
     ];
 
     const dispatch = useDispatch();
     const [isShowDevelopment,setIsShowDevelopment] = useState<boolean>(false)
-    const navigation = useNavigation<NavigationProp<any>>();
     const theme = useTheme();
     const { colors }: { colors: any; } = theme;
     const { collaborator, fetchCollaborator } = useCollaborator();
@@ -90,143 +100,69 @@ export default function HomeWork({setTitleWork}) {
 
     
     return (
-        <View style={{ backgroundColor: colors.card, flex: 1 }}>
+        <View className="flex-1 bg-white">
             <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/>
-            <View>
-            </View>
-            <View style={{}}>
-                <View style={[GlobalStyleSheet.container, { paddingHorizontal: 30,padding:0,paddingTop:30 }]}>
-                    <View style={[GlobalStyleSheet.flex]}>
+            {/* <Header
+                title="Meu trabalho"
+                leftIcon="back"
+            /> */}
+            <View className="flex-1">
+                <View className="px-8 pt-8">
+                    <View className="flex flex-row items-start">
                         <View>
-                            <Text style={{ ...FONTS.fontRegular, fontSize: 14, color: colors.title }}>Bem-Vindo(a) !</Text>
-                            <Text style={{ ...FONTS.fontSemiBold, fontSize: 24, color: colors.title }}>{collaborator && Mask('firstName', collaborator.name)}</Text>
+                            <Text className="text-sm text-gray-600">Bem-Vindo(a) !</Text>
+                            <Text className="text-2xl font-semibold text-gray-800">
+                                {collaborator && Mask('firstName', collaborator.name)}
+                            </Text>
                         </View>
-                        {/* <View style={{flexDirection:'row',alignItems:'center'}}>
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate('Notification')}
-                                activeOpacity={0.5}
-                                style={[GlobalStyleSheet.background3, {}]}
-                            >
-                                <Image
-                                   style={[GlobalStyleSheet.image3,{tintColor:theme.dark ? COLORS.card : '#5F5F5F'}]}
-                                    source={IMAGES.Notification} 
-                                />
-                                <View 
-                                    style={[styles.notifactioncricle,{
-                                        backgroundColor:colors.card,
-                                    }]}
-                                >
-                                    <View
-                                        style={{
-                                            height:13,
-                                            width:13,
-                                            borderRadius:13,
-                                            backgroundColor:COLORS.primary
-                                        }}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                activeOpacity={0.5}
-                                //onPress={() => navigation.openDrawer()}
-                                onPress={() => dispatch(openDrawer())}
-                                style={[GlobalStyleSheet.background3, {}]}
-                            >
-                                <Image
-                                    style={[GlobalStyleSheet.image3,{tintColor:theme.dark ? COLORS.card : '#5F5F5F'}]}
-                                    source={IMAGES.grid6} 
-                                />
-                            </TouchableOpacity>
-                        </View> */}
                     </View>
                 </View>
-            </View>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={[GlobalStyleSheet.container,{padding:0,paddingHorizontal:30,paddingTop:15}]}>
-                    {/* <View>
-                        <TextInput
-                            placeholder='Qual a Busca de Hoje'
-                            style={[styles.TextInput, { color: COLORS.title,backgroundColor:'#FAFAFA' }]}
-                            placeholderTextColor={'#929292'} />
-                        <View style={{ position: 'absolute', top: 15, right: 20 }}>
-                            <Feather name='search' size={24} color={'#C9C9C9'} />
-                        </View>
-                    </View> */}
-                </View>
-                <View style={{alignItems:'center'}}>
-                    <View style={[GlobalStyleSheet.container,{padding:0,}]}>
-                        <ImageSwiper
-                            data={SwiperData}
+                <ScrollView 
+                    className="flex-1"
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 20 }}
+                >
+                    <View className="items-center">
+                        <ImageSwiper 
+                            data={SwiperData} 
+                            onItemPress={(item) => item.route ? navigation.navigate(item.route) : setIsShowDevelopment(true)}
                         />
                     </View>
-                </View>
-                <View style={[GlobalStyleSheet.container,{paddingHorizontal:0,paddingTop:0}]}>
-                    <View style={[GlobalStyleSheet.flex,{paddingHorizontal:30}]}>
-                        <Text style={[styles.brandsubtitle3,{fontSize: 18,color:colors.title}]}>Categorias</Text>
-                    </View>
-                    <View style={{ marginHorizontal: -15, paddingHorizontal: 15, paddingTop: 25 }}>
+                    <View>
+                        <View className="px-8">
+                            <Text className="text-lg font-medium text-gray-800">Categorias</Text>
+                        </View>
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={{ paddingHorizontal: 30 }}
                         >
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 15, marginRight: 10,marginBottom:20 }}>
-                                {ArrivalData.map((data: any, index) => {
-                                    return (
-                                        <TouchableOpacity
-                                            activeOpacity={0.8}
-                                            onPress={() => setIsShowDevelopment(true)}
-                                            key={index}
-                                            style={[styles.arrivaldata,{
-                                                backgroundColor:theme.dark ? colors.background :colors.card,
-                                                borderColor:'#EFEFEF',
-                                                shadowColor: "rgba(4,118,78,.6)",
-                                            }]}>
-                                            <View style={[GlobalStyleSheet.flexcenter,{gap:20,justifyContent:'flex-start'}]}>
-                                                <Image
-                                                    style={[GlobalStyleSheet.image3]}
-                                                    source={data.image}
-                                                    tintColor={`#2f2f2f`}                                                />
-                                                <View>
-                                                    <Text style={{ ...FONTS.fontMedium, fontSize: 16, color:  colors.title }}>{data.title}</Text>
-                                                    <Text style={{ ...FONTS.fontRegular, fontSize: 14, color:COLORS.primary }}>{data.subtitle}</Text>
-                                                </View>
+                            <View className="flex-row items-center gap-4 mr-3 mb-5">
+                                {ArrivalData.map((data: any, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        activeOpacity={0.8}
+                                        onPress={() => data.route ? navigation.navigate(data.route) : setIsShowDevelopment(true)}
+                                        className="bg-white rounded-2xl p-4 border border-gray-100 shadow-md"
+                                    >
+                                        <View className="flex-row items-center gap-5">
+                                            <Image
+                                                source={data.image}
+                                                className="w-6 h-6"
+                                                tintColor="#2f2f2f"
+                                            />
+                                            <View>
+                                                <Text className="text-base font-medium text-gray-800">{data.title}</Text>
+                                                <Text className="text-sm text-primary">{data.subtitle}</Text>
                                             </View>
-                                        </TouchableOpacity>
-                                    );
-                                })}
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
                             </View>
                         </ScrollView>
                     </View>
-                </View>
-                {/* <View style={[GlobalStyleSheet.container, { paddingHorizontal: 0, paddingTop: 0, paddingBottom: 10 }]}>
-                    <View style={[GlobalStyleSheet.flex, { paddingHorizontal: 30 }]}>
-                        <Text style={[styles.brandsubtitle3, { fontSize: 18, color: colors.title }]}>Featured Beverages</Text>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('Products')}
-                        >
-                            <Text style={[styles.brandsubtitle3, { fontSize: 16, color:COLORS.primary }]}>More</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View> */}
-                {/* <View style={[GlobalStyleSheet.container,{paddingHorizontal:30}]}>
-                    {CardStyleData.map((data:any, index:any) => {
-                        return (
-                            <View key={index} style={{marginBottom:40}}>
-                                <Cardstyle4
-                                    id={data.id}
-                                    image={data.image}
-                                    price={data.price}
-                                    countnumber={data.countnumber} 
-                                    title={data.title}
-                                    onPress={() => navigation.navigate('ProductsDetails')}                                        
-                                    onPress5={() => addItemToWishList(data)}                                
-                                />
-                            </View>
-                        );
-                    })}
-                </View> */}
-            </ScrollView>
+                </ScrollView>
+            </View>
         </View>
     );
 };
@@ -326,5 +262,33 @@ const styles = StyleSheet.create({
             borderTopRightRadius: 100,
             marginTop: -50, // Sobreposição para criar profundidade
             transform: [{ rotate: '10deg' }],
+        },
+        buttonContainer: {
+            position: 'absolute',
+            bottom: 20,
+            left: 0,
+            right: 0,
+            alignItems: 'center',
+            paddingHorizontal: 20,
+            zIndex: 1,
+        },
+        dismissButton: {
+            backgroundColor: '#FF4B4B',
+            paddingVertical: 12,
+            paddingHorizontal: 24,
+            borderRadius: 8,
+            width: '100%',
+            alignItems: 'center',
+        },
+        dismissButtonText: {
+            color: '#FFFFFF',
+            ...FONTS.fontSemiBold,
+            fontSize: 16,
+        },
+        pageTitle: {
+            ...FONTS.fontSemiBold,
+            fontSize: 24,
+            textAlign: 'center',
+            marginBottom: 20
         },
 })
