@@ -17,25 +17,30 @@ import DocumentSend from '../Modal/DocumentSend'
 import { ActivityIndicator } from 'react-native-paper'
 import Pdf from 'react-native-pdf';
 
-type Props = {
-    documentName: string;
-    sendDocument: boolean;
-    twoPicture:boolean;
-    statusDocument:string;
-    typeDocument: any;
-    path:any
-    jobId:number;
-};
+interface Props {
+    // Props para documento
+    documentName?: string;
+    sendDocument?: boolean;
+    typeDocument?: string;
+    statusDocument?: string | null;
+    twoPicture?: boolean;
+    path?: any;
+    jobId?: number;
+    
+    // Props para categoria
+    id?: any;
+    image?: any;
+    price?: any;
+    brand?: any;
+    countnumber?: any;
+    title?: any;
+    onPress?: () => void;
+    onPress2?: () => void;
+    onPress5?: () => void;
+    product?: boolean;
+}
 
-const Cardstyle4 = ({
-    documentName,
-    sendDocument,
-    typeDocument,
-    twoPicture,
-    statusDocument,
-    path,
-    jobId
-}: Props) => {
+const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, twoPicture, path, jobId}: Props) => {
     const theme = useTheme();
     const { colors }: { colors: any } = theme;
     const [isBlurred, setIsBlurred] = useState(true); // Controla o desfoque

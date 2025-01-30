@@ -10,7 +10,8 @@ type Props = {
     salary  ?: string;
     PCD     ?: string;
     time    ?: any;
-    demission?:string;
+    demission?:any;
+    motion_demission?:string ;
     candidates?:any
     user_edit ?:string;
     update_at ?:string;

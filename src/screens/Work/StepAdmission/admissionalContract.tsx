@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import CheckDocumentAdmissional from "../../../hooks/get/job/checkSignaure";
 import AdmissionalCard from "./AdmissionalCard";
-import FindFile from "../../../hooks/get/job/findDocsAdmission";
+import FindFile from "../../../hooks/get/job/findFile";
 import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { Title } from "react-native-paper";
 import AdmissionalCarousel from './AdmissionalCarousel';

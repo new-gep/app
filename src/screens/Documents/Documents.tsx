@@ -438,7 +438,8 @@ const Documents = () => {
                                 typeDocument={data.typeDocument}
                                 statusDocument={data.statusDocument}
                                 twoPicture={data.twoPicture}
-                                path={data.path} jobId={0}                              />
+                                path={data.path} jobId={0}                              
+                              />
                             </View>
                           );
                         })}

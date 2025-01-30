@@ -1,6 +1,6 @@
 import axios from "axios";
 import config from "../../../config.json";
-import RNFetchBlob from 'react-native-blob-util';
+import RNFetchBlob from "react-native-blob-util";
 type propsUploadJob = {
   file: any;
   name: any;
@@ -18,32 +18,30 @@ export default async function uploadFile(propsUploadJob) {
 
     // Preparando o FormData com o arquivo e os dados adicionais
     const formData = new FormData();
+    if (typeof propsUploadJob.file === "string" && !propsUploadJob.file.includes("file://")) {
+      const base64Data = propsUploadJob.file.split(",")[1];
+      const mimeType = propsUploadJob.file.split(";")[0].split(":")[1];
+      const extension = mimeType.split("/")[1];
 
-    if (typeof propsUploadJob.file === "string") {
+      const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/arquivo.${extension}`;
+      await RNFetchBlob.fs.writeFile(filePath, base64Data, "base64");
 
-        const base64Data = propsUploadJob.file.split(',')[1];
-        const mimeType = propsUploadJob.file.split(';')[0].split(':')[1];
-        const extension = mimeType.split('/')[1];
-        
-        const filePath = `${RNFetchBlob.fs.dirs.CacheDir}/arquivo.${extension}`;
-        await RNFetchBlob.fs.writeFile(filePath, base64Data, 'base64');
+      type ReactNativeFile = {
+        uri: string;
+        name: string;
+        type: string;
+      };
 
-        type ReactNativeFile = {
-            uri: string;
-            name: string;
-            type: string;
-        };
-    
-        // 2. Use o tipo criado
-        const fileObject: ReactNativeFile = {
-            uri: `file://${filePath}`,
-            name: `arquivo.${extension}`,
-            type: mimeType,
-        };
+      // 2. Use o tipo criado
+      const fileObject: ReactNativeFile = {
+        uri: `file://${filePath}`,
+        name: `arquivo.${extension}`,
+        type: mimeType,
+      };
 
-        formData.append('file', fileObject as unknown as Blob);
-
+      formData.append("file", fileObject as unknown as Blob);
     } else {
+      console.log(propsUploadJob.file);
       formData.append("file", {
         name: `${"teste"}.${extend}`, // Nome do arquivo
         uri: propsUploadJob.file, // Caminho do arquivo

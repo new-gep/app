@@ -29,7 +29,7 @@ const CategoryCart = ({data } : any) => {
                         return (
                             <View key={index} style={{marginBottom:35}}>
                                 <Cardstyle4
-                                    id={data.id}
+                                    key={data.id}
                                     image={data.image}
                                     price={data.price}
                                     brand={data.brand}

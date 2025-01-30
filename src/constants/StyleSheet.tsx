@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, FONTS, SIZES } from './theme';
+//@ts-ignore
+import { COLORS, FONTS, SIZES } from './theme.tsx';
 
 export const GlobalStyleSheet = StyleSheet.create({
     container: {

@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import UpdatePicture from "../../hooks/update/picture";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
 import JobPicture from "../../hooks/upload/job";
+import UpdateJob from "../../hooks/update/job/default";
 
 
 type PropsCreateAvalidPicture = {
@@ -155,12 +156,32 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             throw new Error('Erro interno no upload');
                         };
                     break;
+                case documentName.includes('Carta a Punho'):
+                    documentName = 'Dismissal_Hand';
+                        const propsDocumentHand = {
+                            file:path,
+                            name: documentName,
+                            id  :jobId,
+                            signature:false
+                        }
+                        const responseHand = await JobPicture(propsDocumentHand);
+                        if (responseHand.status !== 200) {
+                            setNoRepeat(true);
+                            setActiveSheet('danger');
+                            setMessageSheet(`Erro interno`);
+                            Sheet();
+                            setFront(null);
+                            setBack(null);
+                            setLoad(false)
+                            throw new Error('Erro interno no upload');
+                        };
+                    break;
                 default:
                     console.log(`Documento não identificado: ${documentName}`);
                     return;
             };
 
-            if(documentName != 'medical'){
+            if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand'){
                 const response = await UploadFile(path, documentName, doc, collaborator.CPF);
                 if (response.status === 400) {
                     setActiveSheet('danger');
@@ -228,6 +249,22 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     cpf: collaborator.CPF,
                 };
                 const createResponse = await CreateAvalidPicture(pictureParams);
+
+                if(documentName.toLowerCase() == 'dismissal_hand'){
+                    const demissionData = {
+                        motion_demission: "card",
+                        demission: JSON.stringify({step:1, status:null, user:null, solicitation:'collaborator', observation:''})
+                    };
+                    const response = await UpdateJob(jobId, demissionData);
+                    console.log(response)
+                    if(response.status !== 200){
+                        setActiveSheet('danger');
+                        setMessageSheet(`Erro ao atualizar o job`);
+                        Sheet();
+                        setLoad(false)
+                        return
+                    }
+                }
     
                 if(createResponse.status === 201){
                     setPath(path)
@@ -347,7 +384,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         );
     
                         
-                        console.log(statusDocument)
                         if(statusDocument == 'reproved'){
                             const pictureUpdateParams: PropsUpdateAvalidPicture = {
                                 picture: documentName,
