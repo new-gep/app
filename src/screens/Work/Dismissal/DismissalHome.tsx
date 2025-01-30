@@ -143,12 +143,16 @@ const DismissalHome = () => {
           if (dismissalData && dismissalData.step === 1) {
             setHasDemissional(true);
             setSolicitationType(dismissalData.solicitation);
+
+            if (dismissalData.solicitation === 'company') {
+              navigation.navigate('DismissalHomeCompany');
+            }
           }
         }
       }
     };
     fetchData();
-  }, [idWork]);
+  }, [idWork, collaborator]);
   
   return (
     <View className="flex-1 bg-white dark:bg-gray-900">
@@ -250,7 +254,7 @@ const DismissalHome = () => {
                         </View>
                       ))}
                     </View>
-                    <View className={`w-full h-72 items-center justify-center`}>
+                    <View className={`w-full h-64 items-center justify-center`}>
                       <Image
                         source={IMAGES.unique13}
                         resizeMode="contain"

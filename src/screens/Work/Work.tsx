@@ -25,6 +25,7 @@ import DismissalHome from "./Dismissal/DismissalHome";
 import PayStub from "./PayStub";
 import TimeClock from "./TimeClock";
 import Absence from "./Absence";
+import DismissalHomeCompany from "./Dismissal/DismissalHomeCompany";
 //import HomeAdmission from "./HomeAdmission";
 
 type WishlistScreenProps = StackScreenProps<RootStackParamList, "Work">;
@@ -112,6 +113,13 @@ const Work = () => {
         component={DismissalHome}
         options={{
           title: "Solicitação de Demissão",
+        }}
+      />
+      <Stack.Screen
+        name="DismissalHomeCompany"
+        component={DismissalHomeCompany}
+        options={{
+          title: "Demissão pela Empresa",
         }}
       />
       <Stack.Screen
