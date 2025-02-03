@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { FONTS } from "../../../constants/theme";
 
 const DismissalHomeCompany = () => {
   return (

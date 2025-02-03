@@ -21,11 +21,12 @@ import FindCollaborator from "../../hooks/findOne/collaborator";
 import HomeWork from "./Home";
 import HomeNoWork from "./HomeNoJob";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
-import DismissalHome from "./Dismissal/DismissalHome";
+import DismissalHome from "./Dismissal/Home";
 import PayStub from "./PayStub";
 import TimeClock from "./TimeClock";
 import Absence from "./Absence";
-import DismissalHomeCompany from "./Dismissal/DismissalHomeCompany";
+// import DismissalHomeCompany from "./Dismissal/DismissalHomeCompany";;
+import Home from "./Home";
 //import HomeAdmission from "./HomeAdmission";
 
 type WishlistScreenProps = StackScreenProps<RootStackParamList, "Work">;
@@ -105,45 +106,55 @@ const WorkContent = () => {
 };
 
 const Work = () => {
+  const [titleWork, setTitleWork] = useState<string>("");
+  const [hasWork, setHaswork] = useState<boolean>(false);
+  const { collaborator, fetchCollaborator } = useCollaborator();
+  const { validateCollaborator, missingData } = useCollaboratorContext();
+  const navigation = useNavigation<NavigationProp<any>>();
+
+  // Verificação Se Trabalha
+  useEffect(() => {
+    const fetchData = async () => {
+      if (collaborator) {
+        const response = await FindCollaborator(collaborator.CPF);
+        if (response.status == 200) {
+          // console.log(response.jobs);
+          if (response.collaborator.id_work) {
+            setHaswork(true);
+          }
+        }
+      }
+    };
+    fetchData();
+  }, [collaborator]);
+
+
+  // Verificação Cadastral
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchCollaborator();
+      validateCollaborator();
+      const backHandlerSubscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        () => {
+          return true;
+        }
+      );
+      return () => backHandlerSubscription.remove();
+    });
+    return unsubscribe;
+  }, []);
+
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="WorkContent" component={WorkContent} />
-      <Stack.Screen
-        name="DismissalHome"
-        component={DismissalHome}
-        options={{
-          title: "Solicitação de Demissão",
-        }}
-      />
-      <Stack.Screen
-        name="DismissalHomeCompany"
-        component={DismissalHomeCompany}
-        options={{
-          title: "Demissão pela Empresa",
-        }}
-      />
-      <Stack.Screen
-        name="PayStub"
-        component={PayStub}
-        options={{
-          title: "Holerite",
-        }}
-      />
-      <Stack.Screen
-        name="TimeClock"
-        component={TimeClock}
-        options={{
-          title: "Ponto",
-        }}
-      />
-      <Stack.Screen
-        name="Absence"
-        component={Absence}
-        options={{
-          title: "Justificar Ausência",
-        }}
-      />
-    </Stack.Navigator>
+    <>
+      {hasWork ? 
+        <Home setTitleWork={setTitleWork} navigation={navigation}/> 
+        :
+        <HomeNoWork setTitleWork={setTitleWork} />
+      }
+    
+    </>
+
   );
 };
 

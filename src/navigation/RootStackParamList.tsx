@@ -79,4 +79,7 @@ export type RootStackParamList = {
     TabStyle2: undefined;
     TabStyle3: undefined;
     TabStyle4: undefined;
+    DismissalHome: undefined;
+    DismissalHomeCompany: undefined;
+    DismissalSteps: undefined;
 };

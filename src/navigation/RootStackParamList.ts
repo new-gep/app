@@ -54,4 +54,6 @@ export type RootStackParamList = {
   Tables: undefined;
   Toggles: undefined;
   DismissalHome: undefined;
+  DismissalHomeCompany: undefined;
+  DismissalSteps: undefined;
 }; 

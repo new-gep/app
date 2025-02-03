@@ -3,7 +3,7 @@ import { View, Modal, PanResponder, Dimensions, Alert } from "react-native";
 import Canvas from "react-native-canvas";
 import ButtonOutline from "../../components/Button/ButtonOutline";
 import uploadFile from "../../hooks/upload/job";
-import WaitingIndicator from "../Work/StepAdmission/admissionalWaitingIndicator";
+import WaitingIndicator from "../Work/Admission/admissionalWaitingIndicator";
 import CreateAvalidPicture from "../../hooks/create/pictures";
 import UpdatePicture from "../../hooks/update/picture";
 

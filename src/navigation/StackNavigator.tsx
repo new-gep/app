@@ -57,7 +57,9 @@ import Tabs from '../screens/Components/Tabs';
 import Tables from '../screens/Components/Tables';
 import Toggles from '../screens/Components/Toggles';
 import Work from '../screens/Work/Work';
-
+import DismissalHome from '../screens/Work/Dismissal/Home';
+import DismissalSteps from '../screens/Work/Dismissal/Step/Medical';
+import DismissalSignature from '../screens/Work/Dismissal/Step/Signature';
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -127,6 +129,10 @@ const StackNavigator = () => {
 				<Stack.Screen name="Tabs" component={Tabs} />
 				<Stack.Screen name="Tables" component={Tables} />
 				<Stack.Screen name="Toggles" component={Toggles} />
+				<Stack.Screen name="DismissalHome" component={DismissalHome} />
+				<Stack.Screen name="DismissalSteps" component={DismissalSteps} />	
+				
+
 			</Stack.Navigator>
 		</View>
     )

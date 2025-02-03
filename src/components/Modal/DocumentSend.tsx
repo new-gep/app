@@ -176,12 +176,32 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             throw new Error('Erro interno no upload');
                         };
                     break;
+                case documentName.includes('Exame Demissional'):
+                    documentName = 'Dismissal_Medical_Examination';
+                        const propsDocumentDismissalExam = {
+                            file:path,
+                            name: documentName,
+                            id  :jobId,
+                            signature:false
+                        }
+                        const responseDismissalExam = await JobPicture(propsDocumentDismissalExam);
+                        if (responseDismissalExam.status !== 200) {
+                            setNoRepeat(true);
+                            setActiveSheet('danger');
+                            setMessageSheet(`Erro interno`);
+                            Sheet();
+                            setFront(null);
+                            setBack(null);
+                            setLoad(false)
+                            throw new Error('Erro interno no upload');
+                        };
+                    break;
                 default:
                     console.log(`Documento não identificado: ${documentName}`);
                     return;
             };
 
-            if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand'){
+            if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand' && documentName.toLowerCase() != 'dismissal_medical_examination'){
                 const response = await UploadFile(path, documentName, doc, collaborator.CPF);
                 if (response.status === 400) {
                     setActiveSheet('danger');
@@ -369,7 +389,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                                         setLoad(false);
                                         return;
                                     default:
-                                        console.log(response)
                                         setActiveSheet('danger');
                                         setMessageSheet(`Erro desconhecido`);
                                         Sheet();
@@ -390,7 +409,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                                 status: 'pending',
                             };
                             const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
-                            console.log(update)
                             switch (update.status) {
                                 case 200:
                                     validateCollaborator()
