@@ -8,7 +8,7 @@ import CreateAvalidPicture from "../../hooks/create/pictures";
 import UpdatePicture from "../../hooks/update/picture";
 
 
-const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf }) => {
+const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf, where }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const isDrawing = useRef(false);
@@ -74,12 +74,10 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf }) =>
         const props = {
           file: base64Data,
           id: id,
-          name: "Admission_Signature",
+          name: where,
         };
         const response = await uploadFile(props);
-        console.log("response:", response);
         if (response?.status === 200) {
-          console.log("Upload realizado com sucesso!");
         } else {
           alert("Ocorreu um erro ao enviar o arquivo. Tente novamente.");
         }
@@ -90,16 +88,14 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf }) =>
     }
 
     const props = {
-      picture :'Admission_Signature',
+      picture :where,
       status  :'pending',
       cpf     : cpf
     }
     const response = await CreateAvalidPicture(props)
-    console.log("response:", response);
     
     if(response.status === 409) {
       const response = await UpdatePicture(cpf, props)
-      console.log("response atualizado:", response);
       if(response.status === 200) {
         Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
           {

@@ -11,10 +11,14 @@ import CheckDocumentDismissal from "../../../../hooks/get/job/checkDismissal";
 import SignatureModalCanvas from "../../../Components/signatureModalCanvas";
 import { WebView } from "react-native-webview";
 import WaitingIndicator from "../../Admission/admissionalWaitingIndicator";
+import WaitingIndicatorDismissal from "./WaitingIndicator";
+import { default as useFocusEffect } from "@react-navigation/native";
+import FindPicture from "../../../../hooks/findOne/picture";
 type Props = {
   jobConected: any;
   CPF: any;
 };
+
 
 const DismissalSignature = ({ jobConected, CPF }: Props) => {
   const [obligations, setObligations] = useState(null);
@@ -87,7 +91,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
             const files = {};
             await Promise.all(
               Object.entries(combined).map(async ([key, value]) => {
-                const response = await FindFile(jobConected[0].id, key, value);
+                const response = await FindFile(jobConected.id, key, value);
                 // console.log(`Arquivo encontrado para ${key}:`, response); // Log do arquivo encontrado
                 files[key] = response;
               })
@@ -103,10 +107,27 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
     fetchData();
   }, [jobConected, CPF]);
 
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const response = await FindPicture(CPF);
+      if (response?.status === 200) {
+          const signatureFound = response.pictures.find(
+            (pic) => pic.picture === "Dismissal_Signature"
+          );
+          // console.log("response do signatureFound", signatureFound.status);
+          setSignatureFound(signatureFound);
+
+        } else {
+          console.log("Erro ao buscar assinatura");
+        }
+      };
+      fetchData();
+    }, [CPF])
+
   return (
     <>
       <ScrollView className="h-3/4">
-        {dynamicDocs.map((doc, index) => (
+        {/* {dynamicDocs.map((doc, index) => (
           <DismissalCard
             key={`dynamic-${index}`}
             title={doc.title}
@@ -114,13 +135,13 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
             path={doc.path}
             typeDocument={doc.typeDocument}
           />
-        ))}
+        ))} */}
         <>
           {signatureFound && signatureFound?.status === "approved" ? (
             <Text>Assinatura aprovada</Text>
           ) : signatureFound?.status === "pending" ? (
             <View className="w-full h-full">
-              <WaitingIndicator visible={true} status={"pending"} />
+              <WaitingIndicatorDismissal visible={true} status={"pending"} />
             </View>
           ) : signatureFound?.status === "reproved" ? (
             <>
@@ -172,7 +193,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
                 snapToAlignment="center"
                 className="w-full"
               >
-                {/* {dynamicDocs.map((doc, index) => (
+                {dynamicDocs.map((doc, index) => (
                     <DismissalCard
                       key={`dynamic-${index}`}
                       title={doc.title}
@@ -180,7 +201,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
                       path={doc.path}
                       typeDocument={doc.typeDocument}
                     />
-                    ))} */}
+                    ))}
               </ScrollView>
 
               {signature ? (
@@ -221,6 +242,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
         onSaveSignature={setSignature}
         cpf={CPF}
         id={jobConected.id}
+        where="Dismissal_Signature"
       />}
     </>
   );
