@@ -23,21 +23,22 @@ const DismissalCard = ({ title, status, path, typeDocument }: CardProps) => {
   };
 
    // Mascara de titúlos
-//   const Mask = (type, value) => {
-//     switch (type) {
-//       case 'title':
-//         // Primeiro verifica se é um dos casos especiais
-//         switch (value) {
-//           case 'registration':
-//             return "Ficha de Registro";
-//           default:
-//             // Se não for um caso especial, retorna o valor formatado
-//             return value;
-//         }
-//       default:
-//         return value;
-//     }
-//   };
+  const Mask = (type, value) => {
+    switch (type) {
+      case 'title':
+
+        // Primeiro verifica se é um dos casos especiais
+        switch (value) {
+          case 'registration':
+            return "Ficha de Registro";
+          default:
+            // Se não for um caso especial, retorna o valor formatado
+            return value;
+        }
+      default:
+        return value;
+    }
+  };
 
 
   return (
@@ -52,8 +53,8 @@ const DismissalCard = ({ title, status, path, typeDocument }: CardProps) => {
           close={handleOpenModalDoc}
         />
 
-        {/* <Text className="text-lg font-bold text-gray-800 mb-2">{Mask('title',title)}</Text> */}
-        <Text className="text-gray-500 mb-4">{status ? "Yes" : "No"}</Text>
+        <Text className="text-lg font-bold text-gray-800 mb-2">{title}</Text>
+        {/* <Text className="text-gray-500 mb-4">{status ? "Yes" : "No"}</Text> */}
 
         {/* Exibir a assinatura como imagem se existir */}
         {signature ? (

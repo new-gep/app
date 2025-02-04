@@ -80,38 +80,6 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
     fetchData();
   }, [jobConected, CPF]);
 
-  // const documents = [
-  //   {
-  //     title: "registration",
-  //     status: true,
-  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/registration.pdf`,
-  //     typeDocument: "pdf",
-  //   },
-  //   {
-  //     title: "experience",
-  //     status: true,
-  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/experience.pdf`,
-  //     typeDocument: "pdf",
-  //   },
-  //   {
-  //     title: "extension",
-  //     status: true,
-  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/extension.pdf`,
-  //     typeDocument: "pdf",
-  //   },
-  //   {
-  //     title: "compensation",
-  //     status: true,
-  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/compensation.pdf`,
-  //     typeDocument: "pdf",
-  //   },
-  //   {
-  //     title: "voucher",
-  //     status: true,
-  //     path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/voucher.pdf`,
-  //     typeDocument: "pdf",
-  //   },
-  // ];
 
   return (
     <View className="flex-row flex-wrap">

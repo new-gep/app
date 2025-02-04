@@ -60,10 +60,11 @@ const DismissalHome = () => {
               
               setCurrentStep(response.step);
               setSolicitationType(response.solicitation)
-              setJobConected(response.job)
+              setJobConected(responseJob.job)
             }
           }
         }
+
       }
     };
     fetchData();
@@ -130,6 +131,7 @@ const DismissalHome = () => {
             )}
           </View>
         </ScrollView>
+
       )}
     </View>
   );

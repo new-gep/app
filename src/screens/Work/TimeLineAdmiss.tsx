@@ -20,7 +20,6 @@ import SignatureModalCanvas from "../Components/signatureModalCanvas";
 import CreateAvalidPicture from "../../hooks/create/pictures";
 import FindPicture from "../../hooks/findOne/picture";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import AdmissionalCard from "./Admission/AdmissionalCard";
 import WaitingIndicator from "./Admission/admissionalWaitingIndicator";
 import HomeWork from "./Home";
 import { BottomTabParamList } from "../../navigation/BottomTabParamList";

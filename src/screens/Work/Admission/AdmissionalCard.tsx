@@ -67,7 +67,7 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
         />
 
         <Text className="text-lg font-bold text-gray-800 mb-2">{Mask('title',title)}</Text>
-        <Text className="text-gray-500 mb-4">{status ? "Yes" : "No"}</Text>
+        {/* <Text className="text-gray-500 mb-4">{status ? "Yes" : "No"}</Text> */}
 
         {/* Exibir a assinatura como imagem se existir */}
         {signature ? (
