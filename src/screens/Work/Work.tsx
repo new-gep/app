@@ -84,7 +84,7 @@ const WorkContent = () => {
     <View style={{ backgroundColor: colors.background, flex: 1 }}>
       <Header
         title={titleWork}
-        leftIcon={hasWork ? "back" : "back"}
+        leftIcon={hasWork ? "back" : "home"}
         rightIcon1={hasWork ? "search" : "search"}
       />
 
@@ -127,7 +127,6 @@ const Work = () => {
     };
     fetchData();
   }, [collaborator]);
-
 
   // Verificação Cadastral
   useEffect(() => {

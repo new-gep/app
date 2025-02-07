@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, ActivityIndicator } from "react-native";
 import { RouteProp } from "@react-navigation/native";
 import { COLORS, FONTS } from "../../constants/theme";
 import CheckCadasterCollaboratorDocument from "../utils/checkCadasterCollaboratorDocument";
@@ -14,35 +14,26 @@ type Props = {
   CPF: any;
 };
 
-
-const JobAdmissionScreen: React.FC<Props> = ({jobConected, CPF}) => {
+const JobAdmissionScreen: React.FC<Props> = ({ jobConected, CPF }) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    //console.log("CPF usuadhIFHS",CPF);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   }, []);
-  
-
-  const [error, setError] = useState<boolean>(false);
 
   return (
     <>
-      {error ? (
-        <View>
-          <View className={`mt-10 items-center`}>
-            <Text style={{ ...FONTS.fontMedium }} className={`text-danger`}>
-              ERRO
-            </Text>
-            <Text style={{ ...FONTS.fontMedium }}>
-              Algo deu errado, tente mais tarde
-            </Text>
-          </View>
-        </View>
-      ) : (
-        <View style={{ backgroundColor: COLORS.background, flex: 1 }}>
-          <View className={'h-full'}>
+      <View style={{ backgroundColor: COLORS.background, flex: 1 }}>
+        {loading ? (
+          <ActivityIndicator size="large" color={COLORS.primary} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+        ) : (
+          <View className={"h-full"}>
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ flexGrow: 1}}
+              contentContainerStyle={{ flexGrow: 1 }}
             >
               <View className={`px-5`}>
                 <CheckCadasterCollaboratorDocument />
@@ -54,8 +45,8 @@ const JobAdmissionScreen: React.FC<Props> = ({jobConected, CPF}) => {
               </View>
             </ScrollView>
           </View>
-        </View>
-      )}
+        )}
+      </View>
     </>
   );
 };

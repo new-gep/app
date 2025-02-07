@@ -60,6 +60,10 @@ import Work from '../screens/Work/Work';
 import DismissalHome from '../screens/Work/Dismissal/Home';
 import DismissalSteps from '../screens/Work/Dismissal/Step/Medical';
 import DismissalSignature from '../screens/Work/Dismissal/Step/Signature';
+import TimelineAdmiss from '../screens/Work/TimeLineAdmiss';
+import PayStub from '../screens/Work/PayStub';
+import TimeClock from '../screens/Work/TimeClock';
+import Absence from '../screens/Work/Absence';
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -130,8 +134,12 @@ const StackNavigator = () => {
 				<Stack.Screen name="Tables" component={Tables} />
 				<Stack.Screen name="Toggles" component={Toggles} />
 				<Stack.Screen name="DismissalHome" component={DismissalHome} />
-				<Stack.Screen name="DismissalSteps" component={DismissalSteps} />	
-				
+				<Stack.Screen name="TimelineAdmiss" component={TimelineAdmiss} />
+				<Stack.Screen name="DismissalSteps" component={DismissalSteps} />
+				<Stack.Screen name="PayStub" component={PayStub} />
+				<Stack.Screen name="TimeClock" component={TimeClock} />
+				<Stack.Screen name="Absence" component={Absence} />
+
 
 			</Stack.Navigator>
 		</View>

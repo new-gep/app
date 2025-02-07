@@ -82,4 +82,8 @@ export type RootStackParamList = {
     DismissalHome: undefined;
     DismissalHomeCompany: undefined;
     DismissalSteps: undefined;
+    TimelineAdmiss: undefined;
+    PayStub: undefined;
+    TimeClock: undefined;
+    Absence: undefined;
 };

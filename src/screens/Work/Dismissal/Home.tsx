@@ -57,7 +57,6 @@ const DismissalHome = () => {
             const responseJob = await FindOneJob(response.collaborator.id_work)
             if (responseJob.status == 200){
               const response = JSON.parse(responseJob.job.demission);
-              
               setCurrentStep(response.step);
               setSolicitationType(response.solicitation)
               setJobConected(responseJob.job)
@@ -105,25 +104,37 @@ const DismissalHome = () => {
                 className="text-2xl font-semibold text-gray-900 dark:text-white flex-1 text-center -ml-10"
                 style={FONTS.fontSemiBold}
               >
-                {solicitationType === 'company' ? 'Demissão pela Empresa' : 'Solicitação de Demissão'}
+                {solicitationType === 'company' ? 'Desligamento pela empresa' : 'Desligamento pelo colaborador'}
               </Text>
             </View>
 
+
             {currentStep === 1 && (
                 solicitationType == 'company'? 
-                <Company/> 
+                <Company jobConected={jobConected} CPF={collaborator.CPF}/> 
                 :
                 solicitationType == 'collaborator'? 
                 <Collaborator/> 
                 :
                 <Text>
-                  Não identificamos o tipo da solicitação
+
+                  Você não está em um processo de demissão;
                 </Text>
             )}
             {currentStep === 2 && (
-                <Medical/>
+                <Medical
+                  jobConected={jobConected}
+                  CPF={collaborator.CPF}
+                />
             )}
+
             {currentStep === 3 && collaborator && collaborator.CPF &&(
+              <Signature 
+                jobConected={jobConected} 
+                CPF={collaborator.CPF} 
+              />
+            )}
+            {currentStep === 4 && collaborator && collaborator.CPF &&(
               <Signature 
                 jobConected={jobConected} 
                 CPF={collaborator.CPF} 

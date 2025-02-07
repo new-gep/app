@@ -8,6 +8,7 @@ import {
   TextInput,
   StyleSheet,
   BackHandler,
+  ActivityIndicator,
 } from "react-native";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
@@ -35,6 +36,7 @@ import FindAplicateInJob from "../../hooks/get/job/findAplicateJob";
 import CardHistory from "./CardHistoryJobCadastrate";
 import fetchCollaborator from "../../function/fetchCollaborator";
 import HomeAdmission from "./HomeAdmission";
+import TimeLineAdmiss from "./TimeLineAdmiss";
 
 const ArrivalData = [
   {
@@ -112,45 +114,57 @@ export default function HomeNoWork({ setTitleWork }) {
         if (collaborator) {
           try {
             const response = await FindAplicateInJob(collaborator.CPF);
-            console.log(response);
+            // console.log("response",collaborator.CPF)
             if (response.status !== 200) {
-              // console.error("Erro ao buscar os cards:", response.message);
+              console.error("Erro ao buscar os cards:", response.message);
               return;
             }
 
             setJobConected(response.jobs);
+            // console.log("response.jobs",response.jobs)
             if (response.processAdmission) {
               setAdmission(true);
-              setTitleWork("Processo admissional");
+              setTitleWork("Processo admissional"); 
+              setProcessAdmission(true);
+              
+              // navigation.navigate("TimeLineAdmiss", { jobConected: response.jobs, CPF: collaborator.CPF });
+
+              // console.log("response.processAdmission", response.processAdmission);
+
             } else {
               setAdmission(false);
               setTitleWork("Vagas aplicadas");
+              // console.log("response.processAdmission", response.processAdmission);
             }
 
-            // if (response.processAdmission && response.processAdmission) {
-            //   setProcessAdmission(response.processAdmission);
-
-            // } 
             return;
 
           } catch (error) {
             console.error("Erro ao buscar os cards:", error);
           } finally {
-              setIsLoading(false);
-
+            setIsLoading(false);
           }
         }
       };
 
       fetchData();
-
-      
     }, [collaborator])
   );
 
   return (
     <View style={{ backgroundColor: colors.card, flex: 1 }}>
-      {!process ? (
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : processAdmission ? (
+        <>
+          <HomeAdmission 
+            jobConected={jobConected} 
+            CPF={collaborator.CPF} 
+          />
+        </>
+      ) : !process ? (
         <>
           <View style={{ paddingHorizontal: 30, padding: 0, paddingTop: 30 }}>
             <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
@@ -176,25 +190,25 @@ export default function HomeNoWork({ setTitleWork }) {
           </View>
           <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
             {jobConected && jobConected.length > 0 ? (
-              jobConected.map((job) => <CardHistory key={job.id} job={job} />)
+              jobConected.map((job) => (
+                <CardHistory 
+                  key={job.id} 
+                  job={job} 
+                />
+              ))
             ) : (
               <Text style={{ textAlign: "center", marginTop: 20 }}>
                 Sem vagas registradas
               </Text>
             )}
           </ScrollView>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.dismissButton}
-              onPress={() => setIsShowDevelopment(true)}
-            >
-              <Text style={styles.dismissButtonText}>Solicitar demissão</Text>
-            </TouchableOpacity>
-          </View>
         </>
       ) : (
         collaborator && (
-          <HomeAdmission jobConected={jobConected} CPF={collaborator.CPF} />
+          <HomeAdmission 
+            jobConected={jobConected} 
+            CPF={collaborator.CPF} 
+          />
         )
       )}
       <DevelopmentModal
@@ -227,8 +241,10 @@ const styles = StyleSheet.create({
     ...FONTS.fontSemiBold,
     fontSize: 16,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
-function validateCollaborator() {
-  throw new Error("Function not implemented.");
-}

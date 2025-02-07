@@ -92,7 +92,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
             await Promise.all(
               Object.entries(combined).map(async ([key, value]) => {
                 const response = await FindFile(jobConected.id, key, value);
-                // console.log(`Arquivo encontrado para ${key}:`, response); // Log do arquivo encontrado
+                // console.log(`Arquivo encontrado jobConected`, jobConected.id); 
                 files[key] = response;
               })
             );

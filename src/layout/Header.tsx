@@ -42,7 +42,6 @@ const Header = ({title, leftIcon,iconSimple, leftAction,transparent,productId,ti
         <View
             style={[{
                 height: 65,
-                backgroundColor:colors.card,
                 alignItems:'center',
                 justifyContent:'center',
                 zIndex:99

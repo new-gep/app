@@ -18,6 +18,11 @@ const Tabs = ({ data }) => {
   const theme = useTheme();
   const { colors } = theme;
 
+  // console.log('Dados recebidos:', JSON.stringify(data.company.company_name, null, 2));
+
+
+
+
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollX.value = event.contentOffset.x;
   });
@@ -52,71 +57,84 @@ const Tabs = ({ data }) => {
         contentContainerStyle={{ width: width * buttons.length }}
       >
         {/* Tab 1: Vaga */}
-        <View style={{ width }}>
+        <View className="w-[100vw]">
           <Animated.ScrollView
             nestedScrollEnabled
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ padding: 16, paddingBottom: 30 }}
+            className="p-4 pb-8"
           >
-            <Text className="text-white text-lg font-semibold">
-              Empresa: {data.company.company_name || "Não informado"}
+            <Text className="text-white text-xl font-semibold">
+              Vaga: {data.function || "Não informado"}
             </Text>
             <View className="flex-row items-center">
-              <MaterialIcons name="attach-money" size={25} color="#f5f5f5" />
-              <Text className="text-white text-lg ml-1">
-                Salário: {data.salary || "Não informado"}
+              {/* <MaterialIcons name="attach-money" size={25} color="#f5f5f5" /> */}
+              <Text className="text-white text-xl font-semibold">
+              Salário: R${data.salary || "Não informado"}
               </Text>
             </View>
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-xl font-semibold">
               Tipo de Contratação: {data.contract_type || "Não informado"}
             </Text>
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-xl font-semibold">
               Descrição: {data.description || "Não informado"}
+            </Text>
+            <Text className="text-white text-xl font-semibold">
+              Jornada: {data.time.journey || "Não informado"}
+            </Text>
+            <Text className="text-white text-xl font-semibold">
+              Tipo de localidade: {data.delete_at || "Home Office"}
+            </Text>
+            <Text className="text-white text-xl font-semibold">
+              Data da postagem: {data.delete_at || "Há 6 dias atrás"}
+            </Text>
+            <Text className="text-white text-xl font-semibold">
+              Quantidade de candidatos: {data.delete_at || "200"}
             </Text>
           </Animated.ScrollView>
         </View>
 
         {/* Tab 2: Empresa */}
-        <View style={{ width }}>
+        <View className="w-[100vw]">
           <Animated.ScrollView
             nestedScrollEnabled
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ padding: 16, paddingBottom: 30 }}
+            className="p-4 pb-8"
           >
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-xl font-semibold">
+              Empresa: {data.company.company_name || "Não informado"}
+            </Text>
+            <Text className="text-white text-xl font-semibold">
               Telefone: {data.company.phone || "Não informado"}
             </Text>
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-xl font-semibold">
               E-mail: {data.company.email || "Não informado"}
             </Text>
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-xl font-semibold">
               Endereço:{" "}
               {`${data.company.street || ""}, ${data.company.number || ""} - ${
                 data.company.district || ""
               }, ${data.company.city || ""} - ${data.company.uf || ""}`}
             </Text>
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-xl font-semibold">
               CEP: {data.company.zip_code || "Não informado"}
             </Text>
           </Animated.ScrollView>
         </View>
 
         {/* Tab 3: Detalhes */}
-        <View  style={{ width }}>
-          <ScrollView
-            className="p-4 h-40 w-full"
-          >
-            <Text className="text-white text-lg font-semibold">
+        <View className="w-[100vw] h-[100vh]">
+          <ScrollView className="p-4 h-40 w-full">
+            <Text className="text-white text-xl font-semibold">
               Carga Horária: {data.workload || "Não informado"}
             </Text>
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-xl font-semibold">
               Benefícios: {data.benefics || "Não informado"}
             </Text>
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-xl font-semibold">
               Obrigações: {data.obligations || "Não informado"}
             </Text>
-            <Text className="text-white text-lg font-semibold">
-              Detalhes Adicionais: {data.details || "Não informadooooooooooooooooooooooooooooooooooooooooooOOOOOO  oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo              oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo              oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"}
+            <Text className="text-white text-xl font-semibold">
+              Detalhes Adicionais: {data.details || "Não informadooooooooooooooooooooooooooooooooooooooooooOOOOOO  oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo              oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"}
             </Text>
           </ScrollView>
         </View>

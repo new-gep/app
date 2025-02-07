@@ -41,14 +41,14 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status }) 
           {getMessage()}
         </Text>
 
-        <TouchableOpacity 
+        {/* <TouchableOpacity 
           onPress={() => navigation.navigate('Home')}
           className="mt-56"
         >
           <Text className="text-gray-800 underline text-lg">
             Enquanto aguarda, que tal ver novas vagas?
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

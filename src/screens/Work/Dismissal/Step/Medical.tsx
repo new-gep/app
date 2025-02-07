@@ -22,24 +22,21 @@ import FindFile from "../../../../hooks/get/job/findFile";
 import FindOneJob from "../../../../hooks/get/job/findOne";
 import GetColaboratorJob from "../../../../hooks/get/job/findJobColaborator";
 
-const DismissalSteps = () => {
+const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) => {
   const theme = useTheme();
-  const [hasDemissional, setHasDemissional] = useState<boolean>(false);
+
+
   const navigation = useNavigation<any>();
   const [myDocsData, setMyDocsData] = useState<any[] | null>(null);
   const { width, height } = Dimensions.get("window");
   const { collaborator, fetchCollaborator } = useCollaborator();
   const [process, setProcess] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
-  const [idWork, setIdWork] = useState<number | null>(null);
-  const [solicitationType, setSolicitationType] = useState<
-    "company" | "collaborator" | null
-  >(null);
 
   const getDocumentInfo = async (name: string) => {
     try {
       const props = {
-        id: idWork,
+        id: jobConected.id,
         name: "Dismissal_Medical_Examination",
         signature: false,
       };
@@ -70,19 +67,15 @@ const DismissalSteps = () => {
 
   const Picture = async () => {
     try {
-      if (!collaborator?.CPF) return;
-
-      console.log("Colaborador CPF:", collaborator.CPF);
-
-      const response = await FindPicture(collaborator.CPF);
-      console.log("Resposta da busca de imagem:", response);
+      if (!CPF) return;
+      // console.log("Colaborador CPF:", CPF);
+      const response = await FindPicture(CPF);
 
       if (response.status == 200) {
         setError(false);
       }
-      // Configuração do documento de carta de demissão
+
       const documentInfo = await getDocumentInfo("Dismissal_Medical_Examination");
-      console.log("Informações do documento:", documentInfo);
 
       let document_params = {
         path: documentInfo?.path,
@@ -92,7 +85,8 @@ const DismissalSteps = () => {
         twoPicture: false,
         statusDocument: null,
       };
-
+      // Configuração do documento de carta de demissão
+      console.log("Informações do documento:", document_params);
       const dismissalDoc = response.pictures.find(
         (pic: { picture: string; status: string }) =>
           pic.picture === "Dismissal_Medical_Examination"
@@ -100,14 +94,9 @@ const DismissalSteps = () => {
 
       if (dismissalDoc) {
         document_params.statusDocument = dismissalDoc.status;
-        console.log('lalala', document_params.statusDocument)
+        // console.log('lalala', document_params.statusDocument)
         document_params.sendDocument = dismissalDoc.status === "reproved";
         
-        // Nova verificação para status 'approved'
-        if (dismissalDoc.status === "approved") {
-          // Navegar para a tela DismissalSignature
-          navigation.navigate("DismissalSignature");
-        }
       }
 
       setMyDocsData([document_params]);
@@ -120,98 +109,16 @@ const DismissalSteps = () => {
   };
 
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setProcess(false);
-      fetchCollaborator();
-    });
-    return unsubscribe;
-  }, [navigation]);
-
-  React.useEffect(() => {
     if (collaborator) {
       Picture();
     }
   }, [collaborator, process]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (collaborator) {
-        const response = await FindCollaborator(collaborator.CPF);
-        console.log("Resposta da busca de colaborador:", response);
-
-        if (response.status == 200) {
-          if (response.collaborator.id_work) {
-            setIdWork(response.collaborator.id_work);
-            console.log("ID do trabalho do colaborador:", idWork);
-          }
-        }
-      }
-    };
-    fetchData();
-  }, [collaborator]);
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-    //   if (collaborator) {
-    //     const responseCollaborator = await FindCollaborator(collaborator.CPF);
-    //     if (responseCollaborator.status == 200) {
-    //       const responseJob = await FindOneJob(
-    //         responseCollaborator.collaborator.id_work
-    //       );
-    //       if (responseJob.status == 200) {
-    //         if (responseJob.job.demission) {
-    //           setHasDemissional(true);
-    //           setSolicitationType(
-    //             JSON.parse(responseJob.job.demission).solicitation
-    //           );
-    //           //console.log("responseJob:", responseJob.job.demission);
-
-    //           // Adicione um log para verificar o tipo de demissão
-    //           //console.log("Tipo de demissão:", typeof responseJob.job.demission, responseJob.job.demission);
-
-    //           // Verifique se é uma string e se contém 'company'
-    //           if (
-    //             typeof responseJob.job.demission === "string" &&
-    //             responseJob.job.demission === "company"
-    //           ) {
-    //             // console.log("Caiu aqui");
-    //             navigation.navigate("DismissalHomeCompany");
-    //           }
-    //         }
-    //       }
-    //     }
-    //     return;
-    //   }
-//     };
-//     fetchData();
-//   }, [collaborator]);
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       if (collaborator) {
-//         const response = await GetColaboratorJob();
-//         if (response.status === 200) {
-//             const dismissalData = response.jobs[0];
-//             console.log("response dismissal:", collaborator);
-//             return;
-//             if (dismissalData && dismissalData.step === 1) {
-//                 setHasDemissional(true);
-//                 setSolicitationType(dismissalData.solicitation);
-//                 return;
-//             if (dismissalData.solicitation === 'company') {
-//               navigation.navigate('DismissalHomeCompany');
-//             }
-//           }
-//         }
-//       }
-//     };
-//     fetchData();
-//   }, [idWork, collaborator]);
 
   return (
     <View style={{ marginTop: 50, padding: 20, backgroundColor: theme.colors.background }}>
       <View className="flex-row items-center mb-5">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
           <View className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center shadow">
             <Text
               style={{ ...FONTS.fontMedium, fontSize: 20, lineHeight: 20 }}
@@ -220,15 +127,16 @@ const DismissalSteps = () => {
               ←
             </Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Text
           className="text-2xl font-semibold text-gray-900 dark:text-white flex-1 text-center"
           style={{ ...FONTS.fontSemiBold, marginLeft: 10 }}
         >
-          Enviar exame demissional
+          Enviar Exame Demissional
         </Text>
       </View>
       
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className={`px-2 w-full mt-10`}>
           <View className={`w-full h-80 items-center justify-center mb-5`}>
@@ -238,6 +146,7 @@ const DismissalSteps = () => {
               className={`h-full w-full`}
             />
           </View>
+
           {myDocsData?.map((data: any) => (
             <View key={data.DocumentName} style={{ marginBottom: 30 }}>
               <Cardstyle4
@@ -247,16 +156,15 @@ const DismissalSteps = () => {
                 statusDocument={data.statusDocument}
                 twoPicture={data.twoPicture}
                 path={data.path}
-                jobId={idWork}
+                jobId={jobConected.id}
               />
             </View>
           ))}
         </View>
       </ScrollView>
       {error && <Text style={{ color: 'red', textAlign: 'center' }}>Erro ao carregar documentos.</Text>}
-      {process && <Text style={{ color: 'blue', textAlign: 'center' }}>Carregando...</Text>}
     </View>
   );
 };
 
-export default DismissalSteps;
+export default DismissalExamination;

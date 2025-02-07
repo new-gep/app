@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, TextInput, StyleSheet, BackHandler } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, TextInput, StyleSheet, BackHandler, ActivityIndicator } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { GlobalStyleSheet } from '../../constants/StyleSheet';
 import { IMAGES } from '../../constants/Images';
@@ -75,8 +75,10 @@ export default function HomeWork({ setTitleWork, navigation }) {
             id:"2",
             image:IMAGES.unique11,
             title:"Ausência",
-            subtitle: "Envia seu atestado e justificativas"
+            subtitle: "Envia seu atestado e justificativas",
+            route: "Absence"
         },
+
         {
             id:"3",
             image4:IMAGES.unique12,
@@ -93,76 +95,99 @@ export default function HomeWork({ setTitleWork, navigation }) {
     const { colors }: { colors: any; } = theme;
     const { collaborator, fetchCollaborator } = useCollaborator();
     const { validateCollaborator, missingData } = useCollaboratorContext();
+    const [loading, setLoading] = useState<boolean>(true);
 
     const closeDevelopment = () => {
         setIsShowDevelopment(false)
     }
 
-    
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true); // Inicia o carregamento
+                await fetchCollaborator(); // Simula uma chamada de API
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false); // Finaliza o carregamento
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <View className="flex-1 bg-white">
-            <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/>
-            {/* <Header
-                title="Meu trabalho"
-                leftIcon="back"
-            /> */}
-            <View className="flex-1">
-                <View className="px-8 pt-8">
-                    <View className="flex flex-row items-start">
-                        <View>
-                            <Text className="text-sm text-gray-600">Bem-Vindo(a) !</Text>
-                            <Text className="text-2xl font-semibold text-gray-800">
-                                {collaborator && Mask('firstName', collaborator.name)}
-                            </Text>
-                        </View>
-                    </View>
+            {loading ? (
+                <View className="flex-1 justify-center items-center">
+                    <ActivityIndicator size="large" color={COLORS.primary} />
                 </View>
-                <ScrollView 
-                    className="flex-1"
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ paddingBottom: 20 }}
-                >
-                    <View className="items-center">
-                        <ImageSwiper 
-                            data={SwiperData} 
-                            onItemPress={(item) => item.route ? navigation.navigate(item.route) : setIsShowDevelopment(true)}
-                        />
-                    </View>
-                    <View>
-                        <View className="px-8">
-                            <Text className="text-lg font-medium text-gray-800">Categorias</Text>
+            ) : (
+                <>
+                    <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/>
+                    {/* <Header
+                        title="Meu trabalho"
+                        leftIcon="back"
+                    /> */}
+                    <View className="flex-1">
+                        <View className="px-8 pt-8">
+                            <View className="flex flex-row items-start">
+                                <View>
+                                    <Text className="text-sm text-gray-600">Bem-Vindo(a) !</Text>
+                                    <Text className="text-2xl font-semibold text-gray-800">
+                                        {collaborator && Mask('firstName', collaborator.name)}
+                                    </Text>
+                                </View>
+                            </View>
                         </View>
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ paddingHorizontal: 30 }}
+                        <ScrollView 
+                            className="flex-1"
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{ paddingBottom: 20 }}
                         >
-                            <View className="flex-row items-center gap-4 mr-3 mb-5">
-                                {ArrivalData.map((data: any, index) => (
-                                    <TouchableOpacity
-                                        key={index}
-                                        activeOpacity={0.8}
-                                        onPress={() => data.route ? navigation.navigate(data.route) : setIsShowDevelopment(true)}
-                                        className="bg-white rounded-2xl p-4 border border-gray-100 shadow-md"
-                                    >
-                                        <View className="flex-row items-center gap-5">
-                                            <Image
-                                                source={data.image}
-                                                className="w-6 h-6"
-                                                tintColor="#2f2f2f"
-                                            />
-                                            <View>
-                                                <Text className="text-base font-medium text-gray-800">{data.title}</Text>
-                                                <Text className="text-sm text-primary">{data.subtitle}</Text>
-                                            </View>
-                                        </View>
-                                    </TouchableOpacity>
-                                ))}
+                            <View className="items-center w-full h-400 mt-20">
+                                <ImageSwiper className="w-full h-full"
+                                    data={SwiperData} 
+                                    onItemPress={(item) => item.route ? navigation.navigate(item.route) : setIsShowDevelopment(true)}
+                                />
+                            </View>
+                            <View>
+                                <View className="px-8 mt-20">
+                                    <Text className="text-lg font-medium text-gray-800">Categorias</Text>
+                                </View>
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={{ paddingHorizontal: 30 }}
+                                >
+                                    <View className="flex-row items-center gap-8 mr-6 mb-8">
+                                        {ArrivalData.map((data: any, index) => (
+                                            <TouchableOpacity
+                                                key={index}
+                                                activeOpacity={0.8}
+                                                onPress={() => data.route ? navigation.navigate(data.route) : setIsShowDevelopment(true)}
+                                                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-md w-48"
+                                            >
+                                                <View className="flex-row items-center gap-4">
+                                                    <Image
+                                                        source={data.image}
+                                                        className="w-12 h-12"
+                                                        tintColor="#2f2f2f"
+                                                    />
+                                                    <View>
+                                                        <Text className="text-lg font-medium text-gray-800">{data.title}</Text>
+                                                        <Text className="text-base text-primary">{data.subtitle}</Text>
+                                                    </View>
+                                                </View>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </ScrollView>
                             </View>
                         </ScrollView>
                     </View>
-                </ScrollView>
-            </View>
+                </>
+            )}
         </View>
     );
 };

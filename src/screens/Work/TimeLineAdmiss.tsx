@@ -112,7 +112,9 @@ const Timeline = ({ jobConected, CPF }) => {
     <>
       <ScrollView className="h-3/4">
         {currentStep === 1 && (
-          <AdmissionalExam CPF={CPF} jobConected={jobConected} />
+          <>
+            <AdmissionalExam CPF={CPF} jobConected={jobConected} />
+          </>
         )}
         {currentStep === 2 && (
           <View className="mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-center">

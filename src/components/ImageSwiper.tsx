@@ -15,7 +15,7 @@ const ImageSwiper = ({ data } : any) => {
   ]);
   
   const { width } = useWindowDimensions();
-  const SIZE = width * 0.6;
+  const SIZE = width * 0.5;
   const SPACER = (width - SIZE) / 2;
   const x = useSharedValue(0);
 
@@ -70,8 +70,8 @@ const ImageSwiper = ({ data } : any) => {
                 activeOpacity={.9}
                 onPress={() => setIsShowDevelopment(true)}
                 style={{ 
-                  height: 222, 
-                  width: 206, 
+                  height: 352, 
+                  width: 266, 
                   backgroundColor: COLORS.primary, 
                   borderRadius: 31,
                   shadowColor: "#025135",
@@ -93,7 +93,7 @@ const ImageSwiper = ({ data } : any) => {
                 <View style={{paddingHorizontal:25}}>
                   <Text style={{...FONTS.fontSemiBold,fontSize:20,color:COLORS.dark,}}>{item.title}</Text>
                   <View style={{flexDirection:'row',alignItems:'flex-start',gap:5,marginTop:10}}>
-                      <Text style={{...FONTS.fontMedium,fontSize:12,color:COLORS.dark,}}>{item.subtitle}</Text>
+                      <Text style={{...FONTS.fontMedium,fontSize:17,color:COLORS.dark,}}>{item.subtitle}</Text>
                   </View>
                 </View>
               </TouchableOpacity>

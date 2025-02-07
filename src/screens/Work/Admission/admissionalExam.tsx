@@ -73,7 +73,7 @@ const admissionalExam: React.FC<Props> = ({ jobConected, CPF }) => {
 
   return (
     <View className={"mt-5 w-full "}>
-       { jobConected && loader ?
+       { jobConected ?
             <Cardstyle4
             documentName={"Exame Admissional"}
             sendDocument={sendDocument}
