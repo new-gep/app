@@ -62,7 +62,8 @@ const ArrivalData = [
 ];
 
 
-export default function HomeWork({ setTitleWork, navigation }) {
+export default function HomeWork({ setTitleWork, navigation, jobConected, CPF }) {
+    
     const SwiperData = [
         {
             id: "1",
@@ -116,6 +117,10 @@ export default function HomeWork({ setTitleWork, navigation }) {
         fetchData();
     }, []);
 
+    // useEffect(()=>{
+    //     console.log("lalala",JobConect)
+    // })
+
     return (
         <View className="flex-1 bg-white">
             {loading ? (
@@ -148,7 +153,11 @@ export default function HomeWork({ setTitleWork, navigation }) {
                             <View className="items-center w-full h-400 mt-20">
                                 <ImageSwiper className="w-full h-full"
                                     data={SwiperData} 
-                                    onItemPress={(item) => item.route ? navigation.navigate(item.route) : setIsShowDevelopment(true)}
+                                    onItemPress={(item, jobConected, cpf = CPF) => 
+                                        item.route 
+                                          ? navigation.navigate(item.route, { jobConected: jobConected, CPF: cpf }) 
+                                          : setIsShowDevelopment(true)
+                                    }
                                 />
                             </View>
                             <View>
@@ -165,7 +174,11 @@ export default function HomeWork({ setTitleWork, navigation }) {
                                             <TouchableOpacity
                                                 key={index}
                                                 activeOpacity={0.8}
-                                                onPress={() => data.route ? navigation.navigate(data.route) : setIsShowDevelopment(true)}
+                                                onPress={() => navigation.navigate('PayStub', { 
+                                                    jobConected: jobConected, // Verifique se essa variável existe no escopo
+                                                    CPF: CPF // Verifique se essa variável existe no escopo
+                                                  })}
+                                                  
                                                 className="bg-white rounded-2xl p-6 border border-gray-100 shadow-md w-48"
                                             >
                                                 <View className="flex-row items-center gap-4">

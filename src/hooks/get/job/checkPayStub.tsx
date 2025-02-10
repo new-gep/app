@@ -1,10 +1,10 @@
 import config from '../../../../config.json';
 import axios from "axios";
 
-const CheckDocumentServices = async (id: any, month: any, year: any, type: any) => {
+const CheckDocumentServices = async (id: any, type: any, year: any, month: any) => {
     try {
-        console.log(`${config.API_URL}fileService/${id}/${type}/${year}/${month}`);
-        const response = await axios.get(`${config.API_URL}fileService/${id}/${type}/${year}/${month}`);
+        const response = await axios.get(`${config.API_URL}job/fileService/${id}/${type}/${year}/${month}`);
+        console.log('teste:', response.data)
         return response.data;
 
     } catch (error) {
