@@ -1,133 +1,233 @@
-import React, { useState } from 'react';
-import { View, Text, Button, ScrollView, TouchableOpacity, Modal } from 'react-native';
-import { useTheme } from '@react-navigation/native';
-import Header from '../../layout/Header';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from "react";
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  ScrollView, 
+  ActivityIndicator,
+  Modal
+} from "react-native";
+import Header from "../../layout/Header";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import CheckDocumentServices from "../../hooks/get/job/checkPayStub";
+import DocumentVisible from "../../components/Modal/DocumentVisible";
+import { COLORS } from "../../constants/theme";
+
+type TimeClockParams = {
+  jobConected: any;
+  CPF: any;
+};
+
+const months = [
+  { value: '01', label: 'Janeiro' },
+  { value: '02', label: 'Fevereiro' },
+  { value: '03', label: 'Março' },
+  { value: '04', label: 'Abril' },
+  { value: '05', label: 'Maio' },
+  { value: '06', label: 'Junho' },
+  { value: '07', label: 'Julho' },
+  { value: '08', label: 'Agosto' },
+  { value: '09', label: 'Setembro' },
+  { value: '10', label: 'Outubro' },
+  { value: '11', label: 'Novembro' },
+  { value: '12', label: 'Dezembro' },
+];
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 5 }, (_, i) => String(currentYear - i + 1));
 
 const TimeClock = () => {
-  const theme = useTheme();
   const navigation = useNavigation();
-  const [mes, setMes] = useState('Novembro');
-  const [ano, setAno] = useState('2019');
-  const [tipo, setTipo] = useState('Mensal');
+  const route = useRoute<RouteProp<{ TimeClock: TimeClockParams }>>();
+  const { jobConected, CPF } = route.params;
+
+  const [mes, setMes] = useState(months[0].label);
+  const [ano, setAno] = useState(String(currentYear));
+  const [documents, setDocuments] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [currentPicker, setCurrentPicker] = useState<'mes' | 'ano' | 'tipo'>('mes');
-  const [isMesOpen, setIsMesOpen] = useState(false);
-  const [isAnoOpen, setIsAnoOpen] = useState(false);
-  const [isTipoOpen, setIsTipoOpen] = useState(false);
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [showYearPicker, setShowYearPicker] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const anos = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997', '1996', '1995', '1994', '1993', '1992', '1991', '1990', '1989', '1988', '1987', '1986', '1985', '1984', '1983', '1982', '1981', '1980'];
-  const meses = ['Novembro', 'Outubro', 'Setembro', 'Agosto', 'Julho', 'Junho', 'Maio', 'Abril', 'Março', 'Fevereiro', 'Janeiro'];
-  const options = {
-    mes: meses,
-    ano: anos,
-    tipo: ['Mensal', 'Adiantamento'],
-  };
-
-  const months = [
-    {
-      id: '1',
-      month: 'Agosto',
-      period: '01 jul 2023 - 31 jul 2023',
-      status: 'approved'
-    },
-    {
-      id: '2',
-      month: 'Julho',
-      period: '01 jun 2023 - 31 jun 2023',
-      status: 'pending'
-    },
-    {
-      id: '3',
-      month: 'Junho',
-      period: '01 Mai 2023 - 30 Mai 2023',
-      status: 'pending'
+  const fetchData = async () => {
+    if (jobConected) {
+      try {
+        const response = await CheckDocumentServices(
+          jobConected.id,
+          "Point",
+          ano,
+          mes
+        );
+        
+        console.log("Resposta da API:", response); // Adicione este log
+        
+        // Verifica se a resposta é um array antes de filtrar
+        const validDocuments = Array.isArray(response) 
+          ? response.filter((doc) => doc !== null)
+          : [];
+          
+        setDocuments(validDocuments);
+      } catch (error) {
+        console.error("Erro detalhado:", error.response?.data || error.message);
+      }
     }
-  ];
+  };
 
-  const pontos = [
-    { id: '1', data: '01/2019', tipo: 'Adiantamento' },
-    { id: '2', data: '12/2018', tipo: 'Adiantamento' },
-    { id: '3', data: '12/2018', tipo: '13º Salário' },
-    { id: '4', data: '12/2018', tipo: 'Mensal' },
-    { id: '5', data: '11/2018', tipo: 'Adiantamento' },
-    { id: '6', data: '11/2018', tipo: 'Mensal' },
-  ];
+  useEffect(() => {
+    fetchData();
+  }, [mes, ano]);
 
-  const handleSelect = (value: string) => {
-    if (currentPicker === 'mes') setMes(value);
-    if (currentPicker === 'ano') setAno(value);
-    if (currentPicker === 'tipo') setTipo(value);
+  const openDocumentModal = async (doc: any) => {
+    setIsLoading(true);
+    setSelectedDocument(doc);
+    setModalVisible(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const closeModal = () => {
     setModalVisible(false);
+    setSelectedDocument(null);
+    setIsLoading(false);
   };
-
-  const toggleDropdown = (type: 'mes' | 'ano' | 'tipo') => {
-    if (type === 'mes') setIsMesOpen(!isMesOpen);
-    if (type === 'ano') setIsAnoOpen(!isAnoOpen);
-    if (type === 'tipo') setIsTipoOpen(!isTipoOpen);
-  };
-
-  const renderDropdown = (selectedValue: string, options: string[], onSelect: (value: string) => void, isOpen: boolean, toggle: () => void) => (
-    <View className="border border-gray-300 rounded p-2 mb-2">
-      <TouchableOpacity onPress={toggle} className="py-2">
-        <Text className="text-lg font-bold">{selectedValue}</Text>
-      </TouchableOpacity>
-      {isOpen && (
-        <ScrollView style={{ maxHeight: 200 }}>
-          {options.map((option) => (
-            <TouchableOpacity key={option} onPress={() => { onSelect(option); toggle(); }} className="py-2">
-              <Text className={`text-lg ${selectedValue === option ? 'font-bold' : ''}`}>{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
-    </View>
-  );
 
   return (
-    <View className="flex-1 p-4">
-      <Header
-        title="Ponto Online"
-        leftIcon="back"
-        leftAction={() => navigation.goBack()}
+    <View className="flex-1 p-4 bg-white">
+      <Header 
+        title="Ponto Online" 
+        leftIcon="back" 
+        leftAction={() => navigation.goBack()} 
       />
-      <Text className="text-xl font-bold">Informe o mês/ano, o tipo de ponto e clique em "Visualizar ponto":</Text>
-      
-      <View className="flex-row justify-between my-2">
-        <View className="flex-1 mr-2">
-          <Text className="text-lg font-bold">Mês:</Text>
-          {renderDropdown(mes, meses, setMes, isMesOpen, () => toggleDropdown('mes'))}
-        </View>
 
-        <View className="flex-1 mr-2">
-          <Text className="text-lg font-bold">Ano:</Text>
-          {renderDropdown(ano, anos, setAno, isAnoOpen, () => toggleDropdown('ano'))}
-        </View>
+      <Text className="text-xl font-bold mb-4 text-gray-800">
+        Selecione o mês e ano:
+      </Text>
 
-        <View className="flex-1">
-          <Text className="text-lg font-bold">Tipo:</Text>
-          {renderDropdown(tipo, options.tipo, setTipo, isTipoOpen, () => toggleDropdown('tipo'))}
-        </View>
+      {/* Filtros */}
+      <View className="flex-row justify-between mb-5">
+        <TouchableOpacity 
+          className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
+          onPress={() => setShowMonthPicker(true)}
+        >
+          <Text className="text-base text-gray-800">
+            {months.find(m => m.label === mes)?.label}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
+          onPress={() => setShowYearPicker(true)}
+        >
+          <Text className="text-base text-gray-800">{ano}</Text>
+        </TouchableOpacity>
       </View>
-      
-      <TouchableOpacity className="bg-primary py-4 rounded" onPress={() => {}}>
-        <Text className="text-white text-center text-xl font-bold">VISUALIZAR PONTO</Text>
-      </TouchableOpacity>
 
-      <Text className="my-4">Meus últimos pontos</Text>
-      <ScrollView>
-        {pontos.map((item) => (
-          <TouchableOpacity key={item.id} className="flex-row items-center mb-2">
-            <View className="w-36 h-36 bg-gray-300 justify-center items-center mr-2">
-              <Text className="text-2xl font-bold ">31</Text>
-            </View>
-            <View className="flex-1">
-              <Text className="text-lg font-bold">{item.data}</Text>
-              <Text className="text-xl font-bold ">{item.tipo}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+      {/* Modal para seleção de mês */}
+      <Modal
+        visible={showMonthPicker}
+        transparent={true}
+        animationType="slide"
+      >
+        <View className="absolute inset-0 bg-black/50 justify-center">
+          <View className="mx-5 bg-white rounded-lg max-h-[60%]">
+            <ScrollView>
+              {months.map((month) => (
+                <TouchableOpacity
+                  key={month.label}
+                  className="p-4 border-b border-gray-200"
+                  onPress={() => {
+                    setMes(month.label);
+                    setShowMonthPicker(false);
+                  }}
+                >
+                  <Text className="text-base text-gray-800">{month.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal para seleção de ano */}
+      <Modal
+        visible={showYearPicker}
+        transparent={true}
+        animationType="slide"
+      >
+        <View className="absolute inset-0 bg-black/50 justify-center">
+          <View className="mx-5 bg-white rounded-lg max-h-[60%]">
+            <ScrollView>
+              {years.map((year) => (
+                <TouchableOpacity
+                  key={year}
+                  className="p-4 border-b border-gray-200"
+                  onPress={() => {
+                    setAno(year);
+                    setShowYearPicker(false);
+                  }}
+                >
+                  <Text className="text-base text-gray-800">{year}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Lista de pontos */}
+      <ScrollView className="flex-1">
+        {documents.length >= 1 ? (
+          documents.map((item) => (
+            <TouchableOpacity
+              key={item.fileName}
+              onPress={() => openDocumentModal(item)}
+              className="flex-row items-center mb-2 p-4 bg-white rounded-xl shadow-sm"
+            >
+              <View className="w-16 h-16 bg-gray-100 rounded-lg justify-center items-center mr-4">
+                <Text className="text-2xl font-bold text-primary">
+                  {new Date(item.createdAt).getDate()}
+                </Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-lg font-semibold text-gray-800">
+                  {months.find(m => m.label === mes)?.label} {ano}
+                </Text>
+                <Text className="text-base text-gray-600">
+                  {item.service}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text className="text-center mt-5 text-gray-500">
+            Nenhum registro de ponto encontrado
+          </Text>
+        )}
       </ScrollView>
+
+      {/* Modal do documento */}
+      {modalVisible && (
+        <>
+          <DocumentVisible
+            path={selectedDocument?.path}
+            typeDocument={selectedDocument?.type}
+            twoPicture={false}
+            visible={modalVisible}
+            documentName={selectedDocument?.fileName || ""}
+            close={closeModal}
+          />
+          
+          {isLoading && (
+            <View className="absolute inset-0 bg-white/90 flex items-center justify-center">
+              <ActivityIndicator size="large" color={COLORS.primary} />
+            </View>
+          )}
+        </>
+      )}
     </View>
   );
 };
