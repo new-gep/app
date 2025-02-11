@@ -141,7 +141,7 @@ const DrawingModal = ({ visible, onClose, onSaveSignature, id }) => {
         };
 
         const response = await uploadFile(props);
-        console.log("positivo capitão", response);
+        // console.log("positivo capitão", response);
       } catch (e) {
         console.log("erro ao salvar assinatura: ", e);
       }

@@ -4,7 +4,8 @@ import {
   Text, 
   TouchableOpacity, 
   ScrollView, 
-  ActivityIndicator 
+  ActivityIndicator, 
+  Modal
 } from "react-native";
 import Header from "../../layout/Header";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -12,8 +13,26 @@ import CheckDocumentServices from "../../hooks/get/job/checkPayStub";
 import DocumentVisible from "../../components/Modal/DocumentVisible";
 import { COLORS } from "../../constants/theme";
 
+const months = [
+  { value: '01', label: 'Janeiro' },
+  { value: '02', label: 'Fevereiro' },
+  { value: '03', label: 'Março' },
+  { value: '04', label: 'Abril' },
+  { value: '05', label: 'Maio' },
+  { value: '06', label: 'Junho' },
+  { value: '07', label: 'Julho' },
+  { value: '08', label: 'Agosto' },
+  { value: '09', label: 'Setembro' },
+  { value: '10', label: 'Outubro' },
+  { value: '11', label: 'Novembro' },
+  { value: '12', label: 'Dezembro' },
+];
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 5 }, (_, i) => String(currentYear - i + 1));
+
 type PayStubParams = {
-  jobConected: any; // Substitua 'any' pelo tipo correto, se possível
+  jobConected: any;
   CPF: string;
 };
 
@@ -22,19 +41,15 @@ const PayStub = () => {
   const route = useRoute<RouteProp<{ PayStub: PayStubParams }>>();
   const { jobConected, CPF } = route.params;
 
-  // Estados para filtros
-  const [mes, setMes] = useState("Janeiro");
-  const [ano, setAno] = useState("2025");
-
-  // Estado para armazenar os documentos (holerites)
+  const [mes, setMes] = useState(months[0].label);
+  const [ano, setAno] = useState(String(currentYear));
   const [documents, setDocuments] = useState<any[]>([]);
-
-  // Estados para controle do modal, documento selecionado e loader
   const [modalVisible, setModalVisible] = useState(false);
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [showYearPicker, setShowYearPicker] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Função para buscar os documentos via API
   const fetchData = async () => {
     if (jobConected) {
       try {
@@ -44,9 +59,9 @@ const PayStub = () => {
           ano,
           mes
         );
-        console.log("Resposta:", response);
-        // Filtra para remover itens nulos
-        const validDocuments = response.filter((doc) => doc !== null);
+        const validDocuments = Array.isArray(response) 
+          ? response.filter((doc) => doc !== null)
+          : [];
         setDocuments(validDocuments);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -54,22 +69,18 @@ const PayStub = () => {
     }
   };
 
-  // Busca inicial (e sempre que os filtros mudarem)
   useEffect(() => {
     fetchData();
-  }, [jobConected, CPF, mes, ano]);
+  }, [mes, ano]);
 
-  // Ao clicar em um holerite, ativa o loader, define o documento e abre o modal
   const openDocumentModal = async (doc: any) => {
-    setIsLoading(true); // Ativa o loader
+    setIsLoading(true);
     setSelectedDocument(doc);
     setModalVisible(true);
-    
     try {
-      // Simulação de requisição (substitua pelo seu fetch real)
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      await new Promise(resolve => setTimeout(resolve, 1000));
     } finally {
-      setIsLoading(false); // Desativa o loader após o carregamento
+      setIsLoading(false);
     }
   }
 
@@ -80,56 +91,120 @@ const PayStub = () => {
   };
 
   return (
-    <View className="flex-1 p-4">
+    <View className="flex-1 p-4 bg-white">
       <Header 
         title="Holerite Online" 
         leftIcon="back" 
         leftAction={() => navigation.goBack()} 
       />
 
-      <Text className="text-xl font-bold mb-4">
-        Informe o mês e o ano para pesquisar holerites:
+      <Text className="text-xl font-bold mb-4 text-gray-800">
+        Selecione o mês e ano:
       </Text>
 
-      {/* Botão para disparar a pesquisa */}
-      <TouchableOpacity
-        onPress={fetchData}
-        className="bg-primary py-4 rounded mb-4"
-      >
-        <Text className="text-white text-center text-xl font-bold">
-          Pesquisar
-        </Text>
-      </TouchableOpacity>
+      {/* Filtros */}
+      <View className="flex-row justify-between mb-5">
+        <TouchableOpacity 
+          className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
+          onPress={() => setShowMonthPicker(true)}
+        >
+          <Text className="text-base text-gray-800">
+            {months.find(m => m.label === mes)?.label}
+          </Text>
+        </TouchableOpacity>
 
-      {/* Lista de holerites */}
-      <ScrollView>
-        {documents && documents.length >= 1 ? (
+        <TouchableOpacity 
+          className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
+          onPress={() => setShowYearPicker(true)}
+        >
+          <Text className="text-base text-gray-800">{ano}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Modal para seleção de mês */}
+      <Modal
+        visible={showMonthPicker}
+        transparent={true}
+        animationType="slide"
+      >
+        <View className="absolute inset-0 bg-black/50 justify-center">
+          <View className="mx-5 bg-white rounded-lg max-h-[60%]">
+            <ScrollView>
+              {months.map((month) => (
+                <TouchableOpacity
+                  key={month.label}
+                  className="p-4 border-b border-gray-200"
+                  onPress={() => {
+                    setMes(month.label);
+                    setShowMonthPicker(false);
+                  }}
+                >
+                  <Text className="text-base text-gray-800">{month.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal para seleção de ano */}
+      <Modal
+        visible={showYearPicker}
+        transparent={true}
+        animationType="slide"
+      >
+        <View className="absolute inset-0 bg-black/50 justify-center">
+          <View className="mx-5 bg-white rounded-lg max-h-[60%]">
+            <ScrollView>
+              {years.map((year) => (
+                <TouchableOpacity
+                  key={year}
+                  className="p-4 border-b border-gray-200"
+                  onPress={() => {
+                    setAno(year);
+                    setShowYearPicker(false);
+                  }}
+                >
+                  <Text className="text-base text-gray-800">{year}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Lista de pontos */}
+      <ScrollView className="flex-1">
+        {documents.length >= 1 ? (
           documents.map((item) => (
             <TouchableOpacity
               key={item.fileName}
               onPress={() => openDocumentModal(item)}
-              className="flex-row items-center mb-2"
+              className="flex-row items-center mb-2 p-4 bg-white rounded-xl shadow-sm"
             >
-              <View className="w-36 h-36 bg-gray-300 justify-center items-center mr-2">
-                {/* Você pode ajustar esse ícone/data conforme necessário */}
-                <Text className="text-2xl font-bold">31</Text>
+              <View className="w-16 h-16 bg-gray-100 rounded-lg justify-center items-center mr-4">
+                <Text className="text-2xl font-bold text-primary">
+                  {new Date(item.createdAt).getDate()}
+                </Text>
               </View>
               <View className="flex-1">
-                <Text className="text-lg font-bold">
-                  {mes.padStart(2, "0")}/{ano}
+                <Text className="text-lg font-semibold text-gray-800">
+                  {months.find(m => m.label === mes)?.label} {ano}
                 </Text>
-                <Text className="text-xl font-bold">{item.service}</Text>
+                <Text className="text-base text-gray-600">
+                  {item.service}
+                </Text>
               </View>
             </TouchableOpacity>
           ))
         ) : (
-          <Text className="text-center mt-5">
-            Nenhum holerite disponível
+          <Text className="text-center mt-5 text-gray-500">
+            Nenhum registro de holerite encontrado
           </Text>
         )}
       </ScrollView>
 
-      {/* Renderiza o modal somente se estiver visível */}
+      {/* Modal do documento */}
       {modalVisible && (
         <>
           <DocumentVisible
@@ -140,9 +215,9 @@ const PayStub = () => {
             documentName={selectedDocument?.fileName || ""}
             close={closeModal}
           />
-          {/* Overlay do loader */}
+          
           {isLoading && (
-            <View className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
+            <View className="absolute inset-0 bg-white/90 flex items-center justify-center">
               <ActivityIndicator size="large" color={COLORS.primary} />
             </View>
           )}

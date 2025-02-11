@@ -41,7 +41,7 @@ export default async function uploadFile(propsUploadJob) {
 
       formData.append("file", fileObject as unknown as Blob);
     } else {
-      console.log(propsUploadJob.file);
+      // console.log(propsUploadJob.file);
       formData.append("file", {
         name: `${"teste"}.${extend}`, // Nome do arquivo
         uri: propsUploadJob.file, // Caminho do arquivo

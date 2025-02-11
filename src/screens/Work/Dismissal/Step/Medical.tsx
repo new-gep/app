@@ -86,7 +86,7 @@ const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) 
         statusDocument: null,
       };
       // Configuração do documento de carta de demissão
-      console.log("Informações do documento:", document_params);
+      // console.log("Informações do documento:", document_params);
       const dismissalDoc = response.pictures.find(
         (pic: { picture: string; status: string }) =>
           pic.picture === "Dismissal_Medical_Examination"

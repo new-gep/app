@@ -60,7 +60,7 @@ const TimeClock = () => {
           mes
         );
         
-        console.log("Resposta da API:", response); // Adicione este log
+        // console.log("Resposta da API:", response); // Adicione este log
         
         // Verifica se a resposta é um array antes de filtrar
         const validDocuments = Array.isArray(response) 

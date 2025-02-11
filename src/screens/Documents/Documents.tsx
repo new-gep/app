@@ -110,7 +110,7 @@ const Documents = () => {
             const checkDocument = documentKey;
             switch (checkDocument) {
               case "Military_Certificate":
-                console.log("aq");
+                // console.log("aq");
                 if (collaborator.sex == "F") {
                   return;
                 }

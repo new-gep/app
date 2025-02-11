@@ -4,7 +4,7 @@ import axios from "axios";
 const CheckDocumentServices = async (id: any, type: any, year: any, month: any) => {
     try {
         const response = await axios.get(`${config.API_URL}job/fileService/${id}/${type}/${year}/${month}`);
-        console.log('teste:', response.data)
+        // console.log('teste:', response.data)
         return response.data;
 
     } catch (error) {
