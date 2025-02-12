@@ -176,6 +176,26 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             throw new Error('Erro interno no upload');
                         };
                     break;
+                    case documentName.includes('Atestado'):
+                    documentName = 'Attest_Ausence';
+                        const propsDocumentAttest = {
+                            file:path,
+                            name: documentName,
+                            id  :jobId,
+                            signature:false
+                        }
+                        const responseAttest = await JobPicture(propsDocumentAttest);
+                        if (responseAttest.status !== 200) {
+                            setNoRepeat(true);
+                            setActiveSheet('danger');
+                            setMessageSheet(`Erro interno`);
+                            Sheet();
+                            setFront(null);
+                            setBack(null);
+                            setLoad(false)
+                            throw new Error('Erro interno no upload');
+                        };
+                    break;
                 case documentName.includes('Exame Demissional'):
                     documentName = 'Dismissal_Medical_Examination';
                         const propsDocumentDismissalExam = {
