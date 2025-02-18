@@ -39,6 +39,11 @@ const DismissalHome = () => {
   const [solicitationType, setSolicitationType] = useState<'company' | 'collaborator' | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
 
+<<<<<<< HEAD
+=======
+
+  
+>>>>>>> master
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       setProcess(false);

@@ -119,6 +119,10 @@ export default function HomeWork({
       try {
         setLoading(true); // Inicia o carregamento
         await fetchCollaborator(); // Simula uma chamada de API
+<<<<<<< HEAD
+=======
+        await new Promise(resolve => setTimeout(resolve, 3000)); // Adiciona 3 segundos de delay
+>>>>>>> master
       } catch (error) {
         console.error(error);
       } finally {
@@ -145,10 +149,13 @@ export default function HomeWork({
             close={closeDevelopment}
             visible={isShowDevelopment}
           />
+<<<<<<< HEAD
           {/* <Header
                         title="Meu trabalho"
                         leftIcon="back"
                     /> */}
+=======
+>>>>>>> master
           <View className="flex-1">
             <View className="px-8 pt-8">
               <View className="flex flex-row items-start">
@@ -196,6 +203,7 @@ export default function HomeWork({
                         key={index}
                         activeOpacity={0.8}
                         onPress={() => {
+<<<<<<< HEAD
                           // Verifica pelas rotas reais (PayStub e TimeClock)
                           if (
                             data.route === "PayStub" ||
@@ -203,6 +211,14 @@ export default function HomeWork({
                           ) {
                             navigation.navigate(data.route, {
                               // Usa o nome exato da rota
+=======
+                          if (
+                            data.route === "PayStub" ||
+                            data.route === "TimeClock" ||
+                            data.route === "Absence"
+                          ) {
+                            navigation.navigate(data.route, {
+>>>>>>> master
                               jobConected: jobConected,
                               CPF: CPF,
                             });

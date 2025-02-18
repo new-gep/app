@@ -63,7 +63,11 @@ import DismissalSignature from '../screens/Work/Dismissal/Step/Signature';
 import TimelineAdmiss from '../screens/Work/TimeLineAdmiss';
 import PayStub from '../screens/Work/PayStub';
 import TimeClock from '../screens/Work/TimeClock';
+<<<<<<< HEAD
 import Absence from '../screens/Work/Absence';
+=======
+import Absence from '../screens/Work/Absence/Home';
+>>>>>>> master
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {

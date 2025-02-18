@@ -48,9 +48,16 @@ const TimeClock = () => {
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
+<<<<<<< HEAD
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = async () => {
+=======
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+>>>>>>> master
     if (jobConected) {
       try {
         const response = await CheckDocumentServices(
@@ -70,7 +77,15 @@ const TimeClock = () => {
         setDocuments(validDocuments);
       } catch (error) {
         console.error("Erro detalhado:", error.response?.data || error.message);
+<<<<<<< HEAD
       }
+=======
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setIsLoading(false);
+>>>>>>> master
     }
   };
 
@@ -180,7 +195,15 @@ const TimeClock = () => {
 
       {/* Lista de pontos */}
       <ScrollView className="flex-1">
+<<<<<<< HEAD
         {documents.length >= 1 ? (
+=======
+        {isLoading ? (
+          <View className="flex-1 justify-center items-center min-h-[400px]">
+            <ActivityIndicator size="large" color={'yellow'} />
+          </View>
+        ) : documents.length >= 1 ? (
+>>>>>>> master
           documents.map((item) => (
             <TouchableOpacity
               key={item.fileName}
@@ -203,9 +226,17 @@ const TimeClock = () => {
             </TouchableOpacity>
           ))
         ) : (
+<<<<<<< HEAD
           <Text className="text-center mt-5 text-gray-500">
             Nenhum registro de ponto encontrado
           </Text>
+=======
+          <View className="flex-1 justify-center items-center">
+            <Text className="text-center mt-5 text-gray-500">
+              Nenhum registro de ponto encontrado
+            </Text>
+          </View>
+>>>>>>> master
         )}
       </ScrollView>
 
@@ -219,6 +250,10 @@ const TimeClock = () => {
             visible={modalVisible}
             documentName={selectedDocument?.fileName || ""}
             close={closeModal}
+<<<<<<< HEAD
+=======
+            onSignaturePress={() => {}}
+>>>>>>> master
           />
           
           {isLoading && (

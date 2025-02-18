@@ -36,6 +36,7 @@ import FindAplicateInJob from "../../hooks/get/job/findAplicateJob";
 import CardHistory from "./CardHistoryJobCadastrate";
 import fetchCollaborator from "../../function/fetchCollaborator";
 import HomeAdmission from "./HomeAdmission";
+<<<<<<< HEAD
 import TimeLineAdmiss from "./TimeLineAdmiss";
 
 const ArrivalData = [
@@ -64,12 +65,15 @@ const ArrivalData = [
     image: IMAGES.chat,
   },
 ];
+=======
+>>>>>>> master
 
 export default function HomeNoWork({ setTitleWork }) {
   const navigation = useNavigation<NavigationProp<any>>();
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [previousCards, setPreviousCards] = useState([]);
+<<<<<<< HEAD
   const SwiperData = [
     {
       id: "1",
@@ -90,6 +94,8 @@ export default function HomeNoWork({ setTitleWork }) {
       sule: "Assine e cheque seu ponto",
     },
   ];
+=======
+>>>>>>> master
 
   const dispatch = useDispatch();
   const [isShowDevelopment, setIsShowDevelopment] = useState<boolean>(false);
