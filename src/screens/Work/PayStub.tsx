@@ -12,10 +12,6 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import CheckDocumentServices from "../../hooks/get/job/checkPayStub";
 import DocumentVisible from "../../components/Modal/DocumentVisible";
 import { COLORS } from "../../constants/theme";
-<<<<<<< HEAD
-=======
-import { Ionicons } from '@expo/vector-icons';
->>>>>>> master
 
 const months = [
   { value: '01', label: 'Janeiro' },
@@ -52,19 +48,11 @@ const PayStub = () => {
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
-<<<<<<< HEAD
   const [isLoading, setIsLoading] = useState(false);
-=======
-  const [isLoading, setIsLoading] = useState(true);
->>>>>>> master
 
   const fetchData = async () => {
     if (jobConected) {
       try {
-<<<<<<< HEAD
-=======
-        setIsLoading(true);
->>>>>>> master
         const response = await CheckDocumentServices(
           jobConected.id,
           "PayStub",
@@ -77,11 +65,6 @@ const PayStub = () => {
         setDocuments(validDocuments);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
-<<<<<<< HEAD
-=======
-      } finally {
-        setIsLoading(false);
->>>>>>> master
       }
     }
   };
@@ -192,15 +175,7 @@ const PayStub = () => {
 
       {/* Lista de pontos */}
       <ScrollView className="flex-1">
-<<<<<<< HEAD
         {documents.length >= 1 ? (
-=======
-        {isLoading ? (
-          <View className="flex-1 justify-center items-center min-h-[400px]">
-            <ActivityIndicator size="large" color={'yellow'} />
-          </View>
-        ) : documents.length >= 1 ? (
->>>>>>> master
           documents.map((item) => (
             <TouchableOpacity
               key={item.fileName}
@@ -223,17 +198,9 @@ const PayStub = () => {
             </TouchableOpacity>
           ))
         ) : (
-<<<<<<< HEAD
           <Text className="text-center mt-5 text-gray-500">
             Nenhum registro de holerite encontrado
           </Text>
-=======
-          <View className="flex-1 justify-center items-center">
-            <Text className="text-center mt-5 text-gray-500">
-              Nenhum registro de holerite encontrado
-            </Text>
-          </View>
->>>>>>> master
         )}
       </ScrollView>
 
@@ -247,10 +214,6 @@ const PayStub = () => {
             visible={modalVisible}
             documentName={selectedDocument?.fileName || ""}
             close={closeModal}
-<<<<<<< HEAD
-=======
-            onSignaturePress={() => {}}
->>>>>>> master
           />
           
           {isLoading && (
@@ -258,25 +221,10 @@ const PayStub = () => {
               <ActivityIndicator size="large" color={COLORS.primary} />
             </View>
           )}
-<<<<<<< HEAD
-=======
-
-          {/* Botão de assinatura */}
-          <TouchableOpacity
-            className="absolute bottom-5 right-5 bg-white bg-opacity-70 p-3 rounded-full shadow-lg"
-            onPress={() => {/* Ação para assinatura */}}
-          >
-            <Ionicons name="pencil" size={24} color={COLORS.primary} />
-          </TouchableOpacity>
->>>>>>> master
         </>
       )}
     </View>
   );
 };
 
-<<<<<<< HEAD
 export default PayStub;
-=======
-export default PayStub;
->>>>>>> master

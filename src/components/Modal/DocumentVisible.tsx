@@ -8,10 +8,6 @@ import * as FileSystem from 'expo-file-system';
 import React from "react";
 import Pdf from "react-native-pdf";
 import { COLORS } from "../../constants/theme"; // Adicione esta importação
-<<<<<<< HEAD
-=======
-import { Ionicons } from '@expo/vector-icons'; // Adicione esta importação
->>>>>>> master
 
 type Props = {
     typeDocument: string;
@@ -20,16 +16,9 @@ type Props = {
     path?: any
     documentName: string
     close: () => void;
-<<<<<<< HEAD
 };
 
 const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Props) => {
-=======
-    onSignaturePress: () => void;
-};
-
-const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, onSignaturePress }: Props) => {
->>>>>>> master
     const [viewingSide, setViewingSide] = useState<'front' | 'back' | null>(null);
     const [loading, setLoading] = useState(true);
     const [pathFront, setPathFront] = useState<any>()
@@ -95,29 +84,6 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, onSig
                 />
             </TouchableOpacity>
 
-<<<<<<< HEAD
-=======
-            {/* Botão de assinatura */}
-            {(!loading && typeDocument === 'document') && (
-                <TouchableOpacity
-                    className="absolute bottom-5 right-5 bg-yellow-500 bg-opacity-70 p-3 rounded-full shadow-lg"
-                    onPress={onSignaturePress}
-                >
-                    <Ionicons name="pencil" size={24} color={COLORS.primary} />
-                </TouchableOpacity>
-            )}
-
-            {/* Novo botão de assinatura levemente transparente */}
-            {(!loading && typeDocument === 'document') && (
-                <TouchableOpacity
-                    className="absolute bottom-20 right-5 bg-yellow-500 bg-opacity-50 p-3 rounded-full shadow-lg"
-                    onPress={onSignaturePress}
-                >
-                    <Ionicons name="pencil" size={24} color={COLORS.primary} />
-                </TouchableOpacity>
-            )}
-
->>>>>>> master
             <View>
                 {typeDocument === 'picture' ? (
                     <>

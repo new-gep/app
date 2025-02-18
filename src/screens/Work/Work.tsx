@@ -5,11 +5,7 @@ import {
   useNavigation,
   useTheme,
 } from "@react-navigation/native";
-<<<<<<< HEAD
 import { View, ScrollView, Image, Text, BackHandler } from "react-native";
-=======
-import { View, ScrollView, Image, Text, BackHandler, ActivityIndicator } from "react-native";
->>>>>>> master
 import Header from "../../layout/Header";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
 import { IMAGES } from "../../constants/Images";
@@ -28,11 +24,7 @@ import { useCollaboratorContext } from "../../context/CollaboratorContext";
 import DismissalHome from "./Dismissal/Home";
 import PayStub from "./PayStub";
 import TimeClock from "./TimeClock";
-<<<<<<< HEAD
-import Absence from "./Absence";
-=======
 import Absence from "./Absence/Home";
->>>>>>> master
 // import DismissalHomeCompany from "./Dismissal/DismissalHomeCompany";;
 import Home from "./Home";
 import FindOneJob from "../../hooks/get/job/findOne";
@@ -116,11 +108,7 @@ const Stack = createStackNavigator();
 
 const Work = () => {
   const [titleWork, setTitleWork] = useState<string>("");
-<<<<<<< HEAD
   const [hasWork, setHaswork] = useState<boolean>(false);
-=======
-  const [hasWork, setHaswork] = useState<boolean>(null);
->>>>>>> master
   const [jobConected, setjobConected] = useState<any>();
   const [CPF, setCPF] = useState<any>();
   const { collaborator, fetchCollaborator } = useCollaborator();
@@ -132,30 +120,16 @@ const Work = () => {
     const fetchData = async () => {
       if (collaborator) {
         const response = await FindCollaborator(collaborator.CPF);
-<<<<<<< HEAD
         setCPF(collaborator.CPF)
         if (response.status == 200) {
           const responseJob = await FindOneJob(response.collaborator.id_work)
           if(responseJob.status == 200){
             // console.log(responseJob.job)
             setjobConected(responseJob.job)
-=======
-        setCPF(collaborator.CPF);
-        if (response.status == 200) {
-          const responseJob = await FindOneJob(response.collaborator.id_work);
-          if (responseJob.status == 200) {
-            // console.log(responseJob.job)
-            setjobConected(responseJob.job);
->>>>>>> master
           }
           // console.log("opa",response);
           if (response.collaborator.id_work) {
             setHaswork(true);
-<<<<<<< HEAD
-=======
-          }else{
-            setHaswork(false);
->>>>>>> master
           }
         }
       }
@@ -179,7 +153,6 @@ const Work = () => {
     return unsubscribe;
   }, []);
 
-<<<<<<< HEAD
 
 
   return (
@@ -192,27 +165,6 @@ const Work = () => {
     
     </>
 
-=======
-  return (
-    <>
-      {
-        hasWork === null ? 
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color={'yellow'} />
-        </View>
-        :
-      !hasWork ? (
-        <HomeNoWork setTitleWork={setTitleWork} />
-      ) : (
-        <Home
-          setTitleWork={setTitleWork}
-          navigation={navigation}
-          jobConected={jobConected}
-          CPF={CPF}
-        />
-      )}
-    </>
->>>>>>> master
   );
 };
 

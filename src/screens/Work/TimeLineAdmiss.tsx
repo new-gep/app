@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useEffect, useState, useRef } from "react";
-=======
-import React, { useEffect, useState, useRef, useCallback } from "react";
->>>>>>> master
 import {
   View,
   Text,
@@ -28,10 +24,6 @@ import WaitingIndicator from "./Admission/admissionalWaitingIndicator";
 import HomeWork from "./Home";
 import { BottomTabParamList } from "../../navigation/BottomTabParamList";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-<<<<<<< HEAD
-=======
-import { Ionicons } from '@expo/vector-icons';
->>>>>>> master
 
 const Timeline = ({ jobConected, CPF }) => {
   const navigation = useNavigation();
@@ -244,17 +236,6 @@ const Timeline = ({ jobConected, CPF }) => {
         id={jobConected[0].id}
         where="Admission_Signature"
       />
-<<<<<<< HEAD
-=======
-
-      {/* Botão de assinatura */}
-      <TouchableOpacity
-        className="absolute bottom-5 right-5 bg-white bg-opacity-70 p-3 rounded-full shadow-lg"
-        onPress={handleOpenModal}
-      >
-        <Ionicons name="pencil" size={24} color={COLORS.primary} />
-      </TouchableOpacity>
->>>>>>> master
     </>
   );
 };
