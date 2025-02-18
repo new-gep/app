@@ -296,11 +296,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         demission: JSON.stringify({step:1, status:null, user:null, solicitation:'collaborator', observation:''})
                     };
                     const response = await UpdateJob(jobId, demissionData);
-<<<<<<< HEAD
                     console.log(response)
-=======
-                    // console.log(response)
->>>>>>> master
                     if(response.status !== 200){
                         setActiveSheet('danger');
                         setMessageSheet(`Erro ao atualizar o job`);

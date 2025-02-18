@@ -53,14 +53,10 @@ const Company = ({ jobConected, CPF }: Props) => {
             const dynamics = response.date.dynamic.communication.document;
             setObligations(obligations);
             setDynamics(dynamics);
-<<<<<<< HEAD
             console.log(
               "dynamics aa",
               response.date.dynamic.communication.document
             );
-=======
-
->>>>>>> master
 
             const dynamicDocuments = await Promise.all(
               Object.entries(dynamics).map(async ([key, value]) => {

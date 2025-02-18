@@ -5,7 +5,7 @@ import {
   useNavigation,
   useTheme,
 } from "@react-navigation/native";
-import { View, ScrollView, Image, Text, BackHandler } from "react-native";
+import { View, ScrollView, Image, Text, BackHandler, ActivityIndicator } from "react-native";
 import Header from "../../layout/Header";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
 import { IMAGES } from "../../constants/Images";
@@ -108,7 +108,7 @@ const Stack = createStackNavigator();
 
 const Work = () => {
   const [titleWork, setTitleWork] = useState<string>("");
-  const [hasWork, setHaswork] = useState<boolean>(false);
+  const [hasWork, setHaswork] = useState<boolean>(null);
   const [jobConected, setjobConected] = useState<any>();
   const [CPF, setCPF] = useState<any>();
   const { collaborator, fetchCollaborator } = useCollaborator();
@@ -157,7 +157,14 @@ const Work = () => {
 
   return (
     <>
-      {hasWork ? 
+      {hasWork === null
+      
+      ? 
+        <View className="flex-1 justify-center items-center"> 
+          <ActivityIndicator size="large" color={'yellow'} />
+        </View>
+        :
+        hasWork ?
         <Home setTitleWork={setTitleWork} navigation={navigation} jobConected={jobConected} CPF={CPF}/> 
         :
         <HomeNoWork setTitleWork={setTitleWork} />

@@ -39,12 +39,12 @@ const Timeline = ({ jobConected, CPF }) => {
   const Tab = createBottomTabNavigator<BottomTabParamList>();
 
   const handleOpenModal = () => {
-    // if (!keySignature) {
-    //   return Alert.alert(
-    //     "Indisponível",
-    //     "Você não pode assinar no momento pois precisa primeiro visualizar todos os documentos."
-    //   );
-    // }
+    if (!keySignature) {
+      return Alert.alert(
+        "Indisponível",
+        "Você não pode assinar no momento pois precisa primeiro visualizar todos os documentos."
+      );
+    }
     setModalVisible(true);
   };
 
