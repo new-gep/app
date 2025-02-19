@@ -6,6 +6,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Modal,
+  Alert,
 } from "react-native";
 import Header from "../../layout/Header";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -15,18 +16,18 @@ import SignatureModalCanvas from "../Components/signatureModalCanvas";
 import { WebView } from "react-native-webview";
 
 const months = [
-  { value: "01", label: "Janeiro" },
-  { value: "02", label: "Fevereiro" },
-  { value: "03", label: "Março" },
-  { value: "04", label: "Abril" },
-  { value: "05", label: "Maio" },
-  { value: "06", label: "Junho" },
-  { value: "07", label: "Julho" },
-  { value: "08", label: "Agosto" },
-  { value: "09", label: "Setembro" },
-  { value: "10", label: "Outubro" },
-  { value: "11", label: "Novembro" },
-  { value: "12", label: "Dezembro" },
+  { value: "01", label: "Janeiro", english: "January" },
+  { value: "02", label: "Fevereiro", english: "February" },
+  { value: "03", label: "Março", english: "March" },
+  { value: "04", label: "Abril", english: "April" },
+  { value: "05", label: "Maio", english: "May" },
+  { value: "06", label: "Junho", english: "June" },
+  { value: "07", label: "Julho", english: "July" },
+  { value: "08", label: "Agosto", english: "August" },
+  { value: "09", label: "Setembro", english: "September" },
+  { value: "10", label: "Outubro", english: "October" },
+  { value: "11", label: "Novembro", english: "November" },
+  { value: "12", label: "Dezembro", english: "December" },
 ];
 
 const currentYear = new Date().getFullYear();
@@ -61,11 +62,12 @@ const PayStub = () => {
     if (jobConected) {
       try {
         setIsFetching(true);
+        const monthInEnglish = months.find(m => m.label === mes)?.english || mes;
         const response = await CheckDocumentServices(
           jobConected.id,
           "PayStub",
           ano,
-          mes
+          monthInEnglish
         );
         const validDocuments = Array.isArray(response)
           ? response.filter((doc) => doc !== null)
@@ -105,14 +107,27 @@ const PayStub = () => {
     setIsLoading(false);
   };
 
-  const handleSaveSignature = (signature: string) => {
+  const handleSaveSignature = async (signature: string) => {
     if (selectedDocument) {
-      setSignatures((prev) => ({
-        ...prev,
-        [selectedDocument.fileName]: signature,
-      }));
+      try {
+        setSignatures((prev) => ({
+          ...prev,
+          [selectedDocument.fileName]: signature,
+        }));
+        
+        setShowSignatureModal(false);
+        
+        Alert.alert("Sucesso", "Assinatura salva com sucesso!");
+      } catch (error) {
+        console.error("Erro ao salvar assinatura:", error);
+        Alert.alert("Erro", "Ocorreu um erro ao salvar a assinatura. Tente novamente.");
+      }
     }
-    setShowSignatureModal(false);
+  };
+
+  const handleOpenSignatureModal = (item: any) => {
+    setSelectedDocument(item);
+    setShowSignatureModal(true);
   };
 
   return (
@@ -246,10 +261,7 @@ const PayStub = () => {
                         className={`py-2 px-4 rounded-lg items-center ${
                           wasViewed ? "bg-primary" : "bg-gray-300"
                         }`}
-                        onPress={() => {
-                          setSelectedDocument(item);
-                          setShowSignatureModal(true);
-                        }}
+                        onPress={() => handleOpenSignatureModal(item)}
                         disabled={!wasViewed}
                       >
                         <Text className="text-white text-base font-semibold">

@@ -6,6 +6,7 @@ import uploadFile from "../../hooks/upload/job";
 import WaitingIndicator from "../Work/Admission/admissionalWaitingIndicator";
 import CreateAvalidPicture from "../../hooks/create/pictures";
 import UpdatePicture from "../../hooks/update/picture";
+import CreateAvalidService from "../../hooks/create/service";
 
 
 const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf, where }) => {
@@ -66,18 +67,39 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf, wher
     }
   };
 
+  const getMonthName = (monthNumber: number) => {
+    const months = [
+      "January", "February", "March", "April", 
+      "May", "June", "July", "August",
+      "September", "October", "November", "December"
+    ];
+    return months[monthNumber - 1] || "Unknown";
+  };
+
   const saveCanvas = async () => {
     try {
       if (canvasRef.current) {
         const base64Data = await canvasRef.current.toDataURL();
+        
+        // Gera o nome do arquivo de acordo com a tela de origem
+        const currentDate = new Date();
+        const monthName = getMonthName(currentDate.getMonth() + 1);
+        const fileName = where === "PayStub" || where === "TimeClock" 
+          ? `Signature_${where}_${currentDate.getFullYear()}_${monthName}_${id}`
+          : `Signature_${where}_${id}`;
+
         // Enviar para o backend
         const props = {
           file: base64Data,
           id: id,
-          name: where,
+          name: fileName,
         };
+
+        console.log('Dados sendo enviados para upload:', props);
+  
         const response = await uploadFile(props);
         if (response?.status === 200) {
+          // ...
         } else {
           alert("Ocorreu um erro ao enviar o arquivo. Tente novamente.");
         }
@@ -86,27 +108,46 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf, wher
       console.error("Erro ao enviar o arquivo:", error);
       alert("Ocorreu um erro inesperado. Verifique sua conexão e tente novamente.");
     }
+  
+    const currentDate = new Date();
+    const monthName = getMonthName(currentDate.getMonth() + 1);
+    const pictureProps = {
+      picture: `Signature_${where}_${id}`,
+      status: 'pending',
+      cpf: cpf,
+    };
+    const serviceProps = {
+      name: where === "PayStub" || where === "TimeClock"
+      ? `Signature_${where}_${currentDate.getFullYear()}_${monthName}_${id}`
+      : `Signature_${where}_${id}`,
+      type: where === "PayStub" ? "PayStub" : where === "TimeClock" ? "TimeClock" : "",
+      status: 'pending',
+    };
 
-    const props = {
-      picture :where,
-      status  :'pending',
-      cpf     : cpf
+    console.log('Dados sendo enviados para CreateAvalidService:', serviceProps);
+  
+    // Verifica se é PayStub ou TimeClock para usar o serviço correto
+    let response;
+    if (where === "PayStub" || where === "TimeClock") {
+      response = await CreateAvalidService(serviceProps);
+    } else {
+      response = await CreateAvalidPicture(pictureProps);
     }
-    const response = await CreateAvalidPicture(props)
-    
+  
+    // Se já existir, atualiza
     if(response.status === 409) {
-      const response = await UpdatePicture(cpf, props)
-      if(response.status === 200) {
+      const responseUpdate = await UpdatePicture(cpf, pictureProps);
+      if(responseUpdate.status === 200) {
         Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
           {
             text: "OK",
           },
         ]);
-        onClose(false)
+        onClose(false);
       }
       return;
     }
-
+  
     Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
       {
         text: "OK",
@@ -115,8 +156,8 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf, wher
         },
       },
     ]);
-
-    onClose(false)
+  
+    onClose(false);
   };
 
   return (
