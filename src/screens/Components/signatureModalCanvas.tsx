@@ -99,7 +99,7 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf, wher
   
         const response = await uploadFile(props);
         if (response?.status === 200) {
-          // ...
+          onSaveSignature(fileName);
         } else {
           alert("Ocorreu um erro ao enviar o arquivo. Tente novamente.");
         }
@@ -124,7 +124,7 @@ const SignatureModalCanvas = ({ visible, onClose, onSaveSignature, id, cpf, wher
       status: 'pending',
     };
 
-    console.log('Dados sendo enviados para CreateAvalidService:', serviceProps);
+    // console.log('Dados sendo enviados para CreateAvalidService:', serviceProps);
   
     // Verifica se é PayStub ou TimeClock para usar o serviço correto
     let response;

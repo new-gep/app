@@ -18,7 +18,7 @@ type Props = {
     close: () => void;
 };
 
-const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Props) => {
+const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, documentName }: Props) => {
     const [viewingSide, setViewingSide] = useState<'front' | 'back' | null>(null);
     const [loading, setLoading] = useState(true);
     const [pathFront, setPathFront] = useState<any>()
@@ -88,10 +88,15 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                 {typeDocument === 'picture' ? (
                     <>
                         {!twoPicture && !loading && (
-                            <Image 
-                                className="w-full h-full object-contain" 
-                                source={{ uri: pathOne }}
-                            />
+                            <View className="w-full bg-white rounded-t-3xl p-4">
+                                <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
+                                    {documentName}
+                                </Text>
+                                <Image 
+                                    className="w-full h-full object-contain" 
+                                    source={{ uri: pathOne }}
+                                />
+                            </View>
                         )}
                         {twoPicture && !viewingSide && !loading && (
                             <View className="items-center w-full bg-white rounded-t-3xl p-4">
@@ -99,7 +104,7 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                                     <View className="w-1/12 bg-neutral-400 rounded-xl h-1" />
                                 </View>
                                 <View className={`w-full`} >
-                                    <Text style={{ ...FONTS.fontMedium, fontSize: 16 }}>Visualização</Text>
+                                    <Text style={{ ...FONTS.fontMedium, fontSize: 16 }}>{documentName}</Text>
                                 </View>
                                 <TouchableOpacity
                                     className="w-1/2 mb-4 mt-4 p-2.5 bg-primary rounded-lg"
@@ -116,19 +121,25 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close }: Pro
                             </View>
                         )}
                         {!loading && viewingSide && (
-                            <>
+                            <View className="w-full bg-white rounded-t-3xl p-4">
+                                <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
+                                    {documentName} - {viewingSide === 'front' ? 'Frente' : 'Verso'}
+                                </Text>
                                 {viewingSide === 'front' && (
                                     <Image className="w-full h-full object-contain" source={{ uri: pathFront }} />
                                 )}
                                 {viewingSide === 'back' && (
                                     <Image className="w-full h-full object-contain" source={{ uri: pathBack }} />
                                 )}
-                            </>
+                            </View>
                         )}
                     </>
                 ) : (
                     !loading && (
-                        <View className={`w-full h-full`}>
+                        <View className={`w-full h-full bg-white rounded-t-3xl p-4`}>
+                            <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
+                                {documentName}
+                            </Text>
                             <Pdf
                                 trustAllCerts={false}
                                 //@ts-ignore

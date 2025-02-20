@@ -55,7 +55,7 @@ const DrawingModal = ({ visible, onClose, onSaveSignature, id }) => {
 
   const capturePng = async () => {
     const uri = await viewShotRef.current.capture(); // Captura como PNG
-    console.log('PNG gerado:', uri);
+    // console.log('PNG gerado:', uri);
   };
 
   const clearCanvas = () => {

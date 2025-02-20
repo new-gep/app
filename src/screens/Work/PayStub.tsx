@@ -14,6 +14,7 @@ import CheckDocumentServices from "../../hooks/get/job/checkPayStub";
 import DocumentVisible from "../../components/Modal/DocumentVisible";
 import SignatureModalCanvas from "../Components/signatureModalCanvas";
 import { WebView } from "react-native-webview";
+import Feather from "@expo/vector-icons/build/Feather";
 
 const months = [
   { value: "01", label: "Janeiro", english: "January" },
@@ -44,7 +45,7 @@ const PayStub = () => {
   const { jobConected, CPF } = route.params;
 
   const [mes, setMes] = useState(months[0].label);
-  const [ano, setAno] = useState(String(currentYear));
+  const [year, setyear] = useState(String(currentYear));
   const [documents, setDocuments] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
@@ -62,16 +63,20 @@ const PayStub = () => {
     if (jobConected) {
       try {
         setIsFetching(true);
-        const monthInEnglish = months.find(m => m.label === mes)?.english || mes;
+        const monthInEnglish =
+          months.find((m) => m.label === mes)?.english || mes;
         const response = await CheckDocumentServices(
           jobConected.id,
           "PayStub",
-          ano,
+          year,
           monthInEnglish
         );
+
         const validDocuments = Array.isArray(response)
           ? response.filter((doc) => doc !== null)
           : [];
+
+        // console.log('ID: ', validDocuments[0].details.id)
         setDocuments(validDocuments);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -83,7 +88,7 @@ const PayStub = () => {
 
   useEffect(() => {
     fetchData();
-  }, [mes, ano]);
+  }, [mes, year]);
 
   const handleDocumentView = (fileName: string) => {
     setViewedDocuments((prev) => ({ ...prev, [fileName]: true }));
@@ -114,13 +119,16 @@ const PayStub = () => {
           ...prev,
           [selectedDocument.fileName]: signature,
         }));
-        
+
         setShowSignatureModal(false);
-        
+
         Alert.alert("Sucesso", "Assinatura salva com sucesso!");
       } catch (error) {
         console.error("Erro ao salvar assinatura:", error);
-        Alert.alert("Erro", "Ocorreu um erro ao salvar a assinatura. Tente novamente.");
+        Alert.alert(
+          "Erro",
+          "Ocorreu um erro ao salvar a assinatura. Tente novamente."
+        );
       }
     }
   };
@@ -139,7 +147,7 @@ const PayStub = () => {
       />
 
       <Text className="text-xl font-bold mb-4 text-gray-800">
-        Selecione o mês e ano:
+        Selecione o mês e ano :
       </Text>
 
       <View className="flex-row justify-between mb-5">
@@ -156,7 +164,7 @@ const PayStub = () => {
           className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
           onPress={() => setShowYearPicker(true)}
         >
-          <Text className="text-base text-gray-800">{ano}</Text>
+          <Text className="text-base text-gray-800">{year}</Text>
         </TouchableOpacity>
       </View>
 
@@ -190,7 +198,7 @@ const PayStub = () => {
                   key={year}
                   className="p-4 border-b border-gray-200"
                   onPress={() => {
-                    setAno(year);
+                    setyear(year);
                     setShowYearPicker(false);
                   }}
                 >
@@ -211,6 +219,15 @@ const PayStub = () => {
           documents.map((item) => {
             const hasSignature = !!signatures[item.fileName];
             const wasViewed = !!viewedDocuments[item.fileName];
+            const details = item.details;
+            const status = details?.status;
+
+            let statusColor = "#6b7280"; // cor default
+            if (status === "pending") {
+              statusColor = "#fbbf24"; // amarelo
+            } else if (status === "approved") {
+              statusColor = "#22c55e"; // verde
+            }
 
             return (
               <View
@@ -222,16 +239,33 @@ const PayStub = () => {
                   className="flex-row items-center p-4"
                 >
                   <View className="w-16 h-16 bg-gray-100 rounded-lg justify-center items-center mr-4">
-                    <Text className="text-2xl font-bold text-primary">
-                      {new Date(item.createdAt).getDate()}
-                    </Text>
+                    {hasSignature ? (
+                      <Feather
+                        name="check-circle"
+                        size={32}
+                        color={statusColor}
+                      />
+                    ) : (
+                      <Feather name="edit-3" size={32} color={statusColor} />
+                    )}
                   </View>
                   <View className="flex-1">
                     <Text className="text-lg font-semibold text-gray-800">
-                      {months.find((m) => m.label === mes)?.label} {ano}
+                      Holerite {months.find((m) => m.label === mes)?.label}{" "}
+                      {year}
                     </Text>
-                    <Text className="text-base text-gray-600">
-                      {item.service}
+                    <Text
+                      className={`text-base ${
+                        status === "approved"
+                          ? "text-green-600"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {status === "approved"
+                        ? "Aprovado"
+                        : status === "pending"
+                        ? "Aguardando aprovação"
+                        : "Pendente"}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -301,12 +335,13 @@ const PayStub = () => {
       )}
 
       <SignatureModalCanvas
+        key={selectedDocument?.details.id}
+        id={selectedDocument?.details.id}
         visible={showSignatureModal}
         onClose={() => setShowSignatureModal(false)}
         onSaveSignature={handleSaveSignature}
-        id={selectedDocument?.id}
         cpf={CPF}
-        where={"PayStub"}
+        where="PayStub"
       />
     </View>
   );

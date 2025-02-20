@@ -305,7 +305,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         return
                     }
                 }
-    
+                
                 if(createResponse.status === 201){
                     setPath(path)
                     setTypeDocument(type)
