@@ -57,7 +57,7 @@ const PayStub = () => {
   const [viewedDocuments, setViewedDocuments] = useState<{
     [key: string]: boolean;
   }>({});
-  const [signatures, setSignatures] = useState<{ [key: string]: string }>({});
+  const [signatures, setSignatures] = useState<any>({});
 
   const fetchData = async () => {
     if (jobConected) {
@@ -232,7 +232,9 @@ const PayStub = () => {
             return (
               <View
                 key={item.fileName}
-                className="mb-4 bg-white rounded-xl shadow-sm"
+                className={`mb-4 bg-white rounded-xl shadow-sm ${
+                  !item.fileName.match(/^Service_PayStub_\d{4}_[A-Za-z]+_\d+$/) && "hidden"
+                }`}
               >
                 <TouchableOpacity
                   onPress={() => openDocumentModal(item)}
@@ -258,6 +260,8 @@ const PayStub = () => {
                       className={`text-base ${
                         status === "approved"
                           ? "text-green-600"
+                          : status === "reproved"
+                          ? "text-red-600"
                           : "text-gray-500"
                       }`}
                     >
@@ -265,11 +269,13 @@ const PayStub = () => {
                         ? "Aprovado"
                         : status === "pending"
                         ? "Aguardando aprovação"
+                        : status === "reproved"
+                        ? "Rejeitado, envie novamente"
                         : "Pendente"}
                     </Text>
                   </View>
                 </TouchableOpacity>
-
+                        
                 <View className="p-4 border-t border-gray-200">
                   {hasSignature ? (
                     <View className="items-center">
@@ -337,6 +343,7 @@ const PayStub = () => {
       <SignatureModalCanvas
         key={selectedDocument?.details.id}
         id={selectedDocument?.details.id}
+        jobId={jobConected.id}
         visible={showSignatureModal}
         onClose={() => setShowSignatureModal(false)}
         onSaveSignature={handleSaveSignature}

@@ -5,6 +5,7 @@ type Props = {
     name: string
     status: string
     type: string
+    id_work: string
     documentId?: string   
     cpf?: string            // CPF do funcionário
     signatureDate?: Date    // Data da assinatura
@@ -15,6 +16,7 @@ export default async function CreateService(props: Props) {
     const { 
         name, 
         status, 
+        id_work,
         type,
         documentId,
         cpf,
@@ -26,8 +28,8 @@ export default async function CreateService(props: Props) {
     const propsService: any = {
         name,
         status,
-        type,
-        createdAt: new Date()  // Mantém registro de criação
+        id_work,
+        type
     };
 
     // Adiciona campos específicos para PayStub/TimeClock
@@ -35,6 +37,7 @@ export default async function CreateService(props: Props) {
         
         propsService.documentId = documentId;
         propsService.cpf = cpf;
+        propsService.id_work = id_work;
         propsService.signatureDate = signatureDate || new Date();
         propsService.monthYear = monthYear || 
             `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getFullYear()}`;
