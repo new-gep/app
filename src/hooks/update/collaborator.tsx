@@ -10,6 +10,7 @@ type Props = {
     phone   ?: string;
     marriage?: string;
     children: { [key: string]: { name: string; birth: string } } | 0;
+    birth?: string;
     terms    ?: string;
     zip_code ?:string;
     street   ?:string;

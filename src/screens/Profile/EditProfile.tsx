@@ -32,6 +32,7 @@ type inputUpdateDates = {
     phone:string,
     email:string,
     marriage:string,
+    birth:string,
     children: { [key: string]: { name: string; birth: string } } | 0;
     zip_code: string;
     street  : string;
@@ -80,6 +81,7 @@ const EditProfile = () => {
         sex  :'M',
         phone:'',
         email:'',
+        birth :'', 
         PCD: '0',
         marriage:'0',
         children:0,
@@ -244,6 +246,7 @@ const EditProfile = () => {
                     email: collaborator.email ,
                     sex : collaborator.sex || 'M' ,
                     marriage: collaborator.marriage || '0' ,
+                    birth: collaborator.birth || '',
                     children: collaborator.children || 0,
                     zip_code: collaborator.zip_code || '',
                     street  : collaborator.street   || '',
@@ -439,7 +442,7 @@ const EditProfile = () => {
                 </View>
                 <View style={[GlobalStyleSheet.container,{backgroundColor:theme.dark ? 'rgba(255,255,255,.1)':colors.card,marginTop:10,paddingVertical:10,borderRadius:15}]}>
                     <View style={[styles.cardBackground,{ borderBottomColor:COLORS.inputborder,borderStyle:'dashed'}]}>
-                        <Text style={{ ...FONTS.fontRegular, fontSize: 14, color: colors.title }}>Informação Pessoais</Text>
+                        <Text style={{ ...FONTS.fontRegular, fontSize: 14, color: colors.title }}>Informações Pessoais</Text>
                     </View>
                     <View style={{ marginBottom: 15, marginTop: 10 }}>
                         <Input 
@@ -483,6 +486,28 @@ const EditProfile = () => {
                             inputicon
                             placeholder='Email'
                             icon={<Image source={IMAGES.email2} style={[styles.icon,{tintColor:colors.title}]}/>}
+                        />
+                    </View>
+                    <View style={{ marginBottom: 15 }}>
+                        <Input  
+                            onFocus={() => setisFocused2(true)}
+                            onBlur={() => setisFocused2(false)}
+                            isFocused={isFocused2}
+                            value={Mask('dateFormatBrazil', collaboratorUpdateDates.birth)}
+                            onChangeText={(value) => {
+                                // Verifica se a data está no formato correto (dd/mm/yyyy)
+                                const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
+                                if (datePattern.test(value)) {
+                                    const [dia, mes, ano] = value.split('/');
+                                    const formattedDate = `${ano}-${mes}-${dia}`; // Converte para yyyy-mm-dd
+                                    setCollaboratorUpdateDates({ ...collaboratorUpdateDates, birth: formattedDate });
+                                }
+                            }}
+                            backround={colors.card}
+                            style={{borderRadius:48}}
+                            inputicon
+                            placeholder='Data de Nascimento'
+                            icon={<Image source={IMAGES.cake} style={[styles.icon,{tintColor:colors.title}]}/>}
                         />
                     </View>
                     <View className={`mt-2`} style={{ marginBottom: 15 }}>

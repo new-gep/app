@@ -92,29 +92,27 @@ export default function Mask(type: MaskType, value: string | number): string {
             const segundos = hora[2];
             const fusoHorario = 'UTC';
 
-            const dataFormatada = `dia ${dia} de ${mes} de ${ano} às ${horas}:${minutos}`;
+            const dataFormatada = `dia ${dia} de ${mes} de ${ano}`;
             return dataFormatada;
         }
         case 'dateFormatBrazil': {
             if (!value) {
-                return '';
+                return 'Data não informada';
             }
-            const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-            const partes = value.toString().split('T');
+        
+            // Se não tiver 'T', adicionamos um horário padrão para evitar erro
+            const partes = value.toString().includes('T') ? value.toString().split('T') : [value.toString(), '00:00:00'];
+            
             const data = partes[0].split('-');
             const hora = partes[1].split(':');
-
+        
             const ano = data[0];
-            const mesIndex = parseInt(data[1]) - 1;
-            const mes = meses[mesIndex];
+            const mes = data[1].padStart(2, '0'); // Mantém o mês como número com 2 dígitos
             const dia = data[2].padStart(2, '0');
             const horas = hora[0].padStart(2, '0');
             const minutos = hora[1].padStart(2, '0');
-            const segundos = hora[2];
-            const fusoHorario = 'UTC';
-
-            const dataFormatada = `${dia} de ${mes} de ${ano}`;
-            return dataFormatada;
+        
+            return `${dia}/${mes}/${ano}`;
         }
         case 'hiddenPhone': {
             const telefoneLimpo = value.toString().replace(/\D/g, '');

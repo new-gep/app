@@ -177,7 +177,7 @@ const DocumentSendServices = ({
   };
 
   const handleSendPictureSide = async (send: string) => {
-    console.log("toma-leee", send);
+    // console.log("toma-leee", send);
     const response = await GetPathPicture(send);
 
     if (response && response != "cancel") {

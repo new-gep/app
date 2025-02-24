@@ -40,7 +40,7 @@ const ArrivalData = [
     title: "Ponto",
     subtitle: "Atalho",
     image: IMAGES.order,
-    route: "TimeClock",
+    route: "Point",
   },
   {
     id: "2",
@@ -98,7 +98,7 @@ export default function HomeWork({
       image4: IMAGES.unique12,
       title: "Ponto",
       subtitle: "Assine e cheque seu ponto",
-      route: "TimeClock",
+      route: "Point",
     },
   ];
 
@@ -196,10 +196,10 @@ export default function HomeWork({
                         key={index}
                         activeOpacity={0.8}
                         onPress={() => {
-                          // Verifica pelas rotas reais (PayStub e TimeClock)
+                          // Verifica pelas rotas reais (PayStub e Point)
                           if (
                             data.route === "PayStub" ||
-                            data.route === "TimeClock"
+                            data.route === "Point"
                           ) {
                             navigation.navigate(data.route, {
                               // Usa o nome exato da rota

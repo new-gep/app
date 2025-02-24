@@ -32,8 +32,8 @@ export default async function CreateService(props: Props) {
         type
     };
 
-    // Adiciona campos específicos para PayStub/TimeClock
-    if (type === 'PayStub' || type === 'TimeClock') {
+    // Adiciona campos específicos para PayStub/Point
+    if (type === 'PayStub' || type === 'Point') {
         
         propsService.documentId = documentId;
         propsService.cpf = cpf;

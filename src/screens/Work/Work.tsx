@@ -23,7 +23,7 @@ import HomeNoWork from "./HomeNoJob";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
 import DismissalHome from "./Dismissal/Home";
 import PayStub from "./PayStub";
-import TimeClock from "./TimeClock";
+import Point from "./Point";
 import Absence from "./Absence/Home";
 // import DismissalHomeCompany from "./Dismissal/DismissalHomeCompany";;
 import Home from "./Home";

@@ -18,6 +18,7 @@ interface propsCollaborator {
             birth: string;
         };
     } | null | 0;
+    birth?: string | null;
     zip_code?: string | null;
     street?: string | null;
     district?: string | null;
@@ -41,6 +42,7 @@ const useCollaborator = () => {
             if (storedData) {
                 const parsedData = JSON.parse(storedData) as propsCollaborator;
                 setCollaborator(parsedData);
+                console.log("Colaborador encontrado:", parsedData);
             }
         } catch (error) {
             console.error('Erro ao buscar colaborador:', error);

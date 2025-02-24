@@ -38,16 +38,22 @@ const Profile = ({navigation} : ProfileScreenProps) => {
         },
         {
             id:"3",
+            image:IMAGES.cake,
+            title:'Data de Nascimento',
+            subtitle: collaborator && Mask('dateFormatBrazil',collaborator.birth)
+        },
+        {
+            id:"4",
             image:IMAGES.children,
             title:'Filhos',
             subtitle: collaborator ? collaborator.children == 0 ? 'Sem filhos' 
                 : collaborator.children && Object.keys(collaborator.children).length > 0 
-                  ? `${Object.keys(collaborator.children).length} Filhos` 
-                  : 'Cadastro incompleto'
+                ? `${Object.keys(collaborator.children).length} Filhos` 
+                : 'Cadastro incompleto'
             : 'Cadastro incompleto'
         },
         {
-            id:"4",
+            id:"5",
             image:IMAGES.ring,
             title:'Casado(a)',
             subtitle: collaborator && `${collaborator && collaborator.marriage ? collaborator.marriage == '1' ? 'Sim' : 'Não' : 'Cadastro incompleto'}`
@@ -59,7 +65,7 @@ const Profile = ({navigation} : ProfileScreenProps) => {
             subtitle: collaborator && `${collaborator && collaborator.PCD ? collaborator.PCD == '1' ? 'Sim' : 'Não' : 'Cadastro incompleto'}`
         },
         {
-            id:"5",
+            id:"7",
             image:IMAGES.map,
             title:'Endereço',
             subtitle: collaborator &&  

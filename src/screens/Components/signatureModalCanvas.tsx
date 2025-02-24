@@ -118,7 +118,7 @@ const SignatureModalCanvas = ({
         const currentDate = new Date();
         const monthName = getMonthName(currentDate.getMonth() + 1);
         const fileName =
-          where === "PayStub" || where === "TimeClock"
+          where === "PayStub" || where === "Point"
             ? `Signature_${where}_${currentDate.getFullYear()}_${monthName}_${id}`
             : `Signature_${where}_${id}`;
      
@@ -127,15 +127,15 @@ const SignatureModalCanvas = ({
           file: dataURL, // Agora só o Base64 puro
           id: jobId,
           dynamic: fileName,
-          name: 'paystub_signature',
+          name: where === "Point" ? 'point_signature' : 'paystub_signature',
         };
-        console.log('Dados sendo enviados para upload:', props.dynamic);
+        // console.log('Dados sendo enviados para upload:', props.dynamic);
     
         // console.log("Dados sendo enviados para upload:", props.id);
 
         const response = await uploadFile(props);
         console.log('Dados sendo enviados para upload:', response);
-        return;
+        // return;
         if (response?.status === 200) {
           onSaveSignature(fileName);
         } else {
@@ -156,14 +156,14 @@ const SignatureModalCanvas = ({
     };
     const serviceProps = {
       name:
-        where === "PayStub" || where === "TimeClock"
+        where === "PayStub" || where === "Point"
           ? `Signature_${where}_${currentDate.getFullYear()}_${monthName}_${id}`
           : `Signature_${where}_${id}`,
       type:
         where === "PayStub"
           ? "PayStub"
-          : where === "TimeClock"
-          ? "TimeClock"
+          : where === "Point"
+          ? "Point"
           : "",
       status: "pending",
       id_work: jobId,
@@ -171,9 +171,9 @@ const SignatureModalCanvas = ({
 
     console.log('Dados sendo enviados para CreateAvalidService:', serviceProps); 
 
-    // Verifica se é PayStub ou TimeClock para usar o serviço correto
+    // Verifica se é PayStub ou Point para usar o serviço correto
     let response;
-    if (where === "PayStub" || where === "TimeClock") {
+    if (where === "PayStub" || where === "Point") {
       response = await CreateAvalidService(serviceProps);
     } else {
       response = await CreateAvalidPicture(pictureProps);

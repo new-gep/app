@@ -229,6 +229,7 @@ const Timeline = ({ jobConected, CPF }) => {
       /> */}
 
       <SignatureModalCanvas
+        jobId={jobConected[0].id}
         visible={modalVisible}
         onClose={handleCloseModal}
         onSaveSignature={setSignature}

@@ -62,7 +62,7 @@ import DismissalSteps from '../screens/Work/Dismissal/Step/Medical';
 import DismissalSignature from '../screens/Work/Dismissal/Step/Signature';
 import TimelineAdmiss from '../screens/Work/TimeLineAdmiss';
 import PayStub from '../screens/Work/PayStub';
-import TimeClock from '../screens/Work/TimeClock';
+import Point from '../screens/Work/Point';
 import Absence from '../screens/Work/Absence/Home';
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -137,7 +137,7 @@ const StackNavigator = () => {
 				<Stack.Screen name="TimelineAdmiss" component={TimelineAdmiss} />
 				<Stack.Screen name="DismissalSteps" component={DismissalSteps} />
 				<Stack.Screen name="PayStub" component={PayStub} />
-				<Stack.Screen name="TimeClock" component={TimeClock} />
+				<Stack.Screen name="Point" component={Point} />
 				<Stack.Screen name="Absence" component={Absence} />
 
 
