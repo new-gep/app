@@ -130,6 +130,8 @@ const Work = () => {
           // console.log("opa",response);
           if (response.collaborator.id_work) {
             setHaswork(true);
+          } else {
+            setHaswork(false);
           }
         }
       }
@@ -158,20 +160,17 @@ const Work = () => {
   return (
     <>
       {hasWork === null
-      
       ? 
         <View className="flex-1 justify-center items-center"> 
-          <ActivityIndicator size="large" color={'yellow'} />
+          <ActivityIndicator size="large" color={'black'} />
         </View>
-        :
-        hasWork ?
+      :
+        hasWork ? 
         <Home setTitleWork={setTitleWork} navigation={navigation} jobConected={jobConected} CPF={CPF}/> 
-        :
+        : 
         <HomeNoWork setTitleWork={setTitleWork} />
       }
-    
     </>
-
   );
 };
 

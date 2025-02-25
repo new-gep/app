@@ -14,6 +14,7 @@ import CheckCadasterCollaboratorProfile from '../utils/checkCadasterCollaborator
 import FindBucketCollaborator from '../../hooks/bucket/collaborator';
 import useCollaborator from '../../function/fetchCollaborator';
 import DevelopmentModal from '../../components/Modal/Development';
+import Feather from '@expo/vector-icons/build/Feather';
 type ProfileScreenProps = StackScreenProps<RootStackParamList, 'Profile'>;
 
 const Profile = ({navigation} : ProfileScreenProps) => {
@@ -136,9 +137,9 @@ const Profile = ({navigation} : ProfileScreenProps) => {
             :
             <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{flexGrow:1,paddingBottom:50}}>
                 <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/>
-                <View className={`px-5`}>
+                {/* <View className={`px-5`}>
                     <CheckCadasterCollaboratorProfile/>
-                </View>
+                </View> */}
                 <View style={[GlobalStyleSheet.container,{alignItems:'center',marginTop:50,padding:0}]}>
                     <View
                         className={`bg-neutral-300 rounded-full h-24 w-24 justify-center items-center `}
@@ -209,7 +210,13 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                                         return (
                                             <TouchableOpacity
                                                 activeOpacity={0.8}
-                                                onPress={() => setIsShowDevelopment(true)}      
+                                                onPress={() => {
+                                                    if (data.id === "1") {
+                                                        navigation.navigate('Point');
+                                                    } else if (data.id === "2") {
+                                                        navigation.navigate('PayStub');
+                                                    }
+                                                }}      
                                                 key={index}
                                                 style={[styles.arrivaldata,{
                                                     backgroundColor:COLORS.dark,
@@ -237,6 +244,22 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                                 </View>
                             </ScrollView>
                     </View>
+                </View>
+                <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:10}}>
+                    <TouchableOpacity
+                    style={{
+                        height: 50,
+                        width: 50,
+                        alignItems: "center",
+                        justifyContent: "center",   
+                    }}
+                    onPress={async () => {
+                        await AsyncStorage.clear();
+                        navigation.navigate('SingIn');
+                    }}
+                >
+                        <Image source={IMAGES.logout} style={{width:20,height:20}}/>
+                    </TouchableOpacity>
                 </View>
             </ScrollView> 
         }

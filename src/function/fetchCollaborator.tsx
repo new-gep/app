@@ -42,7 +42,7 @@ const useCollaborator = () => {
             if (storedData) {
                 const parsedData = JSON.parse(storedData) as propsCollaborator;
                 setCollaborator(parsedData);
-                console.log("Colaborador encontrado:", parsedData);
+                // console.log("Colaborador encontrado:", parsedData);
             }
         } catch (error) {
             console.error('Erro ao buscar colaborador:', error);

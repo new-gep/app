@@ -1,3 +1,4 @@
+import React from 'react';
 import Cardstyle4 from './Cardstyle4';
 
 interface DocumentCardProps {
@@ -11,7 +12,7 @@ interface DocumentCardProps {
 }
 
 const DocumentCard = (props: DocumentCardProps) => {
-    return <Cardstyle4 {...props} />;
+    return <Cardstyle4  {...props} />;
 };
 
 export default DocumentCard; 

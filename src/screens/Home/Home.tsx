@@ -16,7 +16,6 @@ import FindOneJob from "../../hooks/get/job/findOne";
 import UpdateJobDefault from "../../hooks/update/job/default";
 import useCollaborator from "../../function/fetchCollaborator";
 import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
-import Header from "../../layout/Header";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
 import { useNavigation } from '@react-navigation/native';
 import type { NavigationProp } from '@react-navigation/native';
@@ -32,11 +31,12 @@ const Home = () => {
   const navigation = useNavigation<NavigationProp<any>>();
 
   const handleSwipeRight = async (id) => {
+    if (missingData) return;
+    
     let response = await FindOneJob(id);
     setPreviousCards((prev) => [...prev, cards[0]]);
     setCards((prevCards) => prevCards.slice(1));
-    let candidates: any;
-    //showPopupMessage();
+    
     if (response.status == 200) {
       const candidate = {
         cpf: collaborator.CPF,
@@ -45,49 +45,26 @@ const Home = () => {
         verify: false,
         observation: null,
       };
+
+      let formattedCandidates = [];
       if (response.job.candidates) {
-        // Verifica se o CPF já existe
         const cpfExists = response.job.candidates.some(
           (entry: { cpf: string }) => entry.cpf === collaborator.CPF
         );
+        if (cpfExists) return;
 
-        if (cpfExists) {
-          console.log("O colaborador já está cadastrado na vaga.");
-          return; // Interrompe a execução se o CPF já existir
-        } else {
-          // Atualização do array de candidatos com o novo colaborador
-          const formattedCandidates = await response.job.candidates.map(
-            (candidate) => {
-              // Desestrutura as propriedades desejadas e coleta o restante
-              const { cpf, step, status, verify, observation } = candidate;
-
-              // Retorna um novo objeto apenas com as propriedades desejadas
-              return {
-                cpf,
-                step: step || 0,
-                status: status || false,
-                verify: verify || false,
-                observation: observation || null,
-              };
-            }
-          );
-          formattedCandidates.push(candidate);
-
-          const props = {
-            candidates: JSON.stringify(formattedCandidates),
-          };
-
-          const updateResponse = await UpdateJobDefault(id, props);
-          console.log("Vaga atualizada com sucesso!", updateResponse);
-          return;
-        }
+        formattedCandidates = response.job.candidates.map((candidate) => ({
+          cpf: candidate.cpf,
+          step: candidate.step || 0,
+          status: candidate.status || false,
+          verify: candidate.verify || false,
+          observation: candidate.observation || null,
+        }));
       }
 
-      const props = {
-        candidates: JSON.stringify([candidate]),
-      };
-      const updateResponse = await UpdateJobDefault(id, props);
-      console.log(updateResponse);
+      formattedCandidates.push(candidate);
+      const props = { candidates: JSON.stringify(formattedCandidates) };
+      await UpdateJobDefault(id, props);
     }
   };
 
@@ -139,11 +116,12 @@ const Home = () => {
         setIsLoading(false); // Garantir que o carregamento será desativado
       }
     };
-  
+
     fetchData();
   }, []);
 
-  useEffect(() => {
+
+    useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       fetchCollaborator();
       validateCollaborator();
@@ -157,6 +135,13 @@ const Home = () => {
     });
     return unsubscribe;
   }, []);
+
+
+  useEffect(() => {
+    if (missingData) {
+      navigation.navigate('CheckCadasterCollaboratorDocument');
+    }
+  }, [missingData, navigation]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
