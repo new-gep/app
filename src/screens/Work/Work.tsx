@@ -5,7 +5,14 @@ import {
   useNavigation,
   useTheme,
 } from "@react-navigation/native";
-import { View, ScrollView, Image, Text, BackHandler, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  Image,
+  Text,
+  BackHandler,
+  ActivityIndicator,
+} from "react-native";
 import Header from "../../layout/Header";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
 import { IMAGES } from "../../constants/Images";
@@ -108,7 +115,7 @@ const Stack = createStackNavigator();
 
 const Work = () => {
   const [titleWork, setTitleWork] = useState<string>("");
-  const [hasWork, setHaswork] = useState<boolean>(null);
+  const [hasWork, setHaswork] = useState<boolean>(false);
   const [jobConected, setjobConected] = useState<any>();
   const [CPF, setCPF] = useState<any>();
   const { collaborator, fetchCollaborator } = useCollaborator();
@@ -119,25 +126,22 @@ const Work = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (collaborator) {
-        const response = await FindCollaborator(collaborator.CPF);
-        setCPF(collaborator.CPF)
-        if (response.status == 200) {
-          const responseJob = await FindOneJob(response.collaborator.id_work)
-          if(responseJob.status == 200){
-            // console.log(responseJob.job)
-            setjobConected(responseJob.job)
+        const cpfString = collaborator.CPF.toString().padStart(11, '0');
+        console.log(cpfString)
+        const response = await FindCollaborator(cpfString);
+        setCPF(cpfString);
+        if (response.status === 200) {
+          const responseJob = await FindOneJob(collaborator.id_work);
+          if (responseJob.status === 200) {
+            setjobConected(responseJob.job);
           }
-          // console.log("opa",response);
-          if (response.collaborator.id_work) {
-            setHaswork(true);
-          } else {
-            setHaswork(false);
-          }
+          setHaswork(!!collaborator.id_work);
         }
       }
     };
     fetchData();
   }, [collaborator]);
+  
 
   // Verificação Cadastral
   useEffect(() => {
@@ -155,21 +159,22 @@ const Work = () => {
     return unsubscribe;
   }, []);
 
-
-
   return (
     <>
-      {hasWork === null
-      ? 
-        <View className="flex-1 justify-center items-center"> 
-          <ActivityIndicator size="large" color={'black'} />
+      {hasWork === null ? (
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="black" />
         </View>
-      :
-        hasWork ? 
-        <Home setTitleWork={setTitleWork} navigation={navigation} jobConected={jobConected} CPF={CPF}/> 
-        : 
+      ) : hasWork ? (
+        <Home
+          setTitleWork={setTitleWork}
+          navigation={navigation}
+          jobConected={jobConected}
+          CPF={CPF}
+        />
+      ) : (
         <HomeNoWork setTitleWork={setTitleWork} />
-      }
+      )}
     </>
   );
 };

@@ -9,6 +9,8 @@ import {
   StyleSheet,
   BackHandler,
   ActivityIndicator,
+  Button,
+  Dimensions,
 } from "react-native";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
@@ -37,6 +39,8 @@ import CardHistory from "./CardHistoryJobCadastrate";
 import fetchCollaborator from "../../function/fetchCollaborator";
 import HomeAdmission from "./HomeAdmission";
 import TimeLineAdmiss from "./TimeLineAdmiss";
+
+const { width, height } = Dimensions.get("window");
 
 const ArrivalData = [
   {
@@ -99,9 +103,9 @@ export default function HomeNoWork({ setTitleWork }) {
   const { validateCollaborator, missingData } = useCollaboratorContext();
 
   const [jobConected, setJobConected] = useState<any>(null);
-  const [processAdmission, setProcessAdmission] = useState<any>(null); 
+  const [processAdmission, setProcessAdmission] = useState<any>(null);
 
-  const [process, setAdmission] = useState<any>(null); 
+  const [process, setAdmission] = useState<any>(null);
 
   const closeDevelopment = () => {
     setIsShowDevelopment(false);
@@ -124,13 +128,12 @@ export default function HomeNoWork({ setTitleWork }) {
             // console.log("response.jobs",response.jobs)
             if (response.processAdmission) {
               setAdmission(true);
-              setTitleWork("Processo admissional"); 
+              setTitleWork("Processo admissional");
               setProcessAdmission(true);
-              
+
               // navigation.navigate("TimeLineAdmiss", { jobConected: response.jobs, CPF: collaborator.CPF });
 
               // console.log("response.processAdmission", response.processAdmission);
-
             } else {
               setAdmission(false);
               setTitleWork("Vagas aplicadas");
@@ -138,7 +141,6 @@ export default function HomeNoWork({ setTitleWork }) {
             }
 
             return;
-
           } catch (error) {
             console.error("Erro ao buscar os cards:", error);
           } finally {
@@ -159,10 +161,7 @@ export default function HomeNoWork({ setTitleWork }) {
         </View>
       ) : processAdmission ? (
         <>
-          <HomeAdmission 
-            jobConected={jobConected} 
-            CPF={collaborator.CPF} 
-          />
+          <HomeAdmission jobConected={jobConected} CPF={collaborator.CPF} />
         </>
       ) : !process ? (
         <>
@@ -190,61 +189,96 @@ export default function HomeNoWork({ setTitleWork }) {
           </View>
           <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
             {jobConected && jobConected.length > 0 ? (
-              jobConected.map((job) => (
-                <CardHistory 
-                  key={job.id} 
-                  job={job} 
-                />
-              ))
+              jobConected.map((job) => <CardHistory key={job.id} job={job} />)
             ) : (
-              <Text style={{ textAlign: "center", marginTop: 20 }}>
-                Sem vagas registradas
-              </Text>
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "white",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    ...FONTS.fontSemiBold,
+                    fontSize: 16,
+                    color: colors.title,
+                  }}
+                >
+                  Sem vagas cadastradas
+                </Text>
+
+                <Image
+                  source={require("../../assets/images/brand/Business-nojob.png")}
+                  style={{ width: width * 0.7, height: height * 0.7 }}
+                  resizeMode="contain"
+                />
+
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "600",
+                    color: "#333",
+                    textAlign: "center",
+                    marginBottom: 10,
+                    paddingHorizontal: 20,
+                  }}
+                >
+                  Não se cadastrou em nenhuma vaga até o momento;
+                </Text>
+
+                <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#007bff",
+                      textAlign: "center",
+                      paddingHorizontal: 20,
+                    }}
+                  >
+                    Clique aqui para ver as vagas disponíveis.
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
           </ScrollView>
         </>
       ) : (
         collaborator && (
-          <HomeAdmission 
-            jobConected={jobConected} 
-            CPF={collaborator.CPF} 
-          />
+          <HomeAdmission jobConected={jobConected} CPF={collaborator.CPF} />
         )
       )}
-      <DevelopmentModal
-        visible={isShowDevelopment}
-        close={closeDevelopment}
-      />
+      <DevelopmentModal visible={isShowDevelopment} close={closeDevelopment} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
     left: 0,
     right: 0,
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   dismissButton: {
-    backgroundColor: '#FF4B4B',
+    backgroundColor: "#FF4B4B",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   dismissButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     ...FONTS.fontSemiBold,
     fontSize: 16,
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
-
