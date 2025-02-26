@@ -109,7 +109,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.w3itexperts.ombe'
+    namespace "com.newgep"
     defaultConfig {
         applicationId 'com.w3itexperts.ombe'
         minSdkVersion rootProject.ext.minSdkVersion
