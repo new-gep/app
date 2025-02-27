@@ -1,5 +1,7 @@
 {
   "expo": {
+    "slug": "new-gep",
+    "scheme": "new-gep",
     "name": "New Gep",
     "version": "1.0.0",
     "orientation": "portrait",
