@@ -1,4 +1,5 @@
 import axios from "axios";
+//@ts-ignore
 import config from "../../../config.json";
 import RNFetchBlob from "react-native-blob-util";
 type propsUploadJob = {
