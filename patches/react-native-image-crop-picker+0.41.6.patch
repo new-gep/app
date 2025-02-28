@@ -1,0 +1,272 @@
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..33a1d27
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+@@ -0,0 +1,33 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnative.ivpusic.imagepicker" >
++
++    <uses-sdk android:minSdkVersion="23" />
++
++    <queries>
++        <intent>
++            <action android:name="android.media.action.IMAGE_CAPTURE" />
++        </intent>
++    </queries>
++
++    <uses-permission
++        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
++        android:maxSdkVersion="29" />
++
++    <application>
++        <provider
++            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
++            android:authorities="dollar_openBracket_applicationId_closeBracket.provider"
++            android:exported="false"
++            android:grantUriPermissions="true" >
++            <meta-data
++                android:name="android.support.FILE_PROVIDER_PATHS"
++                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
++        </provider>
++
++        <activity
++            android:name="com.yalantis.ucrop.UCropActivity"
++            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
++    </application>
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json b/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
+new file mode 100644
+index 0000000..a34b0f9
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.reactnative.ivpusic.imagepicker",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-image-crop-picker/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..fc3ea20
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1,2 @@
++#Fri Feb 28 11:10:31 BRT 2025
++com.reactnative.ivpusic.imagepicker.react-native-image-crop-picker-main-6\:/xml/ivpusic_imagepicker_provider_paths.xml=C\:\\Users\\Mix - Matheus\\Desktop\\M2C projects\\gep\\app\\node_modules\\react-native-image-crop-picker\\android\\build\\intermediates\\packaged_res\\debug\\xml\\ivpusic_imagepicker_provider_paths.xml
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..6d73a86
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\res"><file name="ivpusic_imagepicker_provider_paths" path="C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\res\xml\ivpusic_imagepicker_provider_paths.xml" qualifiers="" type="xml"/></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\build\generated\res\resValues\debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\build\generated\res\resValues\debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/react-native-image-crop-picker/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..704dcfe
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,52 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.reactnative.ivpusic.imagepicker" >
++4
++5    <uses-sdk android:minSdkVersion="23" />
++6
++7    <queries>
++7-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:4:5-8:15
++8        <intent>
++8-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:5:9-7:18
++9            <action android:name="android.media.action.IMAGE_CAPTURE" />
++9-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:6:13-73
++9-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:6:21-70
++10        </intent>
++11    </queries>
++12
++13    <uses-permission
++13-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:10:5-11:38
++14        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
++14-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:10:22-78
++15        android:maxSdkVersion="29" />
++15-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:11:9-35
++16
++17    <application>
++17-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:13:5-28:19
++18        <provider
++18-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:15:9-23:20
++19            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
++19-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:16:13-59
++20            android:authorities="${applicationId}.provider"
++20-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:17:13-60
++21            android:exported="false"
++21-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:18:13-37
++22            android:grantUriPermissions="true" >
++22-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:19:13-47
++23            <meta-data
++23-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:20:13-22:78
++24                android:name="android.support.FILE_PROVIDER_PATHS"
++24-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:21:17-67
++25                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
++25-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:22:17-75
++26        </provider>
++27
++28        <activity
++28-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:25:9-27:72
++29            android:name="com.yalantis.ucrop.UCropActivity"
++29-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:26:13-60
++30            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
++30-->C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:27:13-69
++31    </application>
++32
++33</manifest>
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
+new file mode 100644
+index 0000000..4f05fb7
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
+@@ -0,0 +1,33 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnative.ivpusic.imagepicker" >
++
++    <uses-sdk android:minSdkVersion="23" />
++
++    <queries>
++        <intent>
++            <action android:name="android.media.action.IMAGE_CAPTURE" />
++        </intent>
++    </queries>
++
++    <uses-permission
++        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
++        android:maxSdkVersion="29" />
++
++    <application>
++        <provider
++            android:name="com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider"
++            android:authorities="${applicationId}.provider"
++            android:exported="false"
++            android:grantUriPermissions="true" >
++            <meta-data
++                android:name="android.support.FILE_PROVIDER_PATHS"
++                android:resource="@xml/ivpusic_imagepicker_provider_paths" />
++        </provider>
++
++        <activity
++            android:name="com.yalantis.ucrop.UCropActivity"
++            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
++    </application>
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/react-native-image-crop-picker/android/build/intermediates/navigation_json/debug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/navigation_json/debug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/intermediates/packaged_res/debug/xml/ivpusic_imagepicker_provider_paths.xml b/node_modules/react-native-image-crop-picker/android/build/intermediates/packaged_res/debug/xml/ivpusic_imagepicker_provider_paths.xml
+new file mode 100644
+index 0000000..ffa74ab
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/intermediates/packaged_res/debug/xml/ivpusic_imagepicker_provider_paths.xml
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<paths xmlns:android="http://schemas.android.com/apk/res/android">
++    <external-path name="external_files" path="."/>
++</paths>
+\ No newline at end of file
+diff --git a/node_modules/react-native-image-crop-picker/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-image-crop-picker/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..38b3158
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,55 @@
++-- Merging decision tree log ---
++manifest
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:1:1-30:12
++INJECTED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:1:1-30:12
++	package
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:2:5-50
++		INJECTED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml
++	xmlns:android
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:1:11-69
++queries
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:4:5-8:15
++intent#action:name:android.media.action.IMAGE_CAPTURE
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:5:9-7:18
++action#android.media.action.IMAGE_CAPTURE
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:6:13-73
++	android:name
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:6:21-70
++uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:10:5-11:38
++	android:maxSdkVersion
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:11:9-35
++	android:name
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:10:22-78
++application
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:13:5-28:19
++provider#com.reactnative.ivpusic.imagepicker.IvpusicImagePickerFileProvider
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:15:9-23:20
++	android:grantUriPermissions
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:19:13-47
++	android:authorities
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:17:13-60
++	android:exported
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:18:13-37
++	android:name
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:16:13-59
++meta-data#android.support.FILE_PROVIDER_PATHS
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:20:13-22:78
++	android:resource
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:22:17-75
++	android:name
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:21:17-67
++activity#com.yalantis.ucrop.UCropActivity
++ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:25:9-27:72
++	android:theme
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:27:13-69
++	android:name
++		ADDED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml:26:13-60
++uses-sdk
++INJECTED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml
++INJECTED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from C:\Users\Mix - Matheus\Desktop\M2C projects\gep\app\node_modules\react-native-image-crop-picker\android\src\main\AndroidManifest.xml
