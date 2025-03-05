@@ -1,4 +1,11 @@
 pluginManagement {
+  repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven { url("https://www.jitpack.io") } // Adicione se necessário
+        maven { url("https://plugins.gradle.org/m2/") }
+    }
   def version = providers.exec {
     commandLine("node", "-e", "console.log(require('react-native/package.json').version);")
   }.standardOutput.asText.get().trim()
@@ -8,9 +15,9 @@ pluginManagement {
   if(reactNativeMinor == 74 && reactNativePatch <= 3){
     includeBuild("react-settings-plugin")
   }
-}
+} 
 
-plugins { id("com.facebook.react.settings") }
+plugins { id("com.facebook.react.settings") version "0.0.1" }
 
 def getRNMinorVersion() {
   def version = providers.exec {
