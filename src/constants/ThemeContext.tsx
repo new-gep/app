@@ -47,7 +47,7 @@ export interface ThemeContextProviderProps {
     children: React.ReactNode;
 }
 
-export const ThemeContextProvider = ({children}: ThemeContextProviderProps) => {
+export const ThemeContextProvider = ({children}: any) => {
   
     
     const [isDarkTheme, setIsDarkTheme] = useState(false);

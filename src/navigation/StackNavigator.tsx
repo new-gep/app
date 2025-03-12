@@ -72,7 +72,7 @@ const StackNavigator = () => {
 
     return (
 		<View style={{width : '100%',flex:1}}>
-			<Stack.Navigator
+			<Stack.Navigator 
 				initialRouteName='Onboarding'
 				screenOptions={{
 					headerShown:false,

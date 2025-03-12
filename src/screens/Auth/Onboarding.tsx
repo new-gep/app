@@ -57,6 +57,8 @@ const Onboarding = ({navigation} : OnboardingScreenProps) => {
     const checkCollaborator = async () => {
         const checkCollaborator = await AsyncStorage.getItem('checkCollaborator');
         const rememberMy        = await AsyncStorage.getItem('rememberMy');
+
+
         if(checkCollaborator){
             setWaitProcess(true)
             navigation.navigate('SignUpAuthentication')
@@ -73,7 +75,8 @@ const Onboarding = ({navigation} : OnboardingScreenProps) => {
     const [imageScale] = useState(new Animated.Value(0));
 
     useEffect(() => {
-        checkCollaborator();
+        setWaitProcess(true)
+        // checkCollaborator();
         Animated.sequence([
             Animated.timing(imageScale, {
                 toValue: 0, // Scale up to 0

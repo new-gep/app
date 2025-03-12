@@ -1,17 +1,17 @@
-import 'react-native-gesture-handler';
+
 import Route from './src/navigation/Route';
 import { useFonts } from 'expo-font';
-import { useTheme } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux'
 import store from './src/redux/store';
 import React from 'react';
+import { View, Text, Platform } from 'react-native';
+import { COLORS } from './src/constants/theme';
 export default function App() {
   
 
-  const theme = useTheme();
-  const { colors } : {colors : any} = theme;
+  // const { colors } : {colors : any} = theme;
 
   const [loaded] = useFonts({
     PoppinsBold: require('./src/assets/fonts/Poppins-Bold.ttf'),
@@ -25,13 +25,14 @@ export default function App() {
   if(!loaded){
     return null;
   }
+
   return (
     <SafeAreaProvider>
         <SafeAreaView
           style={{
             flex: 1,
-            //paddingTop: Platform.OS === 'android' ? 25 : 0,
-            //backgroundColor:COLORS.primary ,
+            paddingTop: Platform.OS === 'android' ? 25 : 0,
+            backgroundColor:COLORS.primary ,
           }}>
             <StatusBar style="dark" />
             <Provider store={store}>
