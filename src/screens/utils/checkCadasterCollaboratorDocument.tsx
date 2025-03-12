@@ -26,7 +26,7 @@ type MissingDatesProps = {
     Address  :boolean;
     School_History:boolean;
     Marriage_Certificate: boolean;
-    Birth_Certificate:boolean;
+    // Birth_Certificate:boolean;
     Military_Certificate:boolean;
 }
 
@@ -42,7 +42,7 @@ export default function CheckCadasterCollaboratorDocument() {
         Address  :false,
         School_History:false,
         Marriage_Certificate:false,
-        Birth_Certificate:false,
+        // Birth_Certificate:false,
         Military_Certificate:false
     });
     const [loading, setLoading] = useState(true); // Estado de carregamento
@@ -62,7 +62,7 @@ export default function CheckCadasterCollaboratorDocument() {
                     Marriage_Certificate: missingDocuments.includes("Marriage_Certificate"),
                     Address: missingDocuments.includes("Address"),
                     School_History: missingDocuments.includes("School_History"),
-                    Birth_Certificate: missingDocuments.includes("Birth_Certificate"),
+                    // Birth_Certificate: missingDocuments.includes("Birth_Certificate"),
                     Military_Certificate: missingDocuments.includes("Military_Certificate"),
                     // Picture: missingFields.includes("Picture"),
                     // AddresField: missingFields.includes("address"),
@@ -78,7 +78,7 @@ export default function CheckCadasterCollaboratorDocument() {
                     Marriage_Certificate: false,
                     Address: false,
                     School_History:false,
-                    Birth_Certificate: false,
+                    // Birth_Certificate: false,
                     Military_Certificate: false,
                     // Picture: missingFields.includes("Picture"),
                     // AddresField: missingFields.includes("address"),

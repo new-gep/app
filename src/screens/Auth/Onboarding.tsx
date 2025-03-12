@@ -75,8 +75,8 @@ const Onboarding = ({navigation} : OnboardingScreenProps) => {
     const [imageScale] = useState(new Animated.Value(0));
 
     useEffect(() => {
-        setWaitProcess(true)
-        // checkCollaborator();
+        // setWaitProcess(true)
+        checkCollaborator();
         Animated.sequence([
             Animated.timing(imageScale, {
                 toValue: 0, // Scale up to 0

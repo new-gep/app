@@ -73,11 +73,11 @@ const Home = () => {
     setCards((prevCards) => prevCards.slice(1));
   };
 
-  const handleSuperLike = () => {
-    setPreviousCards((prev) => [...prev, cards[0]]);
-    setCards((prevCards) => prevCards.slice(1));
-    showPopupMessage("Super like enviado!");
-  };
+  // const handleSuperLike = () => {
+  //   setPreviousCards((prev) => [...prev, cards[0]]);
+  //   setCards((prevCards) => prevCards.slice(1));
+  //   showPopupMessage("Super like enviado!");
+  // };
 
   const handleUndo = () => {
     if (previousCards.length > 0) {
@@ -200,12 +200,12 @@ const Home = () => {
           <FontAwesome name="times" size={32} color="#FF5252" />
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={handleSuperLike}
           className="p-4 rounded-full"
         >
           <MaterialIcons name="star" size={32} color="#007AFF" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           onPress={handleSwipeRight}

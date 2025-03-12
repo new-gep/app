@@ -16,9 +16,12 @@ const { width } = Dimensions.get("window");
 const SWIPE_THRESHOLD = width * 0.6;
 const MAX_ROTATION_ANGLE = 8;
 
-const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex }) => {
+const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex, index }) => {
   const translateX = useSharedValue(0);
   const rotate = useSharedValue(0);
+
+  const translateY = useSharedValue(index * 15); // Ajusta a altura entre os cards
+  const scale = useSharedValue(1 - index * 0.05); // Diminui o tamanho do card de trás
 
   useLayoutEffect(() => {
     requestAnimationFrame(() => {
@@ -55,14 +58,15 @@ const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex }) => {
       }
     });
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    //@ts-ignore
-    transform: [
-      { translateX: translateX.value },
-      { rotateZ: `${rotate.value}deg` },
-    ],
-    zIndex: isTopCard ? 10 : zIndex,
-  }));
+    const animatedStyle = useAnimatedStyle(() => ({
+      //@ts-ignore
+      transform: [
+        { translateX: translateX.value },
+        { rotateZ: `${rotate.value}deg` },
+      ],
+      zIndex: isTopCard ? 10 : zIndex,
+    }));
+    
 
   const likeStyle = useAnimatedStyle(() => {
     const opacity = interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0, 1]);
@@ -93,8 +97,17 @@ const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex }) => {
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View
-        className="w-full flex-grow rounded-3xl bg-dark shadow-lg"
-        style={[animatedStyle, { height: "90%", overflow: "hidden" }]}
+        onPress={() => {
+          console.log("Card pressionado");
+        }}
+        className="w-full rounded-3xl bg-white border-4 border-gray-400 shadow-lg"
+        style={[
+          animatedStyle, 
+          { 
+            height: Dimensions.get('window').height * 0.5, // 50% da altura da tela
+            overflow: "hidden"
+          }
+        ]}
       >
         <ScrollView
           nestedScrollEnabled
@@ -140,7 +153,7 @@ const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex }) => {
             <Image
               source={AbstractPicture[data.image]}
               resizeMode="contain"
-              className="w-full h-[30%] self-center"
+              className="w-full h-[20%] self-center"
             />
 
             <View className="p-4">
