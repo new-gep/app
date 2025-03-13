@@ -11,6 +11,7 @@ import { runOnJS } from "react-native-reanimated";
 import Tabs from "./Tabs";
 import { AbstractPicture } from "../../constants/abstract";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 const SWIPE_THRESHOLD = width * 0.6;
@@ -28,6 +29,7 @@ const Card = ({
   const rotate = useSharedValue(0);
   const translateY = useSharedValue(-index * 35); // Empilhamento negativo para sobreposição superior
   const scale = useSharedValue(1 - index * 0.07); // Maior redução de escala
+  const navigation = useNavigation();
 
   useLayoutEffect(() => {
     requestAnimationFrame(() => {
@@ -66,17 +68,27 @@ const Card = ({
       }
     });
 
-    const animatedStyle = useAnimatedStyle(() => ({
-      //@ts-ignore
-      transform: [
-        { translateX: translateX.value },
-        { translateY: translateY.value },
-        { scale: scale.value },
-        { rotateZ: `${rotate.value}deg` }
-      ],
-      zIndex: zIndex,
-      position: "absolute",
-    }));
+  const singleTap = Gesture.Tap()
+    .enabled(isTopCard)
+    .onEnd(() => {
+      if (isTopCard) {
+        runOnJS(navigation.navigate)('CardInformation', { cardData: data });
+      }
+    });
+
+  const composedGestures = Gesture.Simultaneous(gesture, singleTap);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    //@ts-ignore
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+      { rotateZ: `${rotate.value}deg` }
+    ],
+    zIndex: zIndex,
+    position: "absolute",
+  }));
 
   const likeStyle = useAnimatedStyle(() => {
     const opacity = interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0, 1]);
@@ -129,7 +141,7 @@ const Card = ({
   }));
 
   return (
-    <GestureDetector gesture={gesture}>
+    <GestureDetector gesture={composedGestures}>
       <Animated.View
         className="w-full rounded-3xl bg-white shadow-lg"
         style={[
