@@ -16,18 +16,26 @@ const { width } = Dimensions.get("window");
 const SWIPE_THRESHOLD = width * 0.6;
 const MAX_ROTATION_ANGLE = 8;
 
-const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex, index }) => {
+const Card = ({
+  data,
+  onSwipeLeft,
+  onSwipeRight,
+  isTopCard,
+  zIndex,
+  index,
+}) => {
   const translateX = useSharedValue(0);
   const rotate = useSharedValue(0);
-
-  const translateY = useSharedValue(index * 15); // Ajusta a altura entre os cards
-  const scale = useSharedValue(1 - index * 0.05); // Diminui o tamanho do card de trás
+  const translateY = useSharedValue(-index * 35); // Empilhamento negativo para sobreposição superior
+  const scale = useSharedValue(1 - index * 0.07); // Maior redução de escala
 
   useLayoutEffect(() => {
     requestAnimationFrame(() => {
       if (isTopCard) {
         translateX.value = 0;
         rotate.value = 0;
+        translateY.value = 0; // Reset para posição original quando for o card principal
+        scale.value = 1;
       }
     });
   }, [isTopCard]);
@@ -62,15 +70,21 @@ const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex, index }) => 
       //@ts-ignore
       transform: [
         { translateX: translateX.value },
-        { rotateZ: `${rotate.value}deg` },
+        { translateY: translateY.value },
+        { scale: scale.value },
+        { rotateZ: `${rotate.value}deg` }
       ],
-      zIndex: isTopCard ? 10 : zIndex,
+      zIndex: zIndex,
+      position: "absolute",
     }));
-    
 
   const likeStyle = useAnimatedStyle(() => {
     const opacity = interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0, 1]);
-    const scale = interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0.8, 1.5]);
+    const scale = interpolate(
+      translateX.value,
+      [0, SWIPE_THRESHOLD],
+      [0.8, 1.5]
+    );
 
     return {
       position: "absolute",
@@ -82,8 +96,16 @@ const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex, index }) => 
   });
 
   const nopeStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(translateX.value, [0, -SWIPE_THRESHOLD], [0, 1]);
-    const scale = interpolate(translateX.value, [0, -SWIPE_THRESHOLD], [0.8, 1.5]);
+    const opacity = interpolate(
+      translateX.value,
+      [0, -SWIPE_THRESHOLD],
+      [0, 1]
+    );
+    const scale = interpolate(
+      translateX.value,
+      [0, -SWIPE_THRESHOLD],
+      [0.8, 1.5]
+    );
 
     return {
       position: "absolute",
@@ -94,18 +116,35 @@ const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex, index }) => 
     };
   });
 
+  const cardStyle = useAnimatedStyle(() => ({
+    //@ts-ignore
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+      { rotateZ: `${rotate.value}deg` },
+    ],
+    zIndex: zIndex,
+    position: "absolute",
+  }));
+
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View
-        onPress={() => {
-          console.log("Card pressionado");
-        }}
-        className="w-full rounded-3xl bg-white border-4 border-gray-400 shadow-lg"
+        className="w-full rounded-3xl bg-white shadow-lg"
         style={[
-          animatedStyle, 
-          { 
-            height: Dimensions.get('window').height * 0.5, // 50% da altura da tela
-            overflow: "hidden"
+          animatedStyle,
+          {
+            height: Dimensions.get('window').height * 0.5,
+            opacity: 1 - index * 0.15, // Camadas progressivamente transparentes
+            overflow: "hidden",
+            borderWidth: isTopCard ? 6 : 0,
+            borderColor: isTopCard ? '#E2E8F0' : 'transparent',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.2,
+            shadowRadius: 8,
+            elevation: 10,
           }
         ]}
       >
@@ -161,7 +200,8 @@ const Card = ({ data, onSwipeLeft, onSwipeRight, isTopCard, zIndex, index }) => 
             </View>
 
             <Text className="text-white text-base mt-2">
-              Descrição longa que pode ser rolada dentro do card. Aqui você pode adicionar muito texto sem afetar o swipe horizontal.
+              Descrição longa que pode ser rolada dentro do card. Aqui você pode
+              adicionar muito texto sem afetar o swipe horizontal.
             </Text>
           </View>
         </ScrollView>

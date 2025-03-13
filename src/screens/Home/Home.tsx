@@ -175,6 +175,7 @@ const Home = () => {
                   onSwipeRight={handleSwipeRight} // Swipe para a direita (like e mostra popup)
                   isTopCard={index === 0}
                   zIndex={cards.length - index}
+                  index={index}
                 />
               </View>
             ))}
