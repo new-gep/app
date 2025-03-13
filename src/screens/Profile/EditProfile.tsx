@@ -161,6 +161,11 @@ const EditProfile = () => {
     return childrenObject;
   };
 
+  const convertToISODate = (brazilianDate: string) => {
+    const [dd, mm, yyyy] = brazilianDate.split("-");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   const handleZipCodeChange = (newZipCode: string) => {
     setCollaboratorUpdateDates((prevState) => ({
       ...prevState,
@@ -171,9 +176,13 @@ const EditProfile = () => {
 
   const handleUpdateProfile = async () => {
     if (collaborator) {
+      const payload = {
+        ...collaboratorUpdateDates,
+        birth: convertToISODate(collaboratorUpdateDates.birth)
+      };
       const response = await UpdateCollaborator(
         collaborator.CPF,
-        collaboratorUpdateDates
+        payload
       );
       switch (response.status) {
         case 200:
@@ -186,7 +195,6 @@ const EditProfile = () => {
           Sheet();
           validateCollaborator();
           break;
-
         default:
           break;
       }
@@ -614,42 +622,50 @@ const EditProfile = () => {
           </View>
           <View style={{ marginBottom: 15 }}>
             <Input
-              onFocus={() => {
-                setisFocusedBirth(true);
-                // Ao focar, limpa o campo para evitar problemas com valores antigos
-                setCollaboratorUpdateDates((prev) => ({ ...prev, birth: "" }));
-              }}
+              onFocus={() => setisFocusedBirth(true)}
               onBlur={() => setisFocusedBirth(false)}
               isFocused={isFocusedBirth}
-              // Usa a máscara para exibição
               value={Mask(
                 "dateFormatBrazil",
                 collaboratorUpdateDates.birth || ""
               )}
               onChangeText={(value) => {
+                // Permite digitação contínua mantendo dígitos
                 const numericValue = value.replace(/\D/g, "");
 
-                if (numericValue.length === 8) {
-                    const dd = numericValue.slice(0, 2);
-                    const mm = numericValue.slice(2, 4);
-                    const yyyy = numericValue.slice(4, 8);
-                  
-                    setCollaboratorUpdateDates((prev) => ({
-                      ...prev,
-                      birth: `${dd}-${mm}-${yyyy}`, // armazena do jeito que quer exibir
-                    }));
-                  }
+                let formattedValue = "";
+                // Formatação progressiva durante a digitação
+                if (numericValue.length > 4) {
+                  formattedValue = `${numericValue.slice(
+                    0,
+                    2
+                  )}-${numericValue.slice(2, 4)}-${numericValue.slice(4, 8)}`;
+                } else if (numericValue.length > 2) {
+                  formattedValue = `${numericValue.slice(
+                    0,
+                    2
+                  )}-${numericValue.slice(2, 4)}`;
+                } else {
+                  formattedValue = numericValue;
+                }
+
+                // Atualiza o estado com o valor formatado para exibição
+                setCollaboratorUpdateDates((prev) => ({
+                  ...prev,
+                  birth: formattedValue,
+                }));
               }}
               backround={colors.card}
               style={{ borderRadius: 48 }}
               inputicon
-              placeholder="Data de nascimento"
+              placeholder="Data de nascimento (DD-MM-AAAA)"
               icon={
                 <Image
                   source={IMAGES.cake}
                   style={[styles.icon, { tintColor: colors.title }]}
                 />
               }
+              keyboardType="numeric"
             />
           </View>
           <View className={`mt-2`} style={{ marginBottom: 15 }}>

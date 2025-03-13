@@ -117,22 +117,29 @@ export default function Mask(type: MaskType, value: string | number): string {
       return dataFormatada;
     }
     case "dateFormatBrazil": {
-        if (!value) return "";
+      if (!value) return "";
       
-        // Se o valor estiver completo e contiver hífen
-        if (value.toString().length === 10 && value.toString().includes("-")) {
-          const parts = value.toString().split("-");
-          // Se o primeiro grupo tiver 4 dígitos, assume formato ISO (YYYY-MM-DD)
-          if (parts[0].length === 4) {
-            const [yyyy, mm, dd] = parts;
-            return `${dd}-${mm}-${yyyy}`;
+      const strValue = value.toString();
+      
+      // Se for uma data ISO (contém 'T'), extrai apenas a parte da data
+      if (strValue.includes("T")) {
+          const isoParts = strValue.split("T")[0].split("-");
+          if (isoParts.length === 3) {
+              return `${isoParts[2]}-${isoParts[1]}-${isoParts[0]}`;
           }
-          // Caso já esteja no formato brasileiro (DD-MM-YYYY), retorna o valor
-          return value.toString();
       }
-
-      return value.toString();
-    }
+      
+      // Verifica formato brasileiro ou ISO sem timestamp
+      if (strValue.length === 10 && strValue.includes("-")) {
+          const parts = strValue.split("-");
+          if (parts[0].length === 4) { // Formato ISO (YYYY-MM-DD)
+              return `${parts[2]}-${parts[1]}-${parts[0]}`;
+          }
+          return strValue; // Já está no formato DD-MM-YYYY
+      }
+      
+      return strValue; // Fallback para outros casos
+  }
 
     case "hiddenPhone": {
       const telefoneLimpo = value.toString().replace(/\D/g, "");
