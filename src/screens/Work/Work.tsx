@@ -129,9 +129,11 @@ const Work = () => {
         const cpfString = collaborator.CPF.toString().padStart(11, '0');
         console.log(cpfString)
         const response = await FindCollaborator(cpfString);
+        // console.log("response", response)
         setCPF(cpfString);
         if (response.status === 200) {
           const responseJob = await FindOneJob(collaborator.id_work);
+          // console.log("hasWork", collaborator)
           if (responseJob.status === 200) {
             setjobConected(responseJob.job);
           }

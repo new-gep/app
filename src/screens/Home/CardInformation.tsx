@@ -41,6 +41,7 @@ type CardInformationProps = {
 
 const CardInformation = ({ route }: CardInformationProps) => {
   const { cardData } = route.params;
+  // console.log("cardData", cardData)
   const navigation = useNavigation();
 
   return (

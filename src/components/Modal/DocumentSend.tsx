@@ -23,11 +23,13 @@ type PropsCreateAvalidPicture = {
     picture :string
     status  :string
     cpf     :string
+    id_work :string
 };
 
 type PropsUpdateAvalidPicture = {
     picture :string
     status  :string
+    id_work :string
 };
 
 type Props = {
@@ -176,7 +178,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             throw new Error('Erro interno no upload');
                         };
                     break;
-                    case documentName.includes('Atestado'):
+                case documentName.includes('Atestado'):
                     documentName = 'Attest_Ausence';
                         const propsDocumentAttest = {
                             file:path,
@@ -249,6 +251,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                 const pictureUpdateParams: PropsUpdateAvalidPicture = {
                     picture: documentName == 'medical' ? 'Medical_Examination' : documentName,
                     status: 'pending',
+                    id_work: jobId,
                 };
                 const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
                 switch (update.status) {
@@ -287,6 +290,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     picture: documentName == 'medical' ? 'Medical_Examination' : documentName,
                     status: 'pending',
                     cpf: collaborator.CPF,
+                    id_work: jobId,
                 };
                 const createResponse = await CreateAvalidPicture(pictureParams);
 

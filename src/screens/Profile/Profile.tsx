@@ -160,7 +160,7 @@ const Profile = ({navigation} : ProfileScreenProps) => {
 
                     </View>
                     <Text style={{...FONTS.fontSemiBold,fontSize:28,color:colors.title}}>{collaborator && Mask('fullName',collaborator.name)}</Text>
-                    <Text style={{...FONTS.fontRegular,fontSize:16,color:COLORS.primary}}>
+                    <Text style={{...FONTS.fontRegular,fontSize:16,color:COLORS.dark}}>
                         { collaborator && collaborator.city && collaborator.uf?
                         `${collaborator.city}, ${collaborator.uf}`
                         :
@@ -179,10 +179,11 @@ const Profile = ({navigation} : ProfileScreenProps) => {
                                     style={[GlobalStyleSheet.flexcenter,{width:'100%',gap:20,justifyContent:'flex-start',marginBottom:25,alignItems:'flex-start'}]}
                                 >
                                     <View
-                                        style={[styles.cardimg,{backgroundColor:colors.card}]}
+                                       style={{ backgroundColor:COLORS.dark }}
+                                       className='rounded-full h-12 w-12 items-center justify-center'
                                     >
                                         <Image
-                                            style={[GlobalStyleSheet.image3,{tintColor:COLORS.primary}]}
+                                            style={[GlobalStyleSheet.image3, {tintColor:COLORS.primary, backgroundColor:COLORS.dark}]}
                                             source={data.image}
                                         />
                                     </View>

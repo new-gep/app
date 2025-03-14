@@ -47,6 +47,16 @@ const Card = ({
     .onUpdate(({ translationX }) => {
       translateX.value = translationX;
       rotate.value = (translationX / width) * MAX_ROTATION_ANGLE;
+
+      // Animar os cards de trás
+      if (isTopCard) {
+        const moveUpAmount = Math.abs(translationX) * 0.1; // Ajuste este valor para controlar quanto os cards se movem
+        const scaleUpAmount = Math.abs(translationX) * 0.0001; // Ajuste este valor para controlar quanto os cards aumentam
+
+        // Atualizar a posição Y e escala dos cards de trás
+        translateY.value = -index * 35 + moveUpAmount;
+        scale.value = 1 - index * 0.07 + scaleUpAmount;
+      }
     })
     .onEnd(() => {
       if (Math.abs(translateX.value) > SWIPE_THRESHOLD) {
@@ -65,18 +75,24 @@ const Card = ({
       } else {
         translateX.value = withSpring(0, { damping: 15, stiffness: 120 });
         rotate.value = withSpring(0, { damping: 15, stiffness: 120 });
+
+        // Resetar a posição Y e escala dos cards de trás
+        translateY.value = withSpring(-index * 35, { damping: 15, stiffness: 120 });
+        scale.value = withSpring(1 - index * 0.07, { damping: 15, stiffness: 120 });
       }
     });
 
   const singleTap = Gesture.Tap()
     .enabled(isTopCard)
+    .maxDuration(250) // Limita a duração do toque para diferenciar de um arraste
     .onEnd(() => {
-      if (isTopCard) {
+      // Verifica se não houve movimento significativo (não foi um arraste)
+      if (Math.abs(translateX.value) < 5) {
         runOnJS(navigation.navigate)('CardInformation', { cardData: data });
       }
     });
 
-  const composedGestures = Gesture.Simultaneous(gesture, singleTap);
+  const composedGestures = Gesture.Race(gesture, singleTap);
 
   const animatedStyle = useAnimatedStyle(() => ({
     //@ts-ignore
@@ -160,63 +176,63 @@ const Card = ({
           }
         ]}
       >
-        <ScrollView
-          nestedScrollEnabled
-          contentContainerStyle={{ paddingBottom: 20 }}
-        >
-          <View style={{ flex: 1 }}>
-            {/* Textos "LIKE" e "NOPE" */}
-            <Animated.Text
-              style={[
-                likeStyle,
-                {
-                  fontSize: 32,
-                  fontWeight: "bold",
-                  color: "#4CAF50",
-                },
-              ]}
-            >
-              LIKE
-            </Animated.Text>
-            <Animated.Text
-              style={[
-                nopeStyle,
-                {
-                  fontSize: 32,
-                  fontWeight: "bold",
-                  color: "#FF5252",
-                },
-              ]}
-            >
-              NOPE
-            </Animated.Text>
+        <View style={{ flex: 1 }}>
+          {/* Textos "LIKE" e "NOPE" */}
+          <Animated.Text
+            style={[
+              likeStyle,
+              {
+                fontSize: 32,
+                fontWeight: "bold",
+                color: "#4CAF50",
+              },
+            ]}
+          >
+            LIKE
+          </Animated.Text>
+          <Animated.Text
+            style={[
+              nopeStyle,
+              {
+                fontSize: 32,
+                fontWeight: "bold",
+                color: "#FF5252",
+              },
+            ]}
+          >
+            NOPE
+          </Animated.Text>
 
-            {/* Conteúdo do Card */}
-            <View className="p-4 justify-between flex-row">
-              <Text className="text-white text-lg font-semibold">
+          {/* Imagem da vaga */}
+          <Image
+            source={AbstractPicture[data.image]}
+            resizeMode="contain"
+            className="w-full h-[50%] self-center"
+          />
+
+          {/* Informações principais */}
+          <View className="p-4 space-y-4">
+            {/* Nome da vaga e ícone PCD */}
+            <View className="flex-row justify-between items-center">
+              <Text className="text-black text-xl font-semibold flex-1 mr-2">
                 {data.function}
               </Text>
               {data.PCD === "1" ? (
-                <FontAwesome name="wheelchair-alt" size={24} color="white" />
+                <FontAwesome name="wheelchair-alt" size={24} color="black" />
               ) : null}
             </View>
 
-            <Image
-              source={AbstractPicture[data.image]}
-              resizeMode="contain"
-              className="w-full h-[20%] self-center"
-            />
+            {/* Tipo de contratação */}
+            <Text className="text-black text-base">
+              {data.contract_type || "Tipo de contratação: CLT"}
+            </Text>
 
-            <View className="p-4">
-              <Tabs data={data} />
-            </View>
-
-            <Text className="text-white text-base mt-2">
-              Descrição longa que pode ser rolada dentro do card. Aqui você pode
-              adicionar muito texto sem afetar o swipe horizontal.
+            {/* Localização */}
+            <Text className="text-black text-base">
+              {`Endereço: ${data.company.street || ""}, ${data.company.number || ""} - ${data.company.district || ""}, ${data.company.city || ""} - ${data.company.uf || ""}` || "Home Office"}
             </Text>
           </View>
-        </ScrollView>
+        </View>
       </Animated.View>
     </GestureDetector>
   );

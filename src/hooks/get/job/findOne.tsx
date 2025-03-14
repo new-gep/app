@@ -4,6 +4,7 @@ import axios from "axios";
 const FindOneJob = async (id: any) => {
     try {
         const response = await axios.get(`${config.API_URL}job/${id}`);
+        // console.log("response", response.data.job)
         return response.data;
     } catch (error) {
         console.error("Erro ao fazer a requisição:", error);

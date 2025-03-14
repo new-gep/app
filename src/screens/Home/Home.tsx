@@ -17,8 +17,8 @@ import UpdateJobDefault from "../../hooks/update/job/default";
 import useCollaborator from "../../function/fetchCollaborator";
 import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
-import { useNavigation } from '@react-navigation/native';
-import type { NavigationProp } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import type { NavigationProp } from "@react-navigation/native";
 
 const Home = () => {
   const [cards, setCards] = useState([]);
@@ -32,39 +32,63 @@ const Home = () => {
 
   const handleSwipeRight = async (id) => {
     if (missingData) return;
-    
-    let response = await FindOneJob(id);
-    setPreviousCards((prev) => [...prev, cards[0]]);
-    setCards((prevCards) => prevCards.slice(1));
-    
-    if (response.status == 200) {
-      const candidate = {
+
+    try {
+      // 1. Buscar detalhes da vaga
+      const jobResponse = await FindOneJob(id);
+      // console.log("jobResponse", jobResponse)
+
+      if (jobResponse.status !== 200) {
+        throw new Error("Erro ao buscar detalhes da vaga");
+      }
+
+      let currentCandidates = await Promise.all(
+        jobResponse.job.candidates?.map(async ({ picture, name, ...rest }) => {
+          // Aqui você pode realizar alguma operação assíncrona se necessário
+          return rest; // Remove picture e name
+        }) || []
+      );
+
+      const alreadyApplied = currentCandidates.some(
+        (c) => c.cpf === collaborator.CPF 
+      );
+
+      if (alreadyApplied) {
+        showPopupMessage("Você já aplicou para esta vaga!");
+        return;
+      }
+
+      // 3. Criar novo candidato formatado
+      const newCandidate = {
         cpf: collaborator.CPF,
         step: 0,
-        status: false,
-        verify: false,
+        status: null,
+        verify: null,
         observation: null,
       };
 
-      let formattedCandidates = [];
-      if (response.job.candidates) {
-        const cpfExists = response.job.candidates.some(
-          (entry: { cpf: string }) => entry.cpf === collaborator.CPF
-        );
-        if (cpfExists) return;
+      // 4. Atualizar lista de candidatos
+      const updatedCandidates = [...currentCandidates, newCandidate];
+      console.log("updatedCandidates", updatedCandidates)
 
-        formattedCandidates = response.job.candidates.map((candidate) => ({
-          cpf: candidate.cpf,
-          step: candidate.step || 0,
-          status: candidate.status || false,
-          verify: candidate.verify || false,
-          observation: candidate.observation || null,
-        }));
+      // 5. Enviar para API
+      const updateResponse = await UpdateJobDefault(id, {
+        candidates: JSON.stringify(updatedCandidates), // Enviar array diretamente
+      });
+
+      if (updateResponse.status !== 200) {
+        throw new Error("Erro ao atualizar vaga");
       }
 
-      formattedCandidates.push(candidate);
-      const props = { candidates: JSON.stringify(formattedCandidates) };
-      await UpdateJobDefault(id, props);
+      // 6. Atualizar UI somente após sucesso
+      setPreviousCards((prev) => [...prev, cards[0]]);
+      setCards((prevCards) => prevCards.slice(1));
+
+      showPopupMessage("Candidatura realizada com sucesso!");
+    } catch (error) {
+      console.error("Erro no swipe:", error);
+      showPopupMessage(error.message || "Erro ao aplicar");
+      handleUndo(); // Reverte a ação visual
     }
   };
 
@@ -81,9 +105,11 @@ const Home = () => {
 
   const handleUndo = () => {
     if (previousCards.length > 0) {
-      const lastCard = previousCards.pop();
-      if (lastCard) {
-        setPreviousCards([...previousCards]);
+      const lastCard = previousCards[previousCards.length - 1]; // Pega o último sem mutar o array
+      
+      // Verifica se o card já está na lista atual
+      if (!cards.some((card) => card.id === lastCard.id)) {
+        setPreviousCards((prev) => prev.slice(0, -1));
         setCards((prevCards) => [lastCard, ...prevCards]);
       }
     } else {
@@ -100,28 +126,32 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true); // Ativar estado de carregamento antes da requisição
-        
-        const response = await GetAllJob(); // Chamar a função de busca
-        
+        setIsLoading(true);
+        const response = await GetAllJob();
+  
         if (response.status !== 200) {
-          throw new Error(response.message || "Erro ao buscar os."); // Forçar erro para o catch
+          throw new Error(response.message || "Erro ao buscar os.");
         }
-        
-        setCards(response.job); // Atualizar o estado com os dados recebidos
+  
+        // Adicione este filtro:
+        const uniqueJobs = response.job.filter(
+          (job, index, self) =>
+            self.findIndex((j) => j.id === job.id) === index
+        );
+  
+        setCards(uniqueJobs); // Altere para usar os jobs filtrados
       } catch (error) {
-        console.error("Ocorreu um erro ao buscar os jobs:", error.message); // Log do erro
-        alert("Erro ao buscar os jobs. Por favor, tente novamente."); // Mensagem para o usuário
+        console.error("Ocorreu um erro ao buscar os jobs:", error.message);
+        alert("Erro ao buscar os jobs. Por favor, tente novamente.");
       } finally {
-        setIsLoading(false); // Garantir que o carregamento será desativado
+        setIsLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
 
-
-    useEffect(() => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       fetchCollaborator();
       validateCollaborator();
@@ -136,10 +166,9 @@ const Home = () => {
     return unsubscribe;
   }, []);
 
-
   useEffect(() => {
     if (missingData) {
-      navigation.navigate('CheckCadasterCollaboratorDocument');
+      navigation.navigate("CheckCadasterCollaboratorDocument");
     }
   }, [missingData, navigation]);
 
@@ -159,9 +188,10 @@ const Home = () => {
           </View>
         ) : Array.isArray(cards) && cards.length > 0 ? (
           <View className="flex-1 w-full">
+            {/* No return, onde está mapeando os cards: */}
             {cards.map((card, index) => (
               <View
-                key={card.id}
+                key={`${card.id}_${index}`} // Alterar esta linha
                 className="absolute w-full h-full items-center"
                 style={{
                   top: 0,
@@ -235,5 +265,4 @@ const Home = () => {
   );
 };
 
-export default Home
-
+export default Home;
