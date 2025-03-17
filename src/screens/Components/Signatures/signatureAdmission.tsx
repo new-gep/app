@@ -116,7 +116,6 @@ const SignatureAdmission = ({
         
         // Gera o nome do arquivo de acordo com a tela de origem
         const currentDate = new Date();
-        const monthName = getMonthName(currentDate.getMonth() + 1);
         const fileName = `Signature_Admission_${id}`;
      
         // Enviar para o backend
@@ -149,9 +148,8 @@ const SignatureAdmission = ({
     }
 
     const currentDate = new Date();
-    const monthName = getMonthName(currentDate.getMonth() + 1);
     const pictureProps = {
-      picture: `Signature_Admission_${id}`,
+      picture: `Signature_Admission`,
       status: "pending",
       cpf: cpf,
       id_work: id,
