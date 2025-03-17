@@ -176,6 +176,7 @@ const EditProfile = () => {
 
   const handleUpdateProfile = async () => {
     if (collaborator) {
+      console.log("collaboratorUpdateDates", collaboratorUpdateDates)
       const payload = {
         ...collaboratorUpdateDates,
         birth: convertToISODate(collaboratorUpdateDates.birth)
