@@ -63,6 +63,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
         if(waitProcessSingIn){
             return
         }
+        console.log('aqui aquio aqui')
         setWaitProcessSingIn(true)
         const props: Props = { cpf, password };
         const response = await AuthASingIn(props)
@@ -186,7 +187,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                         loadColor={'#FFFFFF'}
                         title={"Entrar"}
                         color={COLORS.dark}
-                        onPress={handleSingIn}
+                        // onPress={handleSingIn}
                         style={{borderRadius:52}}
                     />
                     <View 
