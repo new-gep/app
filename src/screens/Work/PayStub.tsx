@@ -12,7 +12,7 @@ import Header from "../../layout/Header";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import CheckDocumentServices from "../../hooks/get/job/checkPayStub";
 import DocumentVisible from "../../components/Modal/DocumentVisible";
-import SignatureModalCanvas from "../Components/signatureModalCanvas";
+import SignatureModalCanvas from "../Components/Signatures/signatureModalCanvas";
 import { WebView } from "react-native-webview";
 import Feather from "@expo/vector-icons/build/Feather";
 

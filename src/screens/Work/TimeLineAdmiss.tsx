@@ -16,7 +16,7 @@ import ButtonOutline from "../../components/Button/ButtonOutline";
 import DrawingModal from "../Components/signatureModal";
 import AdmissionalContract from "./Admission/admissionalContract";
 import AdmissionalExam from "./Admission/admissionalExam";
-import SignatureModalCanvas from "../Components/signatureModalCanvas";
+import SignatureModalCanvas from "../Components/Signatures/signatureModalCanvas";
 import CreateAvalidPicture from "../../hooks/create/pictures";
 import FindPicture from "../../hooks/findOne/picture";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -24,6 +24,7 @@ import WaitingIndicator from "./Admission/admissionalWaitingIndicator";
 import HomeWork from "./Home";
 import { BottomTabParamList } from "../../navigation/BottomTabParamList";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import SignatureAdmission from "../Components/Signatures/signatureAdmission";
 
 const Timeline = ({ jobConected, CPF }) => {
   const navigation = useNavigation();
@@ -71,6 +72,7 @@ const Timeline = ({ jobConected, CPF }) => {
 
   useEffect(() => {
     if (jobConected) {
+      // console.log("jobConected", jobConected[0].candidates);
       setCurrentStep(JSON.parse(jobConected[0].candidates)[0].step);
     }
     Animated.timing(lineAnim, {
@@ -228,7 +230,7 @@ const Timeline = ({ jobConected, CPF }) => {
         id={jobConected[0].id}
       /> */}
 
-      <SignatureModalCanvas
+      <SignatureAdmission
         jobId={jobConected[0].id}
         visible={modalVisible}
         onClose={handleCloseModal}

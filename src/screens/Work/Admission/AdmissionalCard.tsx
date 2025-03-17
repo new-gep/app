@@ -46,6 +46,7 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
             return "Solicitação de Vale Transporte";
           default:
             // Se não for um caso especial, retorna o valor formatado
+            console.log("value", value);
             return value;
         }
       default:

@@ -8,7 +8,7 @@ import { Title } from "react-native-paper";
 import AdmissionalCarousel from "../../Admission/AdmissionalCarousel";
 import DismissalCard from "./Helper/Card";
 import CheckDocumentDismissal from "../../../../hooks/get/job/checkDismissal";
-import SignatureModalCanvas from "../../../Components/signatureModalCanvas";
+import SignatureModalCanvas from "../../../Components/Signatures/signatureModalCanvas";
 import { WebView } from "react-native-webview";
 import WaitingIndicator from "../../Admission/admissionalWaitingIndicator";
 import WaitingIndicatorDismissal from "./WaitingIndicator";

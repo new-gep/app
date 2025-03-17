@@ -34,13 +34,19 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
         try {
           const response = await CheckDocumentAdmissional(jobConected[0].id);
           const obligations = response.date.obligation;
+          // console.log("obligation", obligations);
+
           const dynamics = response.date.dynamic.document;
+          await delete obligations.medical;
           setObligations(obligations);
           setDynamics(dynamics);
+          // console.log("response do checkDocumentAdmissional", response);
 
           if (response.status === 200) {
             const combined = { ...obligations, ...dynamics };
-            delete combined.medical;
+            // console.log("combined", combined);
+            await delete combined.medical;
+            // console.log("combined apos delete medical", combined);
             setLockSignature(combined);
 
             // Preparar documentos obrigatórios
@@ -51,6 +57,7 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
               typeDocument: "pdf",
             }));
             setObligationDocs(obligationDocuments);
+
 
             // Preparar documentos dinâmicos
             const dynamicDocuments = Object.entries(dynamics).map(([key, value]) => ({

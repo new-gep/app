@@ -82,6 +82,10 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
     
     const sendPicture = async (option:string) => {
         try{
+            console.log("documentName", documentName)
+            if(load){
+                return
+            }
             setLoad(true)
             let path:any;
             let type:any;
@@ -122,6 +126,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     documentName = 'Voter_Registration';
                     break;
                 case documentName.includes('Comprovante de Endereço'):
+                    console.log("documentName", documentName)
                     documentName = 'Address';
                     break;
                 case documentName.includes('Histórico Escolar'):
@@ -224,7 +229,11 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
             };
 
             if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand' && documentName.toLowerCase() != 'dismissal_medical_examination'){
+                console.log("path", path)
                 const response = await UploadFile(path, documentName, doc, collaborator.CPF);
+                if(documentName == 'Address'){
+                    console.log("response", response)
+                }
                 if (response.status === 400) {
                     setActiveSheet('danger');
                     setMessageSheet(`Documento inválido`);
@@ -290,8 +299,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     picture: documentName == 'medical' ? 'Medical_Examination' : documentName,
                     status: 'pending',
                     cpf: collaborator.CPF,
-                    id_work: jobId,
+                    id_work: jobId || null,
                 };
+
                 const createResponse = await CreateAvalidPicture(pictureParams);
 
                 if(documentName.toLowerCase() == 'dismissal_hand'){
@@ -322,6 +332,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     close()
                 } 
                 else if (createResponse.status === 409) {
+
                     setActiveSheet('danger');
                     setMessageSheet('Imagem já existe');
                     Sheet();
@@ -376,6 +387,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
         const fetchData = async () => {
             try{
                 if (front && back && noRepeat) {
+                    if(load){
+                        return
+                    }
                     // Impede re-execução
                     setNoRepeat(false);
                     setLoad(true)
@@ -431,6 +445,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             const pictureUpdateParams: PropsUpdateAvalidPicture = {
                                 picture: documentName,
                                 status: 'pending',
+                                id_work: jobId || null,
                             };
                             const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
                             switch (update.status) {
@@ -468,7 +483,8 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             const pictureParams: PropsCreateAvalidPicture = {
                                     picture: documentName,
                                     status: 'pending',
-                                    cpf: collaborator.CPF
+                                    cpf: collaborator.CPF,
+                                    id_work: jobId || null,
                             };
                 
                             const createResponse = await CreateAvalidPicture(pictureParams);

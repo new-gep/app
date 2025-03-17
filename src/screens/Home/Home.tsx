@@ -30,13 +30,15 @@ const Home = () => {
   const { validateCollaborator, missingData } = useCollaboratorContext();
   const navigation = useNavigation<NavigationProp<any>>();
 
+
   const handleSwipeRight = async (id) => {
+    console.log("missingData", missingData)
     if (missingData) return;
 
     try {
       // 1. Buscar detalhes da vaga
       const jobResponse = await FindOneJob(id);
-      // console.log("jobResponse", jobResponse)
+      console.log("jobResponse", jobResponse)
 
       if (jobResponse.status !== 200) {
         throw new Error("Erro ao buscar detalhes da vaga");
@@ -168,7 +170,7 @@ const Home = () => {
 
   useEffect(() => {
     if (missingData) {
-      navigation.navigate("CheckCadasterCollaboratorDocument");
+      // navigation.navigate("CheckCadasterCollaboratorDocument");
     }
   }, [missingData, navigation]);
 

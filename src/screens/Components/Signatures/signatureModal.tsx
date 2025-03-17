@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, Modal, Dimensions, PanResponder, Alert } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import ButtonOutline from "../../components/Button/ButtonOutline"; // Ajuste o caminho do ButtonOutline
-import CheckDocumentAdmissional from "../../hooks/get/job/checkSignaure";
-import AdmissionalCard from "../Work/Admission/AdmissionalCard";
-import uploadFile from "../../hooks/upload/job";
+import ButtonOutline from "../../../components/Button/ButtonOutline"; // Ajuste o caminho do ButtonOutline
+import CheckDocumentAdmissional from "../../../hooks/get/job/checkSignaure";
+import AdmissionalCard from "../../Work/Admission/AdmissionalCard";
+import uploadFile from "../../../hooks/upload/job";
 import ImgToBase64 from 'react-native-image-base64-png';
 import ViewShot from 'react-native-view-shot';
 

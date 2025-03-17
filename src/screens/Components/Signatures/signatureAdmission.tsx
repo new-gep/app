@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Modal, PanResponder, Dimensions, Alert } from "react-native";
 import Canvas from "react-native-canvas";
-import ButtonOutline from "../../components/Button/ButtonOutline";
-import uploadFile from "../../hooks/upload/job";
-import WaitingIndicator from "../Work/Admission/admissionalWaitingIndicator";
-import CreateAvalidPicture from "../../hooks/create/pictures";
-import UpdatePicture from "../../hooks/update/picture";
-import CreateAvalidService from "../../hooks/create/service";
+import ButtonOutline from "../../../components/Button/ButtonOutline";
+import uploadFile from "../../../hooks/upload/job";
+import WaitingIndicator from "../../Work/Admission/admissionalWaitingIndicator";
+import CreateAvalidPicture from "../../../hooks/create/pictures";
+import UpdatePicture from "../../../hooks/update/picture";
+import CreateAvalidService from "../../../hooks/create/service";
 
-const SignatureModalCanvas = ({
+const SignatureAdmission = ({
   visible,
   onClose,
   onSaveSignature,
@@ -117,17 +117,18 @@ const SignatureModalCanvas = ({
         // Gera o nome do arquivo de acordo com a tela de origem
         const currentDate = new Date();
         const monthName = getMonthName(currentDate.getMonth() + 1);
-        const fileName =
-          where === "PayStub" || where === "Point"
-            ? `Signature_${where}_${currentDate.getFullYear()}_${monthName}_${id}`
-            : `Signature_${where}_${id}`;
+        const fileName = `Signature_Admission_${id}`;
      
         // Enviar para o backend
+        console.log("idJob", jobId);
         const props = {
           file: dataURL, // Agora só o Base64 puro
           id: jobId,
           dynamic: fileName,
-          name: where === "Point" ? 'point_signature' : 'paystub_signature',
+          name: 'admission_signature',
+          type: 'Admission_Signature',
+          status: 'pending',
+
         };
         // console.log('Dados sendo enviados para upload:', props.dynamic);
     
@@ -150,36 +151,16 @@ const SignatureModalCanvas = ({
     const currentDate = new Date();
     const monthName = getMonthName(currentDate.getMonth() + 1);
     const pictureProps = {
-      picture: `Signature_${where}_${id}`,
+      picture: `Signature_Admission_${id}`,
       status: "pending",
       cpf: cpf,
+      id_work: id,
     };
-    const serviceProps = {
-      name:
-        where === "PayStub" || where === "Point"
-          ? `Signature_${where}_${currentDate.getFullYear()}_${monthName}_${id}`
-          : `Signature_${where}_${id}`,
-      type:
-        where === "PayStub"
-          ? "PayStub"
-          : where === "Point"
-          ? "Point"
-          : "",
-      status: "pending",
-      id_work: jobId,
-    };
+    console.log("pictureProps", pictureProps)
+   
+     let response = await CreateAvalidPicture(pictureProps);
 
-    console.log('Dados sendo enviados para CreateAvalidService:', serviceProps); 
-
-    // Verifica se é PayStub ou Point para usar o serviço correto
-    let response;
-    if (where === "PayStub" || where === "Point") {
-      response = await CreateAvalidService(serviceProps);
-    } else {
-      response = await CreateAvalidPicture(pictureProps);
-    }
-
-    console.log('Dados sendo enviados para CreateAvalidService:', response);
+    console.log('Dados sendo enviados para CreateAvalidPicture:', response);
 
     // Se já existir, atualiza
     if (response.status === 409) {
@@ -253,4 +234,4 @@ const SignatureModalCanvas = ({
   );
 };
 
-export default SignatureModalCanvas;
+export default SignatureAdmission;
