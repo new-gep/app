@@ -82,7 +82,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
     
     const sendPicture = async (option:string) => {
         try{
-            console.log("documentName", documentName)
             if(load){
                 return
             }
