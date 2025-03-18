@@ -34,6 +34,7 @@ export default function App() {
             paddingTop: Platform.OS === 'android' ? 25 : 0,
             backgroundColor:COLORS.primary ,
           }}>
+            
             <StatusBar style="dark" />
             <Provider store={store}>
                 <Route/>

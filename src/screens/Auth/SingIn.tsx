@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native'
+import { View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, StyleSheet, StatusBar } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { COLORS, FONTS } from '../../constants/theme'
 import { GlobalStyleSheet } from '../../constants/StyleSheet'
@@ -15,6 +15,7 @@ import DangerSheet from '../../components/BottomSheet/DangerSheet';
 import { useFocusEffect } from '@react-navigation/native';
 import AuthASingIn from '../../hooks/utils/AuthAccessCollaborator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { InputMode } from 'react-native-paper/lib/typescript/components/TextInput/Adornment/enums';
 
 type SingInScreenProps = StackScreenProps<RootStackParamList, 'SingIn'>;
 type Props = {
@@ -96,7 +97,10 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
     useFocusEffect(handleFocus);
 
   return (
-    <SafeAreaView style={{flex:1,backgroundColor:colors.card,}}>
+    <SafeAreaView style={{flex:1,backgroundColor:colors.card,}}
+        
+    >
+        <StatusBar style="dark" />
         <RBSheet
             ref={refRBSheet}
             closeOnDragDown={true}
@@ -122,15 +126,16 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                 <DangerSheet  message={messageSheet} />
             }
         </RBSheet>
-        <View className='justify-center items-center h-40'>
+        {/* <View className='justify-center items-center h-40'>
             <Image
                 className='h-60 w-60'
                 resizeMode='contain'
                 source={theme.dark ? IMAGES.appnamedark :IMAGES.appname}
             />
-        </View>
+        </View> */}
         <ScrollView style={{flexGrow:1,}} showsVerticalScrollIndicator={false}>
-            <View style={[GlobalStyleSheet.container,{flexGrow:1,paddingBottom:0,paddingHorizontal:30,paddingTop:0}]}>
+
+            <View className={'mt-10'}  style={[GlobalStyleSheet.container,{flexGrow:1,paddingBottom:0,paddingHorizontal:30,paddingTop:0}]}>
                 <View style={{}}>
                     <View style={{marginBottom:30}}>
                         <Text style={[styles.title1,{color:colors.title}]}>Acesso</Text>
@@ -162,7 +167,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                             value={password}
                             onChangeText={(value) => setpassword(value)}
                             isFocused={isFocused2}
-                            type={'default'}
+                            type={'password'}
                             inputBorder
                         />
                     </View>
@@ -210,7 +215,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                         title={"Criar uma conta"}
                         onPress={() => navigation.navigate('SignUp')}
                         text={COLORS.title}
-                        color={COLORS.secondary}
+                        color={COLORS.primary}
                         style={{borderRadius:52}}
                     />
                 </View>

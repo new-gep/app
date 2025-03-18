@@ -71,12 +71,12 @@ const PayStub = () => {
           year,
           monthInEnglish
         );
+        console.log('Retorno do holerite:', response.length);
 
         const validDocuments = Array.isArray(response)
           ? response.filter((doc) => doc !== null)
           : [];
 
-        // console.log('ID: ', validDocuments[0].details.id)
         setDocuments(validDocuments);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);

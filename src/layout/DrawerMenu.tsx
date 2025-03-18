@@ -93,14 +93,12 @@ const DrawerMenu = () => {
     return (
         <ScrollView contentContainerStyle={{flexGrow:1}}>
             <View
+                className='flex-1 px-4 py-4'
                 style={{
-                    flex:1,
                     backgroundColor:colors.background,
-                    paddingHorizontal:15,
-                    paddingVertical:15,
                 }}
             >
-                <View
+                {/* <View
                     style={{
                         alignItems:'center',
                         paddingVertical:30,
@@ -111,15 +109,16 @@ const DrawerMenu = () => {
                         style={{height:35,width:114}}
                         source={theme.dark ? IMAGES.appnamedark :IMAGES.appname}
                     />
-                </View>
+                </View> */}
                 <View
                     style={[GlobalStyleSheet.flex,{
                         paddingHorizontal:15,
                         paddingBottom:20
                     }]}
                 >
-                    <Text style={{...FONTS.fontSemiBold,fontSize:20,color:colors.title}}>Main Menus</Text>
+                    <Text style={{...FONTS.fontSemiBold,fontSize:20,color:colors.title}}>Menu</Text>
                     <TouchableOpacity
+                        focusable={false}
                         onPress={() => dispatch(closeDrawer())}
                         activeOpacity={0.5}
                     >
@@ -130,21 +129,21 @@ const DrawerMenu = () => {
                     {MenuItems.map((data:any,index:any) => {
                         return(
                             <TouchableOpacity
-                            activeOpacity={0.8}
-                            // Verifica se o botão tem a função onPress e a executa antes de navegar
-                            onPress={async () => {
-                                if (data.onPress) {
-                                    await data.onPress(); // Executa a função onPress, se houver
-                                }
-                                dispatch(closeDrawer());
-                                navigation.navigate(data.navigate);
-                            }}
-                            key={index}
-                            style={[GlobalStyleSheet.flex,{
-                                paddingVertical:5,
-                                marginBottom:0,
-                            }]}
-                        >
+                                focusable={false}
+                                activeOpacity={0.8}
+                                onPress={async () => {
+                                    if (data.onPress) {
+                                        await data.onPress();
+                                    }
+                                    dispatch(closeDrawer());
+                                    navigation.navigate(data.navigate);
+                                }}
+                                key={index}
+                                style={[GlobalStyleSheet.flex,{
+                                    paddingVertical:5,
+                                    marginBottom:0,
+                                }]}
+                            >
                                 <View style={{flexDirection:'row',alignItems:'center',gap:20}}>
                                     <View style={{height:45,width:45,borderRadius:10,alignItems:'center',justifyContent:'center'}}>
                                         <Image
@@ -168,7 +167,7 @@ const DrawerMenu = () => {
                     <ThemeBtn />
                 </View>
                 <View style={{paddingVertical:15,paddingHorizontal:10}}>
-                    <Text style={{...FONTS.fontMedium,fontSize:16,color:'#868686'}}>Ombe Coffee App</Text>
+                    <Text style={{...FONTS.fontMedium,fontSize:16,color:'#868686'}}>Gep</Text>
                     <Text style={{...FONTS.fontMedium,fontSize:12,color:'#B1B1C3'}}>App Version 1.0.0</Text>
                 </View>
             </View> 

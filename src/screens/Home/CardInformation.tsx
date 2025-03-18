@@ -1,9 +1,13 @@
-import React from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React from "react";
+import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import { AbstractPicture } from "../../constants/abstract";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Header from "../../layout/Header";
+import AccordionCardIformation from "../../components/Accordion/AccordionCardIformation";
+import { GlobalStyleSheet } from "../../constants/StyleSheet";
+import { COLORS } from "../../constants/theme";
 
 type CardInformationProps = {
   route: {
@@ -29,6 +33,7 @@ type CardInformationProps = {
           city: string;
           uf: string;
           zip_code: string;
+          logo?: string;
         };
         workload: string;
         benefics: string;
@@ -44,101 +49,69 @@ const CardInformation = ({ route }: CardInformationProps) => {
   // console.log("cardData", cardData)
   const navigation = useNavigation();
 
+  const renderFooterContent = () => {
+    return (
+      <View className="flex-row items-center p-4 rounded-t-2xl border-t border-gray-200">
+        {cardData.company.logo ? (
+          <Image
+            source={{ uri: cardData.company.logo }}
+            className="w-12 h-12 rounded-full"
+            resizeMode="cover"
+          />
+        ) : (
+          <View className="w-12 h-12 rounded-full bg-gray-100 items-center justify-center">
+            <Text className="text-dark text-lg font-bold">
+              {cardData.company.company_name?.charAt(0) || "?"}
+            </Text>
+          </View>
+        )}
+        <Text className="text-dark text-lg font-semibold ml-3">
+          {cardData.company.company_name || "Empresa confidencial"}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <View className="flex-1 bg-white">
       {/* Header com botão de voltar */}
-      <View className="bg-blue-600 p-4 flex-row items-center">
-        <TouchableOpacity 
-          onPress={() => navigation.goBack()}
-          className="mr-4"
-        >
-          <MaterialIcons name="arrow-back" size={28} color="white" />
-        </TouchableOpacity>
-        <Text className="text-white text-xl font-bold">Detalhes da Vaga</Text>
-      </View>
+      <Header title="Detalhes da Vaga" leftIcon="back" iconSimple="archive" />
 
       <ScrollView className="flex-1 p-4">
         {/* Cabeçalho do Card */}
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-2xl font-bold text-blue-600">{cardData.function}</Text>
+          <Text className="text-2xl font-bold text-dark">
+            {cardData.function}
+          </Text>
           {cardData.PCD === "1" && (
             <FontAwesome name="wheelchair-alt" size={24} color="black" />
           )}
         </View>
 
-        <Image
-          source={AbstractPicture[cardData.image]}
-          resizeMode="contain"
-          className="w-full h-[200px] mb-6"
-        />
-
-        {/* Seção: Informações da Vaga */}
-        <View className="bg-gray-50 p-4 rounded-lg mb-6">
-          <Text className="text-lg font-bold mb-4 text-blue-600">Informações da Vaga</Text>
-          
-          <View className="space-y-2">
-            <Text className="text-base">
-              <Text className="font-semibold">Salário:</Text> R$ {cardData.salary || "Não informado"}
-            </Text>
-            <Text className="text-base">
-              <Text className="font-semibold">Tipo de Contratação:</Text> {cardData.contract_type || "Não informado"}
-            </Text>
-            <Text className="text-base">
-              <Text className="font-semibold">Jornada:</Text> {cardData.time?.journey || "Não informado"}
-            </Text>
-            <Text className="text-base">
-              <Text className="font-semibold">Carga Horária:</Text> {cardData.workload || "Não informado"}
-            </Text>
-          </View>
+        <View
+          style={[
+            GlobalStyleSheet.cardHeader,
+            { borderBottomColor: COLORS.inputborder },
+          ]}
+        >
+          <Image
+            source={AbstractPicture[cardData.image]}
+            resizeMode="contain"
+            className="w-full h-[200px] mb-6"
+          />
         </View>
 
-        {/* Seção: Informações da Empresa */}
-        <View className="bg-gray-50 p-4 rounded-lg mb-6">
-          <Text className="text-lg font-bold mb-4 text-blue-600">Informações da Empresa</Text>
-          
-          <View className="space-y-2">
-            <Text className="text-base">
-              <Text className="font-semibold">Empresa:</Text> {cardData.company?.company_name || "Não informado"}
-            </Text>
-            <Text className="text-base">
-              <Text className="font-semibold">Telefone:</Text> {cardData.company?.phone || "Não informado"}
-            </Text>
-            <Text className="text-base">
-              <Text className="font-semibold">Email:</Text> {cardData.company?.email || "Não informado"}
-            </Text>
-            <Text className="text-base">
-              <Text className="font-semibold">Localização:</Text> {`${cardData.company?.street || ""}, ${cardData.company?.number || ""} - ${cardData.company?.district || ""}, ${cardData.company?.city || ""} - ${cardData.company?.uf || ""}`}
-            </Text>
-          </View>
-        </View>
-
-        {/* Seção: Detalhes Adicionais */}
-        <View className="bg-gray-50 p-4 rounded-lg mb-6">
-          <Text className="text-lg font-bold mb-4 text-blue-600">Detalhes Adicionais</Text>
-          
-          <View className="space-y-4">
-            <View>
-              <Text className="font-semibold text-base mb-1">Descrição:</Text>
-              <Text className="text-base">{cardData.description || "Não informado"}</Text>
-            </View>
-            
-            <View>
-              <Text className="font-semibold text-base mb-1">Benefícios:</Text>
-              <Text className="text-base">{cardData.benefics || "Não informado"}</Text>
-            </View>
-            
-            <View>
-              <Text className="font-semibold text-base mb-1">Obrigações:</Text>
-              <Text className="text-base">{cardData.obligations || "Não informado"}</Text>
-            </View>
-            
-            <View>
-              <Text className="font-semibold text-base mb-1">Informações Adicionais:</Text>
-              <Text className="text-base">{cardData.details || "Não informado"}</Text>
-            </View>
-          </View>
+        <View style={[GlobalStyleSheet.card, { backgroundColor: COLORS.card }]} className="mt-8">           
+          <AccordionCardIformation
+              information={cardData}
+              company={cardData.company}
+              details={cardData.details}
+            />
         </View>
       </ScrollView>
+
+      {/* Footer */}
+      {renderFooterContent()}
     </View>
   );
 };

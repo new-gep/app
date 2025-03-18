@@ -1,6 +1,6 @@
 import React from "react";
 import BottomNavigation from "./BottomNavigation";
-import { View } from "react-native";
+import { View, Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import DrawerMenu from "../layout/DrawerMenu";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +30,10 @@ const DrawerNavigation = () => {
           onChange={(e) => {
             e === false ? dispatch(closeDrawer()) : null;
           }}
+          animationFunction={(prop, value) => Animated.timing(prop, {
+            toValue: value,
+            useNativeDriver: true,
+          })}
         >
           <BottomNavigation />
         </SideMenu>

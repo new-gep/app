@@ -80,25 +80,36 @@ export default function HomeWork({
   const SwiperData = [
     {
       id: "1",
-      image: IMAGES.unique10,
+      image: IMAGES.unique12,
       title: "Holerite",
       subtitle: "Assine e cheque seu pagamento",
-      route: "PayStub",
+      route: "PayStub" as keyof RootStackParamList,
+      params: {
+        jobConected: jobConected,
+        CPF: CPF,
+      },
     },
     {
       id: "2",
       image: IMAGES.unique11,
       title: "Ausência",
       subtitle: "Envia seu atestado e justificativas",
-      route: "Absence",
+      route: "Absence" as keyof RootStackParamList,
+      params: {
+        jobConected: jobConected,
+        CPF: CPF,
+      },
     },
-
     {
       id: "3",
-      image4: IMAGES.unique12,
+      image: IMAGES.unique12,
       title: "Ponto",
       subtitle: "Assine e cheque seu ponto",
-      route: "Point",
+      route: "Point" as keyof RootStackParamList,
+      params: {
+        jobConected: jobConected,
+        CPF: CPF,
+      },
     },
   ];
 
@@ -169,14 +180,14 @@ export default function HomeWork({
                 <ImageSwiper
                   className="w-full h-full"
                   data={SwiperData}
-                  onItemPress={(item, jobConected, cpf = CPF) =>
-                    item.route
-                      ? navigation.navigate(item.route, {
-                          jobConected: jobConected,
-                          CPF: cpf,
-                        })
-                      : setIsShowDevelopment(true)
-                  }
+                  onItemPress={(item) => {
+                    if (item.route) {
+                      navigation.navigate(item.route, item.params || {
+                        jobConected: jobConected,
+                        CPF: CPF
+                      });
+                    }
+                  }}
                 />
               </View>
               <View>
@@ -196,18 +207,11 @@ export default function HomeWork({
                         key={index}
                         activeOpacity={0.8}
                         onPress={() => {
-                          // Verifica pelas rotas reais (PayStub e Point)
-                          if (
-                            data.route === "PayStub" ||
-                            data.route === "Point"
-                          ) {
+                          if (data.route) {
                             navigation.navigate(data.route, {
-                              // Usa o nome exato da rota
                               jobConected: jobConected,
-                              CPF: CPF,
+                              CPF: CPF
                             });
-                          } else {
-                            navigation.navigate(data.route);
                           }
                         }}
                         className="bg-white rounded-2xl p-6 border border-gray-100 shadow-md w-48"

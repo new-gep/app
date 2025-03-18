@@ -64,11 +64,15 @@ const ImageSwiper = ({ data } : any) => {
 
         return (
           <View key={index} style={{ width: SIZE,}}>
-            <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/>
+            {/* <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/> */}
             <Animated.View style={[style]}>
               <TouchableOpacity
                 activeOpacity={.9}
-                onPress={() => setIsShowDevelopment(true)}
+                onPress={() => navigation.navigate(item.route, {
+                  ...(item.params || {}),
+                  jobConected: item.params?.jobConected,
+                  CPF: item.params?.CPF
+                })}
                 style={{ 
                   height: 352, 
                   width: 266, 

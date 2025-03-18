@@ -19,7 +19,10 @@ import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp } from "@react-navigation/native";
-
+import Header from "../../layout/Header";
+import { FONTS } from "../../constants/theme";
+import Mask from "../../function/mask";
+import HeaderHome from "../../layout/HeaderHome";
 const Home = () => {
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -174,11 +177,22 @@ const Home = () => {
     }
   }, [missingData, navigation]);
 
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      return true; // Retorna true para impedir o comportamento padrão de voltar
+    });
+
+    return () => backHandler.remove(); // Remove o listener quando o componente for desmontado
+  }, []);
+
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View>
-        <HeaderStyle1 title={"Home"} />
-      </View>
+      <HeaderHome
+            title=''
+            leftIcon={'menu'}
+            rightIcon4={'home'}  
+            collaborator={collaborator}
+        />
 
       <View className="flex-1 justify-center bg-white">
         {isLoading ? (

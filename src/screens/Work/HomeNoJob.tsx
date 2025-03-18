@@ -9,7 +9,6 @@ import {
   StyleSheet,
   BackHandler,
   ActivityIndicator,
-  Button,
   Dimensions,
 } from "react-native";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
@@ -39,6 +38,8 @@ import CardHistory from "./CardHistoryJobCadastrate";
 import fetchCollaborator from "../../function/fetchCollaborator";
 import HomeAdmission from "./HomeAdmission";
 import TimeLineAdmiss from "./TimeLineAdmiss";
+import Button from '../../components/Button/Button'
+import Header from '../../layout/Header';
 
 const { width, height } = Dimensions.get("window");
 
@@ -120,7 +121,7 @@ export default function HomeNoWork({ setTitleWork }) {
             const response = await FindAplicateInJob(collaborator.CPF);
             // console.log("response",collaborator.CPF)
             if (response.status !== 200) {
-              console.error("Erro ao buscar os cards:", response.message);
+              console.log("Erro ao buscar os cards:", response.message);
               return;
             }
 
@@ -165,35 +166,17 @@ export default function HomeNoWork({ setTitleWork }) {
         </>
       ) : !process ? (
         <>
-          <View style={{ paddingHorizontal: 30, padding: 0, paddingTop: 30 }}>
-            <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
-              <Text
-                style={{
-                  ...FONTS.fontRegular,
-                  fontSize: 14,
-                  color: colors.title,
-                }}
-              >
-                Bem-Vindo(a)!
-              </Text>
-              <Text
-                style={{
-                  ...FONTS.fontSemiBold,
-                  fontSize: 24,
-                  color: colors.title,
-                }}
-              >
-                {collaborator && Mask("firstName", collaborator.name)}
-              </Text>
-            </View>
-          </View>
-          <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
+          <Header
+            title='Vagas Cadastradas'
+            leftIcon={'back'}
+            iconSimple={'archive'}        
+        />
+          <View className="mt-5 flex justify-between items-center h-full">
             {jobConected && jobConected.length > 0 ? (
               jobConected.map((job) => <CardHistory key={job.id} job={job} />)
             ) : (
               <View
                 style={{
-                  flex: 1,
                   backgroundColor: "white",
                   alignItems: "center",
                   justifyContent: "center",
@@ -204,45 +187,33 @@ export default function HomeNoWork({ setTitleWork }) {
                     ...FONTS.fontSemiBold,
                     fontSize: 16,
                     color: colors.title,
+                    marginBottom: 5,
+                    marginTop: 40,
                   }}
                 >
                   Sem vagas cadastradas
                 </Text>
+                <Text className="text-center text-sm text-gray-400 font-normal">
+                  Não se cadastrou em nenhuma vaga até o momento
+                </Text>
 
                 <Image
                   source={require("../../assets/images/brand/Business-nojob.png")}
-                  style={{ width: width * 0.7, height: height * 0.7 }}
+                  style={{ width: width * 0.7, height: height * 0.5 }}
                   resizeMode="contain"
                 />
 
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: "600",
-                    color: "#333",
-                    textAlign: "center",
-                    marginBottom: 10,
-                    paddingHorizontal: 20,
-                  }}
-                >
-                  Não se cadastrou em nenhuma vaga até o momento;
-                </Text>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: "#007bff",
-                      textAlign: "center",
-                      paddingHorizontal: 20,
-                    }}
-                  >
-                    Clique aqui para ver as vagas disponíveis.
-                  </Text>
-                </TouchableOpacity>
+                <Button 
+                        title={"Ver Vagas"}
+                        onPress={() => navigation.navigate('Home')}
+                        text ={COLORS.title}
+                        color={COLORS.primary}
+                        style={{borderRadius:52 , width: width * 0.7}}
+                    />
               </View>
             )}
-          </ScrollView>
+          </View>
         </>
       ) : (
         collaborator && (

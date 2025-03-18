@@ -230,9 +230,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
             if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand' && documentName.toLowerCase() != 'dismissal_medical_examination'){
                 console.log("path", path)
                 const response = await UploadFile(path, documentName, doc, collaborator.CPF);
-                if(documentName == 'Address'){
-                    console.log("response", response)
-                }
+                console.log("response", response)
                 if (response.status === 400) {
                     setActiveSheet('danger');
                     setMessageSheet(`Documento inválido`);
