@@ -12,7 +12,8 @@ type Props = {
     bg   ?: string,
     load ?: boolean,
     loadColor ?: string,
-    loadSize  ?: number
+    loadSize  ?: number,
+    icon ?: any
 }
 
 const Button = ({
@@ -25,15 +26,15 @@ const Button = ({
     bg,
     load,
     loadColor,
-    loadSize
+    loadSize,
+    icon
 }: Props) => {
     return (
         <TouchableOpacity 
             activeOpacity={0.8}
             onPress={onPress}
         >
-            
-                <View className={`${bg}`}
+            <View className={`${bg}`}
                 style={[styles.button,color && {
                     backgroundColor:color,
                 },size === 'sm' && {
@@ -45,20 +46,26 @@ const Button = ({
                     paddingHorizontal:30,
                 },style && {...style}]}
             >
-                {   load ?
+                {load ? (
                     <ActivityIndicator
                         size={loadSize}
                         color={loadColor}
                     />
-                    :
-                    <Text style={[styles.buttnTitle,size === 'sm' && {
-                        fontSize:14,
-                        },size === 'lg' && {
-                            fontSize:18,
-                        },color && {color : COLORS.white},text && {color : (text)}]}>{title}
-                    </Text>
-                }
-                </View>
+                ) : (
+                    <>
+                        <Text style={[
+                            styles.buttnTitle,
+                            size === 'sm' && { fontSize:14 },
+                            size === 'lg' && { fontSize:18 },
+                            color && {color: COLORS.white},
+                            text && {color: text}
+                        ]}>
+                            {title}
+                        </Text>
+                        {icon && <View style={styles.iconContainer}>{icon}</View>}
+                    </>
+                )}
+            </View>
         </TouchableOpacity>
     )
 }
@@ -78,6 +85,11 @@ const styles = StyleSheet.create({
         color : '#fff',
         lineHeight:24,
         textTransform:'uppercase'
+    },
+    iconContainer: {
+        marginLeft: 8,
+        flexDirection: 'row',
+        alignItems: 'center'
     }
 });
 

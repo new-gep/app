@@ -7,6 +7,8 @@ import {
   SafeAreaView,
   Modal,
   BackHandler,
+  Image,
+  Dimensions,
 } from "react-native";
 import Card from "./Card";
 import GetAllJob from "../../hooks/get/job/all";
@@ -20,7 +22,7 @@ import { useCollaboratorContext } from "../../context/CollaboratorContext";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp } from "@react-navigation/native";
 import Header from "../../layout/Header";
-import { FONTS } from "../../constants/theme";
+import { COLORS, FONTS } from "../../constants/theme";
 import Mask from "../../function/mask";
 import HeaderHome from "../../layout/HeaderHome";
 const Home = () => {
@@ -74,7 +76,7 @@ const Home = () => {
 
       // 4. Atualizar lista de candidatos
       const updatedCandidates = [...currentCandidates, newCandidate];
-      console.log("updatedCandidates", updatedCandidates)
+      
 
       // 5. Enviar para API
       const updateResponse = await UpdateJobDefault(id, {
@@ -197,69 +199,86 @@ const Home = () => {
       <View className="flex-1 justify-center bg-white">
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#4CAF50" />
-            <Text className="mt-4 text-lg text-green-500 font-semibold">
-              Carregando vagas...
-            </Text>
+            <ActivityIndicator size="large" color={COLORS.primary} />
           </View>
         ) : Array.isArray(cards) && cards.length > 0 ? (
-          <View className="flex-1 w-full">
-            {/* No return, onde está mapeando os cards: */}
-            {cards.map((card, index) => (
+          <>
+            <View className="flex-1 w-full">
+              {/* No return, onde está mapeando os cards: */}
+              {cards.map((card, index) => (
+                <View
+                  key={`${card.id}_${index}`} // Alterar esta linha
+                  className="absolute w-full h-full items-center"
+                  style={{
+                    top: 0,
+                    justifyContent: "center",
+                    zIndex: cards.length - index,
+                  }}
+                >
+                  <Card
+                    data={card}
+                    onSwipeLeft={handleSwipeLeft} // Swipe para a esquerda (dislike)
+                    onSwipeRight={handleSwipeRight} // Swipe para a direita (like e mostra popup)
+                    isTopCard={index === 0}
+                    zIndex={cards.length - index}
+                    index={index}
+                  />
+                </View>
+              ))}
+            </View>
+
+            <View className="absolute bottom-8 z-50 flex-row justify-between items-center w-full px-6">
+              <TouchableOpacity onPress={handleUndo} style={{ padding: 16, borderRadius: 9999 }}>
+                <MaterialIcons name="replay" size={32} color="#FFC107" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleSwipeLeft}
+                style={{ padding: 16, borderRadius: 9999 }}
+              >
+                <FontAwesome name="times" size={32} color="#FF5252" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleSwipeRight}
+                style={{ padding: 16, borderRadius: 9999 }}
+              >
+                <FontAwesome name="heart" size={32} color="#4CAF50" />
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : (
+          <View className="mt-5 flex justify-between items-center h-full">
               <View
-                key={`${card.id}_${index}`} // Alterar esta linha
-                className="absolute w-full h-full items-center"
                 style={{
-                  top: 0,
+                  backgroundColor: "white",
+                  alignItems: "center",
                   justifyContent: "center",
-                  zIndex: cards.length - index,
                 }}
               >
-                <Card
-                  data={card}
-                  onSwipeLeft={handleSwipeLeft} // Swipe para a esquerda (dislike)
-                  onSwipeRight={handleSwipeRight} // Swipe para a direita (like e mostra popup)
-                  isTopCard={index === 0}
-                  zIndex={cards.length - index}
-                  index={index}
+                <Text
+                  style={{
+                    ...FONTS.fontSemiBold,
+                    fontSize: 16,
+                    color: COLORS.title,
+                    marginBottom: 5,
+                    marginTop: 90,
+                  }}
+                >
+                  Sem mais vagas no momento
+                </Text>
+                <Text className="text-center text-sm text-gray-400 font-normal">
+                  Não há mais vagas no momento, volte mais tarde!
+                </Text>
+
+                <Image
+                  source={require("../../assets/images/brand/Waiting.png")}
+                  style={{ width: Dimensions.get('window').width * 0.7, height: Dimensions.get('window').height * 0.5 }}
+                  resizeMode="contain"
                 />
-              </View>
-            ))}
           </View>
-        ) : (
-          <View className="flex-1 justify-center items-center">
-            <Text className="text-center text-xl text-black font-semibold">
-              Sem mais cards!
-            </Text>
-          </View>
+        </View>
         )}
-      </View>
-
-      <View className="absolute bottom-8 z-50 flex-row justify-between items-center w-full px-6">
-        <TouchableOpacity onPress={handleUndo} className="p-4 rounded-full">
-          <MaterialIcons name="replay" size={32} color="#FFC107" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={handleSwipeLeft}
-          className="p-4 rounded-full"
-        >
-          <FontAwesome name="times" size={32} color="#FF5252" />
-        </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          onPress={handleSuperLike}
-          className="p-4 rounded-full"
-        >
-          <MaterialIcons name="star" size={32} color="#007AFF" />
-        </TouchableOpacity> */}
-
-        <TouchableOpacity
-          onPress={handleSwipeRight}
-          className="p-4 rounded-full"
-        >
-          <FontAwesome name="heart" size={32} color="#4CAF50" />
-        </TouchableOpacity>
       </View>
 
       {/* Modal de Popup */}

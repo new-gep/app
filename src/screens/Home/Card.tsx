@@ -17,6 +17,14 @@ const { width } = Dimensions.get("window");
 const SWIPE_THRESHOLD = width * 0.6;
 const MAX_ROTATION_ANGLE = 8;
 
+const calculateDaysAgo = (createDate: string) => {
+  const created = new Date(createDate);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - created.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
+};
+
 const Card = ({
   data,
   onSwipeLeft,
@@ -211,25 +219,35 @@ const Card = ({
           />
 
           {/* Informações principais */}
-          <View className="p-4 space-y-4">
+          <View className="p-4 space-y-2">
             {/* Nome da vaga e ícone PCD */}
-            <View className="flex-row justify-between items-center">
-              <Text className="text-black text-xl font-semibold flex-1 mr-2">
-                {data.function}
-              </Text>
+            <View className="flex-row justify-between items-start">
+              <View className="flex-1 mr-2">
+                <Text className="text-black text-xl font-semibold">
+                  {data.function}
+                </Text>
+                <Text className="text-xs text-gray-600 uppercase ">
+                  {data.company?.company_name || "Empresa confidencial"}
+                </Text>
+              </View>
               {data.PCD === "1" ? (
                 <FontAwesome name="wheelchair-alt" size={24} color="black" />
               ) : null}
             </View>
 
-            {/* Tipo de contratação */}
-            <Text className="text-black text-base">
-              {data.contract_type || "Tipo de contratação: CLT"}
+            {/* Localização */}
+            <Text className="text-gray-500 text-sm">
+              {`${data.company.city || ""} - ${data.company.uf || ""}` || "Home Office"}
             </Text>
 
-            {/* Localização */}
+            {/* Salário */}
             <Text className="text-black text-base">
-              {`Endereço: ${data.company.street || ""}, ${data.company.number || ""} - ${data.company.district || ""}, ${data.company.city || ""} - ${data.company.uf || ""}` || "Home Office"}
+              {data.salary ? `R$ ${data.salary} por mês` : 'R$ 8.000 por mês'}
+            </Text>
+
+            {/* Tempo de publicação */}
+            <Text className="text-gray-400 text-sm">
+              {`Publicado há ${calculateDaysAgo(data.create_at)} dias`}
             </Text>
           </View>
         </View>

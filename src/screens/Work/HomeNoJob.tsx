@@ -40,6 +40,7 @@ import HomeAdmission from "./HomeAdmission";
 import TimeLineAdmiss from "./TimeLineAdmiss";
 import Button from '../../components/Button/Button'
 import Header from '../../layout/Header';
+import JobApplicationCard from '../../components/Card/JobApplicationCard';
 
 const { width, height } = Dimensions.get("window");
 
@@ -75,26 +76,7 @@ export default function HomeNoWork({ setTitleWork }) {
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [previousCards, setPreviousCards] = useState([]);
-  const SwiperData = [
-    {
-      id: "1",
-      image: IMAGES.unique10,
-      title: "Holerite",
-      subtitle: "Assine e cheque seu pagamento",
-    },
-    {
-      id: "2",
-      image: IMAGES.unique11,
-      title: "Ausência",
-      subtitle: "Envia seu atestado e justificativas",
-    },
-    {
-      id: "3",
-      image4: IMAGES.unique12,
-      title: "Ponto",
-      sule: "Assine e cheque seu ponto",
-    },
-  ];
+  
 
   const dispatch = useDispatch();
   const [isShowDevelopment, setIsShowDevelopment] = useState<boolean>(false);
@@ -119,7 +101,7 @@ export default function HomeNoWork({ setTitleWork }) {
         if (collaborator) {
           try {
             const response = await FindAplicateInJob(collaborator.CPF);
-            // console.log("response",collaborator.CPF)
+            console.log("response",response)
             if (response.status !== 200) {
               console.log("Erro ao buscar os cards:", response.message);
               return;
@@ -173,7 +155,15 @@ export default function HomeNoWork({ setTitleWork }) {
         />
           <View className="mt-5 flex justify-between items-center h-full">
             {jobConected && jobConected.length > 0 ? (
-              jobConected.map((job) => <CardHistory key={job.id} job={job} />)
+              <ScrollView 
+                style={{ width: '100%' }}
+                showsVerticalScrollIndicator={false}
+              >
+                {jobConected.map((job) => (
+                  console.log('job', job),
+                  <JobApplicationCard key={job.id} job={job} company={job.company}/>
+                ))}
+              </ScrollView>
             ) : (
               <View
                 style={{

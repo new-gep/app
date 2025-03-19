@@ -4,6 +4,7 @@ import Buttons from "../../Components/Buttons";
 import { COLORS } from "../../../constants/theme";
 import Button from "../../../components/Button/Button";
 import DocumentVisible from "../../../components/Modal/DocumentVisible";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 type CardProps = {
   title: any;
@@ -57,43 +58,56 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
 
   return (
     <>
-      <View className="p-4 bg-white w-screen rounded-2xl shadow-md">
-        <DocumentVisible
-          path={path}
-          typeDocument={typeDocument}
-          twoPicture={false}
-          visible={modalVisibleDoc}
-          documentName={""}
-          close={handleOpenModalDoc}
-        />
-
-        <Text className="text-lg font-bold text-gray-800 mb-2">{Mask('title',title)}</Text>
-        {/* <Text className="text-gray-500 mb-4">{status ? "Yes" : "No"}</Text> */}
-
-        {/* Exibir a assinatura como imagem se existir */}
-        {signature ? (
-          <Image
-            source={{ uri: signature }} // Exibe a assinatura usando a URI base64
-            style={{
-              width: 200,
-              height: 100,
-              borderWidth: 1,
-              borderColor: "#ddd",
-              marginBottom: 10,
-            }}
-            resizeMode="contain"
+      <View className="h-3/4 p-4">
+        <View className="h-full w-80 mx-auto bg-white rounded-2xl shadow-lg border-2 border-gray-200 shadow-gray-300 p-4">
+          <DocumentVisible
+            path={path}
+            typeDocument={typeDocument}
+            twoPicture={false}
+            visible={modalVisibleDoc}
+            documentName={""}
+            close={handleOpenModalDoc}
           />
-        ) : (
-          <Text className="text-gray-500 mb-4">Nenhuma assinatura salva.</Text>
-        )}
 
-        <Button
-          title={"Visualizar"}
-          style={{ marginRight: 8, marginBottom: 8 }}
-          text={'#000000'}
-          color={isViewed ? '#28a745' : '#007bff'}
-          onPress={handleOpenModalDoc}
-        />
+          <Text className="text-xl font-bold text-gray-800 mb-4 text-center">{Mask('title',title)}</Text>
+
+          {signature ? (
+            <Image
+              source={{ uri: signature }}
+              style={{
+                width: '100%',
+                height: 120,
+                borderWidth: 1,
+                borderColor: "#ddd",
+                marginBottom: 16,
+              }}
+              resizeMode="contain"
+            />
+          ) : (
+            <Text className="text-gray-500 mb-4 text-center">Nenhuma assinatura salva.</Text>
+          )}
+
+          <View className="flex-1 justify-end">
+            <Button
+              title={"Visualizar"}
+              style={{
+                marginBottom: 8,
+                flexDirection: 'row',
+                alignItems: 'center',
+                width: '100%',
+                justifyContent: 'center'
+              }}
+              text={'#000000'}
+              color={COLORS.primary}
+              onPress={handleOpenModalDoc}
+              icon={
+                isViewed ? 
+                  <FontAwesome5 name="lock-open" size={24} color="#9ACD32" /> :
+                  <FontAwesome5 name="lock" size={24} color="#FFB343" />
+              }
+            />
+          </View>
+        </View>
       </View>
     </>
   );

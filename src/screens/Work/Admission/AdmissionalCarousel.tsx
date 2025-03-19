@@ -36,6 +36,7 @@ const AdmissionalCarousel = ({ cards, setLockSignature, lockSignature }: Carouse
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
+        <View className="flex-row items-center w-full justify-center ">
         {cards.map((card, index) => (
           <View key={index} style={{ width: width }}>
             <AdmissionalCard
@@ -48,6 +49,7 @@ const AdmissionalCarousel = ({ cards, setLockSignature, lockSignature }: Carouse
             />
           </View>
         ))}
+        </View>
       </ScrollView>
       
       <View className="flex-row justify-center items-center mt-4 mb-4">

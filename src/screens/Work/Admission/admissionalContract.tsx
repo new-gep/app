@@ -48,14 +48,19 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
             await delete combined.medical;
             // console.log("combined apos delete medical", combined);
             setLockSignature(combined);
-
+            console.log('inicio')
             // Preparar documentos obrigatórios
-            const obligationDocuments = Object.keys(obligations).map(key => ({
-              title: key,
-              status: true,
-              path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/${key}.pdf`,
-              typeDocument: "pdf",
+            const obligationDocuments = await Promise.all(Object.keys(obligations).map(async (key) => {
+              const response = await FindFile(jobConected[0].id, key, false);
+              // console.log('response', response)
+              return {
+                title: key,
+                status: true,
+                path: response.path,
+                typeDocument: response.type,
+              };
             }));
+            console.log('fim')
             setObligationDocs(obligationDocuments);
 
 

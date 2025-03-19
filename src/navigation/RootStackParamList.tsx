@@ -86,4 +86,13 @@ export type RootStackParamList = {
     PayStub: undefined;
     Point: undefined;
     Absence: undefined;
+    CardInformation: {
+        cardData: any;
+    };
 };
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+}

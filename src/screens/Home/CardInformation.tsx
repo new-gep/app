@@ -9,6 +9,19 @@ import AccordionCardIformation from "../../components/Accordion/AccordionCardIfo
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
 import { COLORS } from "../../constants/theme";
 
+type CompanyType = {
+  company_name: string;
+  phone: string;
+  email: string;
+  street: string;
+  number: string;
+  district: string;
+  city: string;
+  uf: string;
+  zip_code?: string;
+  logo?: string;
+}
+
 type CardInformationProps = {
   route: {
     params: {
@@ -23,16 +36,16 @@ type CardInformationProps = {
         time: {
           journey: string;
         };
-        company: {
-          company_name: string;
-          phone: string;
-          email: string;
-          street: string;
-          number: string;
-          district: string;
-          city: string;
-          uf: string;
-          zip_code: string;
+        company?: {
+          company_name?: string;
+          phone?: string;
+          email?: string;
+          street?: string;
+          number?: string;
+          district?: string;
+          city?: string;
+          uf?: string;
+          zip_code?: string;
           logo?: string;
         };
         workload: string;
@@ -46,31 +59,7 @@ type CardInformationProps = {
 
 const CardInformation = ({ route }: CardInformationProps) => {
   const { cardData } = route.params;
-  // console.log("cardData", cardData)
   const navigation = useNavigation();
-
-  const renderFooterContent = () => {
-    return (
-      <View className="flex-row items-center p-4 rounded-t-2xl border-t border-gray-200">
-        {cardData.company.logo ? (
-          <Image
-            source={{ uri: cardData.company.logo }}
-            className="w-12 h-12 rounded-full"
-            resizeMode="cover"
-          />
-        ) : (
-          <View className="w-12 h-12 rounded-full bg-gray-100 items-center justify-center">
-            <Text className="text-dark text-lg font-bold">
-              {cardData.company.company_name?.charAt(0) || "?"}
-            </Text>
-          </View>
-        )}
-        <Text className="text-dark text-lg font-semibold ml-3">
-          {cardData.company.company_name || "Empresa confidencial"}
-        </Text>
-      </View>
-    );
-  };
 
   return (
     <View className="flex-1 bg-white">
@@ -79,12 +68,17 @@ const CardInformation = ({ route }: CardInformationProps) => {
 
       <ScrollView className="flex-1 p-4">
         {/* Cabeçalho do Card */}
-        <View className="flex-row justify-between items-center mb-4">
+        <View className="mb-4">
           <Text className="text-2xl font-bold text-dark">
             {cardData.function}
           </Text>
+          <Text className="text-sm text-gray-600 mt-1 uppercase">
+            {cardData.company?.company_name || "Empresa confidencial"}
+          </Text>
           {cardData.PCD === "1" && (
-            <FontAwesome name="wheelchair-alt" size={24} color="black" />
+            <View className="mt-2">
+              <FontAwesome name="wheelchair-alt" size={24} color="black" />
+            </View>
           )}
         </View>
 
@@ -103,15 +97,12 @@ const CardInformation = ({ route }: CardInformationProps) => {
 
         <View style={[GlobalStyleSheet.card, { backgroundColor: COLORS.card }]} className="mt-8">           
           <AccordionCardIformation
-              information={cardData}
-              company={cardData.company}
-              details={cardData.details}
-            />
+            information={cardData}
+            company={cardData.company as CompanyType}
+            details={cardData.details}
+          />
         </View>
       </ScrollView>
-
-      {/* Footer */}
-      {renderFooterContent()}
     </View>
   );
 };
