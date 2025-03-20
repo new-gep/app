@@ -9,16 +9,22 @@ import TimelineFront from '../../../components/Timeline/TimelineFront';
 type WaitingIndicatorProps = {
   visible: boolean;
   status?: 'approved' | 'pending';
+  message?: string;
 };
 
-const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status }) => {
+const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status, message }) => {
   const navigation = useNavigation<NavigationProp<any>>();
 
   const getMessage = () => {
+    if (message) {
+      return message;
+    }
+
     switch (status) {
       case 'approved':
         return 'Seus documentos foram aprovados. Agora você pode prosseguir com a assinatura do contrato.';
       case 'pending':
+        return 'Estamos analisando seus documentos. Em breve você poderá prosseguir com a próxima etapa.';
         return 'Seus documentos estão em análise. Em breve você poderá prosseguir com a próxima etapa.';
       default:
         return 'Aguardando retorno da documentação';
@@ -33,24 +39,25 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status }) 
         leftAction={() => navigation.goBack()}
       />
       <TimelineFront 
-        currentStep={2}
+        currentStep={3}
         showProgress={true}
+        status={status}
       />
       
-      <View className="flex-1 justify-center items-center p-6">
-        <Text className="text-2xl font-bold text-gray-800 text-center mb-8">
+      <View className="flex-1 justify-start items-center px-6">
+        <Text className="text-2xl font-bold text-gray-800 text-center mb-2">
           Aguardando análise
         </Text>
         
-        <View className="w-full h-90% aspect-square mb-8">
+        <View className="w-full h-60% aspect-square mb-4">
           <Image 
             source={require('../../../assets/images/gif/Timemanagement.gif')}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '75%' }}
             resizeMode="contain"
           />
         </View>
 
-        <Text className="text-gray-800 text-xl font-bold text-center">
+        <Text className="text-gray-500 text-base text-center">
           {getMessage()}
         </Text>
 

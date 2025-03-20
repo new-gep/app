@@ -28,7 +28,7 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, docum
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log('path', path)
+                // console.log('path', path)
                 
                 setLoading(true);
                 if (path) {

@@ -30,7 +30,7 @@ import TimelineFront from "../../components/Timeline/TimelineFront";
 const Timeline = ({ jobConected, CPF }) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const [signature, setSignature] = useState<string | undefined>(undefined);
+  const [signature, setSignature] = useState<any>(null);
   const steps = ["Exames", "Documentação", "Assinatura"];
   const [currentStep, setCurrentStep] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +38,7 @@ const Timeline = ({ jobConected, CPF }) => {
   const [lockSignature, setLockSignature] = useState(null);
   const [keySignature, setKeySignature] = useState(false);
   const [signatureFound, setSignatureFound] = useState<any>(null);
+  const [statusSignature, setStatusSignature] = useState<any>(null);
   const Tab = createBottomTabNavigator<BottomTabParamList>();
 
   const handleOpenModal = () => {
@@ -99,8 +100,9 @@ const Timeline = ({ jobConected, CPF }) => {
         const response = await FindPicture(CPF);
         if (response?.status === 200) {
           const signatureFound = response.pictures.find(
-            (pic) => pic.picture === "Admission_Signature"
+            (pic) => pic.picture === "Signature_Admission"
           );
+          console.log("signatureFounddddddddddddddddddddddddd", signatureFound);
           // console.log("response do signatureFound", signatureFound.status);
           setSignatureFound(signatureFound);
         } else {
@@ -112,8 +114,8 @@ const Timeline = ({ jobConected, CPF }) => {
   );
 
   return (
-    <>
-      <ScrollView className="h-3/4">
+    <View className="flex-1">
+      <ScrollView className="h-full bg-white">
         {currentStep === 1 && (
           <>
             <AdmissionalExam CPF={CPF} jobConected={jobConected} />
@@ -144,7 +146,7 @@ const Timeline = ({ jobConected, CPF }) => {
             </View>
             <View className="items-center mt-8">
               <Image
-                source={require('../../assets/images/brand/Waiting.png')}
+                source={require("../../assets/images/brand/Waiting.png")}
                 style={{ width: 250, height: 200 }}
                 resizeMode="contain"
               />
@@ -153,52 +155,23 @@ const Timeline = ({ jobConected, CPF }) => {
         )}
         {currentStep === 3 && (
           <>
-            {signatureFound && signatureFound?.status === "approved" ? (
-              <Text>Assinatura aprovada</Text>
-            ) : signatureFound?.status === "pending" ? (
+            {signatureFound && signatureFound?.status === "approved" || signatureFound?.status === "pending" ? (
               <View className="w-full h-full">
                 <WaitingIndicator visible={true} status={"pending"} />
               </View>
             ) : signatureFound?.status === "reproved" ? (
               <>
-                <Text className="text-2xl font-bold text-center mb-6">
-                  Revisar documentação
-                </Text>
-                <View className="w-full">
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    pagingEnabled
-                    snapToAlignment="center"
-                    className="w-full"
-                  >
-                    <AdmissionalContract
-                      CPF={CPF}
-                      jobConected={jobConected}
-                      setLockSignature={setLockSignature}
-                      lockSignature={lockSignature}
-                    />
-                  </ScrollView>
-                  <Text className="text-center text-gray-600 mt-4 mb-2 px-4">
-                    Para assinar é necessário visualizar todos os documentos
-                  </Text>
-                  <TouchableOpacity
-                    className="bg-red-500 py-3 px-6 rounded-lg items-center mt-2 mx-4"
-                    onPress={handleOpenModal}
-                  >
-                    <Text className="text-white text-lg font-semibold">
-                      Assinar
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            ) : (
-              <View className="flex w-full">
                 <Header
-                  title="Assinar Documentos"
+                  title="Revisar documentação" 
                   leftIcon="back"
                   leftAction={() => navigation.goBack()}
                 />
+                <TimelineFront currentStep={3} showProgress={true} status={"pending"} />
+                {/* <Image source={require("../../assets/images/brand/reproved.png")} style={{ width: 200, height: 200 }} /> */}
+                <Text className="text-center text-gray-500 font-semibold mt-16 mb-2 px-4">
+                  Sua documentação foi reprovada. Por favor, revise os documentos e tente novamente.
+                </Text>
+                
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -214,31 +187,44 @@ const Timeline = ({ jobConected, CPF }) => {
                   />
                 </ScrollView>
 
-                {signature ? (
+              <View className="mt-24">
+                <TouchableOpacity
+              style={[styles.signButton, { marginHorizontal: 0 }]}
+              onPress={handleOpenModal}
+            >
+              <Text style={styles.signButtonText}>Assinar novamente</Text>
+            </TouchableOpacity>
+            </View>
+              </>
+            ) : (
+              <View className="flex w-full">
+                <Header
+                  title="Assinar Documentos"
+                  leftIcon="back"
+                  leftAction={() => navigation.goBack()}
+                />
+                <TimelineFront currentStep={3} showProgress={true} />
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  pagingEnabled
+                  snapToAlignment="center"
+                  className="w-full"
+                >
+                  <AdmissionalContract
+                    CPF={CPF}
+                    jobConected={jobConected}
+                    setLockSignature={setLockSignature}
+                    lockSignature={lockSignature}
+                  />
+                </ScrollView>
+
+                {signature && (
                   <View className="flex justify-center items-center min-h-min">
                     <Text className="text-lg font-semibold mb-5 mt-5">
                       Assinatura Salva:
                     </Text>
-                    <WebView
-                      style={{ width: 200, height: 200 }}
-                      originWhitelist={["*"]}
-                      source={{ html: atob(signature.split(",")[1]) }}
-                    />
                   </View>
-                ) : (
-                  <>
-                    <Text className="text-center text-gray-600 mt-4 mb-2 px-4">
-                      Para assinar é necessário visualizar todos os documentos
-                    </Text>
-                    <TouchableOpacity
-                      className="bg-red-500 py-3 px-6 rounded-lg items-center mt-2 mx-4"
-                      onPress={handleOpenModal}
-                    >
-                      <Text className="text-white text-lg font-semibold">
-                        Assinar
-                      </Text>
-                    </TouchableOpacity>
-                  </>
                 )}
               </View>
             )}
@@ -246,12 +232,24 @@ const Timeline = ({ jobConected, CPF }) => {
         )}
       </ScrollView>
 
-      {/* <DrawingModal
-        visible={modalVisible}
-        onClose={handleCloseModal}
-        onSaveSignature={(signature) => setSignature(signature)} // Recebe a assinatura gerada
-        id={jobConected[0].id}
-      /> */}
+      {currentStep === 3 && !signatureFound?.status && (
+        <View className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200">
+          {!Object.values(lockSignature || {}).every(
+            (value) => value === true
+          ) ? (
+            <Text className="text-center text-gray-600 mb-2">
+              Para assinar é necessário visualizar todos os documentos
+            </Text>
+          ) : (
+            <TouchableOpacity
+              style={[styles.signButton, { marginHorizontal: 0 }]}
+              onPress={handleOpenModal}
+            >
+              <Text style={styles.signButtonText}>Assinar</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
 
       <SignatureAdmission
         jobId={jobConected[0].id}
@@ -262,8 +260,23 @@ const Timeline = ({ jobConected, CPF }) => {
         id={jobConected[0].id}
         where="Admission_Signature"
       />
-    </>
+    </View>
   );
+};
+
+const styles = {
+  signButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  signButtonText: {
+    color: COLORS.dark,
+    fontSize: 18,
+    fontWeight: "600",
+  },
 };
 
 export default Timeline;

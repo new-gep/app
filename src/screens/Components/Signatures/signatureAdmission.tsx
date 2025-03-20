@@ -24,7 +24,7 @@ const SignatureAdmission = ({
   const handleCanvas = (canvas) => {
     if (canvas) {
       canvas.width = Dimensions.get("window").width;
-      canvas.height = Dimensions.get("window").height * 0.7; // 70% da altura da tela
+      canvas.height = Dimensions.get("window").height - 65; // Altura total menos espaço para botões
       const ctx = canvas.getContext("2d");
 
       // Configurações de estilo do contexto
@@ -94,118 +94,82 @@ const SignatureAdmission = ({
 
   const saveCanvas = async () => {
     try {
-        if (canvasRef.current) {
-          const dataURL = await canvasRef.current.toDataURL();
-          let base64Data;
-        // Verifica se dataURL foi gerado corretamente
+      if (canvasRef.current) {
+        // Obter o dataURL do canvas
+        const dataURL = await canvasRef.current.toDataURL();
+        // console.log("dataURL", dataURL);
+        
         if (!dataURL) {
-          alert("Não foi possível gerar a assinatura. Tente novamente.");
+          console.log("Erro", "Não foi possível gerar a assinatura. Tente novamente.");
           return;
         }
 
-        // if(dataURL.includes('data:image/png;base64,')) {
-
-        //    base64Data = dataURL.split(",")[1]; // Remove o prefixo
-      
-        // } 
-
-        // if (!base64Data) {
-        //   alert("Formato da assinatura inválido. Tente novamente.");
-        //   return;
-        // }
-        
-        // Gera o nome do arquivo de acordo com a tela de origem
-        const currentDate = new Date();
+        // Gera o nome do arquivo
         const fileName = `Signature_Admission_${id}`;
      
-        // Enviar para o backend
-        console.log("idJob", jobId);
+        // Preparar dados para upload
         const props = {
-          file: dataURL, // Agora só o Base64 puro
+          file: dataURL,
           id: jobId,
           dynamic: fileName,
           name: 'admission_signature',
-          type: 'Admission_Signature',
-          status: 'pending',
-
+          signature: true // Adicionando flag de assinatura
         };
-        // console.log('Dados sendo enviados para upload:', props.dynamic);
-    
-        // console.log("Dados sendo enviados para upload:", props.id);
 
         const response = await uploadFile(props);
-        console.log('Dados sendo enviados para upload:', response);
-        // return;
+        
         if (response?.status === 200) {
+          // Criar registro da imagem após upload bem sucedido
+          const pictureProps = {
+            picture: `Signature_Admission`,
+            status: "pending",
+            cpf: cpf,
+            id_work: id,
+          };
+
+          const pictureResponse = await CreateAvalidPicture(pictureProps);
+
+          if (pictureResponse.status === 409) {
+            const responseUpdate = await UpdatePicture(cpf, pictureProps);
+            if (responseUpdate.status === 200) {
+              Alert.alert("Sucesso", "Assinatura atualizada com sucesso!");
+              onClose(false);
+              return;
+            }else{
+              Alert.alert("Erro", "Ocorreu um erro ao atualizar a assinatura. Tente novamente.");
+              return;
+            }
+          }
+
+          Alert.alert("Sucesso", "Assinatura salva com sucesso!");
+          onClose(false);
           onSaveSignature(fileName);
         } else {
-          alert("Ocorreu um erro ao enviar o arquivo. Tente novamente.");
+          Alert.alert("Erro", "Ocorreu um erro ao enviar a assinatura. Tente novamente.");
         }
       }
     } catch (error) {
-      console.error("Erro ao enviar o arquivo:", error);
-      alert("Ocorreu um erro inesperado. Verifique sua conexão e tente novamente.");
+      console.error("Erro ao processar assinatura:", error);
+      Alert.alert(
+        "Erro", 
+        "Ocorreu um erro ao salvar a assinatura. Por favor, tente novamente."
+      );
     }
-
-    const currentDate = new Date();
-    const pictureProps = {
-      picture: `Signature_Admission`,
-      status: "pending",
-      cpf: cpf,
-      id_work: id,
-    };
-    console.log("pictureProps", pictureProps)
-   
-     let response = await CreateAvalidPicture(pictureProps);
-
-    console.log('Dados sendo enviados para CreateAvalidPicture:', response);
-
-    // Se já existir, atualiza
-    if (response.status === 409) {
-      const responseUpdate = await UpdatePicture(cpf, pictureProps);
-      if (responseUpdate.status === 200) {
-        Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
-          {
-            text: "OK",
-          },
-        ]);
-        onClose(false);
-      }
-      return;
-    }
-
-    Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
-      {
-        text: "OK",
-        onPress: () => {
-          // Nada acontece ao pressionar OK
-        },
-      },
-    ]);
-
-    onClose(false);
   };
-
 
   return (
     <Modal visible={visible} animationType="slide" transparent={false}>
       <View className="flex-1 bg-white">
-        {/* Área de assinatura */}
+        {/* Área de assinatura ocupando toda a tela */}
         <View className="flex-1 w-full" {...panResponder.panHandlers}>
           <Canvas
             ref={handleCanvas}
-            className="flex-1 w-full h-full bg-gray-200"
+            className="flex-1 w-full h-full bg-gray-100"
           />
         </View>
 
-        {/* Botões na parte inferior */}
-        <View
-          className={`flex ${
-            Dimensions.get("window").width > Dimensions.get("window").height
-              ? "flex-col"
-              : "flex-row"
-          } justify-around items-center bg-white p-4`}
-        >
+        {/* Botões fixos na parte inferior */}
+        <View className="flex-row justify-around items-center bg-white p-4 border-t border-gray-200">
           <ButtonOutline
             onPress={clearCanvas}
             color="red"

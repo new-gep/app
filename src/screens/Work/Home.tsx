@@ -147,7 +147,7 @@ export default function HomeWork({
   return (
     <View className="flex-1 bg-white">
       {loading ? (
-        <View className="flex-1 justify-center items-center">
+        <View className="flex-1">
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
       ) : (
@@ -174,11 +174,9 @@ export default function HomeWork({
             <ScrollView
               className="flex-1"
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 20 }}
             >
-              <View className="items-center w-full h-400 mt-20">
+              <View className="flex-row w-full bg-black">
                 <ImageSwiper
-                  className="w-full h-full"
                   data={SwiperData}
                   onItemPress={(item) => {
                     if (item.route) {
@@ -219,7 +217,7 @@ export default function HomeWork({
                         <View className="flex-row items-center gap-4">
                           <Image
                             source={data.image}
-                            className="w-12 h-12"
+                            className="w-8 h-8"
                             tintColor="#2f2f2f"
                           />
                           <View>

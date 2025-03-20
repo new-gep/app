@@ -63,7 +63,7 @@ const ImageSwiper = ({ data } : any) => {
         }
 
         return (
-          <View key={index} style={{ width: SIZE,}}>
+          <View key={index} style={{ width: SIZE, marginRight: 150, marginLeft: -50 }}>
             {/* <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/> */}
             <Animated.View style={[style]}>
               <TouchableOpacity

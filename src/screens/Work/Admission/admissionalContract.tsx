@@ -48,7 +48,7 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
             await delete combined.medical;
             // console.log("combined apos delete medical", combined);
             setLockSignature(combined);
-            console.log('inicio')
+            // console.log('inicio')
             // Preparar documentos obrigatórios
             const obligationDocuments = await Promise.all(Object.keys(obligations).map(async (key) => {
               const response = await FindFile(jobConected[0].id, key, false);
@@ -60,7 +60,7 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
                 typeDocument: response.type,
               };
             }));
-            console.log('fim')
+            // console.log('fim')
             setObligationDocs(obligationDocuments);
 
 

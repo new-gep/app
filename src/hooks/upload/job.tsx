@@ -74,7 +74,7 @@ export default async function uploadFile(propsUploadJob) {
       },
     });
 
-    console.log("Resposta do servidor:", response.data);
+    // console.log("Resposta do servidor:", response.data);
 
     // Verificando a resposta do servidor
     return response.data;

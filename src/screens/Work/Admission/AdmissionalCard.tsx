@@ -22,12 +22,14 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
 
   const handleOpenModalDoc = () => {
     setModalVisibleDoc(!modalVisibleDoc);
-    setIsViewed(true);
-    const test = {
-      ...lockSignature,
-      [title]: true,
-    };
-    setLockSignature(test);
+    if (!isViewed) {
+      setIsViewed(true);
+      const updatedLockSignature = {
+        ...lockSignature,
+        [title]: true,
+      };
+      setLockSignature(updatedLockSignature);
+    }
   };
 
   const Mask = (type, value) => {
