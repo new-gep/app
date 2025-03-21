@@ -48,14 +48,15 @@ const DismissalHomeCompany = () => {
 
         // Configuração do documento de carta de demissão
         const documentInfo = await GetDocumentInfo("Dismissal_Hand");
-        let document_params = {
-          path: documentInfo?.path,
-          DocumentName: "Carta a Punho",
+        if(documentInfo){
+          let document_params = {
+            path: documentInfo?.path,
+            DocumentName: "Carta a Punho",
           sendDocument: true,
           typeDocument: documentInfo?.type,
           twoPicture: false,
           statusDocument: null,
-        };
+          };
 
         const dismissalDoc = response.pictures.find(
           (pic: { picture: string; status: string }) =>
@@ -72,9 +73,10 @@ const DismissalHomeCompany = () => {
         setProcess(true);
 
         // Verifique se statusDocument é "approved" e navegue para DismissalSteps
-        if (document_params.statusDocument === "approved") {
-          navigation.navigate("DismissalSteps");
-        }
+        // if (document_params.statusDocument === "approved") {
+        //   navigation.navigate("DismissalSteps");
+        // }
+      }
       } else {
         setError(true);
       }
@@ -107,7 +109,7 @@ const DismissalHomeCompany = () => {
         if (response.status == 200) {
           if (response.collaborator.id_work) {
             setIdWork(response.collaborator.id_work);
-            // console.log("setIdWork:", idWork);
+            console.log("setIdWork:", idWork);
           }
         }
       }
@@ -116,20 +118,20 @@ const DismissalHomeCompany = () => {
   }, [collaborator]);
 
   React.useEffect(() => {
-    if (collaborator) {
+    if (collaborator && idWork) {
       Picture();
     }
-  }, [collaborator, process]);
+  }, [collaborator, process, idWork]);
 
   return (
     <>
-      <View className={`p-3 mt-5`}>
+      <View>
         <View
-          className={`mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-between`}
+          className={`bg-primary w-full p-3 rounded-xl flex-row justify-between`}
         >
-          <View className={`w-2/4`}>
+          <View className={`w-full`}>
             <Text
-              className={`absolute w-44`}
+              className={`absolute w-full`}
               style={{
                 ...FONTS.fontSemiBold,
                 fontSize: 22,
@@ -137,25 +139,14 @@ const DismissalHomeCompany = () => {
                 marginTop: -38,
               }}
             >
-              Documentação
+              Carta de Demissão
             </Text>
             <Text
               className={`mt-2`}
               style={{ ...FONTS.fontRegular, fontSize: 14 }}
             >
-              Envie sua carta de demissão para iniciar o processo
+              Envie sua carta a punho para iniciar o processo, uma vez enviada, não será possível alterar e caso seja necessário, será necessário solicitar um novo processo.
             </Text>
-          </View>
-          <View className={`w-2/4`}>
-            <Image
-              source={IMAGES.unique14}
-              style={{
-                height: height * 0.3,
-                width: width * 0.5,
-                resizeMode: "contain",
-                marginTop: -120,
-              }}
-            />
           </View>
         </View>
       </View>

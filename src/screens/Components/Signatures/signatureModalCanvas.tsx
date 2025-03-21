@@ -129,6 +129,7 @@ const SignatureModalCanvas = ({
           dynamic: fileName,
           name: where === "Point" ? 'point_signature' : 'paystub_signature',
         };
+        console.log("props", props)
         // console.log('Dados sendo enviados para upload:', props.dynamic);
     
         // console.log("Dados sendo enviados para upload:", props.id);
@@ -169,7 +170,7 @@ const SignatureModalCanvas = ({
       id_work: jobId,
     };
 
-    console.log('Dados sendo enviados para CreateAvalidService:', serviceProps); 
+   
 
     // Verifica se é PayStub ou Point para usar o serviço correto
     let response;
@@ -179,7 +180,7 @@ const SignatureModalCanvas = ({
       response = await CreateAvalidPicture(pictureProps);
     }
 
-    console.log('Dados sendo enviados para CreateAvalidService:', response);
+   
 
     // Se já existir, atualiza
     if (response.status === 409) {

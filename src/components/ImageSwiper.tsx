@@ -5,7 +5,6 @@ import { COLORS, FONTS } from '../constants/theme';
 import { useNavigation } from '@react-navigation/native';
 import DevelopmentModal from './Modal/Development';
 
-
 const ImageSwiper = ({ data } : any) => {
   const [isShowDevelopment,setIsShowDevelopment] = useState<boolean>(false)
   const [newData] = useState([
@@ -15,7 +14,7 @@ const ImageSwiper = ({ data } : any) => {
   ]);
   
   const { width } = useWindowDimensions();
-  const SIZE = width * 0.5;
+  const SIZE = width * 0.7; // Aumentei o tamanho do card para melhor visualização
   const SPACER = (width - SIZE) / 2;
   const x = useSharedValue(0);
 
@@ -39,8 +38,9 @@ const ImageSwiper = ({ data } : any) => {
       decelerationRate="fast"
       onScroll={onScroll}
       contentContainerStyle={{
-        paddingTop:80,
-        paddingBottom:50
+     // Adicionei padding horizontal para centralizar
+        paddingTop: 25,
+        paddingBottom: 10
       }}
     >
       {newData.map((item, index) => {
@@ -63,9 +63,9 @@ const ImageSwiper = ({ data } : any) => {
         }
 
         return (
-          <View key={index} style={{ width: SIZE, marginRight: 150, marginLeft: -50 }}>
+          <View key={index} style={{ width: SIZE, justifyContent: 'center', alignItems: 'center' }}>
             {/* <DevelopmentModal close={closeDevelopment} visible={isShowDevelopment}/> */}
-            <Animated.View style={[style]}>
+            <Animated.View style={[style, { width: '100%', alignItems: 'center' }]}>
               <TouchableOpacity
                 activeOpacity={.9}
                 onPress={() => navigation.navigate(item.route, {
@@ -75,7 +75,7 @@ const ImageSwiper = ({ data } : any) => {
                 })}
                 style={{ 
                   height: 352, 
-                  width: 266, 
+                  width: '90%', 
                   backgroundColor: COLORS.primary, 
                   borderRadius: 31,
                   shadowColor: "#025135",
@@ -90,14 +90,14 @@ const ImageSwiper = ({ data } : any) => {
               >
                 <View style={{alignItems:'center'}}>
                   <Image
-                    style={{ height:210,width:210,resizeMode:'contain',marginTop:-80}}
+                    style={{ height:210,width:210,resizeMode:'contain'}}
                     source={item.image}
                   />
                 </View>
                 <View style={{paddingHorizontal:25}}>
                   <Text style={{...FONTS.fontSemiBold,fontSize:20,color:COLORS.dark,}}>{item.title}</Text>
                   <View style={{flexDirection:'row',alignItems:'flex-start',gap:5,marginTop:10}}>
-                      <Text style={{...FONTS.fontMedium,fontSize:17,color:COLORS.dark,}}>{item.subtitle}</Text>
+                      <Text style={{...FONTS.fontMedium,fontSize:15,color:COLORS.dark,}}>{item.subtitle}</Text>
                   </View>
                 </View>
               </TouchableOpacity>

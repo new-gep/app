@@ -21,6 +21,7 @@ import FindCollaborator from "../../../../hooks/findOne/collaborator";
 import FindFile from "../../../../hooks/get/job/findFile";
 import FindOneJob from "../../../../hooks/get/job/findOne";
 import GetColaboratorJob from "../../../../hooks/get/job/findJobColaborator";
+import TimelineDemission from "../../../../components/Timeline/TimelineDemission";
 
 const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) => {
   const theme = useTheme();
@@ -109,25 +110,18 @@ const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) 
   };
 
   React.useEffect(() => {
-    if (collaborator) {
+
+    if (collaborator && jobConected) {
       Picture();
     }
-  }, [collaborator, process]);
+  }, [collaborator, process, jobConected]);
 
 
   return (
-    <View style={{ marginTop: 50, padding: 20, backgroundColor: theme.colors.background }}>
+    <View>
+      <TimelineDemission currentStep={2} showProgress={true} />
+
       <View className="flex-row items-center mb-5">
-        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
-          <View className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center shadow">
-            <Text
-              style={{ ...FONTS.fontMedium, fontSize: 20, lineHeight: 20 }}
-              className="text-center"
-            >
-              ←
-            </Text>
-          </View>
-        </TouchableOpacity> */}
         <Text
           className="text-2xl font-semibold text-gray-900 dark:text-white flex-1 text-center"
           style={{ ...FONTS.fontSemiBold, marginLeft: 10 }}
@@ -138,15 +132,7 @@ const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) 
       
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className={`px-2 w-full mt-10`}>
-          <View className={`w-full h-80 items-center justify-center mb-5`}>
-            <Image
-              source={IMAGES.unique13}
-              resizeMode="contain"
-              className={`h-full w-full`}
-            />
-          </View>
-
+        <View className={`px-2 w-full`}>
           {myDocsData?.map((data: any) => (
             <View key={data.DocumentName} style={{ marginBottom: 30 }}>
               <Cardstyle4
@@ -161,6 +147,14 @@ const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) 
             </View>
           ))}
         </View>
+
+        <View className={`w-full h-80 items-center justify-center`}>
+            <Image
+              source={IMAGES.unique13}
+              resizeMode="contain"
+              className={`h-full w-full`}
+            />
+          </View>
       </ScrollView>
       {error && <Text style={{ color: 'red', textAlign: 'center' }}>Erro ao carregar documentos.</Text>}
     </View>

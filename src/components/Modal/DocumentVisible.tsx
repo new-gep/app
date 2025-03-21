@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View, Text, Image, ActivityIndicator } from "react-native";
+import { TouchableOpacity, View, Text, Image, ActivityIndicator, Dimensions, ScrollView,  } from "react-native";
 import Modal from "react-native-modal";
 import { FONTS } from "../../constants/theme";
 import { IMAGES } from "../../constants/Images";
 import WebView from "react-native-webview";
 import * as FileSystem from 'expo-file-system';
-import React from "react";
 import Pdf from "react-native-pdf";
 import { COLORS } from "../../constants/theme"; // Adicione esta importação
 
-type Props = {
+type Props = {  
     typeDocument: string;
     twoPicture: boolean;
     visible: boolean;
@@ -17,6 +16,8 @@ type Props = {
     documentName: string
     close: () => void;
 };
+
+const { width, height } = Dimensions.get("window");
 
 const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, documentName }: Props) => {
     const [viewingSide, setViewingSide] = useState<'front' | 'back' | null>(null);
@@ -90,12 +91,12 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, docum
                 {typeDocument === 'picture' ? (
                     <>
                         {!twoPicture && !loading && (
-                            <View className="w-full bg-white rounded-t-3xl p-4">
+                            <View className="w-full h-full bg-white  p-4">
                                 <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
                                     {documentName}
                                 </Text>
                                 <Image 
-                                    className="w-full h-full object-contain" 
+                                    style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }}
                                     source={{ uri: pathOne }}
                                 />
                             </View>
@@ -123,15 +124,15 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, docum
                             </View>
                         )}
                         {!loading && viewingSide && (
-                            <View className="w-full bg-white rounded-t-3xl p-4">
+                            <View className="w-full h-full bg-white p-4">
                                 <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
                                     {documentName} - {viewingSide === 'front' ? 'Frente' : 'Verso'}
                                 </Text>
                                 {viewingSide === 'front' && (
-                                    <Image className="w-full h-full object-contain" source={{ uri: pathFront }} />
+                                    <Image style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }} source={{ uri: pathFront }} />
                                 )}
                                 {viewingSide === 'back' && (
-                                    <Image className="w-full h-full object-contain" source={{ uri: pathBack }} />
+                                    <Image style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }} source={{ uri: pathBack }} />
                                 )}
                             </View>
                         )}

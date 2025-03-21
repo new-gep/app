@@ -42,10 +42,11 @@ type Props = {
     setSendPicture:any;
     setPath:any;
     jobId:any;
+    setStatusDocument:any;
 };
 
 
-const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close }: Props) => {
+const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close, setStatusDocument }: Props) => {
     const navigation = useNavigation<any>();
     const [front,setFront] = useState<any | null>(null)
     const [back ,setBack]  = useState<any | null>(null)
@@ -228,15 +229,14 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
             };
 
             if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand' && documentName.toLowerCase() != 'dismissal_medical_examination'){
-                console.log("path", path)
                 const response = await UploadFile(path, documentName, doc, collaborator.CPF);
-                console.log("response", response)
                 if (response.status === 400) {
                     setActiveSheet('danger');
                     setMessageSheet(`Documento inválido`);
                     Sheet();
                     setFront(null);
                     setBack(null);
+
                     setLoad(false)
                     throw new Error('Documento inválido');
                 }
@@ -266,6 +266,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         setSendPicture(false)
                         setPath(path)
                         setTypeDocument(type)
+                        if(setStatusDocument){
+                            setStatusDocument('pending')
+                        }
                         setActiveSheet('success');
                         setMessageSheet(`Documento Atualizado`);
                         Sheet();
@@ -452,6 +455,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                                     setPath([front,back])
                                     setTypeDocument('picture')
                                     setActiveSheet('success');
+                                    if(setStatusDocument){
+                                        setStatusDocument('pending')
+                                    }
                                     setMessageSheet(`Documento Atualizado`);
                                     Sheet();
                                     setLoad(false)
@@ -492,6 +498,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                                     setPath([front,back])
                                     setTypeDocument('picture')
                                     setActiveSheet('success');
+                                    if(setStatusDocument){
+                                        setStatusDocument('pending')
+                                    }
                                     setMessageSheet(`Documento salvo`);
                                     Sheet();
                                     setLoad(false)

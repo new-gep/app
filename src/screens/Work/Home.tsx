@@ -175,7 +175,7 @@ export default function HomeWork({
               className="flex-1"
               showsVerticalScrollIndicator={false}
             >
-              <View className="flex-row w-full bg-black">
+              <View className="flex-row w-full ">
                 <ImageSwiper
                   data={SwiperData}
                   onItemPress={(item) => {
@@ -189,17 +189,18 @@ export default function HomeWork({
                 />
               </View>
               <View>
-                <View className="px-8 mt-20">
+                <View className="px-8 mt-5">
                   <Text className="text-lg font-medium text-gray-800">
                     Categorias
                   </Text>
                 </View>
                 <ScrollView
+                  className="mt-2"
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={{ paddingHorizontal: 30 }}
                 >
-                  <View className="flex-row items-center gap-8 mr-6 mb-8">
+                  <View className="flex-row items-center gap-8 mr-6">
                     {ArrivalData.map((data: any, index) => (
                       <TouchableOpacity
                         key={index}
@@ -212,16 +213,16 @@ export default function HomeWork({
                             });
                           }
                         }}
-                        className="bg-white rounded-2xl p-6 border border-gray-100 shadow-md w-48"
+                        className="bg-dark rounded-[16px] w-52 py-3 border border-gray-300 shadow-sm"
                       >
-                        <View className="flex-row items-center gap-4">
+                        <View className="flex-row items-center px-4">
                           <Image
                             source={data.image}
-                            className="w-8 h-8"
-                            tintColor="#2f2f2f"
+                            className="w-8 h-8 "
+                            tintColor="#fde047"
                           />
-                          <View>
-                            <Text className="text-lg font-medium text-gray-800">
+                          <View className="flex-1 px-5 items-center">
+                            <Text className="text-lg font-semibold text-primary">
                               {data.title}
                             </Text>
                             <Text className="text-base text-primary">
@@ -229,6 +230,7 @@ export default function HomeWork({
                             </Text>
                           </View>
                         </View>
+                        
                       </TouchableOpacity>
                     ))}
                   </View>

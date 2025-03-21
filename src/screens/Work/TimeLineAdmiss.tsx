@@ -102,7 +102,6 @@ const Timeline = ({ jobConected, CPF }) => {
           const signatureFound = response.pictures.find(
             (pic) => pic.picture === "Signature_Admission"
           );
-          console.log("signatureFounddddddddddddddddddddddddd", signatureFound);
           // console.log("response do signatureFound", signatureFound.status);
           setSignatureFound(signatureFound);
         } else {

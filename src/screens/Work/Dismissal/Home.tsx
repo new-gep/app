@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { FONTS } from "../../../constants/theme";
+import { COLORS, FONTS } from "../../../constants/theme";
 import DismissalCard from "../../../components/Card/DismissalCard";
 import { useNavigation } from "@react-navigation/native";
 import Cardstyle4 from "../../../components/Card/Cardstyle4";
@@ -27,6 +27,10 @@ import Medical from "./Step/Medical";
 import Signature from "./Step/Signature";
 import FindOneJob from "../../../hooks/get/job/findOne";
 import CheckDocumentAdmissional from "../../../hooks/get/job/checkSignaure";
+import Header from "../../../layout/Header";
+import Button from '../../../components/Button/Button'
+
+const { width, height } = Dimensions.get("window");
 
 const DismissalHome = () => {
   const theme = useTheme();
@@ -48,6 +52,10 @@ const DismissalHome = () => {
   }, [navigation]);
 
   useEffect(() => {
+    console.log("currentStep", currentStep)
+  }, [currentStep])
+  
+  useEffect(() => {
     const fetchData = async () => {
       if (collaborator) {
         const response = await FindCollaborator(collaborator.CPF);
@@ -57,6 +65,7 @@ const DismissalHome = () => {
             const responseJob = await FindOneJob(response.collaborator.id_work)
             if (responseJob.status == 200){
               const response = JSON.parse(responseJob.job.demission);
+              console.log("response", response.step)
               setCurrentStep(response.step);
               setSolicitationType(response.solicitation)
               setJobConected(responseJob.job)
@@ -72,7 +81,7 @@ const DismissalHome = () => {
 
 
   return (
-    <View className="flex-1 bg-white dark:bg-gray-900">
+    <View className="flex-1 bg-white ">
       {error ? (
         <View className={`mt-10 items-center`}>
           <Text style={{ ...FONTS.fontMedium }} className={`text-danger`}>
@@ -87,26 +96,12 @@ const DismissalHome = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
         >
+          <Header
+            title="Desligamento"
+            leftIcon="back"
+            leftAction={() => navigation.goBack()}
+          />
           <View className="px-5 mt-14">
-            <View className="flex-row items-center mb-5">
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <View className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center">
-                  <Text
-                    style={{ ...FONTS.fontMedium, fontSize: 20, lineHeight: 20 }}
-                    className="text-center"
-                  >
-                    ←
-                  </Text>
-                </View>
-              </TouchableOpacity>
-
-              <Text
-                className="text-2xl font-semibold text-gray-900 dark:text-white flex-1 text-center -ml-10"
-                style={FONTS.fontSemiBold}
-              >
-                {solicitationType === 'company' ? 'Desligamento pela empresa' : 'Desligamento pelo colaborador'}
-              </Text>
-            </View>
 
 
             {currentStep === 1 && (
@@ -116,18 +111,48 @@ const DismissalHome = () => {
                 solicitationType == 'collaborator'? 
                 <Collaborator/> 
                 :
-                <Text>
+                <View className="h-full items-center justify-between">
+                  <View className="w-full items-center justify-center">
+                      <Text
+                      className="text-center"
+                      style={{
+                        ...FONTS.fontSemiBold,
+                        fontSize: 18,
+                        color: COLORS.title,
+                      }}
+                    >
+                      Nada por aqui!
+                    </Text>
+                    <Text className="text-center text-sm text-gray-400 font-normal text-center">
+                      Você não está em um processo de demissão
+                    </Text>
+                  </View>
+                  
+                  <View className="w-full h-1/2">
+                    <Image 
+                      source={IMAGES.unique18} 
+                      style={{ width: '100%', height: '100%' }}
+                      resizeMode="contain"
+                    />
+                  </View>
 
-                  Você não está em um processo de demissão;
-                </Text>
+                  <View className="mb-5">
+                  <Button 
+                        title={"Solicitar Desligamento"}
+                        onPress={() => setSolicitationType('collaborator')}
+                        text ={COLORS.title}
+                        color={COLORS.primary}
+                        style={{borderRadius:52 , width: width * 0.7}}
+                    />
+                  </View>
+                </View>
             )}
-            {currentStep === 2 && (
-                <Medical
-                  jobConected={jobConected}
-                  CPF={collaborator.CPF}
-                />
+            {currentStep === 2 && collaborator && collaborator.CPF && (
+              <Medical
+                jobConected={jobConected}
+                CPF={collaborator.CPF}
+              />
             )}
-
             {currentStep === 3 && collaborator && collaborator.CPF &&(
               <Signature 
                 jobConected={jobConected} 
