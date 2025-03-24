@@ -26,9 +26,11 @@ const WaitingIndicatorDismissal: React.FC<WaitingIndicatorProps> = ({ visible, s
     <View className="flex-1 bg-white">
       <View className="flex-1 justify-center items-center p-6">
         <Text className="text-2xl font-bold text-gray-800 text-center mb-8">
-          Aguardando retorno da empresa
+          Aguarde
         </Text>
-        
+        <Text className="text-gray-600 text-sm font-bold text-center">
+          {getMessage()}
+        </Text>
         <View className="w-full h-90%  aspect-square mb-8">
           <Image 
             source={require('../../../../assets/images/gif/Timemanagement.gif')}
@@ -37,15 +39,13 @@ const WaitingIndicatorDismissal: React.FC<WaitingIndicatorProps> = ({ visible, s
           />
         </View>
 
-        <Text className="text-gray-800 text-xl font-bold text-center">
-          {getMessage()}
-        </Text>
+        
 
         <TouchableOpacity 
           onPress={() => navigation.navigate('Home')}
           className="mt-20"
         >
-          <Text className="text-gray-900 underline text-lg">
+          <Text className="text-gray-900 underline text-sm">
             Enquanto aguarda, que tal ver novas vagas?
           </Text>
         </TouchableOpacity>

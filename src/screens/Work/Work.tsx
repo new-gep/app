@@ -130,8 +130,8 @@ const Work = () => {
         console.log(cpfString)
         const response = await FindCollaborator(cpfString);
         
-        setHaswork(response.collaborator.id_work);
-        // console.log("response", response.collaborator.id_work)
+        setHaswork(response.collaborator.id_work ? response.collaborator.id_work : false);
+        console.log("response", response.collaborator.id_work)
         setCPF(cpfString);
         if (response.status === 200) {
           const responseJob = await FindOneJob(collaborator.id_work);

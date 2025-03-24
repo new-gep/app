@@ -154,23 +154,29 @@ const Timeline = ({ jobConected, CPF }) => {
         )}
         {currentStep === 3 && (
           <>
-            {signatureFound && signatureFound?.status === "approved" || signatureFound?.status === "pending" ? (
+            {(signatureFound && signatureFound?.status === "approved") ||
+            signatureFound?.status === "pending" ? (
               <View className="w-full h-full">
                 <WaitingIndicator visible={true} status={"pending"} />
               </View>
             ) : signatureFound?.status === "reproved" ? (
               <>
                 <Header
-                  title="Revisar documentação" 
+                  title="Revisar documentação"
                   leftIcon="back"
                   leftAction={() => navigation.goBack()}
                 />
-                <TimelineFront currentStep={3} showProgress={true} status={"pending"} />
+                <TimelineFront
+                  currentStep={3}
+                  showProgress={true}
+                  status={"pending"}
+                />
                 {/* <Image source={require("../../assets/images/brand/reproved.png")} style={{ width: 200, height: 200 }} /> */}
                 <Text className="text-center text-gray-500 font-semibold mt-16 mb-2 px-4">
-                  Sua documentação foi reprovada. Por favor, revise os documentos e tente novamente.
+                  Sua documentação foi reprovada. Por favor, revise os
+                  documentos e tente novamente.
                 </Text>
-                
+
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -186,14 +192,14 @@ const Timeline = ({ jobConected, CPF }) => {
                   />
                 </ScrollView>
 
-              <View className="mt-24">
-                <TouchableOpacity
-              style={[styles.signButton, { marginHorizontal: 0 }]}
-              onPress={handleOpenModal}
-            >
-              <Text style={styles.signButtonText}>Assinar novamente</Text>
-            </TouchableOpacity>
-            </View>
+                <View className="mt-24">
+                  <TouchableOpacity
+                    style={[styles.signButton, { marginHorizontal: 0 }]}
+                    onPress={handleOpenModal}
+                  >
+                    <Text style={styles.signButtonText}>Assinar novamente</Text>
+                  </TouchableOpacity>
+                </View>
               </>
             ) : (
               <View className="flex w-full">

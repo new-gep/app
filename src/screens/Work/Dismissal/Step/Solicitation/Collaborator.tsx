@@ -48,35 +48,48 @@ const DismissalHomeCompany = () => {
 
         // Configuração do documento de carta de demissão
         const documentInfo = await GetDocumentInfo("Dismissal_Hand");
-        if(documentInfo){
+        console.log("documentInfo:", documentInfo);
+        if (documentInfo) {
           let document_params = {
             path: documentInfo?.path,
             DocumentName: "Carta a Punho",
+            sendDocument: true,
+            typeDocument: documentInfo?.type,
+            twoPicture: false,
+            statusDocument: null,
+          };
+
+          const dismissalDoc = response.pictures.find(
+            (pic: { picture: string; status: string }) =>
+              pic.picture === "Dismissal_Hand"
+          );
+          // console.log(document_params.statusDocument)
+
+          if (dismissalDoc) {
+            document_params.statusDocument = dismissalDoc.status;
+            document_params.sendDocument = dismissalDoc.status === "reproved";
+          }
+
+          console.log("document_params:", document_params);
+
+          setMyDocsData([document_params]);
+          setProcess(true);
+
+          // Verifique se statusDocument é "approved" e navegue para DismissalSteps
+          // if (document_params.statusDocument === "approved") {
+          //   navigation.navigate("DismissalSteps");
+          // }
+        }
+        let document_params = {
+          path: documentInfo?.path,
+          DocumentName: "Carta a Punho",
           sendDocument: true,
           typeDocument: documentInfo?.type,
           twoPicture: false,
           statusDocument: null,
-          };
-
-        const dismissalDoc = response.pictures.find(
-          (pic: { picture: string; status: string }) =>
-            pic.picture === "Dismissal_Hand"
-        );
-        // console.log(document_params.statusDocument)
-
-        if (dismissalDoc) {
-          document_params.statusDocument = dismissalDoc.status;
-          document_params.sendDocument = dismissalDoc.status === "reproved";
-        }
-
+        };
         setMyDocsData([document_params]);
-        setProcess(true);
-
-        // Verifique se statusDocument é "approved" e navegue para DismissalSteps
-        // if (document_params.statusDocument === "approved") {
-        //   navigation.navigate("DismissalSteps");
-        // }
-      }
+        return;
       } else {
         setError(true);
       }
@@ -109,7 +122,6 @@ const DismissalHomeCompany = () => {
         if (response.status == 200) {
           if (response.collaborator.id_work) {
             setIdWork(response.collaborator.id_work);
-            console.log("setIdWork:", idWork);
           }
         }
       }
@@ -145,7 +157,9 @@ const DismissalHomeCompany = () => {
               className={`mt-2`}
               style={{ ...FONTS.fontRegular, fontSize: 14 }}
             >
-              Envie sua carta a punho para iniciar o processo, uma vez enviada, não será possível alterar e caso seja necessário, será necessário solicitar um novo processo.
+              Envie sua carta a punho para iniciar o processo, uma vez enviada,
+              não será possível alterar e caso seja necessário, será necessário
+              solicitar um novo processo.
             </Text>
           </View>
         </View>

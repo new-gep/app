@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
 import CheckDocumentAdmissional from "../../../../hooks/get/job/checkSignaure";
 import AdmissionalCard from "../../Admission/AdmissionalCard";
 import FindFile from "../../../../hooks/get/job/findFile";
@@ -14,11 +14,12 @@ import WaitingIndicator from "../../Admission/admissionalWaitingIndicator";
 import WaitingIndicatorDismissal from "./WaitingIndicator";
 import { default as useFocusEffect } from "@react-navigation/native";
 import FindPicture from "../../../../hooks/findOne/picture";
+import Header from "../../../../layout/Header";
+
 type Props = {
   jobConected: any;
   CPF: any;
 };
-
 
 const DismissalSignature = ({ jobConected, CPF }: Props) => {
   const [obligations, setObligations] = useState(null);
@@ -33,6 +34,8 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
   const [files, setFiles] = useState<any>(null);
   const [obligationDocs, setObligationDocs] = useState([]);
   const [dynamicDocs, setDynamicDocs] = useState([]);
+  const [viewedDocuments, setViewedDocuments] = useState<Set<string>>(new Set());
+  const [showWaitingScreen, setShowWaitingScreen] = useState(false);
 
   const handleCloseModal = () => {
     setModalVisible(false);
@@ -40,6 +43,19 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
 
   const handleOpenModal = () => {
     setModalVisible(true);
+  };
+
+  const handleDocumentViewed = (documentTitle: string) => {
+    setViewedDocuments(prev => new Set([...prev, documentTitle]));
+  };
+
+  const allDocumentsViewed = React.useMemo(() => {
+    return dynamicDocs.length > 0 && viewedDocuments.size >= dynamicDocs.length;
+  }, [dynamicDocs.length, viewedDocuments.size]);
+
+  const handleSaveSignature = (signatureData: string) => {
+    setSignature(signatureData);
+    setShowWaitingScreen(true);
   };
 
   useEffect(() => {
@@ -62,7 +78,10 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
                   0,
                   value
                 );
-                dynamicDismissal.title = value.toString().replace(/([A-Z])/g, ' $1').trim();
+                dynamicDismissal.title = value
+                  .toString()
+                  .replace(/([A-Z])/g, " $1")
+                  .trim();
                 return dynamicDismissal;
               })
             );
@@ -92,7 +111,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
             await Promise.all(
               Object.entries(combined).map(async ([key, value]) => {
                 const response = await FindFile(jobConected.id, key, value);
-                // console.log(`Arquivo encontrado jobConected`, jobConected.id); 
+                // console.log(`Arquivo encontrado jobConected`, jobConected.id);
                 files[key] = response;
               })
             );
@@ -111,22 +130,56 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
     const fetchData = async () => {
       const response = await FindPicture(CPF);
       if (response?.status === 200) {
-          const signatureFound = response.pictures.find(
-            (pic) => pic.picture === "Dismissal_Signature"
-          );
-          // console.log("response do signatureFound", signatureFound.status);
-          setSignatureFound(signatureFound);
+        const signatureFound = response.pictures.find(
+          (pic) => pic.picture === "Signature_Dismissal"
+        );
+        console.log("response do signatureFound", signatureFound.status);
+        setSignatureFound(signatureFound);
+      } else {
+        console.log("Erro ao buscar assinatura");
+      }
+    };
+    fetchData();
+  }, [CPF]);
 
-        } else {
-          console.log("Erro ao buscar assinatura");
-        }
-      };
-      fetchData();
-    }, [CPF])
+  if (showWaitingScreen) {
+    return (
+      <View className="flex-1">
+        <Header
+          title="Demissão"
+          leftIcon={"back"}
+          rightIcon2={"Edit"}
+        />
+        <View className="flex-1 mt-16">
+          <View className="w-full p-3 rounded-xl flex-row justify-center">
+            <View className="w-1/2 flex-1 p-4">
+              <Text
+                className="w-44"
+                style={{ fontWeight: "600", fontSize: 24 }}
+              >
+                Assinatura Enviada
+              </Text>
+              <Text className="mt-10" style={{ fontSize: 16 }}>
+                Sua assinatura foi enviada com sucesso! Por favor aguarde a aprovação.
+              </Text>
+            </View>
+          </View>
+
+          <View className="items-center mt-16">
+            <Image
+              source={require("../../../../assets/images/brand/Waiting.png")}
+              style={{ width: 250, height: 300 }}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <>
-      <ScrollView className="h-3/4">
+      <ScrollView className="h-full">
         {/* {dynamicDocs.map((doc, index) => (
           <DismissalCard
             key={`dynamic-${index}`}
@@ -145,10 +198,9 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
             </View>
           ) : signatureFound?.status === "reproved" ? (
             <>
-              <Text className="text-2xl font-bold text-center mb-6">
-                Revisar documentação
-              </Text>
               <View className="w-full">
+                <Text className="text-center text-red-500 text-lg font-semibold">Assinatura recusada</Text>
+                <Text className="text-center text-gray-600 text-sm">Por favor, assine os documentos novamente</Text>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -165,17 +217,27 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
                       status={doc.status}
                       path={doc.path}
                       typeDocument={doc.typeDocument}
+                      onDocumentViewed={handleDocumentViewed}
+                      
                     />
+                    
                   ))}
                 </ScrollView>
                 <Text className="text-center text-gray-600 mt-4 mb-2 px-4">
-                  Para assinar é necessário visualizar todos os documentos
+                  {!allDocumentsViewed 
+                    ? "Para assinar é necessário visualizar todos os documentos"
+                    : "Agora você pode assinar os documentos"}
                 </Text>
                 <TouchableOpacity
-                  className="bg-red-500 py-3 px-6 rounded-lg items-center mt-2 mx-4"
+                  className={`py-3 px-6 rounded-lg items-center mt-2 mx-4 ${
+                    allDocumentsViewed ? "bg-dark" : "bg-gray-400"
+                  }`}
                   onPress={handleOpenModal}
+                  disabled={!allDocumentsViewed}
                 >
-                  <Text className="text-white text-lg font-semibold">
+                  <Text className={`text-lg font-semibold ${
+                    allDocumentsViewed ? "text-primary" : "text-dark"
+                  }`}>
                     Assinar
                   </Text>
                 </TouchableOpacity>
@@ -183,9 +245,6 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
             </>
           ) : (
             <View className="flex w-full">
-              <Text className="text-2xl font-bold text-center mb-6">
-                Revisar documentação
-              </Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -194,14 +253,15 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
                 className="w-full"
               >
                 {dynamicDocs.map((doc, index) => (
-                    <DismissalCard
-                      key={`dynamic-${index}`}
-                      title={doc.title}
-                      status={doc.status}
-                      path={doc.path}
-                      typeDocument={doc.typeDocument}
-                    />
-                    ))}
+                  <DismissalCard
+                    key={`dynamic-${index}`}
+                    title={doc.title}
+                    status={doc.status}
+                    path={doc.path}
+                    typeDocument={doc.typeDocument}
+                    onDocumentViewed={handleDocumentViewed}
+                  />
+                ))}
               </ScrollView>
 
               {signature ? (
@@ -218,13 +278,20 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
               ) : (
                 <>
                   <Text className="text-center text-gray-600 mt-4 mb-2 px-4">
-                    Para assinar é necessário visualizar todos os documentos
+                    {!allDocumentsViewed 
+                      ? "Para assinar é necessário visualizar todos os documentos"
+                      : "Agora você pode assinar os documentos"}
                   </Text>
                   <TouchableOpacity
-                    className="bg-red-500 py-3 px-6 rounded-lg items-center mt-2 mx-4"
+                    className={`py-3 px-6 rounded-lg items-center mt-2 mx-4 ${
+                      allDocumentsViewed ? "bg-dark" : "bg-gray-400"
+                    }`}
                     onPress={handleOpenModal}
+                    disabled={!allDocumentsViewed}
                   >
-                    <Text className="text-white text-lg font-semibold">
+                    <Text className={`text-lg font-semibold ${
+                      allDocumentsViewed ? "text-primary" : "text-gray-600"
+                    }`}>
                       Assinar
                     </Text>
                   </TouchableOpacity>
@@ -235,15 +302,17 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
         </>
       </ScrollView>
 
-    { jobConected && jobConected.id &&
+      {jobConected && jobConected.id && (
         <SignatureModalCanvas
-        visible={modalVisible}
-        onClose={handleCloseModal}
-        onSaveSignature={setSignature}
-        cpf={CPF}
-        id={jobConected.id}
-        where="Dismissal_Signature"
-      />}
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          onSaveSignature={handleSaveSignature}
+          cpf={CPF}
+          id={jobConected.id}
+          where="Dismissal"
+          jobId={jobConected.id}
+        />
+      )}
     </>
   );
 };

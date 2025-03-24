@@ -16,6 +16,14 @@ const SignatureModalCanvas = ({
   cpf,
   where,
   jobId,
+}: {
+  visible: boolean;
+  onClose: (value: boolean) => void;
+  onSaveSignature: (value: string) => void;
+  id: string;
+  cpf: string;
+  where: string;
+  jobId: string;
 }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -94,9 +102,10 @@ const SignatureModalCanvas = ({
 
   const saveCanvas = async () => {
     try {
-        if (canvasRef.current) {
-          const dataURL = await canvasRef.current.toDataURL();
-          let base64Data;
+      if (canvasRef.current) {
+        const dataURL = await canvasRef.current.toDataURL();
+        let base64Data;
+        
         // Verifica se dataURL foi gerado corretamente
         if (!dataURL) {
           alert("Não foi possível gerar a assinatura. Tente novamente.");
@@ -127,20 +136,26 @@ const SignatureModalCanvas = ({
           file: dataURL, // Agora só o Base64 puro
           id: jobId,
           dynamic: fileName,
-          name: where === "Point" ? 'point_signature' : 'paystub_signature',
+          name: where === "Point" 
+            ? 'point_signature' 
+            : where === "PayStub"
+            ? 'paystub_signature'
+            : where === "Dismissal" 
+            ? 'dismissal_signature' 
+            : where,
         };
-        console.log("props", props)
+        // console.log("props", props)
         // console.log('Dados sendo enviados para upload:', props.dynamic);
-    
         // console.log("Dados sendo enviados para upload:", props.id);
 
         const response = await uploadFile(props);
-        console.log('Dados sendo enviados para upload:', response);
+        // console.log('Dados sendo enviados para upload:', response);
         // return;
         if (response?.status === 200) {
-          onSaveSignature(fileName);
+          // onSaveSignature(fileName);
         } else {
           alert("Ocorreu um erro ao enviar o arquivo. Tente novamente.");
+          return;
         }
       }
     } catch (error) {
@@ -151,10 +166,12 @@ const SignatureModalCanvas = ({
     const currentDate = new Date();
     const monthName = getMonthName(currentDate.getMonth() + 1);
     const pictureProps = {
-      picture: `Signature_${where}_${id}`,
-      status: "pending",
+      picture: where === "Dismissal" || where === "Communication" ? `Signature_${where}` : `Signature_${where}_${id}`,
+      status: "pending", 
       cpf: cpf,
+      id_work: jobId,
     };
+    
     const serviceProps = {
       name:
         where === "PayStub" || where === "Point"
@@ -176,8 +193,10 @@ const SignatureModalCanvas = ({
     let response;
     if (where === "PayStub" || where === "Point") {
       response = await CreateAvalidService(serviceProps);
+      
     } else {
       response = await CreateAvalidPicture(pictureProps);
+      console.log("response", response)
     }
 
    

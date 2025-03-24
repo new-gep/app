@@ -140,7 +140,21 @@ const Company = ({ jobConected, CPF }: Props) => {
 
   return (
     <>
-      <ScrollView className="h-3/4">
+    <View className="w-full items-center justify-center">
+      <Text className="text-2xl font-semibold">
+        Documentos
+      </Text>
+      <Text className="text-sm text-gray-500 mt-2">
+        Assine os documentos abaixo para continuar com o processo de desligamento.
+      </Text>
+    </View>
+      <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  pagingEnabled
+                  snapToAlignment="center"
+                  className="w-full"
+                >
         {dynamicDocs.map((doc, index) => (
           <DismissalCard
             key={`dynamic-${index}`}
@@ -150,13 +164,13 @@ const Company = ({ jobConected, CPF }: Props) => {
             typeDocument={doc.typeDocument}
           />
         ))}
+      </ScrollView>
         <TouchableOpacity
-          className="bg-red-500 py-3 px-6 rounded-lg items-center mt-2 mx-4"
+          className="bg-dark py-3 px-6 rounded-lg items-center mt-2 mx-4"
           onPress={handleOpenModal}
         >
-          <Text className="text-white text-lg font-semibold">Assinar</Text>
+          <Text className="text-primary text-lg font-semibold">Assinar</Text>
         </TouchableOpacity>
-      </ScrollView>
 
       {jobConected && jobConected.id && (
         <SignatureModalCanvas
@@ -165,7 +179,7 @@ const Company = ({ jobConected, CPF }: Props) => {
           onSaveSignature={setSignature}
           cpf={CPF}
           id={jobConected.id}
-          where="Dismissal_Signature_Communication"
+          where="Communication"
         />
       )}
     </>
