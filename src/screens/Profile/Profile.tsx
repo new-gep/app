@@ -22,7 +22,39 @@ import FindBucketCollaborator from "../../hooks/bucket/collaborator";
 import useCollaborator from "../../function/fetchCollaborator";
 import DevelopmentModal from "../../components/Modal/Development";
 import Feather from "@expo/vector-icons/build/Feather";
+
 type ProfileScreenProps = StackScreenProps<RootStackParamList, "Profile">;
+
+const getZodiacSign = (date: string | null | undefined): { sign: string, icon: string } => {
+  if (!date) return { sign: "Não informado", icon: "help-circle" };
+  
+  const [day, month] = date.split("/").map(Number);
+  
+  if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
+    return { sign: "Áries", icon: "trending-up" };
+  if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
+    return { sign: "Touro", icon: "circle" };
+  if ((month === 5 && day >= 21) || (month === 6 && day <= 20))
+    return { sign: "Gêmeos", icon: "users" };
+  if ((month === 6 && day >= 21) || (month === 7 && day <= 22))
+    return { sign: "Câncer", icon: "moon" };
+  if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
+    return { sign: "Leão", icon: "sun" };
+  if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
+    return { sign: "Virgem", icon: "star" };
+  if ((month === 9 && day >= 23) || (month === 10 && day <= 22))
+    return { sign: "Libra", icon: "compass" };
+  if ((month === 10 && day >= 23) || (month === 11 && day <= 21))
+    return { sign: "Escorpião", icon: "target" };
+  if ((month === 11 && day >= 22) || (month === 12 && day <= 21))
+    return { sign: "Sagitário", icon: "arrow-up-right" };
+  if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
+    return { sign: "Capricórnio", icon: "triangle" };
+  if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
+    return { sign: "Aquário", icon: "wind" };
+  
+  return { sign: "Peixes", icon: "droplet" };
+};
 
 const Profile = ({ navigation }: ProfileScreenProps) => {
   const theme = useTheme();
@@ -49,6 +81,13 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
       image: IMAGES.cake,
       title: "Data de Nascimento",
       subtitle: collaborator && Mask("dateFormatBrazil", collaborator.birth),
+    },
+    {
+      id: "3.1",
+      image: null,
+      title: "Signo",
+      subtitle: collaborator && getZodiacSign(Mask("dateFormatBrazil", collaborator.birth)).sign,
+      iconName: collaborator && getZodiacSign(Mask("dateFormatBrazil", collaborator.birth)).icon,
     },
     {
       id: "4",
@@ -241,16 +280,24 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                       style={{ backgroundColor: COLORS.dark }}
                       className="rounded-full h-12 w-12 items-center justify-center"
                     >
-                      <Image
-                        style={[
-                          GlobalStyleSheet.image3,
-                          {
-                            tintColor: COLORS.primary,
-                            backgroundColor: COLORS.dark,
-                          },
-                        ]}
-                        source={data.image}
-                      />
+                      {data.image ? (
+                        <Image
+                          style={[
+                            GlobalStyleSheet.image3,
+                            {
+                              tintColor: COLORS.primary,
+                              backgroundColor: COLORS.dark,
+                            },
+                          ]}
+                          source={data.image}
+                        />
+                      ) : (
+                        <Feather
+                          name={data.iconName || "help-circle"}
+                          size={24}
+                          color={COLORS.primary}
+                        />
+                      )}
                     </View>
                     <View className={`w-5/6 `}>
                       <Text
