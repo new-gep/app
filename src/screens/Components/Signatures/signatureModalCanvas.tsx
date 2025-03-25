@@ -105,7 +105,7 @@ const SignatureModalCanvas = ({
       if (canvasRef.current) {
         const dataURL = await canvasRef.current.toDataURL();
         let base64Data;
-        
+
         // Verifica se dataURL foi gerado corretamente
         if (!dataURL) {
           alert("Não foi possível gerar a assinatura. Tente novamente.");
@@ -115,41 +115,46 @@ const SignatureModalCanvas = ({
         // if(dataURL.includes('data:image/png;base64,')) {
 
         //    base64Data = dataURL.split(",")[1]; // Remove o prefixo
-      
-        // } 
+
+        // }
 
         // if (!base64Data) {
         //   alert("Formato da assinatura inválido. Tente novamente.");
         //   return;
         // }
-        
+
         // Gera o nome do arquivo de acordo com a tela de origem
         const currentDate = new Date();
         const monthName = getMonthName(currentDate.getMonth() + 1);
         const fileName =
-          where === "PayStub" || where === "Point"
+          where === "Communication"
+            ? `Signature_${where}_Dismissal`
+            : where === "PayStub" || where === "Point"
             ? `Signature_${where}_${currentDate.getFullYear()}_${monthName}_${id}`
             : `Signature_${where}_${id}`;
-     
+
         // Enviar para o backend
         const props = {
           file: dataURL, // Agora só o Base64 puro
           id: jobId,
           dynamic: fileName,
-          name: where === "Point" 
-            ? 'point_signature' 
-            : where === "PayStub"
-            ? 'paystub_signature'
-            : where === "Dismissal" 
-            ? 'dismissal_signature' 
-            : where,
+          name:
+            where === "Point"
+              ? "point_signature"
+              : where === "PayStub"
+              ? "paystub_signature"
+              : where === "Dismissal"
+              ? "dismissal_signature"
+              : where === "Communication"
+              ? "dismissal_communication_signature"
+              : where,
         };
         // console.log("props", props)
         // console.log('Dados sendo enviados para upload:', props.dynamic);
         // console.log("Dados sendo enviados para upload:", props.id);
 
         const response = await uploadFile(props);
-        // console.log('Dados sendo enviados para upload:', response);
+        console.log("Dados sendo enviados para upload:", response);
         // return;
         if (response?.status === 200) {
           // onSaveSignature(fileName);
@@ -160,50 +165,48 @@ const SignatureModalCanvas = ({
       }
     } catch (error) {
       console.error("Erro ao enviar o arquivo:", error);
-      alert("Ocorreu um erro inesperado. Verifique sua conexão e tente novamente.");
+      alert(
+        "Ocorreu um erro inesperado. Verifique sua conexão e tente novamente."
+      );
     }
 
     const currentDate = new Date();
     const monthName = getMonthName(currentDate.getMonth() + 1);
     const pictureProps = {
-      picture: where === "Dismissal" || where === "Communication" ? `Signature_${where}` : `Signature_${where}_${id}`,
-      status: "pending", 
+      picture:
+        where === "Dismissal" || where === "Communication"
+          ? `Signature_${where}`
+          : `Signature_${where}_${id}`,
+      status: "pending",
       cpf: cpf,
       id_work: jobId,
     };
-    
+
     const serviceProps = {
       name:
         where === "PayStub" || where === "Point"
           ? `Signature_${where}_${currentDate.getFullYear()}_${monthName}_${id}`
           : `Signature_${where}_${id}`,
-      type:
-        where === "PayStub"
-          ? "PayStub"
-          : where === "Point"
-          ? "Point"
-          : "",
+      type: where === "PayStub" ? "PayStub" : where === "Point" ? "Point" : "",
       status: "pending",
       id_work: jobId,
     };
-
-   
 
     // Verifica se é PayStub ou Point para usar o serviço correto
     let response;
     if (where === "PayStub" || where === "Point") {
       response = await CreateAvalidService(serviceProps);
-      
     } else {
       response = await CreateAvalidPicture(pictureProps);
-      console.log("response", response)
+      console.log("response", response);
     }
 
-   
-
-    // Se já existir, atualiza
+    // Se já existir, atualiza com status pending
     if (response.status === 409) {
-      const responseUpdate = await UpdatePicture(cpf, pictureProps);
+      const responseUpdate = await UpdatePicture(cpf, {
+        ...pictureProps,
+        status: "pending"
+      });
       if (responseUpdate.status === 200) {
         Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
           {
@@ -226,7 +229,6 @@ const SignatureModalCanvas = ({
 
     onClose(false);
   };
-
 
   return (
     <Modal visible={visible} animationType="slide" transparent={false}>

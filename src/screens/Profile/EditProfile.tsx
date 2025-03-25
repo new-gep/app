@@ -107,7 +107,7 @@ const EditProfile = () => {
 
   const convertToBase64 = async (fileUri: any) => {
     try {
-      console.log(fileUri);
+      // console.log(fileUri);
       // Lê o arquivo e converte para Base64
       const base64 = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -176,7 +176,7 @@ const EditProfile = () => {
 
   const handleUpdateProfile = async () => {
     if (collaborator) {
-      console.log("collaboratorUpdateDates", collaboratorUpdateDates)
+      // console.log("collaboratorUpdateDates", collaboratorUpdateDates)
       const payload = {
         ...collaboratorUpdateDates,
         birth: convertToISODate(collaboratorUpdateDates.birth)
@@ -204,7 +204,7 @@ const EditProfile = () => {
 
   const handleSendPicture = async () => {
     let response = await GetPathPicture("camera");
-    console.log(response);
+    // console.log(response);
     if (response == "cancel") {
       alert(
         "Permissões de câmera permanentemente negadas. Altere as permissões nas configurações do aplicativo."
@@ -256,7 +256,7 @@ const EditProfile = () => {
         collaborator.CPF,
         "Picture"
       );
-      console.log(response);
+      // console.log(response);
       if (response.status == 200) {
         setPath(response.path);
       }

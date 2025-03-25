@@ -127,7 +127,7 @@ const Company = ({ jobConected, CPF }: Props) => {
       const response = await FindPicture(CPF);
       if (response?.status === 200) {
         const signatureFound = response.pictures.find(
-          (pic) => pic.picture === "Dismissal_Signature_Communication"
+          (pic:any) => pic.picture === "Signature_Communication"
         );
         // console.log("response do signatureFound", signatureFound.status);
         setSignatureFound(signatureFound);
@@ -140,37 +140,85 @@ const Company = ({ jobConected, CPF }: Props) => {
 
   return (
     <>
-    <View className="w-full items-center justify-center">
-      <Text className="text-2xl font-semibold">
-        Documentos
-      </Text>
-      <Text className="text-sm text-gray-500 mt-2">
-        Assine os documentos abaixo para continuar com o processo de desligamento.
-      </Text>
-    </View>
-      <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  pagingEnabled
-                  snapToAlignment="center"
-                  className="w-full"
-                >
-        {dynamicDocs.map((doc, index) => (
-          <DismissalCard
-            key={`dynamic-${index}`}
-            title={doc.title}
-            status={doc.status}
-            path={doc.path}
-            typeDocument={doc.typeDocument}
-          />
-        ))}
-      </ScrollView>
-        <TouchableOpacity
-          className="bg-dark py-3 px-6 rounded-lg items-center mt-2 mx-4"
-          onPress={handleOpenModal}
-        >
-          <Text className="text-primary text-lg font-semibold">Assinar</Text>
-        </TouchableOpacity>
+    {!signatureFound  && 
+      <View className="w-full items-center justify-center">
+        <Text className="text-2xl font-semibold">
+          Documentos
+        </Text>
+        <Text className="text-sm text-gray-500 mt-2">
+          Assine os documentos abaixo para continuar com o processo de desligamento.
+        </Text>
+    </View>}
+      {signatureFound && signatureFound?.status === "approved" ? (
+        <View className="w-full items-center justify-center p-4">
+          <Text className="text-lg text-green-500 font-semibold">Assinatura aprovada</Text>
+        </View>
+      ) : signatureFound?.status === "pending" ? (
+        <View className="w-full h-full">
+          <WaitingIndicatorDismissal visible={true} status={"pending"} />
+        </View>
+      ) : (
+        <View className="flex w-full">
+          {signatureFound?.status === "reproved" && (
+            <View className="w-full p-4">
+              <Text className="text-center text-red-500 text-lg font-semibold">
+                Assinatura recusada
+              </Text>
+              <Text className="text-center text-gray-600 text-sm mb-4">
+                Por favor, assine os documentos novamente
+              </Text>
+            </View>
+          )}
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            snapToAlignment="center"
+            className="w-full"
+          >
+            {dynamicDocs.map((doc: any, index) => (
+              <DismissalCard
+                key={`dynamic-${index}`}
+                title={doc.title}
+                status={doc.status}
+                path={doc.path}
+                typeDocument={doc.typeDocument}
+              />
+            ))}
+          </ScrollView>
+
+          {signature ? (
+            <View className="flex justify-center items-center min-h-min">
+              <Text className="text-lg font-semibold mb-5 mt-5">
+                Assinatura Salva:
+              </Text>
+              <WebView
+                style={{ width: 200, height: 200 }}
+                originWhitelist={["*"]}
+                source={{ html: atob(signature.split(",")[1]) }}
+              />
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#1F2937",
+                paddingVertical: 12,
+                paddingHorizontal: 24,
+                borderRadius: 8,
+                alignItems: "center",
+                marginTop: 8,
+                marginHorizontal: 16,
+              }}
+              onPress={handleOpenModal}
+            >
+              <Text style={{ color: "#F3F4F6", fontSize: 18, fontWeight: "600" }}>
+                Assinar
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
 
       {jobConected && jobConected.id && (
         <SignatureModalCanvas
@@ -180,6 +228,7 @@ const Company = ({ jobConected, CPF }: Props) => {
           cpf={CPF}
           id={jobConected.id}
           where="Communication"
+          jobId={jobConected.id}
         />
       )}
     </>
