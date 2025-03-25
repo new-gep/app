@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffec01"
       },
-      "package": "com.w3itexperts.ombe",
+      "package": "com.newgep.gep",
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "android.permission.CAMERA",
