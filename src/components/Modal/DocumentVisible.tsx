@@ -70,22 +70,29 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, docum
             )}
 
             {/* Botão de fechar (agora fora do overlay de loading) */}
-            <TouchableOpacity
-                className="absolute top-5 right-5 bg-primary p-2 rounded-lg w-8 h-8 items-center z-50"
-                onPress={() => {
-                    if (twoPicture && typeDocument === 'picture') {
-                        setViewingSide(null);
-                    } else {
-                        close();
-                    }
-                }}
-            >
-                <Image
-                    source={IMAGES.close}
-                    className={`w-full h-full`}
-                    resizeMode="contain"
-                />
-            </TouchableOpacity>
+            {(!twoPicture || typeDocument !== 'picture') && (
+                <TouchableOpacity
+                    style={{ 
+                        position: 'absolute',
+                        top: 20,
+                        right: 20,
+                        backgroundColor: COLORS.primary,
+                        padding: 8,
+                        borderRadius: 8,
+                        width: 32,
+                        height: 32,
+                        alignItems: 'center',
+                        zIndex: 50
+                    }}
+                    onPress={close}
+                >
+                    <Image
+                        source={IMAGES.close}
+                        style={{ width: '100%', height: '100%' }}
+                        resizeMode="contain"
+                    />
+                </TouchableOpacity>
+            )}
 
             <View>
                 {typeDocument === 'picture' ? (

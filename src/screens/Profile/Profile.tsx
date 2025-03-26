@@ -29,7 +29,7 @@ const getZodiacSign = (date: string | null | undefined): { sign: string, icon: s
   if (!date) return { sign: "Não informado", icon: "help-circle" };
   
   const [day, month] = date.split("/").map(Number);
-  
+  console.log(day, month);
   if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
     return { sign: "Áries", icon: "trending-up" };
   if ((month === 4 && day >= 20) || (month === 5 && day <= 20))

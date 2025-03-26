@@ -70,6 +70,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
             try{
                 const resolvedPath = await path;
                 const resolvedType = await typeDocument; 
+                console.log(documentName)
                 setSendPicture(sendDocument)
                 if (resolvedPath && resolvedType) {
                     setTypePicture(resolvedType)
