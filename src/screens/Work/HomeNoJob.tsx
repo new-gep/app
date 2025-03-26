@@ -76,8 +76,8 @@ export default function HomeNoWork({ setTitleWork }) {
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [previousCards, setPreviousCards] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   
-
   const dispatch = useDispatch();
   const [isShowDevelopment, setIsShowDevelopment] = useState<boolean>(false);
   const theme = useTheme();
@@ -87,7 +87,6 @@ export default function HomeNoWork({ setTitleWork }) {
 
   const [jobConected, setJobConected] = useState<any>(null);
   const [processAdmission, setProcessAdmission] = useState<any>(null);
-
   const [process, setAdmission] = useState<any>(null);
 
   const closeDevelopment = () => {
@@ -101,26 +100,20 @@ export default function HomeNoWork({ setTitleWork }) {
         if (collaborator) {
           try {
             const response = await FindAplicateInJob(collaborator.CPF);
-            console.log("response",response)
             if (response.status !== 200) {
               console.log("Erro ao buscar os cards:", response.message);
               return;
             }
 
             setJobConected(response.jobs);
-            // console.log("response.jobs",response.jobs)
+            
             if (response.processAdmission) {
               setAdmission(true);
               setTitleWork("Processo admissional");
               setProcessAdmission(true);
-
-              // navigation.navigate("TimeLineAdmiss", { jobConected: response.jobs, CPF: collaborator.CPF });
-
-              // console.log("response.processAdmission", response.processAdmission);
             } else {
               setAdmission(false);
               setTitleWork("Vagas aplicadas");
-              // console.log("response.processAdmission", response.processAdmission);
             }
 
             return;
@@ -134,6 +127,10 @@ export default function HomeNoWork({ setTitleWork }) {
 
       fetchData();
     }, [collaborator])
+  );
+
+  const filteredJobs = jobConected?.filter(job => 
+    job.function.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -152,17 +149,36 @@ export default function HomeNoWork({ setTitleWork }) {
             title='Vagas Cadastradas'
             leftIcon={'back'}
             iconSimple={'archive'}        
-        />
+          />
+          <View className="px-4 mt-4">
+            <TextInput
+              placeholder="Buscar vaga..."
+              placeholderTextColor="#9CA3AF"
+              className="p-3 border border-gray-300 rounded-lg text-gray-900"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
           <View className="mt-5 flex justify-between items-center h-full">
             {jobConected && jobConected.length > 0 ? (
               <ScrollView 
                 style={{ width: '100%' }}
                 showsVerticalScrollIndicator={false}
               >
-                {jobConected.map((job) => (
-                  console.log('job', job),
-                  <JobApplicationCard key={job.id} job={job} company={job.company}/>
-                ))}
+                {filteredJobs?.length > 0 ? (
+                  filteredJobs.map((job) => (
+                    <JobApplicationCard key={job.id} job={job} company={job.company}/>
+                  ))
+                ) : (
+                  <View className="py-20 items-center justify-center">
+                    <Text className="text-lg text-gray-500 font-semibold">
+                      Não há uma vaga com este nome
+                    </Text>
+                    <Text className="text-gray-400 mt-2 text-center px-8">
+                      Tente buscar com outro termo
+                    </Text>
+                  </View>
+                )}
               </ScrollView>
             ) : (
               <View
@@ -193,14 +209,13 @@ export default function HomeNoWork({ setTitleWork }) {
                   resizeMode="contain"
                 />
 
-
                 <Button 
-                        title={"Ver Vagas"}
-                        onPress={() => navigation.navigate('Home')}
-                        text ={COLORS.title}
-                        color={COLORS.primary}
-                        style={{borderRadius:52 , width: width * 0.7}}
-                    />
+                  title={"Ver Vagas"}
+                  onPress={() => navigation.navigate('Home')}
+                  text={COLORS.title}
+                  color={COLORS.primary}
+                  style={{borderRadius:52 , width: width * 0.7}}
+                />
               </View>
             )}
           </View>

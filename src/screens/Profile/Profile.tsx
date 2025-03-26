@@ -25,35 +25,34 @@ import Feather from "@expo/vector-icons/build/Feather";
 
 type ProfileScreenProps = StackScreenProps<RootStackParamList, "Profile">;
 
-const getZodiacSign = (date: string | null | undefined): { sign: string, icon: string } => {
-  if (!date) return { sign: "Não informado", icon: "help-circle" };
+const getZodiacSign = (date: string | null | undefined): { sign: string, icon: any } => {
+  if (!date) return { sign: "Não informado", icon: IMAGES.help };
   
-  const [day, month] = date.split("/").map(Number);
-  console.log(day, month);
+  const [day, month] = date.split("-").map(Number);
   if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
-    return { sign: "Áries", icon: "trending-up" };
+    return { sign: "Áries", icon: require("../../assets/images/zoadicSign/aries.png") };
   if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
-    return { sign: "Touro", icon: "circle" };
+    return { sign: "Touro", icon: require("../../assets/images/zoadicSign/Taurus.png") };
   if ((month === 5 && day >= 21) || (month === 6 && day <= 20))
-    return { sign: "Gêmeos", icon: "users" };
+    return { sign: "Gêmeos", icon: require("../../assets/images/zoadicSign/gemini.png") };
   if ((month === 6 && day >= 21) || (month === 7 && day <= 22))
-    return { sign: "Câncer", icon: "moon" };
+    return { sign: "Câncer", icon: require("../../assets/images/zoadicSign/cancer.png") };
   if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
-    return { sign: "Leão", icon: "sun" };
+    return { sign: "Leão", icon: require("../../assets/images/zoadicSign/leo.png") };
   if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
-    return { sign: "Virgem", icon: "star" };
+    return { sign: "Virgem", icon: require("../../assets/images/zoadicSign/virgo.png") };
   if ((month === 9 && day >= 23) || (month === 10 && day <= 22))
-    return { sign: "Libra", icon: "compass" };
+    return { sign: "Libra", icon: require("../../assets/images/zoadicSign/libra.png") };
   if ((month === 10 && day >= 23) || (month === 11 && day <= 21))
-    return { sign: "Escorpião", icon: "target" };
+    return { sign: "Escorpião", icon: require("../../assets/images/zoadicSign/scorpio.png") };
   if ((month === 11 && day >= 22) || (month === 12 && day <= 21))
-    return { sign: "Sagitário", icon: "arrow-up-right" };
+    return { sign: "Sagitário", icon: require("../../assets/images/zoadicSign/Sagittarius.png") };
   if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
-    return { sign: "Capricórnio", icon: "triangle" };
+    return { sign: "Capricórnio", icon: require("../../assets/images/zoadicSign/capricorn.png") };
   if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
-    return { sign: "Aquário", icon: "wind" };
+    return { sign: "Aquário", icon: require("../../assets/images/zoadicSign/aquarius.png") };
   
-  return { sign: "Peixes", icon: "droplet" };
+  return { sign: "Peixes", icon: require("../../assets/images/zoadicSign/Pisces.png") };
 };
 
 const Profile = ({ navigation }: ProfileScreenProps) => {
@@ -291,9 +290,18 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                           ]}
                           source={data.image}
                         />
+                      ) : data.iconName ? (
+                        <Image
+                          style={{
+                            width: 24,
+                            height: 24,
+                            tintColor: COLORS.primary
+                          }}
+                          source={data.iconName}
+                        />
                       ) : (
                         <Feather
-                          name={data.iconName || "help-circle"}
+                          name="help-circle"
                           size={24}
                           color={COLORS.primary}
                         />
@@ -433,7 +441,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
               gap: 10,
             }}
           >
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 height: 50,
                 width: 50,
@@ -446,7 +454,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
               }}
             >
               <Image source={IMAGES.logout} style={{ width: 20, height: 20 }} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </ScrollView>
       )}
