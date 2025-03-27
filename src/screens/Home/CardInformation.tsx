@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import { AbstractPicture } from "../../constants/abstract";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -8,6 +8,9 @@ import Header from "../../layout/Header";
 import AccordionCardIformation from "../../components/Accordion/AccordionCardIformation";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
 import { COLORS } from "../../constants/theme";
+import Button from '../../components/Button/Button';
+import useCollaborator from "../../function/fetchCollaborator";
+import UpdateJobDefault from "../../hooks/update/job/default";
 
 type CompanyType = {
   company_name: string;
@@ -52,6 +55,13 @@ type CardInformationProps = {
         benefics: string;
         obligations: string;
         details: string;
+        candidates?: Array<{
+          cpf: string;
+          step: number;
+          status: string | null;
+          verify: string | null;
+          observation: string | null;
+        }>;
       };
     };
   };
@@ -60,6 +70,140 @@ type CardInformationProps = {
 const CardInformation = ({ route }: CardInformationProps) => {
   const { cardData } = route.params;
   const navigation = useNavigation();
+  const { collaborator } = useCollaborator();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCandidateApplied, setIsCandidateApplied] = useState(false);
+
+  useEffect(() => {
+    const checkCandidateStatus = () => {
+      // console.log('=== DEBUG CANDIDATE STATUS ===');
+      // console.log('CardData:', cardData);
+      // console.log('Candidates type:', typeof cardData?.candidates);
+      // console.log('Candidates:', JSON.stringify(cardData?.candidates, null, 2));
+      // console.log('Collaborator:', collaborator);
+      // console.log('Collaborator CPF type:', typeof collaborator?.CPF);
+      // console.log('Collaborator CPF:', collaborator?.CPF);
+
+      if (!cardData?.candidates || !collaborator?.CPF) {
+        // console.log('Missing data - candidates or CPF');
+        return;
+      }
+
+      try {
+        const parsedCandidates = typeof cardData.candidates === 'string' 
+          ? JSON.parse(cardData.candidates) 
+          : cardData.candidates;
+
+        console.log('Parsed candidates:', parsedCandidates);
+
+        if (!Array.isArray(parsedCandidates)) {
+          console.log('Candidates is not an array after parsing');
+          return;
+        }
+
+        const isApplied = parsedCandidates.some(candidate => {
+          const candidateCpf = String(candidate.cpf).replace(/\D/g, '');
+          const collaboratorCpf = String(collaborator.CPF).replace(/\D/g, '');
+          
+          // console.log('Comparing CPFs:', {
+          //   candidateCpf,
+          //   collaboratorCpf,
+          //   isEqual: candidateCpf === collaboratorCpf
+          // });
+          
+          return candidateCpf === collaboratorCpf;
+        });
+
+        console.log('Final isApplied value:', isApplied);
+        setIsCandidateApplied(isApplied);
+        
+      } catch (error) {
+        console.error('Error checking candidate status:', error);
+      }
+    };
+
+    checkCandidateStatus();
+  }, [cardData, collaborator]);
+
+  const handleRemoveApplication = async () => {
+    try {
+      setIsLoading(true);
+      
+      if (!cardData?.candidates) {
+        throw new Error('Lista de candidatos inválida');
+      }
+
+      // Garante que candidates seja um array
+      const currentCandidates = typeof cardData.candidates === 'string' 
+        ? JSON.parse(cardData.candidates) 
+        : cardData.candidates;
+
+      if (!Array.isArray(currentCandidates)) {
+        throw new Error('Lista de candidatos inválida após parse');
+      }
+
+      // Filtra o candidato atual da lista
+      const updatedCandidates = currentCandidates.filter(candidate => {
+        const candidateCpf = String(candidate.cpf).replace(/\D/g, '');
+        const collaboratorCpf = String(collaborator?.CPF).replace(/\D/g, '');
+        return candidateCpf !== collaboratorCpf;
+      });
+
+      // Atualiza a vaga removendo o candidato
+      const response = await UpdateJobDefault(cardData.id, {
+        candidates: JSON.stringify(updatedCandidates),
+      });
+
+      if (response.status === 200) {
+        alert('Candidatura removida com sucesso!');
+        // Primeiro volta para a tela anterior
+        navigation.goBack();
+        // Depois atualiza a Home
+        // navigation.navigate('Home');
+      } else {
+        throw new Error('Erro ao remover candidatura');
+      }
+    } catch (error) {
+      console.error('Erro ao remover candidatura:', error);
+      alert('Erro ao remover candidatura. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApplyToJob = async () => {
+    try {
+      setIsLoading(true);
+
+      const newCandidate = {
+        cpf: collaborator?.CPF,
+        step: 0,
+        status: null,
+        verify: null,
+        observation: null,
+      };
+
+      // Garante que candidates seja um array
+      const currentCandidates = Array.isArray(cardData.candidates) ? cardData.candidates : [];
+      const updatedCandidates = [...currentCandidates, newCandidate];
+
+      const response = await UpdateJobDefault(cardData.id, {
+        candidates: JSON.stringify(updatedCandidates),
+      });
+
+      if (response.status === 200) {
+        alert('Candidatura realizada com sucesso!');
+        navigation.goBack();
+      } else {
+        throw new Error('Erro ao realizar candidatura');
+      }
+    } catch (error) {
+      console.error('Erro ao realizar candidatura:', error);
+      alert('Erro ao realizar candidatura. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -103,6 +247,17 @@ const CardInformation = ({ route }: CardInformationProps) => {
           />
         </View>
       </ScrollView>
+
+      <View className="absolute bottom-4 left-4 right-4">
+        {/* {console.log('Render - isCandidateApplied:', isCandidateApplied)} */}
+        <Button
+          title={isCandidateApplied ? "Remover Candidatura" : "Candidatar-se"}
+          onPress={isCandidateApplied ? handleRemoveApplication : handleApplyToJob}
+          color={isCandidateApplied ? COLORS.dark : COLORS.primary}
+          text={isCandidateApplied ? COLORS.primary : COLORS.dark}
+          style={{borderRadius: 8 }}
+        />
+      </View>
     </View>
   );
 };

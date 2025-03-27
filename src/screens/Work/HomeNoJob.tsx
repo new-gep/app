@@ -93,39 +93,41 @@ export default function HomeNoWork({ setTitleWork }) {
     setIsShowDevelopment(false);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        setIsLoading(true);
-        if (collaborator) {
-          try {
-            const response = await FindAplicateInJob(collaborator.CPF);
-            if (response.status !== 200) {
-              console.log("Erro ao buscar os cards:", response.message);
-              return;
-            }
-
-            setJobConected(response.jobs);
-            
-            if (response.processAdmission) {
-              setAdmission(true);
-              setTitleWork("Processo admissional");
-              setProcessAdmission(true);
-            } else {
-              setAdmission(false);
-              setTitleWork("Vagas aplicadas");
-            }
-
-            return;
-          } catch (error) {
-            console.error("Erro ao buscar os cards:", error);
-          } finally {
-            setIsLoading(false);
-          }
+  const fetchJobs = async () => {
+    setIsLoading(true);
+    if (collaborator) {
+      try {
+        const response = await FindAplicateInJob(collaborator.CPF);
+        if (response.status !== 200) {
+          console.log("Erro ao buscar os cards:", response.message);
+          setJobConected([]);
+          return;
         }
-      };
 
-      fetchData();
+        const jobs = Array.isArray(response.jobs) ? response.jobs : [];
+        setJobConected(jobs);
+        
+        if (response.processAdmission) {
+          setAdmission(true);
+          setTitleWork("Processo admissional");
+          setProcessAdmission(true);
+        } else {
+          setAdmission(false);
+          setTitleWork("Vagas aplicadas");
+        }
+
+      } catch (error) {
+        console.error("Erro ao buscar os cards:", error);
+        setJobConected([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchJobs();
     }, [collaborator])
   );
 
@@ -137,7 +139,7 @@ export default function HomeNoWork({ setTitleWork }) {
     <View style={{ backgroundColor: colors.card, flex: 1 }}>
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
       ) : processAdmission ? (
         <>
@@ -220,11 +222,7 @@ export default function HomeNoWork({ setTitleWork }) {
             )}
           </View>
         </>
-      ) : (
-        collaborator && (
-          <HomeAdmission jobConected={jobConected} CPF={collaborator.CPF} />
-        )
-      )}
+      ) : null}
       <DevelopmentModal visible={isShowDevelopment} close={closeDevelopment} />
     </View>
   );

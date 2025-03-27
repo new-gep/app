@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as FileSystem from 'expo-file-system';
-
+import { COLORS } from '../../constants/theme';
 const PdfViewer = () => {
     const [pdfUri, setPdfUri] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -37,7 +37,7 @@ const PdfViewer = () => {
     return (
         <View style={styles.container}>
             {loading && (
-                <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+                <ActivityIndicator size="large" color={COLORS.primary} style={styles.loader} />
             )}
             {pdfUri && (
                 <WebView

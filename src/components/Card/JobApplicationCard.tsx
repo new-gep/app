@@ -53,7 +53,20 @@ const JobApplicationCard = ({ job, company }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('CardInformation', { cardData: job })}
+      onPress={() => {
+        console.log('=== DEBUG NAVIGATION ===');
+        console.log('Job data being passed:', {
+          ...job,
+          candidates: job.candidates
+        });
+        
+        navigation.navigate('CardInformation', { 
+          cardData: {
+            ...job,
+            candidates: job.candidates
+          }
+        });
+      }}
       style={[styles.card, 'shadow-md']}
     >
       <View className="p-4">

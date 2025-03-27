@@ -36,7 +36,7 @@ import Absence from "./Absence/Home";
 import Home from "./Home";
 import FindOneJob from "../../hooks/get/job/findOne";
 //import HomeAdmission from "./HomeAdmission";
-
+import { COLORS } from "../../constants/theme";
 type WishlistScreenProps = StackScreenProps<RootStackParamList, "Work">;
 
 const Stack = createStackNavigator();
@@ -166,7 +166,7 @@ const Work = () => {
     <>
       {hasWork === null ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="black" />
+          <ActivityIndicator size="large" color={COLORS.primary} /> 
         </View>
       ) : hasWork ? (
         <Home

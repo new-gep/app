@@ -60,7 +60,7 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
 
   return (
     <>
-      <View className="h-3/4 p-4">
+      <View className="h-4/5 p-4">
         <View className="h-full w-80 mx-auto bg-white rounded-2xl shadow-lg border-2 border-gray-200 shadow-gray-300 p-4">
           <DocumentVisible
             path={path}

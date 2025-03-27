@@ -195,8 +195,9 @@ const EditProfile = () => {
           );
           setMessageSheet("Informações atualizadas");
           setActiveSheet("success");
-          Sheet();
+          await Sheet();
           validateCollaborator();
+          navigation.goBack();
           break;
         default:
           break;

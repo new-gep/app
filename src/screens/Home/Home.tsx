@@ -19,7 +19,7 @@ import UpdateJobDefault from "../../hooks/update/job/default";
 import useCollaborator from "../../function/fetchCollaborator";
 import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import type { NavigationProp } from "@react-navigation/native";
 import Header from "../../layout/Header";
 import { COLORS, FONTS } from "../../constants/theme";
@@ -130,33 +130,40 @@ const Home = () => {
     setTimeout(() => setShowPopup(false), 2000);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await GetAllJob();
-  
-        if (response.status !== 200) {
-          throw new Error(response.message || "Erro ao buscar os.");
-        }
-  
-        // Adicione este filtro:
-        const uniqueJobs = response.job.filter(
-          (job, index, self) =>
-            self.findIndex((j) => j.id === job.id) === index
-        );
-  
-        setCards(uniqueJobs); // Altere para usar os jobs filtrados
-      } catch (error) {
-        console.error("Ocorreu um erro ao buscar os jobs:", error.message);
-        alert("Erro ao buscar os jobs. Por favor, tente novamente.");
-      } finally {
-        setIsLoading(false);
+  const fetchJobs = async () => {
+    try {
+      setIsLoading(true);
+      const response = await GetAllJob();
+
+      if (response.status !== 200) {
+        throw new Error(response.message || "Erro ao buscar os jobs.");
       }
-    };
-  
-    fetchData();
-  }, []);
+
+      const uniqueJobs = response.job.filter(
+        (job, index, self) =>
+          self.findIndex((j) => j.id === job.id) === index
+      );
+
+      setCards(uniqueJobs);
+    } catch (error) {
+      console.error("Ocorreu um erro ao buscar os jobs:", error.message);
+      alert("Erro ao buscar os jobs. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadData = async () => {
+        await fetchJobs();
+        await fetchCollaborator();
+        validateCollaborator();
+      };
+      
+      loadData();
+    }, [])
+  );
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {

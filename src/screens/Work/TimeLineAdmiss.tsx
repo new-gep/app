@@ -156,7 +156,7 @@ const Timeline = ({ jobConected, CPF }) => {
           <>
             {(signatureFound && signatureFound?.status === "approved") ||
             signatureFound?.status === "pending" ? (
-              <View className="w-full h-full">
+              <View className="w-full h-full ">
                 <WaitingIndicator visible={true} status={"pending"} />
               </View>
             ) : signatureFound?.status === "reproved" ? (
@@ -202,7 +202,7 @@ const Timeline = ({ jobConected, CPF }) => {
                 </View>
               </>
             ) : (
-              <View className="flex w-full">
+              <View className="flex w-full h-full">
                 <Header
                   title="Assinar Documentos"
                   leftIcon="back"
@@ -238,7 +238,7 @@ const Timeline = ({ jobConected, CPF }) => {
       </ScrollView>
 
       {currentStep === 3 && !signatureFound?.status && (
-        <View className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200">
+        <View className="absolute bottom-0 left-0 right-0 p-4  border-t border-gray-200">
           {!Object.values(lockSignature || {}).every(
             (value) => value === true
           ) ? (
