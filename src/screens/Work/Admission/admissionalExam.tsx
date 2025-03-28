@@ -15,7 +15,7 @@ import GetJobDocument from "../../../hooks/get/job/findDocument";
 import Header from "../../../layout/Header";
 import Timeline from "../../../components/Timeline/TimelineFront";
 import WaitingIndicator from "./admissionalWaitingIndicator";
-
+import TimelineFront from "../../../components/Timeline/TimelineFront";
 type Props = {
   jobConected: any;
   CPF: any;
@@ -147,6 +147,7 @@ const admissionalExam: React.FC<Props> = ({ jobConected, CPF }) => {
           leftIcon="back"
           leftAction={() => navigation.goBack()}
         />
+        <TimelineFront currentStep={1} showProgress={true} />
 
         {loader && (
           <Timeline 
@@ -167,7 +168,7 @@ const admissionalExam: React.FC<Props> = ({ jobConected, CPF }) => {
         ) : (
           jobConected ? (
             <>
-              <Cardstyle4
+              <Cardstyle4 
                 documentName={"Exame Admissional"}
                 sendDocument={sendDocument}
                 typeDocument={typeDocument}
@@ -178,7 +179,7 @@ const admissionalExam: React.FC<Props> = ({ jobConected, CPF }) => {
                 onSuccess={handleDocumentSuccess}
               />
 
-              <View className="items-center mt-8">
+              <View className="items-center mt-16">
                 <Image
                   source={require('../../../assets/images/brand/Medical.png')}
                   style={{ width: 250, height: 200 }}

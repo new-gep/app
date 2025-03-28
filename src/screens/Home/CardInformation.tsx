@@ -212,12 +212,15 @@ const CardInformation = ({ route }: CardInformationProps) => {
 
       <ScrollView className="flex-1 p-4">
         {/* Cabeçalho do Card */}
-        <View className="mb-4">
+        <View className="mb-8">
           <Text className="text-2xl font-bold text-dark">
             {cardData.function}
           </Text>
           <Text className="text-sm text-gray-600 mt-1 uppercase">
             {cardData.company?.company_name || "Empresa confidencial"}
+          </Text>
+          <Text className="text-sm text-gray-600 mt-1">
+            {cardData.company?.city ? `${cardData.company.city}-${cardData.company.uf}` : "Localização não informada"}
           </Text>
           {cardData.PCD === "1" && (
             <View className="mt-2">
@@ -246,18 +249,21 @@ const CardInformation = ({ route }: CardInformationProps) => {
             details={cardData.details}
           />
         </View>
-      </ScrollView>
 
-      <View className="absolute bottom-4 left-4 right-4">
-        {/* {console.log('Render - isCandidateApplied:', isCandidateApplied)} */}
-        <Button
-          title={isCandidateApplied ? "Remover Candidatura" : "Candidatar-se"}
-          onPress={isCandidateApplied ? handleRemoveApplication : handleApplyToJob}
-          color={isCandidateApplied ? COLORS.dark : COLORS.primary}
-          text={isCandidateApplied ? COLORS.primary : COLORS.dark}
-          style={{borderRadius: 8 }}
-        />
-      </View>
+        {/* Movendo o botão para dentro do ScrollView com margem adequada */}
+        <View className="mt-8 mb-6 flex items-center">
+          <Button
+            title={isCandidateApplied ? "Remover Candidatura" : "Candidatar-se"}
+            onPress={isCandidateApplied ? handleRemoveApplication : handleApplyToJob}
+            color={isCandidateApplied ? COLORS.dark : COLORS.primary}
+            text={isCandidateApplied ? COLORS.primary : COLORS.dark}
+            style={{
+              borderRadius: 8,
+              width: '60%'
+            }}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };

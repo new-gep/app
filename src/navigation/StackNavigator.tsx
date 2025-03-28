@@ -67,6 +67,7 @@ import PayStub from "../screens/Work/PayStub";
 import CardInformation from '../screens/Home/CardInformation';
 import Point from "../screens/Work/Point";
 import Absence from "../screens/Work/Absence/Home";
+import Company from "../screens/Work/Dismissal/Step/Solicitation/Company";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
