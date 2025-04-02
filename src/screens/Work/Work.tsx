@@ -164,20 +164,7 @@ const Work = () => {
 
   return (
     <>
-      {hasWork === null ? (
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color={COLORS.primary} /> 
-        </View>
-      ) : hasWork ? (
-        <Home
-          setTitleWork={setTitleWork}
-          navigation={navigation}
-          jobConected={jobConected}
-          CPF={CPF}
-        />
-      ) : (
         <HomeNoWork setTitleWork={setTitleWork} />
-      )}
     </>
   );
 };

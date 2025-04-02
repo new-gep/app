@@ -1,6 +1,13 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, ScrollView, Image, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { IMAGES } from "../../constants/Images";
 import { COLORS, FONTS } from "../../constants/theme";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
@@ -42,12 +49,14 @@ const Documents = () => {
         // const picturesFromAPI = response.pictures;
 
         const picturesFromAPI = response.pictures.filter((picture: any) => {
-          return !picture.picture.toLowerCase().includes('signature') &&
-                 !picture.picture.toLowerCase().includes('medical') &&
-                 !picture.picture.toLowerCase().includes('dismissal') &&
-                 !picture.picture.toLowerCase().includes('admission');
+          return (
+            !picture.picture.toLowerCase().includes("signature") &&
+            !picture.picture.toLowerCase().includes("medical") &&
+            !picture.picture.toLowerCase().includes("dismissal") &&
+            !picture.picture.toLowerCase().includes("admission")
+          );
         });
-        console.log(picturesFromAPI)
+        // console.log(picturesFromAPI)
 
         let tempPictureCard: { [key: string]: any } = {};
 
@@ -201,7 +210,7 @@ const Documents = () => {
         case "voter_registration":
           return "Titulo de Eleitor (opcional)";
         default:
-          console.log(name)
+          console.log(name);
           return "?";
       }
     }
@@ -373,12 +382,8 @@ const Documents = () => {
           </View>
         </View>
       ) : (
-        <View style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
-          <Header
-            title="Documentos"
-            leftIcon="back"
-            iconSimple={`folder`}
-          />
+        <View style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
+          <Header title="Documentos" leftIcon="back" iconSimple={`folder`} />
           <View>
             <ScrollView
               showsVerticalScrollIndicator={false}
@@ -397,7 +402,7 @@ const Documents = () => {
                       style={{
                         ...FONTS.fontSemiBold,
                         fontSize: 24,
-                        color: '#000000',
+                        color: "#000000",
                         marginTop: -38,
                       }}
                     >
@@ -447,7 +452,8 @@ const Documents = () => {
                                 typeDocument={data.typeDocument}
                                 statusDocument={data.statusDocument}
                                 twoPicture={data.twoPicture}
-                                path={data.path} jobId={0}                              
+                                path={data.path}
+                                jobId={0}
                               />
                             </View>
                           );

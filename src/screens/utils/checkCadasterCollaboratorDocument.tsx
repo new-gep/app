@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Children } from "react"
 import { AntDesign, SimpleLineIcons } from "@expo/vector-icons"
-import { View, Text, Image } from "react-native"
+import { View, Text, Image, ActivityIndicator } from "react-native"
 import ListStyle1 from "../../components/List/ListStyle1"
 import { GlobalStyleSheet } from "../../constants/StyleSheet"
 import { COLORS, FONTS } from "../../constants/theme"
@@ -115,8 +115,8 @@ export default function CheckCadasterCollaboratorDocument() {
     return (
         <>
             {loading ? (
-                <View>
-                    <Text>Carregando...</Text>
+                <View className="flex-1 justify-center items-center">
+                    <ActivityIndicator size="large" color={'#fde047'} />
                 </View>
             ) : (
                 <View className={`bg-dark px-5 rounded-b-3xl ${[!missingDate.Address, !missingDate.Birth_Certificate, !missingDate.Marriage_Certificate, !missingDate.RG, !missingDate.School_History, !missingDate.Military_Certificate, !missingDate.Work_Card].every(Boolean) && 'hidden'}`}>

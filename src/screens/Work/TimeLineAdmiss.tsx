@@ -27,7 +27,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SignatureAdmission from "../Components/Signatures/signatureAdmission";
 import Header from "../../layout/Header";
 import TimelineFront from "../../components/Timeline/TimelineFront";
-const Timeline = ({ jobConected, CPF }) => {
+const Timeline = ({ jobConected, CPF }: { jobConected: any, CPF: any }) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [signature, setSignature] = useState<any>(null);
@@ -153,34 +153,11 @@ const Timeline = ({ jobConected, CPF }) => {
         )}
         {currentStep === 2 && (
           <>
-            <Header
-              title="Exame Admissional"
-              leftIcon="back"
-              leftAction={() => navigation.goBack()}
-            />
-            <TimelineFront currentStep={2} showProgress={true} />
-            <View className=" bg-primary w-full p-3 rounded-xl flex-row justify-center">
-              <View className="w-1/2 flex-1 p-4">
-                <Text
-                  className="absolute w-44"
-                  style={{ fontWeight: "600", fontSize: 24 }}
-                >
-                  Em espera
-                </Text>
-                <Text className="mt-10" style={{ fontSize: 14 }}>
-                  Estamos preparando seu kit admissional. Por favor, aguarde
-                  enquanto finalizamos os últimos detalhes. Retornaremos em
-                  breve.
-                </Text>
-              </View>
-            </View>
-            <View className="items-center mt-8">
-              <Image
-                source={require("../../assets/images/brand/Waiting.png")}
-                style={{ width: 250, height: 200 }}
-                resizeMode="contain"
-              />
-            </View>
+            <WaitingIndicator 
+                  visible={true} 
+                  status={"pending"} 
+                  currentStep={currentStep} 
+                />
           </>
         )}
         {currentStep === 3 && (

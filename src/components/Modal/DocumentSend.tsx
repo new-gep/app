@@ -43,10 +43,11 @@ type Props = {
     setPath:any;
     jobId:any;
     setStatusDocument:any;
+    finishSendDocument?:any,
 };
 
 
-const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close, setStatusDocument }: Props) => {
+const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, twoPicture, setTypeDocument, setPath, visible, close, setStatusDocument, finishSendDocument }: Props) => {
     const navigation = useNavigation<any>();
     const [front,setFront] = useState<any | null>(null)
     const [back ,setBack]  = useState<any | null>(null)
@@ -231,6 +232,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
             if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand' && documentName.toLowerCase() != 'dismissal_medical_examination'){
                 const response = await UploadFile(path, documentName, doc, collaborator.CPF);
                 if (response.status === 400) {
+                    if(finishSendDocument){
+                        finishSendDocument(400)
+                    }
                     setActiveSheet('danger');
                     setMessageSheet(`Documento inválido`);
                     Sheet();
@@ -241,6 +245,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     throw new Error('Documento inválido');
                 }
                 else if (response.status !== 200) {
+                    if(finishSendDocument){
+                        finishSendDocument(200)
+                    }
                     setNoRepeat(true);
                     setActiveSheet('danger');
                     setMessageSheet(`Erro interno`);
@@ -262,6 +269,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                 const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
                 switch (update.status) {
                     case 200:
+                        if(finishSendDocument){
+                            finishSendDocument(200)
+                        }
                         validateCollaborator()
                         setSendPicture(false)
                         setPath(path)
@@ -276,6 +286,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         close()
                         break;
                     case 400:
+                        if(finishSendDocument){
+                            finishSendDocument(400)
+                        }
                         setActiveSheet('danger');
                         setMessageSheet(`Documento não encontrado`);
                         setLoad(false)
@@ -285,6 +298,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         setBack(null);
                         break
                     default:
+                        if(finishSendDocument){
+                            finishSendDocument(500)
+                        }
                         setActiveSheet('danger');
                         setMessageSheet('Erro, tente novamente!');
                         Sheet();
@@ -310,8 +326,11 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         demission: JSON.stringify({step:1, status:null, user:null, solicitation:'collaborator', observation:''})
                     };
                     const response = await UpdateJob(jobId, demissionData);
-                    console.log(response)
+                 
                     if(response.status !== 200){
+                        if(finishSendDocument){
+                            finishSendDocument(200)
+                        }
                         setActiveSheet('danger');
                         setMessageSheet(`Erro ao atualizar o job`);
                         Sheet();
@@ -321,6 +340,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                 }
                 
                 if(createResponse.status === 201){
+                    if(finishSendDocument){
+                        finishSendDocument(201)
+                    }
                     setPath(path)
                     setTypeDocument(type)
                     setActiveSheet('success');
@@ -332,12 +354,17 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     close()
                 } 
                 else if (createResponse.status === 409) {
-
+                    if(finishSendDocument){
+                        finishSendDocument(409)
+                    }
                     setActiveSheet('danger');
                     setMessageSheet('Imagem já existe');
                     Sheet();
                 } 
                 else {
+                    if(finishSendDocument){
+                        finishSendDocument(500)
+                    }
                     setActiveSheet('danger');
                     setMessageSheet('Erro ao salvar imagem');
                     Sheet();

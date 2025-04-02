@@ -40,9 +40,12 @@ interface Props {
     onPress5?: () => void;
     product?: boolean;
     onSuccess?: () => void;
+    
+    //function finishSend
+    finishSendDocument?: any;
 }
 
-const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, setStatusDocument, twoPicture, path, jobId, onSuccess}: Props) => {
+const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, setStatusDocument, twoPicture, path, jobId, onSuccess, finishSendDocument}: Props) => {
     const theme = useTheme();
     const { colors }: { colors: any } = theme;
     const [isBlurred, setIsBlurred] = useState(true); // Controla o desfoque
@@ -114,11 +117,12 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
         }
     };
 
+
     return (
         <View
             style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}
         >
-            <DocumentSend statusDocument={statusDocument} setStatusDocument={setStatusDocument} jobId={jobId} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
+            <DocumentSend statusDocument={statusDocument} finishSendDocument={finishSendDocument} setStatusDocument={setStatusDocument} jobId={jobId} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
             <DocumentVisible documentName={documentName}  path={pathPictureSide} typeDocument={typePicture} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
             <View style={{ width: '40%', alignItems: 'center' }}>
                 <TouchableOpacity onPress={handlePress}>

@@ -1,10 +1,10 @@
 import axios from 'axios';
 import config from '../../../config.json';
 
-export default async function FindPicture(cpf: any) {
+export default async function FindOnePicture(document: string, cpf: string, jobId: string) {
     try {
-        const response = await axios.get(`${config.API_URL}picture/${cpf}`);
-        
+        console.log(`${config.API_URL}picture/findOnePicture/${document}/${cpf}/${jobId}`);
+        const response = await axios.get(`${config.API_URL}picture/findOnePicture/${document}/${cpf}/${jobId}`);
         if (response.status === 200) {
             return response.data;
         } else {

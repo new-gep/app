@@ -9,6 +9,7 @@ import ProfileScreen from '../screens/Profile/Profile';
 import DocumentsScreen from '../screens/Documents/Documents';
 import BottomMenu from '../layout/BottomMenu';
 import { useTheme } from '@react-navigation/native';
+import Default from '../screens/Cycle/Default'
 
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -37,12 +38,13 @@ const BottomNavigation = () => {
             />
             <Tab.Screen 
                 name='Documents'
-                component={DocumentsScreen}
+                component={Default}
             />
             <Tab.Screen 
                 name='Profile'
                 component={ProfileScreen}
             />
+
             
         </Tab.Navigator>
     )

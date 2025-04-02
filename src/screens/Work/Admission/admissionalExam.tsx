@@ -1,7 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Image, Text, RefreshControl, ScrollView } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  RefreshControl,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import Cardstyle4 from "../../../components/Card/Cardstyle4";
-import FindPicture from "../../../hooks/findOne/picture";
+import FindOnePicture from "../../../hooks/findOne/onePicture";
 import JobAdmissionScreen from "../HomeAdmission";
 import { SafeAreaView } from "react-native";
 import {
@@ -9,6 +16,7 @@ import {
   useFocusEffect,
   useNavigation,
 } from "@react-navigation/native";
+import COLORS from "../../../constants/theme";
 import { isPending } from "@reduxjs/toolkit";
 import JobPicture from "../../../hooks/upload/job";
 import GetJobDocument from "../../../hooks/get/job/findDocument";
@@ -20,7 +28,7 @@ type Props = {
   jobConected: any;
   CPF: any;
 };
-const admissionalExam: React.FC<Props> = ({ jobConected, CPF }) => {
+const admissionalExam: React.FC<Props> = ({ CPF, jobConected }) => {
   const navigation = useNavigation();
   const [myDocsData, setMyDocsData] = useState<any[] | null>(null);
   const [sendDocument, setSendDocument] = useState<boolean>(false);
@@ -30,51 +38,11 @@ const admissionalExam: React.FC<Props> = ({ jobConected, CPF }) => {
   const [loader, setLoader] = useState<any>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    
-    const fetchData = async () => {
-      try {
-        const response = await FindPicture(CPF);
-        if (response.status === 200 && response.pictures) {
-          const pictures = response.pictures;
-          const hasMedicalExamination = pictures.find(
-            (picture: any) => picture.picture === "Medical_Examination"
-          );
-
-          if (hasMedicalExamination) {
-            setStatusDocument(hasMedicalExamination.status);
-            const response = await GetJobDocument(
-              jobConected[0].id,
-              "medical",
-              "1"
-            );
-            if (response.status === 200) {
-              if (hasMedicalExamination.status === "reproved") {
-                setSendDocument(true);
-              }
-              setTypeDocument(response.type);
-              setPathDocument(response.path);
-              setLoader(true);
-            }
-          } else {
-            setSendDocument(true);
-            setTypeDocument(null);
-            setStatusDocument(null);
-            setLoader(true);
-            setPathDocument(null);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setRefreshing(false);
-      }
-    };
-
-    fetchData();
-  }, [CPF, jobConected]);
+  const finishSendDocument = (props: any) => {
+    console.log("Props", props);
+  };
 
   const getTimelineStep = () => {
     switch (statusDocument) {
@@ -93,13 +61,13 @@ const admissionalExam: React.FC<Props> = ({ jobConected, CPF }) => {
       if (jobConected && jobConected[0]) {
         const candidates = JSON.parse(jobConected[0].candidates);
         candidates[0].step = 2; // Atualiza para o step 2
-        
+
         // Aqui você precisa implementar a chamada à API para atualizar o step
         // Exemplo:
         // await UpdateJob(jobConected[0].id, { candidates: JSON.stringify(candidates) });
-        
+
         // Após atualizar, recarrega a página
-        navigation.replace('Timeline', { jobConected, CPF });
+        navigation.replace("Timeline", { jobConected, CPF });
       }
     } catch (error) {
       console.error("Erro ao atualizar step:", error);
@@ -110,89 +78,198 @@ const admissionalExam: React.FC<Props> = ({ jobConected, CPF }) => {
     setShowSuccessMessage(true);
     setTimeout(() => {
       // Em vez de ir direto para Timeline, vamos para WaitingIndicator
-      navigation.replace('WaitingIndicator', { 
+      navigation.replace("WaitingIndicator", {
         visible: true,
-        status: 'pending',
-        message: 'Seu exame admissional foi enviado com sucesso! Aguarde enquanto nossa equipe realiza a análise.'
+        status: "pending",
+        message:
+          "Seu exame admissional foi enviado com sucesso! Aguarde enquanto nossa equipe realiza a análise.",
       });
     }, 2000);
   };
 
-  // Mostrar WaitingIndicator apenas se o documento foi enviado E está pendente
-  if (statusDocument === "pending" && pathDocument) {
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await FindOnePicture(
+        "Medical_Examination",
+        CPF,
+        jobConected[0].id
+      );
+
+      if (response.status === 200 && response.pictures) {
+        const pictures = response.pictures;
+        const hasMedicalExamination = pictures.find(
+          (picture: any) => picture.picture === "Medical_Examination"
+        );
+
+        if (hasMedicalExamination) {
+          setStatusDocument(hasMedicalExamination.status);
+          const response = await GetJobDocument(
+            jobConected[0].id,
+            "medical",
+            "1"
+          );
+          if (response.status === 200) {
+            if (hasMedicalExamination.status === "reproved") {
+              setSendDocument(true);
+            }
+            setTypeDocument(response.type);
+            setPathDocument(response.path);
+            setLoader(true);
+          }
+        } else {
+          setSendDocument(true);
+          setTypeDocument(null);
+          setStatusDocument(null);
+          setLoader(true);
+          setPathDocument(null);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setRefreshing(false);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData();
+  }, [CPF, jobConected]);
+
+  if (statusDocument === "approved" && pathDocument) {
+    
+  }else if (statusDocument === "pending" && pathDocument) {
     return (
-      <WaitingIndicator 
+      <WaitingIndicator
         visible={true}
         status="pending"
         message="Seu exame admissional está em análise. Em breve você receberá um retorno."
       />
     );
-  }
-
-  return (
-    <ScrollView 
-      className={"flex-1"}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={["#9Bd35A", "#689F38"]} // Cores do indicador de loading
-          tintColor={"#689F38"} // Cor do spinner no iOS
-        />
-      }
-    >
-      <View className={"mt-5 w-full "}>
+  } else if (statusDocument === "reproved" && pathDocument) {
+    return (
+      <View className="h-full flex flex-col justify-between">
         <Header
           title="Exame Admissional"
           leftIcon="back"
           leftAction={() => navigation.goBack()}
         />
-        <TimelineFront currentStep={1} showProgress={true} />
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#fde047"]}
+              tintColor={"#fde047"}
+            />
+          }
+        >
+          <TimelineFront currentStep={1} showProgress={true} />
 
-        {loader && (
-          <Timeline 
-            currentStep={getTimelineStep()} 
-            showProgress={false}
-          />
-        )}
-
-        {showSuccessMessage ? (
-          <View className="items-center justify-center p-4 bg-green-100 rounded-lg m-4">
-            <Text className="text-green-700 text-lg font-semibold">
-              Exame enviado com sucesso!
-            </Text>
-            <Text className="text-green-600 text-center mt-2">
-              Redirecionando para a próxima etapa...
-            </Text>
-          </View>
-        ) : (
-          jobConected ? (
-            <>
-              <Cardstyle4 
+          <View className="h-full justify-center flex-1 items-center px-6">
+            <View className="mt-9">
+              <Cardstyle4
                 documentName={"Exame Admissional"}
-                sendDocument={sendDocument}
+                sendDocument={true}
                 typeDocument={typeDocument}
                 statusDocument={statusDocument}
                 twoPicture={false}
                 path={pathDocument}
                 jobId={jobConected[0].id}
-                onSuccess={handleDocumentSuccess}
               />
+            </View>
+            <View className="mt-9">
+              <Image
+                source={require("../../../assets/images/brand/Medical.png")}
+                style={{ width: 250, height: 150 }}
+                resizeMode="contain"
+              />
+            </View>
+            <View className="mt-9">
+              <Text className="text-2xl font-bold text-dark text-center mt-">
+                Exame Reprovado
+              </Text>
 
-              <View className="items-center mt-16">
-                <Image
-                  source={require('../../../assets/images/brand/Medical.png')}
-                  style={{ width: 250, height: 200 }}
-                  resizeMode="contain"
-                />
-              </View>
-            </>
-          ) : (
-            <Text>carregando</Text>
-          )
-        )}
+              <Text className="text-gray-500 text-base text-center mb-8">
+                Seu exame admissional foi reprovado. Por favor, envie novamente
+                o documento.
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
       </View>
-    </ScrollView>
+    );
+  }
+
+  return (
+    <View className="flex-1 h-screen items-center justify-center">
+      {isLoading ? (
+        <ActivityIndicator size="large" color={"#fde047"} />
+      ) : (
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#fde047"]}
+              tintColor={"#fde047"}
+            />
+          }
+        >
+          <View className={"mt-5 w-full "}>
+            <Header
+              title="Exame Admissional"
+              leftIcon="back"
+              leftAction={() => navigation.goBack()}
+            />
+            <TimelineFront currentStep={1} showProgress={true} />
+
+            {loader && <TimelineFront currentStep={1} showProgress={true} />}
+
+            {showSuccessMessage ? (
+              <View className="items-center justify-center p-4 bg-green-100 rounded-lg m-4">
+                <Text className="text-green-700 text-lg font-semibold">
+                  Exame enviado com sucesso!
+                </Text>
+                <Text className="text-green-600 text-center mt-2">
+                  Redirecionando para a próxima etapa...
+                </Text>
+              </View>
+            ) : (
+              jobConected && (
+                <>
+                  <Cardstyle4
+                    documentName={"Exame Admissional"}
+                    sendDocument={sendDocument}
+                    typeDocument={typeDocument}
+                    statusDocument={statusDocument}
+                    twoPicture={false}
+                    path={pathDocument}
+                    jobId={jobConected[0].id}
+                    onSuccess={handleDocumentSuccess}
+                    finishSendDocument={finishSendDocument}
+                  />
+
+                  <View className="items-center mt-16">
+                    <Image
+                      source={require("../../../assets/images/brand/Medical.png")}
+                      style={{ width: 250, height: 200 }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </>
+              )
+            )}
+          </View>
+        </ScrollView>
+      )}
+    </View>
   );
 };
 

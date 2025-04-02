@@ -10,9 +10,10 @@ type WaitingIndicatorProps = {
   visible: boolean;
   status?: 'approved' | 'pending';
   message?: string;
+  currentStep?: number;
 };
 
-const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status, message }) => {
+const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status, message, currentStep }) => {
   const navigation = useNavigation<NavigationProp<any>>();
 
   const getMessage = () => {
@@ -20,12 +21,15 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status, me
       return message;
     }
 
+    if (currentStep === 2) {
+      return 'Seu exame foi aprovado! Em breve enviaremos os documentos para prosseguir com a admissão, por favor aguarde.';
+    }
+
     switch (status) {
       case 'approved':
         return 'Seus documentos foram aprovados. Agora você pode prosseguir com a assinatura do contrato.';
       case 'pending':
         return 'Estamos analisando seus documentos. Em breve você poderá prosseguir com a próxima etapa.';
-        return 'Seus documentos estão em análise. Em breve você poderá prosseguir com a próxima etapa.';
       default:
         return 'Aguardando retorno da documentação';
     }
@@ -38,11 +42,7 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({ visible, status, me
         leftIcon="back"
         leftAction={() => navigation.goBack()}
       />
-      <TimelineFront 
-        currentStep={3}
-        showProgress={true}
-        status={status}
-      />
+      <TimelineFront currentStep={currentStep || 1} showProgress={true} />
       
       <View className="flex-1 justify-start items-center px-6">
         <Text className="text-2xl font-bold text-gray-800 text-center mb-2">
