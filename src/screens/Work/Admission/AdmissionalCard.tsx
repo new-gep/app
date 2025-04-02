@@ -7,60 +7,54 @@ import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 type CardProps = {
+  lockKey: string;
   title: any;
   status: any;
   path: any;
   typeDocument: string;
-  setLockSignature:  (any) => void;
+  setLockSignature: (any) => void;
   lockSignature: any;
 };
 
-const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, lockSignature }: CardProps) => {
-  const [signature, setSignature] = useState<string | null>(null); // Estado para armazenar a assinatura em base64
+const AdmissionalCard = ({ 
+  lockKey,
+  title, 
+  status, 
+  path, 
+  typeDocument, 
+  setLockSignature, 
+  lockSignature 
+}: CardProps) => {
+  const [signature, setSignature] = useState<string | null>(null);
   const [modalVisibleDoc, setModalVisibleDoc] = useState(false);
-  const [isViewed, setIsViewed] = useState(false);
 
   const handleOpenModalDoc = () => {
     setModalVisibleDoc(!modalVisibleDoc);
-    if (!isViewed) {
-      setIsViewed(true);
-      const updatedLockSignature = {
-        ...lockSignature,
-        [title]: true,
-      };
-      setLockSignature(updatedLockSignature);
+    
+    // Atualiza o estado apenas se ainda não foi visualizado
+    if (!lockSignature[lockKey]) {
+      setLockSignature(prev => ({
+        ...prev,
+        [lockKey]: true
+      }));
     }
   };
 
-  const Mask = (type, value) => {
-    switch (type) {
-      case 'title':
-        // Primeiro verifica se é um dos casos especiais
-        switch (value) {
-          case 'registration':
-            return "Ficha de Registro";
-          case 'experience':
-            return "Contrato de Experiência";
-          case 'extension':
-            return "Acordo de Prorrogação de Horas";
-          case 'compensation':
-            return "Acordo de Compensação de Horas";
-          case 'voucher':
-            return "Solicitação de Vale Transporte";
-          default:
-            // Se não for um caso especial, retorna o valor formatado
-            console.log("value", value);
-            return value;
-        }
-      default:
-        return value;
-    }
-  };
+  const Mask = (type: string, value: string) => {
+    const titleMappings: { [key: string]: string } = {
+      registration: "Ficha de Registro",
+      experience: "Contrato de Experiência",
+      extension: "Acordo de Prorrogação de Horas",
+      compensation: "Acordo de Compensação de Horas",
+      voucher: "Solicitação de Vale Transporte"
+    };
 
+    return titleMappings[value] || value;
+  };
 
   return (
     <>
-      <View className="h-3/4 p-4">
+      <View className="h-5/6 p-4">
         <View className="h-full w-80 mx-auto bg-white rounded-2xl shadow-lg border-2 border-gray-200 shadow-gray-300 p-4">
           <DocumentVisible
             path={path}
@@ -71,7 +65,9 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
             close={handleOpenModalDoc}
           />
 
-          <Text className="text-xl font-bold text-gray-800 mb-4 text-center">{Mask('title',title)}</Text>
+          <Text className="text-xl font-bold text-gray-800 mb-4 text-center">
+            {Mask('title', title)}
+          </Text>
 
           {signature ? (
             <Image
@@ -86,7 +82,9 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
               resizeMode="contain"
             />
           ) : (
-            <Text className="text-gray-500 mb-4 text-center">Nenhuma assinatura salva.</Text>
+            <Text className="text-gray-500 mb-4 text-center">
+              Nenhuma assinatura salva.
+            </Text>
           )}
 
           <View className="flex-1 justify-end">
@@ -103,7 +101,7 @@ const AdmissionalCard = ({ title, status, path, typeDocument, setLockSignature, 
               color={COLORS.primary}
               onPress={handleOpenModalDoc}
               icon={
-                isViewed ? 
+                lockSignature[lockKey] ? 
                   <FontAwesome5 name="lock-open" size={24} color="#9ACD32" /> :
                   <FontAwesome5 name="lock" size={24} color="#FFB343" />
               }

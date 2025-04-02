@@ -39,9 +39,10 @@ interface Props {
     onPress2?: () => void;
     onPress5?: () => void;
     product?: boolean;
+    onSuccess?: () => void;
 }
 
-const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, setStatusDocument, twoPicture, path, jobId}: Props) => {
+const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, setStatusDocument, twoPicture, path, jobId, onSuccess}: Props) => {
     const theme = useTheme();
     const { colors }: { colors: any } = theme;
     const [isBlurred, setIsBlurred] = useState(true); // Controla o desfoque
@@ -70,6 +71,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
             try{
                 const resolvedPath = await path;
                 const resolvedType = await typeDocument; 
+                console.log(documentName)
                 setSendPicture(sendDocument)
                 if (resolvedPath && resolvedType) {
                     setTypePicture(resolvedType)
@@ -106,6 +108,11 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
         }
     },[newPathPicture])
 
+    const handleUploadSuccess = () => {
+        if (onSuccess) {
+            onSuccess();
+        }
+    };
 
     return (
         <View
@@ -247,46 +254,47 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                         <Text style={{ ...FONTS.fontMedium, fontSize: 16, color: statusDocument == 'approved' ? COLORS.success : statusDocument == 'approved' ?  COLORS.danger :  COLORS.dark }}>{statusDocument == 'approved' ? 'Aprovado' :  statusDocument == 'reproved' ? 'Reenviar' : statusDocument == 'pending' ? 'Em Análise' :'Pendente'}</Text>
                     </View>
                    
-                    { sendPicture &&
+                    {(!pathPicture || statusDocument === 'reproved') && (
                         <TouchableOpacity
-                                activeOpacity={0.8}
-                                style={{
-                                    padding: 10,
-                                    paddingHorizontal: 15,
-                                    backgroundColor: COLORS.primary,
-                                    borderRadius: 30,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: 10,
-                                }}
-                                onPress={()=>setSendModalDocument(true)}
-                            >
-                                <Text className={`text-dark`} style={{ ...FONTS.fontMedium, fontSize: 14, lineHeight: 21 }}>Enviar</Text>
+                            activeOpacity={0.8}
+                            style={{
+                                padding: 10,
+                                paddingHorizontal: 15,
+                                backgroundColor: COLORS.primary,
+                                borderRadius: 30,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 10,
+                            }}
+                            onPress={()=>setSendModalDocument(true)}
+                        >
+                            <Text className={`text-dark`} style={{ ...FONTS.fontMedium, fontSize: 14, lineHeight: 21 }}>
+                                {statusDocument === 'reproved' ? 'Reenviar' : 'Enviar'}
+                            </Text>
                         </TouchableOpacity>
-                    }
-                        
+                    )}
 
-
-                    { !sendPicture && 
+                    {pathPicture && statusDocument !== 'reproved' && (
                         <TouchableOpacity
                             onPress={()=>setViewingDocument(true)}
                             activeOpacity={0.8}
                             style={{
-                                    padding: 10,
-                                    paddingHorizontal: 20,
-                                    backgroundColor: COLORS.dark,
-                                    borderRadius: 30,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: 10,
+                                padding: 10,
+                                paddingHorizontal: 20,
+                                backgroundColor: COLORS.dark,
+                                borderRadius: 30,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 10,
                             }}
                         >
-                            <Text className={`text-white`} style={{ ...FONTS.fontMedium, fontSize: 14, lineHeight: 21}}>Visualizar</Text>
+                            <Text className={`text-white`} style={{ ...FONTS.fontMedium, fontSize: 14, lineHeight: 21}}>
+                                Visualizar
+                            </Text>
                         </TouchableOpacity>
-                    }
-                        
+                    )}
                 </View>
             </View>
         </View>

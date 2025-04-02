@@ -36,7 +36,7 @@ import Absence from "./Absence/Home";
 import Home from "./Home";
 import FindOneJob from "../../hooks/get/job/findOne";
 //import HomeAdmission from "./HomeAdmission";
-
+import { COLORS } from "../../constants/theme";
 type WishlistScreenProps = StackScreenProps<RootStackParamList, "Work">;
 
 const Stack = createStackNavigator();
@@ -127,11 +127,11 @@ const Work = () => {
     const fetchData = async () => {
       if (collaborator) {
         const cpfString = collaborator.CPF.toString().padStart(11, '0');
-        console.log(cpfString)
+        // console.log(cpfString)
         const response = await FindCollaborator(cpfString);
         
         setHaswork(response.collaborator.id_work ? response.collaborator.id_work : false);
-        console.log("response", response.collaborator.id_work)
+        // console.log("response", response.collaborator.id_work)
         setCPF(cpfString);
         if (response.status === 200) {
           const responseJob = await FindOneJob(collaborator.id_work);
@@ -166,7 +166,7 @@ const Work = () => {
     <>
       {hasWork === null ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="black" />
+          <ActivityIndicator size="large" color={COLORS.primary} /> 
         </View>
       ) : hasWork ? (
         <Home

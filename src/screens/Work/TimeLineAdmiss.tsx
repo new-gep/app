@@ -35,7 +35,9 @@ const Timeline = ({ jobConected, CPF }) => {
   const [currentStep, setCurrentStep] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const lineAnim = useRef(new Animated.Value(0)).current;
-  const [lockSignature, setLockSignature] = useState(null);
+  const [lockSignature, setLockSignature] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [keySignature, setKeySignature] = useState(false);
   const [signatureFound, setSignatureFound] = useState<any>(null);
   const [statusSignature, setStatusSignature] = useState<any>(null);
@@ -63,12 +65,41 @@ const Timeline = ({ jobConected, CPF }) => {
     fetchData();
   }, []);
 
+  // useEffect(() => {
+  //   if (lockSignature) {
+  //     console.log('Estado atual do lockSignature:', lockSignature);
+  //     console.log('Chaves do lockSignature:', Object.keys(lockSignature));
+  //     console.log('Valores do lockSignature:', Object.values(lockSignature));
+
+  //     // Verifica se é um array e converte para objeto se necessário
+  //     const lockSignatureObj = Array.isArray(lockSignature) ?
+  //       lockSignature.reduce((obj, value, index) => {
+  //         if (typeof value === 'string') {
+  //           obj[value] = false;
+  //         } else {
+  //           obj[`doc${index}`] = value;
+  //         }
+  //         return obj;
+  //       }, {}) :
+  //       lockSignature;
+
+  //     const allTrue = Object.values(lockSignatureObj)
+  //       .filter(value => typeof value === 'boolean')
+  //       .every(value => value === true);
+
+  //     console.log('LockSignature convertido:', lockSignatureObj);
+  //     console.log('Todos os documentos foram visualizados?', allTrue);
+  //     setKeySignature(allTrue);
+  //   }
+  // }, [lockSignature]);
+
   useEffect(() => {
-    if (lockSignature) {
-      const allTrue = Object.values(lockSignature).every(
+    if (lockSignature && Object.keys(lockSignature).length > 0) {
+      const allViewed = Object.values(lockSignature).every(
         (value) => value === true
       );
-      setKeySignature(allTrue);
+      setKeySignature(allViewed);
+      console.log("Todos os documentos visualizados?", allViewed);
     }
   }, [lockSignature]);
 
@@ -156,7 +187,7 @@ const Timeline = ({ jobConected, CPF }) => {
           <>
             {(signatureFound && signatureFound?.status === "approved") ||
             signatureFound?.status === "pending" ? (
-              <View className="w-full h-full">
+              <View className="w-full h-full ">
                 <WaitingIndicator visible={true} status={"pending"} />
               </View>
             ) : signatureFound?.status === "reproved" ? (
@@ -202,7 +233,7 @@ const Timeline = ({ jobConected, CPF }) => {
                 </View>
               </>
             ) : (
-              <View className="flex w-full">
+              <View className="flex w-full h-full">
                 <Header
                   title="Assinar Documentos"
                   leftIcon="back"
@@ -223,14 +254,6 @@ const Timeline = ({ jobConected, CPF }) => {
                     lockSignature={lockSignature}
                   />
                 </ScrollView>
-
-                {signature && (
-                  <View className="flex justify-center items-center min-h-min">
-                    <Text className="text-lg font-semibold mb-5 mt-5">
-                      Assinatura Salva:
-                    </Text>
-                  </View>
-                )}
               </View>
             )}
           </>
@@ -238,21 +261,23 @@ const Timeline = ({ jobConected, CPF }) => {
       </ScrollView>
 
       {currentStep === 3 && !signatureFound?.status && (
-        <View className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200">
-          {!Object.values(lockSignature || {}).every(
-            (value) => value === true
-          ) ? (
-            <Text className="text-center text-gray-600 mb-2">
-              Para assinar é necessário visualizar todos os documentos
-            </Text>
-          ) : (
-            <TouchableOpacity
-              style={[styles.signButton, { marginHorizontal: 0 }]}
-              onPress={handleOpenModal}
-            >
-              <Text style={styles.signButtonText}>Assinar</Text>
-            </TouchableOpacity>
-          )}
+        <View className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <Text className="text-center text-gray-600 mb-2">
+            Para assinar é necessário visualizar todos os documentos
+          </Text>
+          <TouchableOpacity
+            style={[
+              styles.signButton,
+              {
+                marginHorizontal: 0,
+                opacity: keySignature ? 1 : 0.5,
+              },
+            ]}
+            onPress={handleOpenModal}
+            disabled={!keySignature}
+          >
+            <Text style={styles.signButtonText}>Assinar</Text>
+          </TouchableOpacity>
         </View>
       )}
 

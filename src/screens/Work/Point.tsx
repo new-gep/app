@@ -15,7 +15,7 @@ import DocumentVisible from "../../components/Modal/DocumentVisible";
 import SignatureModalCanvas from "../Components/Signatures/signatureModalCanvas";
 import { WebView } from "react-native-webview";
 import Feather from "@expo/vector-icons/build/Feather";
-
+import { COLORS } from "../../constants/theme";
 const months = [
   { value: "01", label: "Janeiro", english: "January" },
   { value: "02", label: "Fevereiro", english: "February" },
@@ -219,7 +219,7 @@ const Point = () => {
       <ScrollView className="flex-1">
         {isFetching ? (
           <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="black" />
+            <ActivityIndicator size="large" color={COLORS.primary} />
           </View>
         ) : documents.length >= 1 ? (
           documents.map((item) => {
@@ -340,7 +340,7 @@ const Point = () => {
 
           {isLoading && (
             <View className="absolute inset-0 bg-white/90 flex items-center justify-center">
-              <ActivityIndicator size="large" color="black" />
+              <ActivityIndicator size="large" color={COLORS.primary} />
             </View>
           )}
         </>

@@ -39,7 +39,15 @@ const Documents = () => {
       const response = await FindPicture(collaborator.CPF);
       if (response.status != 500) {
         setError(false);
-        const picturesFromAPI = response.pictures;
+        // const picturesFromAPI = response.pictures;
+
+        const picturesFromAPI = response.pictures.filter((picture: any) => {
+          return !picture.picture.toLowerCase().includes('signature') &&
+                 !picture.picture.toLowerCase().includes('medical') &&
+                 !picture.picture.toLowerCase().includes('dismissal') &&
+                 !picture.picture.toLowerCase().includes('admission');
+        });
+        console.log(picturesFromAPI)
 
         let tempPictureCard: { [key: string]: any } = {};
 
@@ -193,6 +201,7 @@ const Documents = () => {
         case "voter_registration":
           return "Titulo de Eleitor (opcional)";
         default:
+          console.log(name)
           return "?";
       }
     }

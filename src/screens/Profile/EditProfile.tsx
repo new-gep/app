@@ -32,6 +32,8 @@ import GetPathPicture from "../../function/getPathPicture";
 import * as FileSystem from "expo-file-system";
 import UploadFile from "../../hooks/upload/picture";
 import FindBucketCollaborator from "../../hooks/bucket/collaborator";
+import * as ImageManipulator from 'expo-image-manipulator';
+
 
 type inputUpdateDates = {
   name: string;
@@ -193,8 +195,9 @@ const EditProfile = () => {
           );
           setMessageSheet("Informações atualizadas");
           setActiveSheet("success");
-          Sheet();
+          await Sheet();
           validateCollaborator();
+          navigation.goBack();
           break;
         default:
           break;
@@ -204,21 +207,41 @@ const EditProfile = () => {
 
   const handleSendPicture = async () => {
     let response = await GetPathPicture("camera");
-    // console.log(response);
     if (response == "cancel") {
       alert(
         "Permissões de câmera permanentemente negadas. Altere as permissões nas configurações do aplicativo."
       );
       return;
     }
+    const compressImage = async (imageUri: string) => {
+      try {
+        const result = await ImageManipulator.manipulateAsync(
+          imageUri,
+          [{ resize: { width: 800 } }],
+          { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+        );
+        return result.uri;
+      } catch (error) {
+        console.log("Erro ao comprimir imagem:", error);
+        return imageUri;
+      }
+    };
+    //@ts-ignore
+    const compressedImage = await compressImage(response);
+
+    response = compressedImage;
+    // console.log(response);
+
     convertToBase64(response);
-    if (typeof response === "string") {
+    console.log("collaborator", response);
+    if (typeof response === "string" && collaborator) {
       const fileUpload = await UploadFile(
         response,
         "Picture",
         "complet",
         collaborator.CPF
       );
+      console.log("fileUpload", fileUpload);
       switch (fileUpload.status) {
         case 200:
           setMessageSheet("Foto Atualizada");
@@ -408,7 +431,12 @@ const EditProfile = () => {
 
   return (
     <View style={{ backgroundColor: colors.background, flex: 1 }}>
-      <Header title="Editar Perfil" leftIcon="back" titleRight />
+      <Header 
+        title="Editar Perfil" 
+        leftIcon="back" 
+        titleRight 
+        onLeftPress={() => navigation.navigate('Profile')}
+      />
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
@@ -548,6 +576,7 @@ const EditProfile = () => {
             </Text>
           </View>
           <View style={{ marginBottom: 15, marginTop: 10 }}>
+            <Text style={styles.InputTitle}>Nome Completo</Text>
             <Input
               onFocus={() => setisFocused(true)}
               onBlur={() => setisFocused(false)}
@@ -572,6 +601,7 @@ const EditProfile = () => {
             />
           </View>
           <View style={{ marginBottom: 15 }}>
+            <Text style={styles.InputTitle}>Celular</Text>
             <Input
               prop_mask={"phone"}
               onFocus={() => setisFocused1(true)}
@@ -598,6 +628,7 @@ const EditProfile = () => {
             />
           </View>
           <View style={{ marginBottom: 15 }}>
+            <Text style={styles.InputTitle}>Email</Text>
             <Input
               onFocus={() => setisFocused2(true)}
               onBlur={() => setisFocused2(false)}
@@ -622,6 +653,7 @@ const EditProfile = () => {
             />
           </View>
           <View style={{ marginBottom: 15 }}>
+            <Text style={styles.InputTitle}>Data de Nascimento</Text>
             <Input
               onFocus={() => setisFocusedBirth(true)}
               onBlur={() => setisFocusedBirth(false)}
@@ -835,6 +867,7 @@ const EditProfile = () => {
             </View>
             <View className={`px-5`} style={{ marginBottom: 15 }}>
               <View className={`mb-3`}>
+                <Text style={styles.InputTitle}>CEP</Text>
                 <Input
                   prop_mask={"cep"}
                   onFocus={() => setIsFocusedCep(true)}
@@ -859,6 +892,7 @@ const EditProfile = () => {
               </View>
 
               <View className={`mb-3`}>
+                <Text style={styles.InputTitle}>Rua</Text>
                 <Input
                   onFocus={() => setIsFocusedStreet(true)}
                   onBlur={() => setIsFocusedStreet(false)}
@@ -885,6 +919,7 @@ const EditProfile = () => {
 
               <View className={`mb-3 flex-row items-center justify-between`}>
                 <View className={`w-2/4`}>
+                  <Text style={styles.InputTitle}>Número</Text>
                   <Input
                     onFocus={() => setIsFocusedNumber(true)}
                     onBlur={() => setIsFocusedNumber(false)}
@@ -923,6 +958,7 @@ const EditProfile = () => {
               </View>
 
               <View className={`mb-3`}>
+                <Text style={styles.InputTitle}>Complemento</Text>
                 <Input
                   onFocus={() => setIsFocusedComplement(true)}
                   onBlur={() => setIsFocusedComplement(false)}
@@ -948,6 +984,7 @@ const EditProfile = () => {
               </View>
 
               <View className={`mb-3`}>
+                <Text style={styles.InputTitle}>Bairro</Text>
                 <Input
                   onFocus={() => setIsFocusedDistrict(true)}
                   onBlur={() => setIsFocusedDistrict(false)}
@@ -973,6 +1010,7 @@ const EditProfile = () => {
               </View>
 
               <View className={`mb-3`}>
+                <Text style={styles.InputTitle}>Cidade</Text>
                 <Input
                   onFocus={() => setIsFocusedCity(true)}
                   onBlur={() => setIsFocusedCity(false)}
@@ -998,6 +1036,7 @@ const EditProfile = () => {
               </View>
 
               <View className={`mb-3 w-1/2`}>
+                <Text style={styles.InputTitle}>UF</Text>
                 <Input
                   classStyles="uppercase"
                   length={2}
