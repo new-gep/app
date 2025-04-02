@@ -24,13 +24,15 @@ const Absence = () => {
 
   return (
     <View className="flex-1 bg-white">
-      <View className="px-5 mt-10 mb-5">
-        <Header
-          title="Minhas Ausências"
-          leftIcon="back"
-          leftAction={() => navigation.goBack()}
+      {!isAddingNew && (
+        <View className="mb-5">
+          <Header
+            title="Minhas Ausências"
+            leftIcon="back"
+            leftAction={() => navigation.goBack()}
           />
         </View>
+      )}
 
       {!isAddingNew ? (
         <AbsenceGet onAddNew={() => setIsAddingNew(true)} />

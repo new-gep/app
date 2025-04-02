@@ -11,7 +11,6 @@ const Route = () => {
 			<CollaboratorProvider>
 				{/* <ValidateCollaboratorAndBlock/> */}
 				<StackNavigator/>
-
 			</CollaboratorProvider>
 		</ThemeContextProvider>
 	)

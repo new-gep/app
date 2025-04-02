@@ -71,7 +71,7 @@ const ArrivalData = [
   },
 ];
 
-export default function HomeNoWork({ setTitleWork }) {
+export default function HomeNoWork() {
   const navigation = useNavigation<NavigationProp<any>>();
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -109,11 +109,11 @@ export default function HomeNoWork({ setTitleWork }) {
         
         if (response.processAdmission) {
           setAdmission(true);
-          setTitleWork("Processo admissional");
+          // setTitleWork("Processo admissional");
           setProcessAdmission(true);
         } else {
           setAdmission(false);
-          setTitleWork("Vagas aplicadas");
+          // setTitleWork("Vagas aplicadas");
         }
 
       } catch (error) {
@@ -131,7 +131,11 @@ export default function HomeNoWork({ setTitleWork }) {
     }, [collaborator])
   );
 
-  const filteredJobs = jobConected?.filter(job => 
+  useEffect(() => {
+    console.log("caindo aqui")
+  }, [jobConected])
+
+  const filteredJobs = jobConected?.filter((job:any) => 
     job.function.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -143,7 +147,7 @@ export default function HomeNoWork({ setTitleWork }) {
         </View>
       ) : processAdmission ? (
         <>
-          <HomeAdmission jobConected={jobConected} CPF={collaborator.CPF} />
+          <HomeAdmission jobConected={jobConected} CPF={collaborator?.CPF} />
         </>
       ) : !process ? (
         <>
@@ -168,7 +172,7 @@ export default function HomeNoWork({ setTitleWork }) {
                 showsVerticalScrollIndicator={false}
               >
                 {filteredJobs?.length > 0 ? (
-                  filteredJobs.map((job) => (
+                  filteredJobs.map((job:any) => (
                     <JobApplicationCard key={job.id} job={job} company={job.company}/>
                   ))
                 ) : (

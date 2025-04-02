@@ -8,13 +8,19 @@ import {
   Image,
   TextInput,
   Dimensions,
+  Alert,
 } from "react-native";
-import { useFocusEffect, useTheme, useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useTheme,
+  useNavigation,
+} from "@react-navigation/native";
 import DocumentSendServices from "../../../components/Modal/DocumentSendServices";
 import { IMAGES } from "../../../constants/Images";
 import FindPicture from "../../../hooks/findOne/picture";
 import GetJobDocument from "../../../hooks/get/job/findDocument";
 import uploadAbsence from "../../../hooks/upload/absence";
+import Header from "~/src/layout/Header";
 
 type AbsenceAddProps = {
   onClose: () => void;
@@ -62,15 +68,29 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
   const [path, setPath] = useState<string | null>(null);
   const [statusDocument, setStatusDocument] = useState<string | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [documentUploaded, setDocumentUploaded] = useState(false);
   const navigation = useNavigation();
 
   const handleSelectReason = (reason: string) => {
-    setSelectedReason(reason);
+    // Se clicar na mesma opção que já está selecionada, limpa a seleção
+    if (selectedReason === reason) {
+      setSelectedReason(null);
+      setOtherReason("");
+    } else {
+      setSelectedReason(reason);
+      // Não limpar otherReason se a opção "Outros" for selecionada novamente
+      if (reason !== "Outros") {
+        setOtherReason("");
+      }
+    }
+    
     setShowOptions(false);
-    if (reason !== "Outros") setOtherReason("");
-
     // Resetar o caminho do arquivo ao selecionar um novo motivo
-    setPath(null);
+    // exceto quando selecionar "Outros" novamente
+    if (reason !== "Outros" || selectedReason !== "Outros") {
+      setPath(null);
+      setDocumentUploaded(false);
+    }
   };
 
   useFocusEffect(
@@ -97,7 +117,8 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
             if (hasAbsenceDocument) {
               setStatusDocument(hasAbsenceDocument.status);
               setPath(hasAbsenceDocument.path);
-              
+              setDocumentUploaded(true);
+
               if (hasAbsenceDocument.status === "approved") {
                 setShowSuccessPopup(true); // Mostra o popup de sucesso
               } else if (hasAbsenceDocument.status === "reproved") {
@@ -106,6 +127,7 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
             } else {
               setSendModalDocument(true);
               setPath(null);
+              setDocumentUploaded(false);
             }
           }
         } catch (error) {
@@ -119,11 +141,13 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       return () => {
         setSendModalDocument(false);
         setPath(null);
+        setDocumentUploaded(false);
       };
     }, [absenceData.id_work, absenceData.month, absenceData.year])
   );
 
   const handleUploadSuccess = () => {
+    setDocumentUploaded(true);
     setShowSuccessPopup(true);
     setTimeout(() => {
       setShowSuccessPopup(false);
@@ -132,169 +156,217 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
     }, 3000);
   };
 
-  return (
-    <ScrollView
-      contentContainerStyle={{ paddingBottom: 70 }}
-      className="px-5 py-5"
-    >
-      {/* Header */}
-      <View className="flex-row items-center">
-        <TouchableOpacity onPress={onClose}></TouchableOpacity>
-        <Text className="flex-1 text-center text-2xl font-semibold">
-          Justificar Ausência
-        </Text>
-      </View>
+  const handleSendDocument = () => {
+    if (!path) {
+      Alert.alert(
+        "Documento necessário",
+        "Por favor, faça o upload do documento antes de enviar.",
+        [{ text: "OK", onPress: () => setSendModalDocument(true) }]
+      );
+      return;
+    }
+    
+    // Se já tiver um documento, apenas confirma o envio
+    Alert.alert(
+      "Confirmar envio",
+      "Deseja enviar este documento para análise?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { 
+          text: "Enviar", 
+          onPress: handleUploadSuccess 
+        }
+      ]
+    );
+  };
 
-      {/* Seletor de Motivo */}
-      <View className="mt-8">
-        <Text className="mb-2 text-base font-semibold">
-          Selecione o motivo da ausência:
-        </Text>
-        <TouchableOpacity
-          className="p-4 border border-gray-700 rounded-lg"
-          onPress={() => setShowOptions(!showOptions)}
-        >
-          <Text className="text-center text-base text-gray-900">
-            {selectedReason || "Selecione uma opção"}
+  return (
+    <>
+      <View className="mb-5">
+        <Header
+          title="Justificar Ausência"
+          leftIcon="back"
+          leftAction={() => onClose()}
+        />
+      </View>
+      <ScrollView contentContainerStyle={{ paddingBottom: 70 }}>
+        {/* Seletor de Motivo */}
+        <View className="mt-8 px-5">
+          <Text className="mb-2 text-base font-semibold">
+            Selecione o motivo da ausência:
           </Text>
-        </TouchableOpacity>
-        {showOptions && (
-          <View className="mt-2 border border-gray-700 rounded-lg">
-            <TouchableOpacity
-              className="p-3 border-b border-gray-700"
-              onPress={() => handleSelectReason("Atestado de colaborador")}
-            >
-              <Text className="text-base text-gray-900">
-                Atestado de colaborador
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="p-3 border-b border-gray-700"
-              onPress={() => handleSelectReason("Ateatado de acompanhamento")}
-            >
-              <Text className="text-base text-gray-900">
-                Ateatado de acompanhamento
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="p-3"
-              onPress={() => handleSelectReason("Outros")}
-            >
-              <Text className="text-base text-gray-900">Outros</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {selectedReason === "Outros" && (
-          <TextInput
-            placeholder="Digite o motivo"
-            placeholderTextColor={theme.dark ? "#fff" : "#000"}
-            className="mt-4 p-4 border border-gray-700 rounded-lg"
-            value={otherReason}
-            onChangeText={setOtherReason}
-            multiline
+          <TouchableOpacity
+            className="p-4 border border-gray-700 rounded-lg"
+            onPress={() => setShowOptions(!showOptions)}
+          >
+            <Text className="text-center text-base text-gray-900">
+              {selectedReason || "Selecione uma opção"}
+            </Text>
+          </TouchableOpacity>
+          {showOptions && (
+            <View className="mt-2 border border-gray-700 rounded-lg">
+              <TouchableOpacity
+                className="p-3 border-b border-gray-700"
+                onPress={() => {
+                  handleSelectReason("Atestado de colaborador");
+                }}
+              >
+                <Text className="text-base text-gray-900">
+                  Atestado de colaborador
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="p-3 border-b border-gray-700"
+                onPress={() => {
+                  handleSelectReason("Ateatado de acompanhamento");
+                }}
+              >
+                <Text className="text-base text-gray-900">
+                  Ateatado de acompanhamento
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="p-3"
+                onPress={() => {
+                  handleSelectReason("Outros");
+                }}
+              >
+                <Text className="text-base text-gray-900">Outros</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {selectedReason === "Outros" && (
+            <TextInput
+              placeholder="Digite o motivo"
+              placeholderTextColor={theme.dark ? "#fff" : "#000"}
+              className="mt-4 p-4 border border-gray-700 rounded-lg"
+              value={otherReason}
+              onChangeText={setOtherReason}
+              multiline
+            />
+          )}
+        </View>
+
+        {/* Imagem ilustrativa quando não há motivo selecionado */}
+        {!selectedReason && (
+          <Image
+            source={IMAGES.unique14}
+            className="mt-10 self-center"
+            style={{
+              height: height * 0.4,
+              width: width * 0.8,
+              resizeMode: "contain",
+              opacity: 0.8,
+            }}
           />
         )}
-      </View>
 
-      {/* Imagem ilustrativa quando não há motivo selecionado */}
-      {!selectedReason && (
-        <Image
-          source={IMAGES.unique14}
-          className="mt-10 self-center"
-          style={{
-            height: height * 0.4,
-            width: width * 0.8,
-            resizeMode: "contain",
-            opacity: 0.8,
-          }}
-        />
-      )}
-
-      {/* Seção de documentação quando motivo é selecionado */}
-      {selectedReason && (
-        <View className="mt-8">
-          <View className="bg-primary rounded-xl p-3 flex-row justify-between">
-            <View className="w-1/2">
-              <Text className="absolute w-44 text-2xl font-semibold text-black -mt-10">
-                Documentação
-              </Text>
-              <Text className="mt-2 text-base text-black">
-                Envie seu documento para análise
-              </Text>
-            </View>
-            <View className="w-1/2 items-end">
-              <Image
-                source={IMAGES.unique14}
-                style={{
-                  height: height * 0.3,
-                  width: width * 0.5,
-                  resizeMode: "contain",
-                  marginTop: -120,
+        {/* Seção de documentação quando motivo é selecionado */}
+        {selectedReason && (
+          <View className="mt-10 px-5">
+            <View className="mt-5 px-2">
+              <DocumentSendServices
+                absenceData={absenceData}
+                documentName={
+                  selectedReason === "Outros" && otherReason
+                    ? otherReason
+                    : selectedReason
+                }
+                visible={sendModalDocument}
+                twoPicture={false}
+                close={() => setSendModalDocument(false)}
+                setPath={(newPath: string | null) => {
+                  setPath(newPath);
+                  if (newPath) setDocumentUploaded(true);
                 }}
+                path={path}
+                statusDocument={null}
+                setSendPicture={() => {}}
+                setTypeDocument={() => {}}
+                jobId={absenceData.id_work}
+                onSuccess={handleUploadSuccess}
               />
-            </View>
-          </View>
-          <View className="mt-5 px-2">
-            <DocumentSendServices
-              absenceData={absenceData}
-              documentName={
-                selectedReason === "Outros" && otherReason
-                  ? otherReason
-                  : selectedReason
-              }
-              visible={sendModalDocument}
-              twoPicture={false}
-              close={() => setSendModalDocument(false)}
-              setPath={setPath}
-              path={path}
-              statusDocument={null}
-              setSendPicture={() => {}}
-              setTypeDocument={() => {}}
-              jobId={absenceData.id_work}
-              onSuccess={handleUploadSuccess} // Garanta que está passando a prop
-            />
-            <TouchableOpacity
-              className="bg-primary p-4 rounded-lg mt-3 items-center border border-gray-700"
-              onPress={() => setSendModalDocument(true)}
-            >
-              <Text className="text-white text-base font-medium">Enviar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {showSuccessPopup && (
-        <View className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <View className="bg-white p-6 rounded-lg w-11/12 max-w-md">
-            <View className="flex items-center justify-center mb-4">
-              <View className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center">
-                <Text className="text-4xl text-green-600">✓</Text>
+              
+              {/* Indicador de status do documento */}
+              <View className="mt-3 mb-3">
+                {path ? (
+                  <View className="flex-row items-center justify-center p-2 bg-green-50 rounded-lg">
+                    <Text className="text-green-600 mr-2">✓</Text>
+                    <Text className="text-green-600">
+                      Documento carregado com sucesso
+                    </Text>
+                  </View>
+                ) : (
+                  <View className="flex-row items-center justify-center p-2 bg-yellow-50 rounded-lg">
+                    <Text className="text-yellow-600 mr-2">!</Text>
+                    <Text className="text-yellow-600">
+                      Nenhum documento carregado
+                    </Text>
+                  </View>
+                )}
+              </View>
+              
+              {/* Botões de ação */}
+              <View className="flex-row justify-between">
+                <TouchableOpacity
+                  className="bg-gray-200 p-4 rounded-lg mt-3 items-center flex-1 mr-2"
+                  onPress={() => setSendModalDocument(true)}
+                >
+                  <Text className="text-gray-800 text-base font-medium">
+                    {path ? "Alterar documento" : "Carregar documento"}
+                  </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  className={`p-4 rounded-lg mt-3 items-center flex-1 ml-2 ${
+                    path ? "bg-primary" : "bg-gray-400"
+                  }`}
+                  onPress={handleSendDocument}
+                  disabled={!path}
+                >
+                  <Text className="text-dark text-base font-medium">Enviar</Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <Text className="text-xl font-bold text-center text-gray-800 mb-2">
-              Ausência Justificada!
-            </Text>
-            <Text className="text-base text-center text-gray-600 mb-4">
-              Seu documento foi enviado para análise.
-            </Text>
-            <View className="mt-4 border-t border-gray-100 pt-4">
-              <Text className="text-sm text-center text-gray-500">
-                Você receberá uma notificação quando o documento for analisado.
-              </Text>
-            </View>
-            <TouchableOpacity
-              className="mt-6 bg-green-600 py-3 px-6 rounded-lg"
-              onPress={() => {
-                setShowSuccessPopup(false);
-                onClose();
-              }}
-            >
-              <Text className="text-white text-center font-medium">Entendi</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      )}
-    </ScrollView>
+        )}
+
+        {showSuccessPopup && (
+          <View className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <View className="bg-white p-6 rounded-lg w-11/12 max-w-md">
+              <View className="flex items-center justify-center mb-4">
+                <View className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center">
+                  <Text className="text-4xl text-green-600">✓</Text>
+                </View>
+              </View>
+              <Text className="text-xl font-bold text-center text-gray-800 mb-2">
+                Ausência Justificada!
+              </Text>
+              <Text className="text-base text-center text-gray-600 mb-4">
+                Seu documento foi enviado para análise.
+              </Text>
+              <View className="mt-4 border-t border-gray-100 pt-4">
+                <Text className="text-sm text-center text-gray-500">
+                  Você receberá uma notificação quando o documento for
+                  analisado.
+                </Text>
+              </View>
+              <TouchableOpacity
+                className="mt-6 bg-green-600 py-3 px-6 rounded-lg"
+                onPress={() => {
+                  setShowSuccessPopup(false);
+                  onClose();
+                }}
+              >
+                <Text className="text-white text-center font-medium">
+                  Entendi
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </ScrollView>
+    </>
   );
 };
 

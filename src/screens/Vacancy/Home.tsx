@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, TextInput, Dimensions } from 'react-native';
-import 
-import { Button } from '../components/Button';
-import { JobApplicationCard } from '../../../components/JobApplicationCard';
-import { FONTS, COLORS } from '../../constants';
-
+import Button from '../../components/Button/Button';
+import JobApplicationCard from '../../components/Card/JobApplicationCard';
+import { FONTS, COLORS } from '../../constants/theme';
+import Header from '../../layout/Header';
 const { width, height } = Dimensions.get('window');
 
-export const Vacancy = ({ navigation }) => {
+import { useNavigation } from '@react-navigation/native';
+export default function Vacancy() {
+  const navigation = useNavigation<any>();
   const [searchQuery, setSearchQuery] = useState('');
   const [jobConected, setJobConected] = useState([]); // Substitua por seus dados reais
   
-  const filteredJobs = jobConected.filter(job => 
-    job.title?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // const filteredJobs = jobConected.filter((job:any) => 
+  //   job.title?.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
   return (
     <>
@@ -22,23 +23,28 @@ export const Vacancy = ({ navigation }) => {
         leftIcon={'back'}
         iconSimple={'archive'}        
       />
-      <View className="px-4 mt-4">
-        <TextInput
-          placeholder="Buscar vaga..."
-          placeholderTextColor="#9CA3AF"
-          className="p-3 border border-gray-300 rounded-lg text-gray-900"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
+
+      {/* Search */}
+      { jobConected && jobConected.length > 0 &&
+        <View className="px-4 mt-4">
+          <TextInput
+            placeholder="Buscar vaga..."
+            placeholderTextColor="#9CA3AF"
+            className="p-3 border border-gray-300 rounded-lg text-gray-900"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+      }
+
       <View className="mt-5 flex justify-between items-center h-full">
         {jobConected && jobConected.length > 0 ? (
           <ScrollView 
             style={{ width: '100%' }}
             showsVerticalScrollIndicator={false}
           >
-            {filteredJobs?.length > 0 ? (
-              filteredJobs.map((job) => (
+            {jobConected?.length > 0 ? (
+              jobConected.map((job:any) => (
                 <JobApplicationCard key={job.id} job={job} company={job.company}/>
               ))
             ) : (
@@ -54,17 +60,13 @@ export const Vacancy = ({ navigation }) => {
           </ScrollView>
         ) : (
           <View
-            style={{
-              backgroundColor: "white",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className="items-center justify-center"
           >
             <Text
               style={{
                 ...FONTS.fontSemiBold,
                 fontSize: 16,
-                color: colors.title,
+                color: COLORS.title,
                 marginBottom: 5,
                 marginTop: 40,
               }}

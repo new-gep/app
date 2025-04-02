@@ -4,6 +4,7 @@ import { BottomTabParamList } from './BottomTabParamList';
 import WishlistScreen from '../screens/Wishlist/Wishlist';
 import MyCartScreen from '../screens/MyCart/MyCart';
 import WorkScreen from '../screens/Work/Work';
+import VacancyScreen from '../screens/Vacancy/Home';
 import HomeScreen from '../screens/Home/Home';
 import ProfileScreen from '../screens/Profile/Profile';
 import DocumentsScreen from '../screens/Documents/Documents';
@@ -34,7 +35,7 @@ const BottomNavigation = () => {
             />
             <Tab.Screen 
                 name='Work'
-                component={WorkScreen}
+                component={VacancyScreen}
             />
             <Tab.Screen 
                 name='Documents'

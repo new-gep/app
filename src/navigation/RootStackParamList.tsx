@@ -86,6 +86,7 @@ export type RootStackParamList = {
     PayStub: undefined;
     Point: undefined;
     Absence: undefined;
+    Vacancy: undefined;
     CardInformation: {
         cardData: any;
     };

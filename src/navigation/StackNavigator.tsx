@@ -68,6 +68,7 @@ import CardInformation from '../screens/Home/CardInformation';
 import Point from "../screens/Work/Point";
 import Absence from "../screens/Work/Absence/Home";
 import Company from "../screens/Work/Dismissal/Step/Solicitation/Company";
+import Vacancy  from "../screens/Vacancy/Home";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -86,10 +87,7 @@ const StackNavigator = () => {
         <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="WelCome" component={WelCome} />
         <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen
-          name="SignUpAuthentication"
-          component={SignUpAuthentication}
-        />
+        <Stack.Screen name="SignUpAuthentication" component={SignUpAuthentication} />
         <Stack.Screen name="SingIn" component={SingIn} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="OTPAuthentication" component={OTPAuthentication} />
@@ -101,14 +99,11 @@ const StackNavigator = () => {
         <Stack.Screen name="Products" component={Products} />
         <Stack.Screen name="ProductsDetails" component={ProductsDetails} />
         <Stack.Screen name="DeliveryAddress" component={DeliveryAddress} />
-        <Stack.Screen
-          name="AddDeliveryAddress"
-          component={AddDeliveryAddress}
-        />
+        <Stack.Screen name="AddDeliveryAddress" component={AddDeliveryAddress} />
         <Stack.Screen name="Payment" component={Payment} />
         <Stack.Screen name="Addcard" component={Addcard} />
         <Stack.Screen name="Checkout" component={Checkout} />
-        <Stack.Screen name="Myorder" component={Myorder} />
+        <Stack.Screen name="Myorder"  component={Myorder} />
         <Stack.Screen name="Trackorder" component={Trackorder} />
         <Stack.Screen name="Writereview" component={Writereview} />
         <Stack.Screen name="Rewards" component={Rewards} />
@@ -118,7 +113,7 @@ const StackNavigator = () => {
         <Stack.Screen name="Call" component={Call} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="Work" component={Work} />
-
+        <Stack.Screen name="Vacancy" component={Vacancy} />
         <Stack.Screen name="Components" component={Components} />
         <Stack.Screen name="Accordion" component={AccordionScreen} />
         <Stack.Screen name="BottomSheet" component={BottomSheet} />

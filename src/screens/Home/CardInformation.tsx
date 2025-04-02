@@ -11,6 +11,7 @@ import { COLORS } from "../../constants/theme";
 import Button from '../../components/Button/Button';
 import useCollaborator from "../../function/fetchCollaborator";
 import UpdateJobDefault from "../../hooks/update/job/default";
+import Logo from "../../assets/picture/logo/logo_black.png";
 
 type CompanyType = {
   company_name: string;
@@ -236,7 +237,8 @@ const CardInformation = ({ route }: CardInformationProps) => {
           ]}
         >
           <Image
-            source={AbstractPicture[cardData.image]}
+            // source={AbstractPicture[cardData.image]}
+            source={Logo}
             resizeMode="contain"
             className="w-full h-[200px] mb-6"
           />
@@ -257,10 +259,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
             onPress={isCandidateApplied ? handleRemoveApplication : handleApplyToJob}
             color={isCandidateApplied ? COLORS.dark : COLORS.primary}
             text={isCandidateApplied ? COLORS.primary : COLORS.dark}
-            style={{
-              borderRadius: 8,
-              width: '60%'
-            }}
+            className="rounded-lg w-4/5"
           />
         </View>
       </ScrollView>

@@ -12,6 +12,7 @@ import Tabs from "./Tabs";
 import { AbstractPicture } from "../../constants/abstract";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import Logo from "../../assets/picture/logo/logo_black.png";
 
 const { width } = Dimensions.get("window");
 const SWIPE_THRESHOLD = width * 0.6;
@@ -213,7 +214,8 @@ const Card = ({
 
           {/* Imagem da vaga */}
           <Image
-            source={AbstractPicture[data.image]}
+            // source={AbstractPicture[data.image]}
+            source={Logo}
             resizeMode="contain"
             className="w-full h-[50%] self-center"
           />

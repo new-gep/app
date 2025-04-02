@@ -27,7 +27,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SignatureAdmission from "../Components/Signatures/signatureAdmission";
 import Header from "../../layout/Header";
 import TimelineFront from "../../components/Timeline/TimelineFront";
-const Timeline = ({ jobConected, CPF }: { jobConected: any, CPF: any }) => {
+
+const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [signature, setSignature] = useState<any>(null);
@@ -56,14 +57,6 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any, CPF: any }) => {
   const handleCloseModal = () => {
     setModalVisible(false);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await FindPicture(CPF);
-      // console.log(response);
-    };
-    fetchData();
-  }, []);
 
   // useEffect(() => {
   //   if (lockSignature) {
@@ -133,7 +126,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any, CPF: any }) => {
           const signatureFound = response.pictures.find(
             (pic) => pic.picture === "Signature_Admission"
           );
-          // console.log("response do signatureFound", signatureFound.status);
+          console.log("response do signatureFound", signatureFound.status);
           setSignatureFound(signatureFound);
         } else {
           console.log("Erro ao buscar assinatura");
@@ -153,11 +146,11 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any, CPF: any }) => {
         )}
         {currentStep === 2 && (
           <>
-            <WaitingIndicator 
-                  visible={true} 
-                  status={"pending"} 
-                  currentStep={currentStep} 
-                />
+            <WaitingIndicator
+              visible={true}
+              status={"pending"}
+              currentStep={currentStep}
+            />
           </>
         )}
         {currentStep === 3 && (
@@ -165,7 +158,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any, CPF: any }) => {
             {(signatureFound && signatureFound?.status === "approved") ||
             signatureFound?.status === "pending" ? (
               <View className="w-full h-full ">
-                <WaitingIndicator visible={true} status={"pending"} />
+                <WaitingIndicator currentStep={currentStep} visible={true} status={"pending"} />
               </View>
             ) : signatureFound?.status === "reproved" ? (
               <>

@@ -41,77 +41,7 @@ type WishlistScreenProps = StackScreenProps<RootStackParamList, "Work">;
 
 const Stack = createStackNavigator();
 
-// const WorkContent = () => {
-//   const [titleWork, setTitleWork] = useState<string>("");
-//   const [hasWork, setHaswork] = useState<boolean>(false);
-//   const { collaborator, fetchCollaborator } = useCollaborator();
-//   const { validateCollaborator, missingData } = useCollaboratorContext();
-//   const navigation = useNavigation<NavigationProp<any>>();
-//   const wishList = useSelector((state: any) => state.wishList.wishList);
-//   const dispatch = useDispatch();
-//   const theme = useTheme();
-//   const { colors }: { colors: any } = theme;
-//   const addItemToCart = (data: any) => {
-//     dispatch(addToCart(data));
-//   };
-//   const removeItemFromWishList = (data: any) => {
-//     dispatch(removeFromwishList(data));
-//   };
 
-//   useEffect(() => {
-//     const unsubscribe = navigation.addListener("focus", () => {
-//       fetchCollaborator();
-//       validateCollaborator();
-//       const backHandlerSubscription = BackHandler.addEventListener(
-//         "hardwareBackPress",
-//         () => {
-//           return true;
-//         }
-//       );
-//       return () => backHandlerSubscription.remove();
-//     });
-//     return unsubscribe;
-//   }, []);
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       if (collaborator) {
-//         const response = await FindCollaborator(collaborator.CPF);
-//         if (response.status == 200) {
-//           console.log(response.jobs);
-//           if (response.collaborator.id_work) {
-//             setHaswork(true);
-//           }
-//         }
-//       }
-//     };
-//     fetchData();
-//   }, [collaborator]);
-
-//   return (
-//     <View style={{ backgroundColor: colors.background, flex: 1 }}>
-//       <Header
-//         title={titleWork}
-//         leftIcon={hasWork ? "back" : "home"}
-//         rightIcon1={hasWork ? "search" : "search"}
-//       />
-
-//       <ScrollView
-//         className={`bg-white`}
-//         contentContainerStyle={{
-//           flexGrow: 1,
-//           justifyContent: wishList.length === 0 ? "center" : "flex-start",
-//         }}
-//       >
-//         {hasWork ? (
-//           <HomeWork setTitleWork={setTitleWork} navigation={navigation} />
-//         ) : (
-//           <HomeNoWork setTitleWork={setTitleWork} />
-//         )}
-//       </ScrollView>
-//     </View>
-//   );
-// };
 
 const Work = () => {
   const [titleWork, setTitleWork] = useState<string>("");
@@ -164,7 +94,8 @@ const Work = () => {
 
   return (
     <>
-        <HomeNoWork setTitleWork={setTitleWork} />
+        {/* <HomeNoWork setTitleWork={setTitleWork} /> */}
+        <></>
     </>
   );
 };

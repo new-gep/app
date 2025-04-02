@@ -32,10 +32,10 @@ export default function App() {
           style={{
             flex: 1,
             paddingTop: Platform.OS === 'android' ? 25 : 0,
-            backgroundColor:COLORS.primary ,
+            backgroundColor:COLORS.primary,
           }}>
             
-            <StatusBar style="dark" />
+            <StatusBar style="dark" backgroundColor={COLORS.primary}/>
             <Provider store={store}>
                 <Route/>
             </Provider>

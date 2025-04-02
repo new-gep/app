@@ -50,14 +50,16 @@ const Default = () => {
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
       ) : hasWork ? (
-        <HomeWork
-          setTitleWork={setTitleWork}
-          navigation={navigation}
+        <>
+          <HomeWork
+            setTitleWork={setTitleWork}
+            navigation={navigation}
           jobConected={jobConected}
           CPF={CPF}
         />
+        </>
       ) : (
-        <HomeNoWork setTitleWork={setTitleWork} />
+        <HomeNoWork />
       )}
     </>
   );
