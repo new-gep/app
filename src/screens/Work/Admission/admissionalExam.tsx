@@ -95,6 +95,7 @@ const admissionalExam: React.FC<Props> = ({ CPF, jobConected }) => {
         CPF,
         jobConected[0].id
       );
+      // console.log('response', response);
 
       if (response.status === 200 && response.pictures) {
         const pictures = response.pictures;
@@ -109,6 +110,7 @@ const admissionalExam: React.FC<Props> = ({ CPF, jobConected }) => {
             "medical",
             "1"
           );
+
           if (response.status === 200) {
             if (hasMedicalExamination.status === "reproved") {
               setSendDocument(true);

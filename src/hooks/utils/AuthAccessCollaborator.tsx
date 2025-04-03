@@ -8,7 +8,6 @@ type Props = {
 export default async function AuthASingIn(props: Props){
     try{
         const response = await axios.post(`${config.API_URL}collaborator/SingIn`, props)
-        console.log("response", `${config.API_URL}collaborator/SingIn`)
         return response.data
     }catch(e){
         console.log(e)

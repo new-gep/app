@@ -67,7 +67,6 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
         setWaitProcessSingIn(true)
         const props: Props = { cpf, password };
         const response = await AuthASingIn(props)
-        console.log("response", response)
         switch (response.status) {
             case 200:
                 await AsyncStorage.setItem('collaborator', JSON.stringify(response.collaborator));

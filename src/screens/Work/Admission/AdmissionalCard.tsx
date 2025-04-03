@@ -52,6 +52,7 @@ const AdmissionalCard = ({
     return titleMappings[value] || value;
   };
 
+
   return (
     <>
       <View className="h-5/6 p-4">

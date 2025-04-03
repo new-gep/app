@@ -1,20 +1,65 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TextInput, Dimensions } from 'react-native';
 import Button from '../../components/Button/Button';
 import JobApplicationCard from '../../components/Card/JobApplicationCard';
 import { FONTS, COLORS } from '../../constants/theme';
 import Header from '../../layout/Header';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import FindAplicateInJob from '~/src/hooks/get/job/findAplicateJob';
+import useCollaborator from '~/src/function/fetchCollaborator';
 const { width, height } = Dimensions.get('window');
 
-import { useNavigation } from '@react-navigation/native';
 export default function Vacancy() {
   const navigation = useNavigation<any>();
   const [searchQuery, setSearchQuery] = useState('');
   const [jobConected, setJobConected] = useState([]); // Substitua por seus dados reais
+  const [isLoading, setIsLoading] = useState(false);
+  const [admission, setAdmission] = useState(false);
+  const [processAdmission, setProcessAdmission] = useState(false);
+  const { collaborator } = useCollaborator();
   
-  // const filteredJobs = jobConected.filter((job:any) => 
-  //   job.title?.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
+  const fetchJobs = async () => {
+    setIsLoading(true);
+    if (collaborator) {
+      try {
+        const response = await FindAplicateInJob(collaborator.CPF);
+        // console.log(response);
+        if (response.status !== 200) {
+          console.log("Erro ao buscar os cards:", response.message);
+          setJobConected([]);
+          return;
+        }
+
+        const jobs = Array.isArray(response.jobs) ? response.jobs : [];
+        setJobConected(jobs);
+        
+        if (response.processAdmission) {
+          setAdmission(true);
+          // setTitleWork("Processo admissional");
+          setProcessAdmission(true);
+        } else {
+          setAdmission(false);
+          // setTitleWork("Vagas aplicadas");
+        }
+
+      } catch (error) {
+        console.error("Erro ao buscar os cards:", error);
+        setJobConected([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchJobs();
+    }, [collaborator])
+  );
+
+  const filteredJobs = jobConected?.filter((job:any) => 
+    job.function.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -73,6 +118,7 @@ export default function Vacancy() {
             >
               Sem vagas cadastradas
             </Text>
+
             <Text className="text-center text-sm text-gray-400 font-normal">
               Não se cadastrou em nenhuma vaga até o momento
             </Text>

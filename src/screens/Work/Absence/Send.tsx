@@ -1,5 +1,5 @@
 // AbsenceAdd.tsx
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import FindPicture from "../../../hooks/findOne/picture";
 import GetJobDocument from "../../../hooks/get/job/findDocument";
 import uploadAbsence from "../../../hooks/upload/absence";
 import Header from "~/src/layout/Header";
+import useCollaborator from "~/src/function/fetchCollaborator";
 
 type AbsenceAddProps = {
   onClose: () => void;
@@ -60,6 +61,7 @@ type DocumentSendServicesProps = {
 
 const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
   const theme = useTheme();
+  const { collaborator} = useCollaborator();
   const { width, height } = Dimensions.get("window");
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [showOptions, setShowOptions] = useState(false);
@@ -83,7 +85,7 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
         setOtherReason("");
       }
     }
-    
+
     setShowOptions(false);
     // Resetar o caminho do arquivo ao selecionar um novo motivo
     // exceto quando selecionar "Outros" novamente
@@ -93,66 +95,75 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          if (!absenceData.path) {
-            setSendModalDocument(true);
-            return;
-          }
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const fetchData = async () => {
+  //       try {
+  //         if (!absenceData.path) {
+  //           setSendModalDocument(true);
+  //           return;
+  //         }
 
-          const response = await uploadAbsence(
-            absenceData.path,
-            absenceData.file_name,
-            absenceData.id_work,
-            absenceData.CPF
-          );
+  //         const response = await uploadAbsence(
+  //           absenceData.path,
+  //           absenceData.file_name,
+  //           absenceData.id_work,
+  //           absenceData.CPF
+  //         );
 
-          if (response && response.status === 200) {
-            const hasAbsenceDocument = response.documents.find(
-              (doc: any) => doc.service === "Absence"
-            );
+  //         if (response && response.status === 200) {
+  //           const hasAbsenceDocument = response.documents.find(
+  //             (doc: any) => doc.service === "Absence"
+  //           );
 
-            if (hasAbsenceDocument) {
-              setStatusDocument(hasAbsenceDocument.status);
-              setPath(hasAbsenceDocument.path);
-              setDocumentUploaded(true);
+  //           if (hasAbsenceDocument) {
+  //             setStatusDocument(hasAbsenceDocument.status);
+  //             setPath(hasAbsenceDocument.path);
+  //             setDocumentUploaded(true);
 
-              if (hasAbsenceDocument.status === "approved") {
-                setShowSuccessPopup(true); // Mostra o popup de sucesso
-              } else if (hasAbsenceDocument.status === "reproved") {
-                setSendModalDocument(true);
-              }
-            } else {
-              setSendModalDocument(true);
-              setPath(null);
-              setDocumentUploaded(false);
-            }
-          }
-        } catch (error) {
-          console.error("Erro ao buscar documentos:", error);
-          setSendModalDocument(true);
-        }
-      };
+  //             if (hasAbsenceDocument.status === "approved") {
+  //               setShowSuccessPopup(true); // Mostra o popup de sucesso
+  //             } else if (hasAbsenceDocument.status === "reproved") {
+  //               setSendModalDocument(true);
+  //             }
+  //           } else {
+  //             setSendModalDocument(true);
+  //             setPath(null);
+  //             setDocumentUploaded(false);
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.error("Erro ao buscar documentos:", error);
+  //         setSendModalDocument(true);
+  //       }
+  //     };
 
-      fetchData();
+  //     fetchData();
 
-      return () => {
-        setSendModalDocument(false);
-        setPath(null);
-        setDocumentUploaded(false);
-      };
-    }, [absenceData.id_work, absenceData.month, absenceData.year])
-  );
+  //     return () => {
+  //       setSendModalDocument(false);
+  //       setPath(null);
+  //       setDocumentUploaded(false);
+  //     };
+  //   }, [absenceData.id_work, absenceData.month, absenceData.year])
+  // );
 
-  const handleUploadSuccess = () => {
+  const handleUploadSuccess = async () => {
     setDocumentUploaded(true);
     setShowSuccessPopup(true);
+
+    const response = await uploadAbsence(
+      path,
+      'teste',
+      absenceData.id_work,
+      absenceData.CPF
+    );
+    console.log(response);
+
     setTimeout(() => {
       setShowSuccessPopup(false);
       onClose();
-      navigation.goBack();
+      // navigation.goBack();
     }, 3000);
   };
 
@@ -165,20 +176,27 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       );
       return;
     }
-    
+
     // Se já tiver um documento, apenas confirma o envio
     Alert.alert(
       "Confirmar envio",
       "Deseja enviar este documento para análise?",
       [
         { text: "Cancelar", style: "cancel" },
-        { 
-          text: "Enviar", 
-          onPress: handleUploadSuccess 
-        }
+        {
+          text: "Enviar",
+          onPress: handleUploadSuccess,
+        },
       ]
     );
   };
+
+  useEffect(() => {
+    if (collaborator) {
+      console.log(collaborator);
+      
+    }
+  }, [collaborator]);
 
   return (
     <>
@@ -218,11 +236,11 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
               <TouchableOpacity
                 className="p-3 border-b border-gray-700"
                 onPress={() => {
-                  handleSelectReason("Ateatado de acompanhamento");
+                  handleSelectReason("Atestado de acompanhamento");
                 }}
               >
                 <Text className="text-base text-gray-900">
-                  Ateatado de acompanhamento
+                  Atestado de acompanhamento
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -286,7 +304,7 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
                 jobId={absenceData.id_work}
                 onSuccess={handleUploadSuccess}
               />
-              
+
               {/* Indicador de status do documento */}
               <View className="mt-3 mb-3">
                 {path ? (
@@ -305,26 +323,42 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
                   </View>
                 )}
               </View>
-              
+
               {/* Botões de ação */}
-              <View className="flex-row justify-between">
+              <View className="flex-col">
                 <TouchableOpacity
-                  className="bg-gray-200 p-4 rounded-lg mt-3 items-center flex-1 mr-2"
+                  className="bg-gray-200 p-4 rounded-lg mt-3 items-center flex-1"
                   onPress={() => setSendModalDocument(true)}
                 >
                   <Text className="text-gray-800 text-base font-medium">
                     {path ? "Alterar documento" : "Carregar documento"}
                   </Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity
-                  className={`p-4 rounded-lg mt-3 items-center flex-1 ml-2 ${
+                  className={`p-4 rounded-lg mt-3 items-center flex-1 ${
                     path ? "bg-primary" : "bg-gray-400"
                   }`}
-                  onPress={handleSendDocument}
-                  disabled={!path}
+                  onPress={() => {
+                    if (!path) {
+                      Alert.alert(
+                        "Documento necessário",
+                        "Por favor, carregue um documento antes de enviar.",
+                        [
+                          {
+                            text: "OK",
+                            onPress: () => setSendModalDocument(true),
+                          },
+                        ]
+                      );
+                    } else {
+                      handleSendDocument();
+                    }
+                  }}
                 >
-                  <Text className="text-dark text-base font-medium">Enviar</Text>
+                  <Text className="text-dark text-base font-medium">
+                    Enviar
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

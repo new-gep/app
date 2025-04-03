@@ -131,10 +131,6 @@ export default function HomeNoWork() {
     }, [collaborator])
   );
 
-  useEffect(() => {
-    console.log("caindo aqui")
-  }, [jobConected])
-
   const filteredJobs = jobConected?.filter((job:any) => 
     job.function.toLowerCase().includes(searchQuery.toLowerCase())
   );

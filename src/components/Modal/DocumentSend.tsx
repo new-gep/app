@@ -17,6 +17,7 @@ import UpdatePicture from "../../hooks/update/picture";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
 import JobPicture from "../../hooks/upload/job";
 import UpdateJob from "../../hooks/update/job/default";
+import * as ImageManipulator from 'expo-image-manipulator';
 
 
 type PropsCreateAvalidPicture = {
@@ -95,10 +96,12 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
             switch (option) {
                 case 'gallery':
                     path = await GetPathPicture('gallery');
+                    path = await compressImage(path);
                     type = 'picture'
                     break;
                 case 'camera':
                     path = await GetPathPicture('camera')
+                    path = await compressImage(path);
                     type = 'picture'
                     break;
                 case 'file':
@@ -387,6 +390,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
 
     const handleSendPictureSide = async (send:string) => {
         const response = await GetPathPicture(send)
+
         if(response && response != 'cancel'){
             switch (selection) {
                 case 'front':
@@ -410,17 +414,33 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
         await refRBSheet.current.open();
     };
 
+    const compressImage = async (imageUri: string) => {
+        try {
+          const result = await ImageManipulator.manipulateAsync(
+            imageUri,
+            [{ resize: { width: 800 } }],
+            { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+          );
+          return result.uri;
+        } catch (error) {
+          console.log("Erro ao comprimir imagem:", error);
+          return imageUri;
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try{
                 if (front && back && noRepeat) {
+                    const compressfront = await compressImage(front);
+                    const compressback  = await compressImage(back);
                     if(load){
                         return
                     }
                     // Impede re-execução
                     setNoRepeat(false);
                     setLoad(true)
-                    const paths = [front, back];
+                    const paths = [compressfront, compressback];
                     switch (documentName) {
                         case 'Carteira de Trabalho':
                             documentName = 'Work_Card'

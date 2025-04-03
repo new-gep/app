@@ -10,7 +10,7 @@ import ProfileScreen from '../screens/Profile/Profile';
 import DocumentsScreen from '../screens/Documents/Documents';
 import BottomMenu from '../layout/BottomMenu';
 import { useTheme } from '@react-navigation/native';
-import Default from '../screens/Cycle/Default'
+import Default from '../screens/Cycle/Index'
 
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();

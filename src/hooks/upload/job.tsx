@@ -10,7 +10,7 @@ type propsUploadJob = {
   dynamic?: any;
 };
 
-export default async function uploadFile(propsUploadJob) {
+export default async function uploadFile(propsUploadJob:any) {
   try {
 
     if (!propsUploadJob.file) {

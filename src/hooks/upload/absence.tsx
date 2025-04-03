@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from '../../../config.json';
 
-export default async function uploadAbsence(path: string, nameFile: string, id_work: string, cpf: string) {
+export default async function uploadAbsence(path: any, nameFile: string, id_work: string, cpf: string) {
     try {
         // Verifica se o caminho e o nome do arquivo foram fornecidos
         if (!path) {
@@ -39,7 +39,7 @@ export default async function uploadAbsence(path: string, nameFile: string, id_w
         // Preparando o FormData com o arquivo e os dados adicionais
         const formData = new FormData();
         formData.append('file', {
-            name: `${nameFile}.${extend}`, // Nome do arquivo
+            name: `nameFile.${extend}`, // Nome do arquivo
             uri: path,                     // Caminho do arquivo
             type: `image/${extend}`,        // Tipo MIME baseado na extensão
         } as any);

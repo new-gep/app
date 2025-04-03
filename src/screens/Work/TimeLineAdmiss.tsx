@@ -45,12 +45,12 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
   const Tab = createBottomTabNavigator<BottomTabParamList>();
 
   const handleOpenModal = () => {
-    if (!keySignature) {
-      return Alert.alert(
-        "Indisponível",
-        "Você não pode assinar no momento pois precisa primeiro visualizar todos os documentos."
-      );
-    }
+    // if (!keySignature) {
+    //   return Alert.alert(
+    //     "Indisponível",
+    //     "Você não pode assinar no momento pois precisa primeiro visualizar todos os documentos."
+    //   );
+    // }
     setModalVisible(true);
   };
 
@@ -102,6 +102,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
       setCurrentStep(JSON.parse(jobConected[0].candidates)[0].step);
     }
     Animated.timing(lineAnim, {
+
       toValue: currentStep / (steps.length - 1),
       duration: 500,
       useNativeDriver: false,
@@ -244,7 +245,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
               },
             ]}
             onPress={handleOpenModal}
-            disabled={!keySignature}
+
           >
             <Text style={styles.signButtonText}>Assinar</Text>
           </TouchableOpacity>

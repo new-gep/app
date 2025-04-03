@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AbsenceGet from "./History";
 import AbsenceUpload from "./Send";
 import Header from "../../../layout/Header";
+import useCollaborator from "~/src/function/fetchCollaborator";
 
 const Absence = () => {
+  const { collaborator, updateCollaborator } = useCollaborator();
   const [isAddingNew, setIsAddingNew] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
@@ -21,6 +23,12 @@ const Absence = () => {
     year: new Date().getFullYear().toString(),
     month: new Date().toLocaleString("en-US", { month: "long" }),
   };
+
+  useEffect(() => {
+    if (collaborator) {
+      // updateCollaborator(collaborator.CPF);
+    }
+  }, [collaborator]);
 
   return (
     <View className="flex-1 bg-white">

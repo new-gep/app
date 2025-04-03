@@ -151,6 +151,7 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, docum
                                 {documentName}
                             </Text>
                             <Pdf
+                                //@ts-ignore
                                 trustAllCerts={false}
                                 //@ts-ignore
                                 enableDoubleTapZoom={true}

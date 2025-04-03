@@ -21,8 +21,8 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
   const [allCompleted, setAllCompleted] = useState(false);
   
   const [files, setFiles] = useState<any>(null);
-  const [obligationDocs, setObligationDocs] = useState([]);
-  const [dynamicDocs, setDynamicDocs] = useState([]);
+  const [obligationDocs, setObligationDocs] = useState<any>([]);
+  const [dynamicDocs, setDynamicDocs] = useState<any>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +31,7 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
           const response = await CheckDocumentAdmissional(jobConected[0].id);
           const obligations = response.date.obligation;
           const dynamics = response.date.dynamic.document;
-          
+          console.log('response', dynamics)
           // Remover campo medical das obrigações
           delete obligations.medical;
 
@@ -46,16 +46,19 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
             acc[key] = false;
             return acc;
           }, {});
-
           setLockSignature(initialLockState);
 
           // Preparar documentos obrigatórios
           const obligationDocuments = await Promise.all(
             Object.keys(obligations).map(async (key) => {
+              console.log(jobConected[0].id, key, false)
               const response = await FindFile(jobConected[0].id, key, false);
+              if(!response){
+                return
+              }
               return {
                 lockKey: key, // Chave original para controle de estado
-                title: response.name || key, // Título formatado para exibição
+                title: key, // Título formatado para exibição
                 status: true,
                 path: response.path,
                 typeDocument: response.type,
@@ -63,14 +66,25 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
             })
           );
 
-          // Preparar documentos dinâmicos
-          const dynamicDocuments = Object.entries(dynamics).map(([key, value]) => ({
-            lockKey: key, // Manter a chave original
-            title: value, // Valor para exibição
-            status: true,
-            path: `https://storage.googleapis.com/admission_pictures_bucket/documents/${CPF}/${value}.pdf`,
-            typeDocument: "pdf",
-          }));
+          const dynamicDocuments = await Promise.all(
+            Object.entries(dynamics).map(async ([key, value]) => {
+              console.log(jobConected[0].id, key, false)
+              const response = await FindFile(jobConected[0].id, 'dynamic', false, value);
+              console.log('response', response)
+              if(!response){
+                return
+              }
+              return {
+                lockKey: value, // Chave original para controle de estado
+                title: value, // Título formatado para exibição
+                status: true,
+                path: response.path,
+                typeDocument: response.type,
+              };
+            })
+          );
+
+
 
           setObligationDocs(obligationDocuments);
           setDynamicDocs(dynamicDocuments);
@@ -101,18 +115,23 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
   return (
     <View className="flex-row flex-wrap">
       {/* Documentos Obrigatórios */}
-      {obligationDocs.map((doc, index) => (
-        <AdmissionalCard
-          key={`obligation-${index}`}
-          lockKey={doc.lockKey}
-          title={doc.title}
-          status={doc.status}
-          path={doc.path}
-          typeDocument={doc.typeDocument}
-          setLockSignature={setLockSignature}
-          lockSignature={lockSignature}
-        />
-      ))}
+      {obligationDocs.map((doc, index) => {
+        if (!doc) {
+          return  // Retorne null para não renderizar nada
+        }
+        return (
+          <AdmissionalCard
+            key={`obligation-${index}`}
+            lockKey={'doc.lockKey'}
+            title={doc.title}
+            status={doc.status}
+            path={doc.path}
+            typeDocument={doc.typeDocument}
+            setLockSignature={setLockSignature}
+            lockSignature={lockSignature}
+          />
+        );
+      })}
 
       {/* Documentos Dinâmicos */}
       {dynamicDocs.map((doc, index) => (

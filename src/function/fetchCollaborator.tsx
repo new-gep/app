@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DefaultCollaborator from '../hooks/get/collaborator/Default';
 
 // Definindo a interface para o colaborador
 interface propsCollaborator {
@@ -45,7 +46,27 @@ const useCollaborator = () => {
                 // console.log("Colaborador encontrado:", parsedData);
             }
         } catch (error) {
+            await AsyncStorage.removeItem('collaborator');
             console.error('Erro ao buscar colaborador:', error);
+        }
+    };
+
+    const updateCollaborator = async (cpf: string | null) => {
+        try {
+            if (!cpf) {
+                console.error('CPF não fornecido para atualização do colaborador');
+                return;
+            }
+            
+            const response = await DefaultCollaborator(cpf);
+            if (response.status === 200) {
+                setCollaborator(response.collaborator);
+                
+                // Atualiza o cache no AsyncStorage
+                await AsyncStorage.setItem('collaborator', JSON.stringify(response.collaborator));
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar colaborador:', error);
         }
     };
 
@@ -53,7 +74,13 @@ const useCollaborator = () => {
         fetchCollaborator(); // Busca o colaborador ao montar o componente
     }, []);
 
-    return { collaborator, fetchCollaborator };
+    // useEffect(() => {
+    //     if (collaborator && collaborator.CPF) {
+    //         updateCollaborator(collaborator.CPF);
+    //     }
+    // }, [collaborator]);
+
+    return { collaborator, fetchCollaborator, updateCollaborator };
 };
 
 export default useCollaborator;

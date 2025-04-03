@@ -140,10 +140,6 @@ export default function HomeWork({
     fetchData();
   }, []);
 
-  // useEffect(()=>{
-  //     console.log("lalala",JobConect)
-  // })
-
   return (
     <View className="flex-1 bg-white">
       {loading ? (
@@ -156,10 +152,6 @@ export default function HomeWork({
             close={closeDevelopment}
             visible={isShowDevelopment}
           />
-          {/* <Header
-                        title="Meu trabalho"
-                        leftIcon="back"
-                    /> */}
           <View className="flex-1">
             <View className="px-8 pt-8">
               <View className="flex flex-row items-start">
@@ -178,7 +170,7 @@ export default function HomeWork({
               <View className="flex-row w-full ">
                 <ImageSwiper
                   data={SwiperData}
-                  onItemPress={(item) => {
+                  onItemPress={(item:any) => {
                     if (item.route) {
                       navigation.navigate(item.route, item.params || {
                         jobConected: jobConected,
@@ -230,7 +222,6 @@ export default function HomeWork({
                             </Text>
                           </View>
                         </View>
-                        
                       </TouchableOpacity>
                     ))}
                   </View>

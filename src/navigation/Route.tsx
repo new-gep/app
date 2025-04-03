@@ -9,7 +9,7 @@ const Route = () => {
 	return (
 		<ThemeContextProvider>
 			<CollaboratorProvider>
-				{/* <ValidateCollaboratorAndBlock/> */}
+				<ValidateCollaboratorAndBlock/>
 				<StackNavigator/>
 			</CollaboratorProvider>
 		</ThemeContextProvider>
