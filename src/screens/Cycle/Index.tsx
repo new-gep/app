@@ -41,6 +41,7 @@ const Default = () => {
               }
             } catch (error) {
               console.error("Erro ao buscar os cards:", error);
+              return
             } finally {
               // setIsLoading(false);
             }
