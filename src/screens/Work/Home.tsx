@@ -73,7 +73,6 @@ const ArrivalData = [
 
 export default function HomeWork({
   setTitleWork,
-  navigation,
   jobConected,
   CPF,
 }) {
@@ -120,6 +119,7 @@ export default function HomeWork({
   const { collaborator, fetchCollaborator } = useCollaborator();
   const { validateCollaborator, missingData } = useCollaboratorContext();
   const [loading, setLoading] = useState<boolean>(true);
+  const navigation = useNavigation<NavigationProp<any>>();
 
   const closeDevelopment = () => {
     setIsShowDevelopment(false);
@@ -139,6 +139,10 @@ export default function HomeWork({
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    console.log('aqui')
+  }, [navigation]);
 
   return (
     <View className="flex-1 bg-white">
