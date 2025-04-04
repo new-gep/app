@@ -5,7 +5,7 @@ import FindCollaborator from "~/src/hooks/findOne/collaborator";
 import FindOneJob from "~/src/hooks/get/job/findOne";
 import useCollaborator from "~/src/function/fetchCollaborator";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, View } from "react-native";
 import HomeWork from "../Work/Home";
 import HomeNoWork from "../Work/HomeNoJob";
 import { COLORS } from "~/src/constants/theme";
@@ -16,64 +16,118 @@ const Default = () => {
   const [titleWork, setTitleWork] = useState<string>("");
   const { collaborator, fetchCollaborator, updateCollaborator } = useCollaborator();
   const [hasWork, setHaswork] = useState<boolean | null>(null);
-  const [hasWorkk, setHasWorkk] = useState<boolean | null>(null);
+  const [hasProcessAdmission, setHasProcessAdmission] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [jobConected, setjobConected] = useState<any>();
   const [CPF, setCPF] = useState<any>();
   const navigation = useNavigation<NavigationProp<any>>();
 
-  useFocusEffect(
-    React.useCallback(() => {
-        //verificação admissao
-        const fetchJobs = async () => {
-          // setIsLoading(true);
-          if (collaborator) { 
-            try {
-              if(collaborator.id_work){
-                setHasWorkk(true)
-                return
-              }
-              const response = await FindAplicateInJob(collaborator.CPF);
-            
-              setHaswork(response.processAdmission);
-              if (response.status !== 200) {
-                console.log("Erro ao buscar os cards:", response.message);
-                return;
-              }
-            } catch (error) {
-              console.error("Erro ao buscar os cards:", error);
-              return
-            } finally {
-              // setIsLoading(false);
-            }
-          }
-        };
-
-      fetchJobs();
-    }, [collaborator])
-  );
-
-  useEffect(() => {
-    if (collaborator) {
-      updateCollaborator(collaborator.CPF);
+  const fetchJobs = async () => {
+    if (!collaborator) {
+      console.log('collaborator', collaborator)
+      return; // Evita requisições desnecessárias se já tiver trabalho ou não tiver colaborador
+    };
+    updateCollaborator(collaborator.CPF);
+    if(collaborator.id_work){
+      setHaswork(true);
+      return;
+    };
+    const response = await FindAplicateInJob(collaborator.CPF);
+    if (response.status !== 200) {
+      setHasProcessAdmission(false);
+      return;
     }
-  }, [collaborator]);
+    setHasProcessAdmission(response.processAdmission);
+    return
+    try {
+      if(collaborator.id_work){
+        console.log('collaborator.id_work', collaborator.id_work)
+        setHaswork(true);
+        return;
+      }
+      
+      // Verifica se já temos os dados do processo de admissão
+      if (hasProcessAdmission !== null) {
+        return; // Evita requisição repetida se já soubermos o status
+      }
+      
+      const response = await FindAplicateInJob(collaborator.CPF);
+      if (response.status !== 200) {
+        return;
+      }
+      setHasProcessAdmission(response.processAdmission);
+    } catch (error) {
+      console.error("Erro ao buscar os cards:", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   //verificação admissao
+  //   console.log('collaborator', collaborator)
+  //   if(collaborator){
+  //     fetchJobs();
+  //   }
+  // }, [collaborator]);
+
+  // useEffect(() => {
+  //   if (collaborator) {
+  //     updateCollaborator(collaborator.CPF);
+  //   }
+  // }, [collaborator]);
+
+  const onRefresh = async () => {
+    await fetchJobs();
+  }
 
   return (
     <>
-      {hasWork && hasWorkk === null ? (
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        </View>
-      ) : collaborator && collaborator.id_work ? (
-        <HomeWork setTitleWork={undefined} navigation={''} jobConected={hasWorkk} CPF={collaborator.CPF} />
-      ) : hasWork ? (
-        <>
-          <HomeNoWork/>
-        </>
-      ) : (
+    { loading ?
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    :
+      hasWork ?
+      <ScrollView 
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => onRefresh()}
+            colors={[COLORS.dark]}
+          />
+        }
+        className="flex-1"
+      >
+        <HomeWork />
+      </ScrollView>
+      :
+      hasProcessAdmission ?
+      <ScrollView 
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => onRefresh()}
+            colors={[COLORS.dark]}
+          />
+        }
+        className="flex-1"
+      >
+        <HomeNoWork />
+      </ScrollView>
+      :
+      <ScrollView 
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => onRefresh()}
+            colors={[COLORS.dark]}
+          />
+        }
+        className="flex-1"
+      >
         <Documents />
-      )}
+      </ScrollView>
+    }
     </>
-    )
+  );
 };
 export default Default;

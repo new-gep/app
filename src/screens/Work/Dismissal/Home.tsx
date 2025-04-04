@@ -63,9 +63,13 @@ const DismissalHome = () => {
           if (response.collaborator.id_work) {
             setIdWork(response.collaborator.id_work);
             const responseJob = await FindOneJob(response.collaborator.id_work)
+            console.log("responseJob", responseJob.status)
+            console.log("responseJob", collaborator.CPF)
             if (responseJob.status == 200){
               const response = JSON.parse(responseJob.job.demission);
-              console.log("response", response.step)
+              console.log("response", response)
+              console.log("responseJob", responseJob.collaborator)
+              console.log("responseJob", response.solicitation)
               setCurrentStep(response.step);
               setSolicitationType(response.solicitation)
               setJobConected(responseJob.job)
@@ -109,10 +113,10 @@ const DismissalHome = () => {
                 <Company jobConected={jobConected} CPF={collaborator.CPF}/> 
                 :
                 solicitationType == 'collaborator'? 
-                <Collaborator/> 
+                <Collaborator /> 
                 :
                 <View className="h-full items-center justify-between">
-                  <View className="w-full items-center justify-center">
+                  <View className="w-full items-center justify-center mt-2">
                       <Text
                       className="text-center"
                       style={{
@@ -123,7 +127,7 @@ const DismissalHome = () => {
                     >
                       Nada por aqui!
                     </Text>
-                    <Text className="text-center text-sm text-gray-400 font-normal text-center">
+                    <Text className="text-center text-sm text-gray-400 font-normal">
                       Você não está em um processo de demissão
                     </Text>
                   </View>

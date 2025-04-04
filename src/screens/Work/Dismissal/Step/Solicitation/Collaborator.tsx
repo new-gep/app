@@ -32,17 +32,17 @@ const DismissalHomeCompany = () => {
   const { collaborator, fetchCollaborator } = useCollaborator();
   const [process, setProcess] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
-  const [idWork, setIdWork] = useState<number | null>(null);
+  const [idWork, setIdWork] = useState<any | null>(null);
   const [solicitationType, setSolicitationType] = useState<
     "company" | "collaborator" | null
   >(null);
-  const [currentStep, setCurrentStep] = useState<number>(1);
 
   const Picture = async () => {
     try {
       if (!collaborator?.CPF) return;
 
       const response = await FindPicture(collaborator.CPF);
+      console.log("response:", response);
       if (response.status == 200) {
         setError(false);
 
@@ -107,6 +107,7 @@ const DismissalHomeCompany = () => {
         signature: false,
       };
       const response = await FindFile(props.id, props.name, props.signature);
+      console.log("response:", response);
       return response && response.path && response.type
         ? { path: response.path, type: response.type }
         : null;
@@ -118,12 +119,7 @@ const DismissalHomeCompany = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (collaborator) {
-        const response = await FindCollaborator(collaborator.CPF);
-        if (response.status == 200) {
-          if (response.collaborator.id_work) {
-            setIdWork(response.collaborator.id_work);
-          }
-        }
+        setIdWork(collaborator.id_work)
       }
     };
     fetchData();
@@ -168,9 +164,8 @@ const DismissalHomeCompany = () => {
       <View style={{ marginTop: 50 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className={`px-2`}>
-            {myDocsData?.map((data: any) => (
-              <View key={data.DocumentName} style={{ marginBottom: 30 }}>
-                <Cardstyle4
+              <View style={{ marginBottom: 30 }}>
+                {/* <Cardstyle4
                   documentName={data.DocumentName}
                   sendDocument={data.sendDocument}
                   typeDocument={data.typeDocument}
@@ -178,9 +173,9 @@ const DismissalHomeCompany = () => {
                   twoPicture={data.twoPicture}
                   path={data.path}
                   jobId={idWork}
-                />
+                /> */}
               </View>
-            ))}
+
           </View>
           <View className={`w-full h-64 items-center justify-center`}>
             <Image
