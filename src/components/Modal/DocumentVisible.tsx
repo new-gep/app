@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { TouchableOpacity, View, Text, Image, ActivityIndicator, Dimensions, ScrollView,  } from "react-native";
+import { ImageZoom } from '@likashefqet/react-native-image-zoom';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Modal from "react-native-modal";
 import { FONTS } from "../../constants/theme";
 import { IMAGES } from "../../constants/Images";
@@ -16,6 +18,8 @@ type Props = {
     documentName: string
     close: () => void;
 };
+
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -49,6 +53,7 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, docum
         }
         fetchData();
     }, [path])
+
 
     return (
         <Modal
@@ -98,14 +103,20 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, docum
                 {typeDocument === 'picture' ? (
                     <>
                         {!twoPicture && !loading && (
-                            <View className="w-full h-full bg-white  p-4">
+                            <View className="w-full h-full bg-white p-3">
                                 <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
                                     {documentName}
                                 </Text>
-                                <Image 
-                                    style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }}
-                                    source={{ uri: pathOne }}
-                                />
+                                <GestureHandlerRootView>
+                                    <ImageZoom   
+                                        isDoubleTapEnabled={true}
+                                        isPanEnabled={true}
+                                        // style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }}
+                                        style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                                        className="rounded-lg"
+                                        source={{ uri: pathOne }}
+                                    />
+                                </GestureHandlerRootView>
                             </View>
                         )}
                         {twoPicture && !viewingSide && !loading && (
@@ -132,21 +143,24 @@ const DocumentVisible = ({ path, twoPicture, typeDocument, visible, close, docum
                         )}
                         {!loading && viewingSide && (
                             <View className="w-full h-full bg-white p-4">
-                                <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
-                                    {documentName} - {viewingSide === 'front' ? 'Frente' : 'Verso'}
-                                </Text>
+                                <GestureHandlerRootView>
+                                    <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
+                                        {documentName} - {viewingSide === 'front' ? 'Frente' : 'Verso'}
+                                    </Text>
+                                
                                 {viewingSide === 'front' && (
-                                    <Image style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }} source={{ uri: pathFront }} />
+                                    <ImageZoom style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }} source={{ uri: pathFront }} />
                                 )}
                                 {viewingSide === 'back' && (
-                                    <Image style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }} source={{ uri: pathBack }} />
-                                )}
+                                    <ImageZoom style={{ width: '100%', height: Dimensions.get('window').height * 0.7, resizeMode: 'contain' }} source={{ uri: pathBack }} />
+                                    )}
+                                </GestureHandlerRootView>
                             </View>
                         )}
                     </>
                 ) : (
                     !loading && (
-                        <View className={`w-full h-full bg-white rounded-t-3xl p-4`}>
+                        <View className={`w-full h-full bg-white  p-4`}>
                             <Text style={{ ...FONTS.fontMedium, fontSize: 16 }} className="mb-4">
                                 {documentName}
                             </Text>

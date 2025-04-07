@@ -124,6 +124,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
         >
             <DocumentSend statusDocument={statusDocument} finishSendDocument={finishSendDocument} setStatusDocument={setStatusDocument} jobId={jobId} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
             <DocumentVisible documentName={documentName}  path={pathPictureSide} typeDocument={typePicture} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
+            
             <View style={{ width: '40%', alignItems: 'center' }}>
                 <TouchableOpacity onPress={handlePress}>
                     <View
@@ -228,6 +229,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                     </View>
                 </TouchableOpacity>
             </View>
+            
             <View
                 style={{
                     width: '60%',

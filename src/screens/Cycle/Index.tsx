@@ -61,19 +61,12 @@ const Default = () => {
     }
   };
 
-  // useEffect(() => {
-  //   //verificação admissao
-  //   console.log('collaborator', collaborator)
-  //   if(collaborator){
-  //     fetchJobs();
-  //   }
-  // }, [collaborator]);
-
-  // useEffect(() => {
-  //   if (collaborator) {
-  //     updateCollaborator(collaborator.CPF);
-  //   }
-  // }, [collaborator]);
+  useEffect(() => {
+    //verificação admissao
+    if(collaborator){
+      fetchJobs()
+    }
+  }, [collaborator]);
 
   const onRefresh = async () => {
     await fetchJobs();

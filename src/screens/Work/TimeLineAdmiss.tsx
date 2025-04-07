@@ -92,7 +92,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
         (value) => value === true
       );
       setKeySignature(allViewed);
-      console.log("Todos os documentos visualizados?", allViewed);
+      // console.log("Todos os documentos visualizados?", allViewed);
     }
   }, [lockSignature]);
 
@@ -123,11 +123,15 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
     React.useCallback(() => {
       const fetchData = async () => {
         const response = await FindPicture(CPF);
+        // console.log("response", response)
+        // console.log("jobConected", jobConected[0].id)
         if (response?.status === 200) {
+
           const signatureFound = response.pictures.find(
-            (pic) => pic.picture === "Signature_Admission"
+            (pic:any) => pic.picture === "Signature_Admission" && pic.id_work === jobConected[0].id
           );
-          console.log("response do signatureFound", signatureFound.status);
+          console.log("response do ", signatureFound.status);
+
           setSignatureFound(signatureFound);
         } else {
           console.log("Erro ao buscar assinatura");
@@ -138,7 +142,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
   );
 
   return (
-    <View className="flex-1">
+    <View className="bg-white" style={{ height: Dimensions.get('window').height }}>
       <ScrollView className="h-full bg-white">
         {currentStep === 1 && (
           <>

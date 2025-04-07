@@ -67,9 +67,6 @@ const DismissalHome = () => {
             console.log("responseJob", collaborator.CPF)
             if (responseJob.status == 200){
               const response = JSON.parse(responseJob.job.demission);
-              console.log("response", response)
-              console.log("responseJob", responseJob.collaborator)
-              console.log("responseJob", response.solicitation)
               setCurrentStep(response.step);
               setSolicitationType(response.solicitation)
               setJobConected(responseJob.job)

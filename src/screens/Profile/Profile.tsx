@@ -26,7 +26,7 @@ import Feather from "@expo/vector-icons/build/Feather";
 type ProfileScreenProps = StackScreenProps<RootStackParamList, "Profile">;
 
 const getZodiacSign = (date: string | null | undefined): { sign: string, icon: any } => {
-  if (!date) return { sign: "Não informado", icon: IMAGES.help };
+  if (!date) return { sign: "Cadastro incompleto", icon: IMAGES.help };
   
   const [day, month] = date.split("-").map(Number);
   if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
@@ -79,7 +79,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
       id: "3",
       image: IMAGES.cake,
       title: "Data de Nascimento",
-      subtitle: collaborator && Mask("dateFormatBrazil", collaborator.birth),
+      subtitle: collaborator && Mask("dateFormatBrazil", collaborator.birth) ? Mask("dateFormatBrazil", collaborator.birth) : "Cadastro incompleto",
     },
     {
       id: "3.1",
@@ -357,13 +357,13 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                     return (
                       <TouchableOpacity
                         activeOpacity={0.8}
-                        onPress={() => {
-                          if (data.id === "1") {
-                            navigation.navigate("Point");
-                          } else if (data.id === "2") {
-                            navigation.navigate("PayStub");
-                          }
-                        }}
+                        // onPress={() => {
+                        //   if (data.id === "1") {
+                        //     navigation.navigate("Point");
+                        //   } else if (data.id === "2") {
+                        //     navigation.navigate("PayStub");
+                        //   }
+                        // }}
                         key={index}
                         style={[
                           styles.arrivaldata,
