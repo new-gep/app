@@ -130,7 +130,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     documentName = 'Voter_Registration';
                     break;
                 case documentName.includes('Comprovante de Endereço'):
-                    console.log("documentName", documentName)
                     documentName = 'Address';
                     break;
                 case documentName.includes('Histórico Escolar'):
@@ -156,6 +155,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             signature:false
                         }
                         const response = await JobPicture(propsDocument);
+                        console.log(response)
                         if (response.status !== 200) {
                             setNoRepeat(true);
                             setActiveSheet('danger');
@@ -232,6 +232,8 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     return;
             };
 
+            // console.log(statusDocument)
+
             if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand' && documentName.toLowerCase() != 'dismissal_medical_examination'){
                 const response = await UploadFile(path, documentName, doc, collaborator.CPF);
                 if (response.status === 400) {
@@ -267,9 +269,10 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                 const pictureUpdateParams: PropsUpdateAvalidPicture = {
                     picture: documentName == 'medical' ? 'Medical_Examination' : documentName,
                     status: 'pending',
-                    id_work: jobId,
+                    id_work: jobId || null,
                 };
                 const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
+                console.log(update)
                 switch (update.status) {
                     case 200:
                         if(finishSendDocument){
@@ -287,7 +290,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         Sheet();
                         setLoad(false)
                         close()
-                        break;
+                        return;
                     case 400:
                         if(finishSendDocument){
                             finishSendDocument(400)
@@ -299,7 +302,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         setNoRepeat(true);
                         setFront(null);
                         setBack(null);
-                        break
+                        return;
                     default:
                         if(finishSendDocument){
                             finishSendDocument(500)
@@ -311,7 +314,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         setFront(null);
                         setBack(null);
                         setLoad(false)
-                        break;
+                        return;
                 }
             }else{
                 const pictureParams: PropsCreateAvalidPicture = {
@@ -320,9 +323,10 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     cpf: collaborator.CPF,
                     id_work: jobId || null,
                 };
+                console.log(pictureParams)
 
                 const createResponse = await CreateAvalidPicture(pictureParams);
-
+                console.log(createResponse)
                 if(documentName.toLowerCase() == 'dismissal_hand'){
                     const demissionData = {
                         motion_demission: "card",
@@ -489,6 +493,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
     
                         
                         if(statusDocument == 'reproved'){
+                            console.log('aqui')
                             const pictureUpdateParams: PropsUpdateAvalidPicture = {
                                 picture: documentName,
                                 status: 'pending',

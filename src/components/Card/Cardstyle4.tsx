@@ -25,7 +25,7 @@ interface Props {
     statusDocument?: string | null;
     twoPicture?: boolean;
     path?: any;
-    jobId?: number;
+    jobId?: number | null;
     setStatusDocument?: any;
     
     // Props para categoria

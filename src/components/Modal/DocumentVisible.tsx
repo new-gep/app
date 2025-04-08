@@ -9,6 +9,7 @@ import WebView from "react-native-webview";
 import * as FileSystem from 'expo-file-system';
 import Pdf from "react-native-pdf";
 import { COLORS } from "../../constants/theme"; // Adicione esta importação
+import React from "react";
 
 type Props = {  
     typeDocument: string;

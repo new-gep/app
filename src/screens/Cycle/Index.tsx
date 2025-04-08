@@ -1,7 +1,6 @@
 import Work from "../Work/Work";
 import Documents from "../Documents/Documents";
 import { useEffect, useState } from "react";
-import FindCollaborator from "~/src/hooks/findOne/collaborator";
 import FindOneJob from "~/src/hooks/get/job/findOne";
 import useCollaborator from "~/src/function/fetchCollaborator";
 import React from "react";
@@ -11,54 +10,61 @@ import HomeNoWork from "../Work/HomeNoJob";
 import { COLORS } from "~/src/constants/theme";
 import { NavigationProp, useFocusEffect, useNavigation } from "@react-navigation/native";
 import FindAplicateInJob from "~/src/hooks/get/job/findAplicateJob";
+import FindCollaborator from "~/src/hooks/findOne/collaborator";
 
 const Default = () => {
   const [titleWork, setTitleWork] = useState<string>("");
   const { collaborator, fetchCollaborator, updateCollaborator } = useCollaborator();
   const [hasWork, setHaswork] = useState<boolean | null>(null);
   const [hasProcessAdmission, setHasProcessAdmission] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [jobConected, setjobConected] = useState<any>();
   const [CPF, setCPF] = useState<any>();
   const navigation = useNavigation<NavigationProp<any>>();
 
   const fetchJobs = async () => {
-    if (!collaborator) {
-      console.log('collaborator', collaborator)
-      return; // Evita requisições desnecessárias se já tiver trabalho ou não tiver colaborador
-    };
-    updateCollaborator(collaborator.CPF);
-    if(collaborator.id_work){
-      setHaswork(true);
-      return;
-    };
-    const response = await FindAplicateInJob(collaborator.CPF);
-    if (response.status !== 200) {
-      setHasProcessAdmission(false);
-      return;
-    }
-    setHasProcessAdmission(response.processAdmission);
-    return
-    try {
-      if(collaborator.id_work){
-        console.log('collaborator.id_work', collaborator.id_work)
+    try{
+      if (!collaborator) {
+        console.log('collaborator', collaborator)
+        return; // Evita requisições desnecessárias se já tiver trabalho ou não tiver colaborador
+      };
+      const responseCollaborator = await FindCollaborator(collaborator.CPF);
+      if(responseCollaborator.collaborator.id_work.id){
         setHaswork(true);
         return;
-      }
-      
-      // Verifica se já temos os dados do processo de admissão
-      if (hasProcessAdmission !== null) {
-        return; // Evita requisição repetida se já soubermos o status
-      }
-      
+      };
       const response = await FindAplicateInJob(collaborator.CPF);
       if (response.status !== 200) {
+        setHasProcessAdmission(false);
         return;
-      }
+      };
       setHasProcessAdmission(response.processAdmission);
+      return
     } catch (error) {
       console.error("Erro ao buscar os cards:", error);
+    }finally{
+      setLoading(false);
     }
+    // try {
+    //   if(collaborator.id_work){
+    //     console.log('collaborator.id_work', collaborator.id_work)
+    //     setHaswork(true);
+    //     return;
+    //   }
+      
+    //   // Verifica se já temos os dados do processo de admissão
+    //   if (hasProcessAdmission !== null) {
+    //     return; // Evita requisição repetida se já soubermos o status
+    //   }
+      
+    //   const response = await FindAplicateInJob(collaborator.CPF);
+    //   if (response.status !== 200) {
+    //     return;
+    //   }
+    //   setHasProcessAdmission(response.processAdmission);
+    // } catch (error) {
+    //   console.error("Erro ao buscar os cards:", error);
+    // }
   };
 
   useEffect(() => {
@@ -67,6 +73,8 @@ const Default = () => {
       fetchJobs()
     }
   }, [collaborator]);
+
+
 
   const onRefresh = async () => {
     await fetchJobs();

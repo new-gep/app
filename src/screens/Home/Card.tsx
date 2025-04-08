@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { Dimensions, Image, View, Text, ScrollView } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -225,7 +225,7 @@ const Card = ({
             {/* Nome da vaga e ícone PCD */}
             <View className="flex-row justify-between items-start">
               <View className="flex-1 mr-2">
-                <Text className="text-black text-xl font-semibold">
+                <Text className="text-xl font-semibold capitalize">
                   {data.function}
                 </Text>
                 <Text className="text-xs text-gray-600 uppercase ">

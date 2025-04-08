@@ -455,7 +455,7 @@ const Documents = () => {
                                 statusDocument={data.statusDocument}
                                 twoPicture={data.twoPicture}
                                 path={data.path}
-                                jobId={0}
+                                jobId={null}
                               />
                             </View>
                           );

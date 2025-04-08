@@ -27,6 +27,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SignatureAdmission from "../Components/Signatures/signatureAdmission";
 import Header from "../../layout/Header";
 import TimelineFront from "../../components/Timeline/TimelineFront";
+import FindOnePicture from "~/src/hooks/findOne/onePicture";
 
 const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
   const navigation = useNavigation();
@@ -122,17 +123,11 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const response = await FindPicture(CPF);
-        // console.log("response", response)
+        // const response = await FindPicture(CPF);
+        const responseSignature = await FindOnePicture("Signature_Admission", CPF, jobConected[0].id);
         // console.log("jobConected", jobConected[0].id)
-        if (response?.status === 200) {
-
-          const signatureFound = response.pictures.find(
-            (pic:any) => pic.picture === "Signature_Admission" && pic.id_work === jobConected[0].id
-          );
-          console.log("response do ", signatureFound.status);
-
-          setSignatureFound(signatureFound);
+        if (responseSignature?.status === 200) {
+          setSignatureFound(responseSignature.pictures);
         } else {
           console.log("Erro ao buscar assinatura");
         }

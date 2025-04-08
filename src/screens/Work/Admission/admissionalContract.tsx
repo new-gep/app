@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import CheckDocumentAdmissional from "../../../hooks/get/job/checkSignaure";
 import AdmissionalCard from "./AdmissionalCard";
 import FindFile from "../../../hooks/get/job/findFile";
 import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { Title } from "react-native-paper";
 import AdmissionalCarousel from './AdmissionalCarousel';
+import { COLORS } from "~/src/constants/theme";
 
 type Props = {
   jobConected: any;
@@ -23,6 +24,7 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
   const [files, setFiles] = useState<any>(null);
   const [obligationDocs, setObligationDocs] = useState<any>([]);
   const [dynamicDocs, setDynamicDocs] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +33,6 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
           const response = await CheckDocumentAdmissional(jobConected[0].id);
           const obligations = response.date.obligation;
           const dynamics = response.date.dynamic.document;
-          console.log('response', dynamics)
           // Remover campo medical das obrigações
           delete obligations.medical;
 
@@ -84,8 +85,6 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
             })
           );
 
-
-
           setObligationDocs(obligationDocuments);
           setDynamicDocs(dynamicDocuments);
 
@@ -105,6 +104,8 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
 
         } catch (error) {
           console.error("Erro ao buscar dados:", error);
+        }finally{
+          setLoading(false);
         }
       }
     };
@@ -146,6 +147,9 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
           lockSignature={lockSignature}
         />
       ))}
+      <View className="h-full w-full justify-center items-center flex">
+        {loading && <Text>Buscando documentos...</Text>}
+      </View>
     </View>
   );
 };

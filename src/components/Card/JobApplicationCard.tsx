@@ -71,7 +71,7 @@ const JobApplicationCard = ({ job, company }) => {
     >
       <View className="p-4">
         <View className="flex-row justify-between items-center">
-          <Text className="text-lg font-bold text-gray-900">{job.function}</Text>
+          <Text className="text-lg font-bold text-gray-900 capitalize">{job.function}</Text>
           <TouchableOpacity onPress={toggleFavorite}>
             <HeartIcon 
               size={24} 
@@ -84,7 +84,7 @@ const JobApplicationCard = ({ job, company }) => {
           {job.company ? `${job.company.city || ''}, ${job.company.uf || ''}` : 'Localização não informada'}
         </Text>
         <Text className="text-base text-gray-900 mt-1">
-          {job.salary ? `R$ ${job.salary} por mês` : 'R$ 8.000 por mês'}
+          {job.salary ? `R$ ${job.salary} por mês` : 'Não informado'}
         </Text>
         <Text className="text-sm text-gray-400 mt-1">
           {`Publicado há ${calculateDaysAgo(job.create_at)} dias`}

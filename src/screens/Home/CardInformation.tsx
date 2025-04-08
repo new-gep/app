@@ -95,7 +95,6 @@ const CardInformation = ({ route }: CardInformationProps) => {
           ? JSON.parse(cardData.candidates) 
           : cardData.candidates;
 
-        console.log('Parsed candidates:', parsedCandidates);
 
         if (!Array.isArray(parsedCandidates)) {
           console.log('Candidates is not an array after parsing');
@@ -115,7 +114,6 @@ const CardInformation = ({ route }: CardInformationProps) => {
           return candidateCpf === collaboratorCpf;
         });
 
-        console.log('Final isApplied value:', isApplied);
         setIsCandidateApplied(isApplied);
         
       } catch (error) {

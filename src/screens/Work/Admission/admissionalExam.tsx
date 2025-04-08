@@ -95,37 +95,28 @@ const admissionalExam: React.FC<Props> = ({ CPF, jobConected }) => {
         CPF,
         jobConected[0].id
       );
-      // console.log('response', response);
-
       if (response.status === 200 && response.pictures) {
-        const pictures = response.pictures;
-        const hasMedicalExamination = pictures.find(
-          (picture: any) => picture.picture === "Medical_Examination"
+        setStatusDocument(response.pictures.status);
+        const documentResponse = await GetJobDocument(
+          jobConected[0].id,
+          "medical",
+          "1"
         );
 
-        if (hasMedicalExamination) {
-          setStatusDocument(hasMedicalExamination.status);
-          const response = await GetJobDocument(
-            jobConected[0].id,
-            "medical",
-            "1"
-          );
-
-          if (response.status === 200) {
-            if (hasMedicalExamination.status === "reproved") {
-              setSendDocument(true);
-            }
-            setTypeDocument(response.type);
-            setPathDocument(response.path);
-            setLoader(true);
+        if (documentResponse.status === 200) {
+          if (response.pictures.status === "reproved") {
+            setSendDocument(true);
           }
-        } else {
-          setSendDocument(true);
-          setTypeDocument(null);
-          setStatusDocument(null);
+          setTypeDocument(documentResponse.type);
+          setPathDocument(documentResponse.path);
           setLoader(true);
-          setPathDocument(null);
         }
+      } else {
+        setSendDocument(true);
+        setTypeDocument(null);
+        setStatusDocument(null);
+        setLoader(true);
+        setPathDocument(null);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -145,8 +136,7 @@ const admissionalExam: React.FC<Props> = ({ CPF, jobConected }) => {
   }, [CPF, jobConected]);
 
   if (statusDocument === "approved" && pathDocument) {
-    
-  }else if (statusDocument === "pending" && pathDocument) {
+  } else if (statusDocument === "pending" && pathDocument) {
     return (
       <WaitingIndicator
         visible={true}
