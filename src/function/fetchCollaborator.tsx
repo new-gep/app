@@ -43,6 +43,7 @@ const useCollaborator = () => {
             if (storedData) {
                 const parsedData = JSON.parse(storedData) as propsCollaborator;
                 setCollaborator(parsedData);
+                updateCollaborator(parsedData?.CPF || null);
                 // console.log("Colaborador encontrado:", parsedData);
             }
         } catch (error) {

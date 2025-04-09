@@ -20,6 +20,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/RootStackParamList";
 import { addTowishList } from "../../redux/reducer/wishListReducer";
 import ImageSwiper from "../../components/ImageSwiper";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Cardstyle4 from "../../components/Card/Cardstyle4";
 import { openDrawer } from "../../redux/actions/drawerAction";
 import ProfileCompletionModal from "../../components/Modal/ProfileLock";
@@ -34,52 +35,16 @@ import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp } from "@react-navigation/native";
 import Header from "../../layout/Header";
 
-const ArrivalData = [
-  {
-    id: "1",
-    title: "Ponto",
-    subtitle: "Atalho",
-    image: IMAGES.order,
-    route: "Point",
-  },
-  {
-    id: "2",
-    title: "Holerite",
-    subtitle: "Atalho",
-    image: IMAGES.payment,
-    route: "PayStub",
-  },
-  // {
-  //     id:"3",
-  //     title: "Vagas",
-  //     subtitle:"Atalho",
-  //     image:IMAGES.send
-  // },
-  {
-    id: "4",
-    title: "Ausência",
-    subtitle: "Atalho",
-    image: IMAGES.chat,
-    route: "Absence",
-  },
-  {
-    id: "5",
-    title: "Demissão",
-    subtitle: "Atalho",
-    image: IMAGES.chat,
-    route: "DismissalHome",
-  },
-];
 
 export default function HomeWork({
-  setTitleWork,
   jobConected,
   CPF,
 }) {
-  const SwiperData = [
+
+  const ObligationData = [
     {
       id: "1",
-      image: IMAGES.unique12,
+      image: IMAGES.unique10,
       title: "Holerite",
       subtitle: "Assine e cheque seu pagamento",
       route: "PayStub" as keyof RootStackParamList,
@@ -110,6 +75,35 @@ export default function HomeWork({
         CPF: CPF,
       },
     },
+    {
+      id: "4",
+      image: IMAGES.unique19,
+      title: "Demissão",
+      subtitle: "Acompanhe e solicite sua demissão",
+      route: "DismissalHome" as keyof RootStackParamList,
+      params: {
+        jobConected: jobConected,
+        CPF: CPF,
+      },
+    },
+  ];
+
+  const AdditionalData = [
+    {
+      id: "1",
+      title: "Avisos",
+      subtitle: "acesso",
+      image: IMAGES.warning,
+      route: "Point",
+    },
+    {
+      id: "2",
+      title: "Multas",
+      subtitle: "acesso",
+      image: IMAGES.swap,
+      route: "PayStub",
+    },
+
   ];
 
   const dispatch = useDispatch();
@@ -140,10 +134,6 @@ export default function HomeWork({
     fetchData();
   }, []);
 
-  useEffect(() => {
-    console.log('aqui')
-  }, [navigation]);
-
   return (
     <View className="flex-1 bg-white">
       {loading ? (
@@ -173,7 +163,7 @@ export default function HomeWork({
             >
               <View className="flex-row w-full ">
                 <ImageSwiper
-                  data={SwiperData}
+                  data={ObligationData}
                   onItemPress={(item:any) => {
                     if (item.route) {
                       navigation.navigate(item.route, item.params || {
@@ -187,7 +177,7 @@ export default function HomeWork({
               <View>
                 <View className="px-8 mt-5">
                   <Text className="text-lg font-medium text-gray-800">
-                    Categorias
+                    Adicionais
                   </Text>
                 </View>
                 <ScrollView
@@ -197,24 +187,25 @@ export default function HomeWork({
                   contentContainerStyle={{ paddingHorizontal: 30 }}
                 >
                   <View className="flex-row items-center gap-8 mr-6">
-                    {ArrivalData.map((data: any, index) => (
+                    {AdditionalData.map((data: any, index) => (
                       <TouchableOpacity
                         key={index}
                         activeOpacity={0.8}
                         onPress={() => {
-                          if (data.route) {
-                            navigation.navigate(data.route, {
-                              jobConected: jobConected,
-                              CPF: CPF
-                            });
-                          }
+                          // if (data.route) {
+                          //   navigation.navigate(data.route, {
+                          //     jobConected: jobConected,
+                          //     CPF: CPF
+                          //   });
+                          // }
+                          setIsShowDevelopment(true);
                         }}
                         className="bg-dark rounded-[16px] w-52 py-3 border border-gray-300 shadow-sm"
                       >
                         <View className="flex-row items-center px-4">
                           <Image
                             source={data.image}
-                            className="w-8 h-8 "
+                            className="w-12 h-12 "
                             tintColor="#fde047"
                           />
                           <View className="flex-1 px-5 items-center">
@@ -302,7 +293,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: "center",
   },
-  arrivaldata: {
+  AdditionalData: {
     // backgroundColor:COLORS.card,
     borderRadius: 18,
     width: 199,

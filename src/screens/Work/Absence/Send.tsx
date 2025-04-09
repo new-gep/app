@@ -9,6 +9,8 @@ import {
   TextInput,
   Dimensions,
   Alert,
+  Button,
+  Modal,
 } from "react-native";
 import {
   useFocusEffect,
@@ -22,7 +24,10 @@ import GetJobDocument from "../../../hooks/get/job/findDocument";
 import uploadAbsence from "../../../hooks/upload/absence";
 import Header from "~/src/layout/Header";
 import useCollaborator from "~/src/function/fetchCollaborator";
-
+import { Picker } from "@react-native-picker/picker";
+import { FONTS } from "~/src/constants/theme";
+import { DatePickerInput } from "react-native-paper-dates";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 type AbsenceAddProps = {
   onClose: () => void;
   absenceData: {
@@ -61,7 +66,7 @@ type DocumentSendServicesProps = {
 
 const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
   const theme = useTheme();
-  const { collaborator} = useCollaborator();
+  const { collaborator } = useCollaborator();
   const { width, height } = Dimensions.get("window");
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [showOptions, setShowOptions] = useState(false);
@@ -70,6 +75,9 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
   const [path, setPath] = useState<string | null>(null);
   const [statusDocument, setStatusDocument] = useState<string | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState("date"); // 'date' ou 'time'
+  const [show, setShow] = useState(false);
   const [documentUploaded, setDocumentUploaded] = useState(false);
   const navigation = useNavigation();
 
@@ -94,6 +102,10 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       setDocumentUploaded(false);
     }
   };
+
+  useEffect(() => {
+    console.log(absenceData);
+  }, []);
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -150,21 +162,22 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
 
   const handleUploadSuccess = async () => {
     setDocumentUploaded(true);
-    setShowSuccessPopup(true);
-
     const response = await uploadAbsence(
       path,
-      'teste',
+      absenceData.file_name,
       absenceData.id_work,
-      absenceData.CPF
+      absenceData.CPF,
+      date,
+      otherReason,
+      selectedReason
     );
     console.log(response);
 
-    setTimeout(() => {
-      setShowSuccessPopup(false);
-      onClose();
-      // navigation.goBack();
-    }, 3000);
+    // setTimeout(() => {
+    //   setShowSuccessPopup(false);
+    //   onClose();
+    //   // navigation.goBack();
+    // }, 3000);
   };
 
   const handleSendDocument = () => {
@@ -177,6 +190,19 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       return;
     }
 
+    if (!date) {
+      Alert.alert("Data necessária", "Por favor, selecione uma data.", [
+        { text: "OK", onPress: () => {} },
+      ]);
+      return;
+    }
+
+    if(otherReason === "" && selectedReason == "Outros"){
+      Alert.alert("Motivo necessário", "Por favor, digite o motivo da ausência.", [
+        { text: "OK", onPress: () => {} },
+      ]);
+      return;
+    }
     // Se já tiver um documento, apenas confirma o envio
     Alert.alert(
       "Confirmar envio",
@@ -191,12 +217,13 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
     );
   };
 
-  useEffect(() => {
-    if (collaborator) {
-      console.log(collaborator);
-      
-    }
-  }, [collaborator]);
+
+  // useEffect(() => {
+  //   if (collaborator) {
+  //     console.log(collaborator);
+
+  //   }
+  // }, [collaborator]);
 
   return (
     <>
@@ -210,73 +237,129 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       <ScrollView contentContainerStyle={{ paddingBottom: 70 }}>
         {/* Seletor de Motivo */}
         <View className="mt-8 px-5">
-          <Text className="mb-2 text-base font-semibold">
-            Selecione o motivo da ausência:
+          <Text
+            className="mb-2 text-base font-semibold"
+            style={{ ...FONTS.fontMedium, fontSize: 20 }}
+          >
+            Motivo da Ausência:
           </Text>
           <TouchableOpacity
-            className="p-4 border border-gray-700 rounded-lg"
+            className={`p-4 border bg-primary border-gray-700 rounded-lg flex-row justify-between items-center`}
             onPress={() => setShowOptions(!showOptions)}
           >
-            <Text className="text-center text-base text-gray-900">
+            <Text
+              className="text-base text-gray-900"
+              style={{ ...FONTS.fontMedium, fontSize: 18 }}
+            >
               {selectedReason || "Selecione uma opção"}
             </Text>
+            <Image
+              source={showOptions ? IMAGES.arrowDown : IMAGES.arrowRight}
+              style={{ width: 32, height: 32 }}
+            />
           </TouchableOpacity>
           {showOptions && (
-            <View className="mt-2 border border-gray-700 rounded-lg">
+            <View className="border border-t-0 rounded-lg rounded-t-none px-5">
               <TouchableOpacity
-                className="p-3 border-b border-gray-700"
+                className="p-3 border-b my-1 border-gray-700 bg-dark rounded-lg"
                 onPress={() => {
                   handleSelectReason("Atestado de colaborador");
                 }}
               >
-                <Text className="text-base text-gray-900">
+                <Text
+                  className="text-base text-white"
+                  style={{ ...FONTS.fontMedium, fontSize: 16 }}
+                >
                   Atestado de colaborador
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="p-3 border-b border-gray-700"
+                className="p-3 border-b border-gray-700 bg-dark rounded-lg my-1"
                 onPress={() => {
                   handleSelectReason("Atestado de acompanhamento");
                 }}
               >
-                <Text className="text-base text-gray-900">
+                <Text
+                  className="text-base text-white"
+                  style={{ ...FONTS.fontMedium, fontSize: 16 }}
+                >
                   Atestado de acompanhamento
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="p-3"
+                className="p-3 bg-dark rounded-lg my-1"
                 onPress={() => {
                   handleSelectReason("Outros");
                 }}
               >
-                <Text className="text-base text-gray-900">Outros</Text>
+                <Text
+                  className="text-base text-white"
+                  style={{ ...FONTS.fontMedium, fontSize: 16 }}
+                >
+                  Outros
+                </Text>
               </TouchableOpacity>
             </View>
+            
           )}
           {selectedReason === "Outros" && (
-            <TextInput
-              placeholder="Digite o motivo"
-              placeholderTextColor={theme.dark ? "#fff" : "#000"}
-              className="mt-4 p-4 border border-gray-700 rounded-lg"
-              value={otherReason}
-              onChangeText={setOtherReason}
-              multiline
-            />
+            <View className=" justify-between">
+              <TextInput
+                style={{ ...FONTS.fontMedium, fontSize: 16 }}
+                className="mt-4 p-3 border border-gray-700 rounded-lg"
+                placeholder="Digite o motivo"
+                placeholderTextColor={theme.dark ? "#fff" : "#000"}
+                value={otherReason}
+                onChangeText={setOtherReason}
+                multiline
+              />
+            </View>
           )}
+          { selectedReason &&
+            <SafeAreaProvider>
+            <DatePickerInput
+              className="mt-4 bg-white"
+              style={{ ...FONTS.fontMedium, fontSize: 16 }}
+              locale="pt"
+              label="Data da Consulta"
+              saveLabel="Salvar"
+              value={date}
+              onChange={(d: any) => setDate(d)}
+              inputMode="start"
+            />
+          </SafeAreaProvider>
+          }
+          
         </View>
 
         {/* Imagem ilustrativa quando não há motivo selecionado */}
         {!selectedReason && (
-          <Image
-            source={IMAGES.unique14}
-            className="mt-10 self-center"
-            style={{
-              height: height * 0.4,
-              width: width * 0.8,
-              resizeMode: "contain",
-              opacity: 0.8,
-            }}
-          />
+          <>
+            <View className="px-5 py-5">
+              <Text
+                className="text-center"
+                style={{ ...FONTS.fontMedium, fontSize: 18 }}
+              >
+                Selecione o motivo da ausência
+              </Text>
+              <Text
+                className="text-center text-gray-500"
+                style={{ ...FONTS.fontRegular, fontSize: 14 }}
+              >
+                Seleciona o documento, foto ou pdf que comprova a ausência
+              </Text>
+            </View>
+
+            <Image
+              source={IMAGES.unique22}
+              className="self-center"
+              style={{
+                height: height * 0.5,
+                width: width * 0.9,
+                resizeMode: "contain",
+              }}
+            />
+          </>
         )}
 
         {/* Seção de documentação quando motivo é selecionado */}
@@ -339,24 +422,12 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
                   className={`p-4 rounded-lg mt-3 items-center flex-1 ${
                     path ? "bg-primary" : "bg-gray-400"
                   }`}
+                  style={{ ...FONTS.fontMedium, fontSize: 16 }}
                   onPress={() => {
-                    if (!path) {
-                      Alert.alert(
-                        "Documento necessário",
-                        "Por favor, carregue um documento antes de enviar.",
-                        [
-                          {
-                            text: "OK",
-                            onPress: () => setSendModalDocument(true),
-                          },
-                        ]
-                      );
-                    } else {
-                      handleSendDocument();
-                    }
+                    handleSendDocument();
                   }}
                 >
-                  <Text className="text-dark text-base font-medium">
+                  <Text className="text-dark text-base font-medium" style={{ ...FONTS.fontMedium, fontSize: 18 }}>
                     Enviar
                   </Text>
                 </TouchableOpacity>

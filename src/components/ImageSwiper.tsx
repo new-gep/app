@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, useWindowDimensions,TouchableOpacity, Text } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { COLORS, FONTS } from '../constants/theme';
@@ -27,7 +27,7 @@ const ImageSwiper = ({ data } : any) => {
   const closeDevelopment = () => {
     setIsShowDevelopment(false)
   }
-  
+
   return (
     <Animated.ScrollView
       horizontal

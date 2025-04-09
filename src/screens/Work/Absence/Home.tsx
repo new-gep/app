@@ -16,19 +16,14 @@ const Absence = () => {
 
   // Dados para enviar ao DocumentSendServices
   const absenceData = {
-    CPF: jobConected?.collaborator?.CPF,
+    CPF: jobConected?.CPF,
     path: path,
-    file_name: `Absence_${jobConected?.collaborator?.name}`,
-    id_work: jobConected?.id || "",
+    file_name: `Absence_${jobConected?.name}`,
+    id_work: jobConected?.id_work.id || "",
     year: new Date().getFullYear().toString(),
     month: new Date().toLocaleString("en-US", { month: "long" }),
   };
 
-  useEffect(() => {
-    if (collaborator) {
-      // updateCollaborator(collaborator.CPF);
-    }
-  }, [collaborator]);
 
   return (
     <View className="flex-1 bg-white">

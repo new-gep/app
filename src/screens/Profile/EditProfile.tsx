@@ -691,7 +691,7 @@ const EditProfile = () => {
               backround={colors.card}
               style={{ borderRadius: 48 }}
               inputicon
-              placeholder="Data de nascimento (DD-MM-AAAA)"
+              placeholder="Data de nascimento"
               icon={
                 <Image
                   source={IMAGES.cake}

@@ -1,16 +1,12 @@
 import axios from 'axios';
 import config from '../../../config.json';
 
-export default async function uploadAbsence(path: any, nameFile: string, id_work: string, cpf: string) {
+export default async function uploadAbsence(path: any, file_name: string, id_work: string, cpf: string, date: any, otherReason: any, selectedReason: any) {
     try {
         // Verifica se o caminho e o nome do arquivo foram fornecidos
         if (!path) {
             throw new Error('Caminho do arquivo não fornecido');
         }
-        if (!nameFile) {
-            throw new Error('Nome do arquivo não fornecido');
-        }
-
         // Obtendo a data atual
         const currentDate = new Date();
         const year = currentDate.getFullYear();
@@ -44,11 +40,12 @@ export default async function uploadAbsence(path: any, nameFile: string, id_work
             type: `image/${extend}`,        // Tipo MIME baseado na extensão
         } as any);
         formData.append('id_work', id_work);
-        formData.append('type', 'Absence');
-        formData.append('name', nameFile);
         formData.append('year', year.toString());
         formData.append('month', monthInEnglish);
         formData.append('cpf', cpf);
+        formData.append('date', date.toISOString());
+        formData.append('status', 'pending');
+        formData.append('name', otherReason === "" ? selectedReason : otherReason);
 
         // Fazendo a requisição POST para o upload
         const response = await axios.post(`${config.API_URL}job/service/upload`, formData, {
@@ -62,7 +59,7 @@ export default async function uploadAbsence(path: any, nameFile: string, id_work
         return response.data;
 
     } catch (error) {
-        console.error(`Erro ao enviar o arquivo ${nameFile}:`, error);
+        console.error(`Erro ao enviar o arquivo:`, error);
         return false;
     }
 }

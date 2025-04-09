@@ -135,6 +135,13 @@ export const IMAGES = {
     welcome : require('../assets/images/onbording/welcome.png'),
     welcome2 : require('../assets/images/onbording/welcome2.png'),
 
+    door : require('../assets/images/icons/door.png'),
+    medical : require('../assets/images/icons/medical.png'),
+    warning : require('../assets/images/icons/warning.png'),
+    swap : require('../assets/images/icons/swap.png'),
+    arrowDown : require('../assets/images/icons/arrowDown.png'),
+    arrowRight : require('../assets/images/icons/arrowRight.png'),
+
     onborder5 : require('../assets/picture/onboarding/1.png'),
     onborder4 : require('../assets/picture/onboarding/2.png'),
     onborder3 : require('../assets/picture/onboarding/3.png'),
@@ -211,6 +218,10 @@ export const IMAGES = {
     unique16: require('../assets/picture/unique/unique16.png'),
     unique17: require('../assets/picture/unique/unique15.png'),
     unique18: require('../assets/picture/unique/unique18.png'),
+    unique19: require('../assets/picture/unique/unique19.png'),
+    unique20: require('../assets/picture/unique/unique20.png'),
+    unique21: require('../assets/picture/unique/unique21.png'),
+    unique22: require('../assets/picture/unique/unique22.png'),
 
     gif0: require('../assets/picture/gif/unique0.gif')
 }

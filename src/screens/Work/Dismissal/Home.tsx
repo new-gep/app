@@ -50,10 +50,6 @@ const DismissalHome = () => {
     });
     return unsubscribe;
   }, [navigation]);
-
-  useEffect(() => {
-    console.log("currentStep", currentStep)
-  }, [currentStep])
   
   useEffect(() => {
     const fetchData = async () => {
@@ -63,8 +59,6 @@ const DismissalHome = () => {
           if (response.collaborator.id_work) {
             setIdWork(response.collaborator.id_work);
             const responseJob = await FindOneJob(response.collaborator.id_work)
-            console.log("responseJob", responseJob.status)
-            console.log("responseJob", collaborator.CPF)
             if (responseJob.status == 200){
               const response = JSON.parse(responseJob.job.demission);
               setCurrentStep(response.step);

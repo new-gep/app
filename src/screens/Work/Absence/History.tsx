@@ -14,6 +14,8 @@ import { useTheme, useRoute, useNavigation } from '@react-navigation/native';
 import CheckDocumentServices from '../../../hooks/get/job/checkPayStub';
 import DocumentVisible from '../../../components/Modal/DocumentVisible';
 import { IMAGES } from '../../../constants/Images';
+import { FONTS } from '~/src/constants/theme';
+import Mask from '~/src/function/mask';
 
 const months = [
   { value: '01', label: 'Janeiro' },
@@ -72,7 +74,7 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
     if (jobConected) {
       try {
         const response = await CheckDocumentServices(
-          jobConected.id,
+          jobConected.id_work.id,
           'Absence',
           ano,
           monthMap[mes]
@@ -81,6 +83,7 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
           ? response.filter((doc) => doc !== null)
           : [];
         setDocuments(validDocuments);
+        console.log(validDocuments);
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
@@ -188,7 +191,8 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
       {/* Lista de ausências */}
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {documents.length >= 1 ? (
-          documents.map((item) => (
+          documents.map((item) => 
+          (
             <TouchableOpacity
               key={item.fileName}
               className="flex-row items-center mb-2 p-4 bg-white rounded-xl shadow border border-gray-700"
@@ -201,20 +205,29 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
               </View>
               <View className="flex-1">
                 <Text className="text-lg font-semibold text-gray-800">
-                  {months.find((m) => m.value === mes)?.label} {ano}
+                  {/* {months.find((m) => m.value === mes)?.label} {ano} */}
+                  {item.details.name}
                 </Text>
-                <Text className="text-base text-gray-600">{item.service}</Text>
+                <Text className="text-base text-gray-600">{Mask('dateFormat',item.details.date)}</Text>
               </View>
             </TouchableOpacity>
           ))
         ) : (
-          <View className="items-center mt-12">
+          <View className="w-full justify-center  items-center mt-12">
             <Image
-              source={IMAGES.unique14}
-              className="w-52 h-52 opacity-50"
+              source={IMAGES.unique20}
+              style={{
+                height: height * 0.4,
+                width: width * 0.8,
+                resizeMode: "contain",
+                opacity: 0.8,
+              }}
             />
-            <Text className="text-base text-gray-500 mt-4">
-              Nenhuma ausência registrada
+            <Text className="mt-4 text-center" style={{...FONTS.fontMedium,fontSize:18}}>
+              Nenhuma ausência registrada em <Text style={{...FONTS.fontSemiBold,fontSize:18}}>{mes}/{ano}</Text>
+            </Text>
+            <Text className="text-base text-gray-500" style={{...FONTS.fontRegular,fontSize:14}}>
+              para buscar as ausências anteriores, selecione outro mês e ano
             </Text>
           </View>
         )}
@@ -228,7 +241,7 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
             typeDocument={selectedDocument?.type}
             twoPicture={false}
             visible={modalVisible}
-            documentName={selectedDocument?.fileName || ''}
+            documentName={selectedDocument?.details.name || ''}
             close={closeModal}
           />
           {isLoading && (

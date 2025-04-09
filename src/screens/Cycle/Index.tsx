@@ -30,6 +30,8 @@ const Default = () => {
       };
       const responseCollaborator = await FindCollaborator(collaborator.CPF);
       if(responseCollaborator.collaborator.id_work.id){
+        setCPF(collaborator.CPF);
+        setjobConected(responseCollaborator.collaborator);
         setHaswork(true);
         return;
       };
@@ -81,7 +83,7 @@ const Default = () => {
   }
 
   return (
-    <>
+    <View className="flex-1 bg-white">
     { loading ?
       <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" color={COLORS.primary} />
@@ -98,7 +100,7 @@ const Default = () => {
         }
         className="flex-1"
       >
-        <HomeWork />
+        <HomeWork setTitleWork={setTitleWork} jobConected={jobConected} CPF={CPF} />
       </ScrollView>
       :
       hasProcessAdmission ?
@@ -128,7 +130,7 @@ const Default = () => {
         <Documents />
       </ScrollView>
     }
-    </>
+    </View>
   );
 };
 export default Default;
