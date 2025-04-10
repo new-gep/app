@@ -17,7 +17,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default class SwipeBox extends Component {
     
-  rightSwipe = (progress, dragX) => {
+  rightSwipe = (progress: any, dragX: any) => {
     const scale = dragX.interpolate({
       inputRange: [45, 90],
       outputRange: [0, 1],
@@ -38,10 +38,12 @@ export default class SwipeBox extends Component {
     );
   };
 
-  updateRef = ref => {
+  updateRef = (ref: any) => {
+    //@ts-ignore
     this._swipeableRow = ref;
   };
   close = () => {
+    //@ts-ignore
     this._swipeableRow.close();
   };
 

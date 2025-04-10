@@ -59,47 +59,47 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
     setModalVisible(false);
   };
 
+
+  useEffect(() => {
+    if (lockSignature) {
+      console.log('Estado atual do lockSignature:', lockSignature);
+      console.log('Chaves do lockSignature:', Object.keys(lockSignature));
+      console.log('Valores do lockSignature:', Object.values(lockSignature));
+
+      // Verifica se é um array e converte para objeto se necessário
+      const lockSignatureObj = Array.isArray(lockSignature) ?
+        lockSignature.reduce((obj, value, index) => {
+          if (typeof value === 'string') {
+            obj[value] = false;
+          } else {
+            obj[`doc${index}`] = value;
+          }
+          return obj;
+        }, {}) :
+        lockSignature;
+
+      const allTrue = Object.values(lockSignatureObj)
+        .filter(value => typeof value === 'boolean')
+        .every(value => value === true);
+
+      console.log('LockSignature convertido:', lockSignatureObj);
+      console.log('Todos os documentos foram visualizados?', allTrue);
+      setKeySignature(allTrue);
+    }
+  }, [lockSignature]);
+
   // useEffect(() => {
-  //   if (lockSignature) {
-  //     console.log('Estado atual do lockSignature:', lockSignature);
-  //     console.log('Chaves do lockSignature:', Object.keys(lockSignature));
-  //     console.log('Valores do lockSignature:', Object.values(lockSignature));
-
-  //     // Verifica se é um array e converte para objeto se necessário
-  //     const lockSignatureObj = Array.isArray(lockSignature) ?
-  //       lockSignature.reduce((obj, value, index) => {
-  //         if (typeof value === 'string') {
-  //           obj[value] = false;
-  //         } else {
-  //           obj[`doc${index}`] = value;
-  //         }
-  //         return obj;
-  //       }, {}) :
-  //       lockSignature;
-
-  //     const allTrue = Object.values(lockSignatureObj)
-  //       .filter(value => typeof value === 'boolean')
-  //       .every(value => value === true);
-
-  //     console.log('LockSignature convertido:', lockSignatureObj);
-  //     console.log('Todos os documentos foram visualizados?', allTrue);
-  //     setKeySignature(allTrue);
+  //   if (lockSignature && Object.keys(lockSignature).length > 0) {
+  //     const allViewed = Object.values(lockSignature).every(
+  //       (value) => value === true
+  //     );
+  //     setKeySignature(allViewed);
+  //     // console.log("Todos os documentos visualizados?", allViewed);
   //   }
   // }, [lockSignature]);
 
   useEffect(() => {
-    if (lockSignature && Object.keys(lockSignature).length > 0) {
-      const allViewed = Object.values(lockSignature).every(
-        (value) => value === true
-      );
-      setKeySignature(allViewed);
-      // console.log("Todos os documentos visualizados?", allViewed);
-    }
-  }, [lockSignature]);
-
-  useEffect(() => {
     if (jobConected) {
-      // console.log("jobConected", jobConected[0].candidates);
       setCurrentStep(JSON.parse(jobConected[0].candidates)[0].step);
     }
     Animated.timing(lineAnim, {
@@ -108,7 +108,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
       duration: 500,
       useNativeDriver: false,
     }).start();
-  }, [currentStep, jobConected]);
+  }, [jobConected]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -123,13 +123,15 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
+        if(CPF){
         // const response = await FindPicture(CPF);
         const responseSignature = await FindOnePicture("Signature_Admission", CPF, jobConected[0].id);
         // console.log("jobConected", jobConected[0].id)
         if (responseSignature?.status === 200) {
           setSignatureFound(responseSignature.pictures);
         } else {
-          console.log("Erro ao buscar assinatura");
+            console.log("Erro ao buscar assinatura");
+          }
         }
       };
       fetchData();
@@ -141,7 +143,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
       <ScrollView className="h-full bg-white">
         {currentStep === 1 && (
           <>
-            <AdmissionalExam CPF={CPF} jobConected={jobConected} />
+            <AdmissionalExam CPF={CPF} jobConected={jobConected} setCurrentStep={setCurrentStep} />
           </>
         )}
         {currentStep === 2 && (
@@ -149,7 +151,9 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
             <WaitingIndicator
               visible={true}
               status={"pending"}
+              CPF={CPF}
               currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
             />
           </>
         )}
@@ -231,8 +235,8 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
       </ScrollView>
 
       {currentStep === 3 && !signatureFound?.status && (
-        <View className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-          <Text className="text-center text-gray-600 mb-2">
+        <View className=" p-4 border-t border-gray-200 mb-20">
+          <Text className="text-center text-gray-600">
             Para assinar é necessário visualizar todos os documentos
           </Text>
           <TouchableOpacity

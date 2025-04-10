@@ -67,7 +67,7 @@ const useCollaborator = () => {
                 await AsyncStorage.setItem('collaborator', JSON.stringify(response.collaborator));
             }
         } catch (error) {
-            console.error('Erro ao atualizar colaborador:', error);
+            return null;
         }
     };
 

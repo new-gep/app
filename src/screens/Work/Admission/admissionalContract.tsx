@@ -135,7 +135,7 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
       })}
 
       {/* Documentos Dinâmicos */}
-      {dynamicDocs.map((doc, index) => (
+      {/* {dynamicDocs.map((doc, index) => (
         <AdmissionalCard
           key={`dynamic-${index}`}
           lockKey={doc.lockKey}
@@ -146,9 +146,9 @@ const AdmissionalContract = ({ jobConected, CPF, setLockSignature, lockSignature
           setLockSignature={setLockSignature}
           lockSignature={lockSignature}
         />
-      ))}
+      ))} */}
       <View className="h-full w-full justify-center items-center flex">
-        {loading && <Text>Buscando documentos...</Text>}
+        {loading && <Text className="text-center">Buscando documentos...</Text>}
       </View>
     </View>
   );

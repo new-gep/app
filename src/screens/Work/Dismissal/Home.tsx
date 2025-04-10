@@ -101,7 +101,7 @@ const DismissalHome = () => {
 
             {currentStep === 1 && (
                 solicitationType == 'company'? 
-                <Company jobConected={jobConected} CPF={collaborator.CPF}/> 
+                <Company jobConected={jobConected} CPF={collaborator?.CPF}/> 
                 :
                 solicitationType == 'collaborator'? 
                 <Collaborator /> 

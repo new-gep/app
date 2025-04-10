@@ -257,7 +257,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                             style={[GlobalStyleSheet.image2, { tintColor: show ? COLORS.card : COLORS.primary }]}
                             source={IMAGES.shoppingbag}
                         /> */}
-                        <Text style={{ ...FONTS.fontMedium, fontSize: 16, color: statusDocument == 'approved' ? COLORS.success : statusDocument == 'approved' ?  COLORS.danger :  COLORS.dark }}>{statusDocument == 'approved' ? 'Aprovado' :  statusDocument == 'reproved' ? 'Reenviar' : statusDocument == 'pending' ? 'Em Análise' :'Pendente'}</Text>
+                        <Text style={{ ...FONTS.fontMedium, fontSize: 16, color: statusDocument == 'approved' ? COLORS.success : statusDocument == 'approved' ?  COLORS.danger :  COLORS.dark }}>{statusDocument == 'approved' ? 'Aprovado' :  statusDocument == 'reproved' ? 'Recusado' : statusDocument == 'pending' ? 'Em Análise' :'Pendente'}</Text>
                     </View>
                    
                     {(!pathPicture || statusDocument === 'reproved') && (

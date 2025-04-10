@@ -272,11 +272,13 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     id_work: jobId || null,
                 };
                 const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
-                console.log(update)
+                console.log(update.status)
                 switch (update.status) {
                     case 200:
+                        console.log(finishSendDocument)
                         if(finishSendDocument){
                             finishSendDocument(200)
+                            console.log('aqui')
                         }
                         validateCollaborator()
                         setSendPicture(false)
@@ -323,10 +325,9 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     cpf: collaborator.CPF,
                     id_work: jobId || null,
                 };
-                console.log(pictureParams)
 
                 const createResponse = await CreateAvalidPicture(pictureParams);
-                console.log(createResponse)
+          
                 if(documentName.toLowerCase() == 'dismissal_hand'){
                     const demissionData = {
                         motion_demission: "card",
@@ -335,9 +336,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     const response = await UpdateJob(jobId, demissionData);
                  
                     if(response.status !== 200){
-                        if(finishSendDocument){
-                            finishSendDocument(200)
-                        }
                         setActiveSheet('danger');
                         setMessageSheet(`Erro ao atualizar o job`);
                         Sheet();

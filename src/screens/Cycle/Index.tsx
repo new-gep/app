@@ -11,12 +11,14 @@ import { COLORS } from "~/src/constants/theme";
 import { NavigationProp, useFocusEffect, useNavigation } from "@react-navigation/native";
 import FindAplicateInJob from "~/src/hooks/get/job/findAplicateJob";
 import FindCollaborator from "~/src/hooks/findOne/collaborator";
+import Timeline from "../Work/TimeLineAdmiss";
 
 const Default = () => {
   const [titleWork, setTitleWork] = useState<string>("");
   const { collaborator, fetchCollaborator, updateCollaborator } = useCollaborator();
   const [hasWork, setHaswork] = useState<boolean | null>(null);
   const [hasProcessAdmission, setHasProcessAdmission] = useState<boolean | null>(null);
+  const [document, setDocument] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [jobConected, setjobConected] = useState<any>();
   const [CPF, setCPF] = useState<any>();
@@ -29,7 +31,7 @@ const Default = () => {
         return; // Evita requisições desnecessárias se já tiver trabalho ou não tiver colaborador
       };
       const responseCollaborator = await FindCollaborator(collaborator.CPF);
-      if(responseCollaborator.collaborator.id_work.id){
+      if(responseCollaborator.status === 200 && responseCollaborator.collaborator?.id_work && responseCollaborator.collaborator?.id_work?.id){
         setCPF(collaborator.CPF);
         setjobConected(responseCollaborator.collaborator);
         setHaswork(true);
@@ -37,9 +39,12 @@ const Default = () => {
       };
       const response = await FindAplicateInJob(collaborator.CPF);
       if (response.status !== 200) {
+        setDocument(true);
         setHasProcessAdmission(false);
         return;
       };
+      setCPF(collaborator.CPF);
+      setjobConected(response.jobs);
       setHasProcessAdmission(response.processAdmission);
       return
     } catch (error) {
@@ -69,12 +74,14 @@ const Default = () => {
     // }
   };
 
-  useEffect(() => {
-    //verificação admissao
-    if(collaborator){
-      fetchJobs()
-    }
-  }, [collaborator]);
+  useFocusEffect(
+    React.useCallback(() => {
+      //verificação admissao
+      if(collaborator){
+        fetchJobs()
+      }
+    }, [collaborator])
+  );
 
 
 
@@ -100,23 +107,13 @@ const Default = () => {
         }
         className="flex-1"
       >
-        <HomeWork setTitleWork={setTitleWork} jobConected={jobConected} CPF={CPF} />
+        <HomeWork jobConected={jobConected} CPF={CPF} />
       </ScrollView>
       :
-      hasProcessAdmission ?
-      <ScrollView 
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => onRefresh()}
-            colors={[COLORS.dark]}
-          />
-        }
-        className="flex-1"
-      >
-        <HomeNoWork />
-      </ScrollView>
+      hasProcessAdmission?
+        <Timeline jobConected={jobConected} CPF={CPF} />
       :
+      document ?
       <ScrollView 
         refreshControl={
           <RefreshControl
@@ -129,6 +126,8 @@ const Default = () => {
       >
         <Documents />
       </ScrollView>
+      :
+      <></>
     }
     </View>
   );
