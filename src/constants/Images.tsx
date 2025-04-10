@@ -141,6 +141,7 @@ export const IMAGES = {
     swap : require('../assets/images/icons/swap.png'),
     arrowDown : require('../assets/images/icons/arrowDown.png'),
     arrowRight : require('../assets/images/icons/arrowRight.png'),
+    picture : require('../assets/images/icons/picture.png'),
 
     onborder5 : require('../assets/picture/onboarding/1.png'),
     onborder4 : require('../assets/picture/onboarding/2.png'),
@@ -222,6 +223,8 @@ export const IMAGES = {
     unique20: require('../assets/picture/unique/unique20.png'),
     unique21: require('../assets/picture/unique/unique21.png'),
     unique22: require('../assets/picture/unique/unique22.png'),
+    unique23: require('../assets/picture/unique/unique23.png'),
+    unique24: require('../assets/picture/unique/unique24.png'),
 
     gif0: require('../assets/picture/gif/unique0.gif')
 }

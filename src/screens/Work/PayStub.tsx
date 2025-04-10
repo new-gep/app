@@ -7,6 +7,8 @@ import {
   ActivityIndicator,
   Modal,
   Alert,
+  Image,
+  Dimensions,
 } from "react-native";
 import Header from "../../layout/Header";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -15,7 +17,8 @@ import DocumentVisible from "../../components/Modal/DocumentVisible";
 import SignatureModalCanvas from "../Components/Signatures/signatureModalCanvas";
 import { WebView } from "react-native-webview";
 import Feather from "@expo/vector-icons/build/Feather";
-import { COLORS } from "../../constants/theme";
+import { COLORS, FONTS } from "../../constants/theme";
+import { IMAGES } from "~/src/constants/Images";
 const months = [
   { value: "01", label: "Janeiro", english: "January" },
   { value: "02", label: "Fevereiro", english: "February" },
@@ -43,7 +46,7 @@ const PayStub = () => {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<{ PayStub: PayStubParams }>>();
   const { jobConected, CPF } = route.params;
-
+  const { width, height } = Dimensions.get("window");
   const [mes, setMes] = useState(months[0].label);
   const [year, setyear] = useState(String(currentYear));
   const [documents, setDocuments] = useState<any[]>([]);
@@ -71,7 +74,7 @@ const PayStub = () => {
           year,
           monthInEnglish
         );
-        console.log('Retorno do holerite:', response.length);
+        console.log("Retorno do holerite:", response.length);
 
         const validDocuments = Array.isArray(response)
           ? response.filter((doc) => doc !== null)
@@ -139,32 +142,36 @@ const PayStub = () => {
   };
 
   return (
-    <View className="flex-1 p-4 bg-white">
+    <View className="flex-1 bg-white">
       <Header
         title="Holerite Online"
         leftIcon="back"
         leftAction={() => navigation.goBack()}
       />
 
-      <Text className="text-xl font-bold mb-4 text-gray-800">
-        Selecione o mês e ano :
-      </Text>
-
-      <View className="flex-row justify-between mb-5">
+      <View className="flex-row justify-between mb-5 mt-5 px-5">
         <TouchableOpacity
           className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
           onPress={() => setShowMonthPicker(true)}
         >
-          <Text className="text-base text-gray-800">
+          <Text
+            className="text-base text-center text-gray-800"
+            style={{ ...FONTS.fontBold, fontSize: 16 }}
+          >
             {months.find((m) => m.label === mes)?.label}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
+          className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300 "
           onPress={() => setShowYearPicker(true)}
         >
-          <Text className="text-base text-gray-800">{year}</Text>
+          <Text
+            className="text-base text-center text-gray-800"
+            style={{ ...FONTS.fontBold, fontSize: 16 }}
+          >
+            {year}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -233,7 +240,9 @@ const PayStub = () => {
               <View
                 key={item.fileName}
                 className={`mb-4 bg-white rounded-xl shadow-sm ${
-                  !item.fileName.match(/^Service_PayStub_\d{4}_[A-Za-z]+_\d+$/) && "hidden"
+                  !item.fileName.match(
+                    /^Service_PayStub_\d{4}_[A-Za-z]+_\d+$/
+                  ) && "hidden"
                 }`}
               >
                 <TouchableOpacity
@@ -275,7 +284,7 @@ const PayStub = () => {
                     </Text>
                   </View>
                 </TouchableOpacity>
-                        
+
                 <View className="p-4 border-t border-gray-200">
                   {hasSignature ? (
                     <View className="items-center">
@@ -315,9 +324,32 @@ const PayStub = () => {
             );
           })
         ) : (
-          <Text className="text-center mt-5 text-gray-500">
-            Nenhum registro de holerite encontrado
-          </Text>
+          <View className="w-full justify-center items-center px-5">
+            <Image
+              source={IMAGES.unique23}
+              style={{
+                height: height * 0.4,
+                width: width * 0.8,
+                resizeMode: "contain",
+                opacity: 0.8,
+              }}
+            />
+            <Text
+              className="mt-4 text-center"
+              style={{ ...FONTS.fontMedium, fontSize: 18 }}
+            >
+              Nenhum holerite registrado em{" "}
+              <Text style={{ ...FONTS.fontSemiBold, fontSize: 18 }}>
+                {mes}/{year}
+              </Text>
+            </Text>
+            <Text
+              className="text-base text-gray-500"
+              style={{ ...FONTS.fontRegular, fontSize: 14 }}
+            >
+              para buscar os holerites anteriores, selecione outro mês e ano
+            </Text>
+          </View>
         )}
       </ScrollView>
 

@@ -14,7 +14,8 @@ import { useTheme, useRoute, useNavigation } from '@react-navigation/native';
 import CheckDocumentServices from '../../../hooks/get/job/checkPayStub';
 import DocumentVisible from '../../../components/Modal/DocumentVisible';
 import { IMAGES } from '../../../constants/Images';
-import { FONTS } from '~/src/constants/theme';
+import { COLORS, FONTS } from '~/src/constants/theme';
+
 import Mask from '~/src/function/mask';
 
 const months = [
@@ -67,12 +68,14 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { width, height } = Dimensions.get('window');
 
   const fetchData = async () => {
     if (jobConected) {
       try {
+        setLoading(true); 
         const response = await CheckDocumentServices(
           jobConected.id_work.id,
           'Absence',
@@ -83,9 +86,11 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
           ? response.filter((doc) => doc !== null)
           : [];
         setDocuments(validDocuments);
-        console.log(validDocuments);
+       
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -132,15 +137,16 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
           className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-700"
           onPress={() => setShowMonthPicker(true)}
         >
-          <Text className="text-base text-gray-800 text-center">
+          <Text className="text-base text-gray-800 text-center" style={{...FONTS.fontBold,fontSize:16}}>
             {months.find((m) => m.value === mes)?.label}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-700"
+          
           onPress={() => setShowYearPicker(true)}
         >
-          <Text className="text-base text-gray-800 text-center">{ano}</Text>
+          <Text className="text-base text-gray-800 text-center" style={{...FONTS.fontBold,fontSize:16}}>{ano}</Text>
         </TouchableOpacity>
       </View>
 
@@ -190,47 +196,56 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
 
       {/* Lista de ausências */}
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {documents.length >= 1 ? (
-          documents.map((item) => 
-          (
-            <TouchableOpacity
-              key={item.fileName}
-              className="flex-row items-center mb-2 p-4 bg-white rounded-xl shadow border border-gray-700"
-              onPress={() => openDocumentModal(item)}
-            >
-              <View className="w-16 h-16 bg-gray-100 rounded-lg items-center justify-center mr-4">
-                <Text className="text-2xl font-bold text-primary">
-                  {new Date(item.createdAt).getDate()}
+        { !loading ? 
+          <>
+            {documents.length >= 1 ? (
+              documents.map((item) => 
+              (
+                <TouchableOpacity
+                  key={item.fileName}
+                  className="flex-row items-center mb-2 p-4 bg-primary rounded-xl shadow-lg relative"
+                  onPress={() => openDocumentModal(item)}
+                >
+                  <View className="w-16 h-16 bg-dark rounded-full items-center justify-center mr-4 p-3">
+                    <Image source={IMAGES.picture} tintColor={COLORS.primary} style={{width:'100%',height:'100%'}} resizeMode='contain'/>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-lg font-semibold"  style={{...FONTS.fontSemiBold,fontSize:16}}>
+                      {item.details.name}
+                    </Text>
+                    <Text className="text-base" style={{...FONTS.fontRegular,fontSize:14}}>{Mask('dateFormat',item.details.date)}</Text>
+                  </View>
+                  {/* <View className="absolute top-2 right-2 w-4 h-4 rounded-full" style={{
+                    backgroundColor: item.details.status === 'pending' ? 'yellow' : item.details.status === 'approved' ? 'green' : 'red'
+                  }} /> */}
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View className="w-full justify-center  items-center mt-12">
+                <Image
+                  source={IMAGES.unique20}
+                  style={{
+                    height: height * 0.4,
+                    width: width * 0.8,
+                    resizeMode: "contain",
+                    opacity: 0.8,
+                  }}
+                />
+                <Text className="mt-4 text-center" style={{...FONTS.fontMedium,fontSize:18}}>
+                  Nenhuma ausência registrada em <Text style={{...FONTS.fontSemiBold,fontSize:18}}>{mes}/{ano}</Text>
+                </Text>
+                <Text className="text-base text-gray-500" style={{...FONTS.fontRegular,fontSize:14}}>
+                  para buscar as ausências anteriores, selecione outro mês e ano
                 </Text>
               </View>
-              <View className="flex-1">
-                <Text className="text-lg font-semibold text-gray-800">
-                  {/* {months.find((m) => m.value === mes)?.label} {ano} */}
-                  {item.details.name}
-                </Text>
-                <Text className="text-base text-gray-600">{Mask('dateFormat',item.details.date)}</Text>
-              </View>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <View className="w-full justify-center  items-center mt-12">
-            <Image
-              source={IMAGES.unique20}
-              style={{
-                height: height * 0.4,
-                width: width * 0.8,
-                resizeMode: "contain",
-                opacity: 0.8,
-              }}
-            />
-            <Text className="mt-4 text-center" style={{...FONTS.fontMedium,fontSize:18}}>
-              Nenhuma ausência registrada em <Text style={{...FONTS.fontSemiBold,fontSize:18}}>{mes}/{ano}</Text>
-            </Text>
-            <Text className="text-base text-gray-500" style={{...FONTS.fontRegular,fontSize:14}}>
-              para buscar as ausências anteriores, selecione outro mês e ano
-            </Text>
+            )}
+          </>
+          :
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator className='mt-12' size="large" color={COLORS.primary} />
           </View>
-        )}
+        }
+
       </ScrollView>
 
       {/* Modal do documento */}
@@ -254,7 +269,7 @@ const AbsenceGet = ({ onAddNew }: AbsenceGetProps) => {
 
       {/* Botão flutuante para adicionar nova ausência */}
       <TouchableOpacity
-        className="absolute bottom-6 right-6 bg-green-800 w-14 h-14 rounded-full flex items-center justify-center shadow-lg border border-gray-700"
+        className="absolute bottom-6 right-6 bg-green-600 w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
         onPress={handleAddNew}
       >
         <Text className="text-white text-3xl">+</Text>

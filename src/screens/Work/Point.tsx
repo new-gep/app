@@ -7,6 +7,8 @@ import {
   ActivityIndicator,
   Modal,
   Alert,
+  Dimensions,
+  Image,
 } from "react-native";
 import Header from "../../layout/Header";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -15,7 +17,9 @@ import DocumentVisible from "../../components/Modal/DocumentVisible";
 import SignatureModalCanvas from "../Components/Signatures/signatureModalCanvas";
 import { WebView } from "react-native-webview";
 import Feather from "@expo/vector-icons/build/Feather";
-import { COLORS } from "../../constants/theme";
+import { COLORS, FONTS } from "../../constants/theme";
+import { IMAGES } from "~/src/constants/Images";
+
 const months = [
   { value: "01", label: "Janeiro", english: "January" },
   { value: "02", label: "Fevereiro", english: "February" },
@@ -43,7 +47,7 @@ const Point = () => {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<{ Point: PointParams }>>();
   const { jobConected, CPF } = route.params;
-
+  const { width, height } = Dimensions.get("window");
   const [mes, setMes] = useState(months[0].label);
   const [year, setyear] = useState(String(currentYear));
   const [documents, setDocuments] = useState<any[]>([]);
@@ -145,23 +149,20 @@ const Point = () => {
   };
 
   return (
-    <View className="flex-1 p-4 bg-white">
+    <View className="flex-1 bg-white">
       <Header
         title="Ponto Online"
         leftIcon="back"
         leftAction={() => navigation.goBack()}
       />
 
-      <Text className="text-xl font-bold mb-4 text-gray-800">
-        Selecione o mês e ano :
-      </Text>
 
-      <View className="flex-row justify-between mb-5">
+      <View className="flex-row justify-between mb-5 mt-5 px-5">
         <TouchableOpacity
           className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
           onPress={() => setShowMonthPicker(true)}
         >
-          <Text className="text-base text-gray-800">
+          <Text className="text-base text-center text-gray-800" style={{...FONTS.fontBold,fontSize:16}}>
             {months.find((m) => m.label === mes)?.label}
           </Text>
         </TouchableOpacity>
@@ -170,7 +171,7 @@ const Point = () => {
           className="w-[48%] bg-gray-100 rounded-lg p-3 border border-gray-300"
           onPress={() => setShowYearPicker(true)}
         >
-          <Text className="text-base text-gray-800">{year}</Text>
+          <Text className="text-base text-center text-gray-800" style={{...FONTS.fontBold,fontSize:16}}>{year}</Text>
         </TouchableOpacity>
       </View>
 
@@ -321,9 +322,32 @@ const Point = () => {
             );
           })
         ) : (
-          <Text className="text-center mt-5 text-gray-500">
-            Nenhum registro de ponto encontrado
-          </Text>
+          <View className="w-full justify-center items-center px-5">
+            <Image
+              source={IMAGES.unique24}
+              style={{
+                height: height * 0.4,
+                width: width * 0.8,
+                resizeMode: "contain",
+                opacity: 0.8,
+              }}
+            />
+            <Text
+              className="mt-4 text-center"
+              style={{ ...FONTS.fontMedium, fontSize: 18 }}
+            >
+              Nenhum ponto registrado em{" "}
+              <Text style={{ ...FONTS.fontSemiBold, fontSize: 18 }}>
+                {mes}/{year}
+              </Text>
+            </Text>
+            <Text
+              className="text-base text-gray-500"
+              style={{ ...FONTS.fontRegular, fontSize: 14 }}
+            >
+              para buscar os pontos anteriores, selecione outro mês e ano
+            </Text>
+          </View>
         )}
       </ScrollView>
 

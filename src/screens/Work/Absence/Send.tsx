@@ -1,5 +1,5 @@
 // AbsenceAdd.tsx
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Alert,
   Button,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import {
   useFocusEffect,
@@ -19,8 +20,7 @@ import {
 } from "@react-navigation/native";
 import DocumentSendServices from "../../../components/Modal/DocumentSendServices";
 import { IMAGES } from "../../../constants/Images";
-import FindPicture from "../../../hooks/findOne/picture";
-import GetJobDocument from "../../../hooks/get/job/findDocument";
+import { COLORS } from "../../../constants/theme";
 import uploadAbsence from "../../../hooks/upload/absence";
 import Header from "~/src/layout/Header";
 import useCollaborator from "~/src/function/fetchCollaborator";
@@ -28,6 +28,10 @@ import { Picker } from "@react-native-picker/picker";
 import { FONTS } from "~/src/constants/theme";
 import { DatePickerInput } from "react-native-paper-dates";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import RBSheet from 'react-native-raw-bottom-sheet';
+import SuccessSheet from '../../../components/BottomSheet/SuccessSheet';
+import DangerSheet from '../../../components/BottomSheet/DangerSheet';
+
 type AbsenceAddProps = {
   onClose: () => void;
   absenceData: {
@@ -73,13 +77,13 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
   const [otherReason, setOtherReason] = useState("");
   const [sendModalDocument, setSendModalDocument] = useState(false);
   const [path, setPath] = useState<string | null>(null);
-  const [statusDocument, setStatusDocument] = useState<string | null>(null);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState("date"); // 'date' ou 'time'
-  const [show, setShow] = useState(false);
+  const [activeSheet, setActiveSheet] = useState("success");
+  const [messageSheet, setMessageSheet] = useState("");
   const [documentUploaded, setDocumentUploaded] = useState(false);
+  const [loadingSend, setLoadingSend] = useState(false);
   const navigation = useNavigation();
+  const refRBSheet = useRef<any>(null);
 
   const handleSelectReason = (reason: string) => {
     // Se clicar na mesma opção que já está selecionada, limpa a seleção
@@ -102,10 +106,6 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       setDocumentUploaded(false);
     }
   };
-
-  useEffect(() => {
-    console.log(absenceData);
-  }, []);
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -161,9 +161,10 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
   // );
 
   const handleUploadSuccess = async () => {
-    setDocumentUploaded(true);
-    const response = await uploadAbsence(
-      path,
+    try {
+      setLoadingSend(true);
+      const response = await uploadAbsence(
+        path,
       absenceData.file_name,
       absenceData.id_work,
       absenceData.CPF,
@@ -171,13 +172,27 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       otherReason,
       selectedReason
     );
-    console.log(response);
-
-    // setTimeout(() => {
-    //   setShowSuccessPopup(false);
-    //   onClose();
-    //   // navigation.goBack();
-    // }, 3000);
+    if (response && response.status === 200) {
+      setActiveSheet("success");
+      setMessageSheet("Ausência enviada com sucesso");
+      refRBSheet.current?.open();
+      setTimeout(() => {
+        onClose();
+        // navigation.goBack();
+      }, 3000);
+    } else {
+      setActiveSheet("error");
+      setMessageSheet("Erro ao enviar ausência");
+      refRBSheet.current?.open();
+    }
+    } catch (error) {
+      console.error("Erro ao enviar ausência:", error);
+      setActiveSheet("error");
+      setMessageSheet("Erro ao enviar ausência");
+      refRBSheet.current?.open();
+    }finally {
+      setLoadingSend(false);
+    }
   };
 
   const handleSendDocument = () => {
@@ -197,10 +212,12 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       return;
     }
 
-    if(otherReason === "" && selectedReason == "Outros"){
-      Alert.alert("Motivo necessário", "Por favor, digite o motivo da ausência.", [
-        { text: "OK", onPress: () => {} },
-      ]);
+    if (otherReason === "" && selectedReason == "Outros") {
+      Alert.alert(
+        "Motivo necessário",
+        "Por favor, digite o motivo da ausência.",
+        [{ text: "OK", onPress: () => {} }]
+      );
       return;
     }
     // Se já tiver um documento, apenas confirma o envio
@@ -216,14 +233,6 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
       ]
     );
   };
-
-
-  // useEffect(() => {
-  //   if (collaborator) {
-  //     console.log(collaborator);
-
-  //   }
-  // }, [collaborator]);
 
   return (
     <>
@@ -263,27 +272,27 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
               <TouchableOpacity
                 className="p-3 border-b my-1 border-gray-700 bg-dark rounded-lg"
                 onPress={() => {
-                  handleSelectReason("Atestado de colaborador");
+                  handleSelectReason("Atestado");
                 }}
               >
                 <Text
                   className="text-base text-white"
                   style={{ ...FONTS.fontMedium, fontSize: 16 }}
                 >
-                  Atestado de colaborador
+                  Atestado
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="p-3 border-b border-gray-700 bg-dark rounded-lg my-1"
                 onPress={() => {
-                  handleSelectReason("Atestado de acompanhamento");
+                  handleSelectReason("Atestado de Acompanhamento");
                 }}
               >
                 <Text
                   className="text-base text-white"
                   style={{ ...FONTS.fontMedium, fontSize: 16 }}
                 >
-                  Atestado de acompanhamento
+                  Atestado de Acompanhamento
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -300,7 +309,6 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            
           )}
           {selectedReason === "Outros" && (
             <View className=" justify-between">
@@ -315,21 +323,20 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
               />
             </View>
           )}
-          { selectedReason &&
+          {selectedReason && (
             <SafeAreaProvider>
-            <DatePickerInput
-              className="mt-4 bg-white"
-              style={{ ...FONTS.fontMedium, fontSize: 16 }}
-              locale="pt"
-              label="Data da Consulta"
-              saveLabel="Salvar"
-              value={date}
-              onChange={(d: any) => setDate(d)}
-              inputMode="start"
-            />
-          </SafeAreaProvider>
-          }
-          
+              <DatePickerInput
+                className="mt-4 bg-white"
+                style={{ ...FONTS.fontMedium, fontSize: 16 }}
+                locale="pt"
+                label="Data da Consulta"
+                saveLabel="Salvar"
+                value={date}
+                onChange={(d: any) => setDate(d)}
+                inputMode="start"
+              />
+            </SafeAreaProvider>
+          )}
         </View>
 
         {/* Imagem ilustrativa quando não há motivo selecionado */}
@@ -419,57 +426,52 @@ const AbsenceUpload = ({ onClose, absenceData }: AbsenceAddProps) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  className={`p-4 rounded-lg mt-3 items-center flex-1 ${
+                  className={`h-14 justify-center rounded-lg mt-3 items-center flex-1 ${
                     path ? "bg-primary" : "bg-gray-400"
                   }`}
-                  style={{ ...FONTS.fontMedium, fontSize: 16 }}
                   onPress={() => {
                     handleSendDocument();
                   }}
                 >
-                  <Text className="text-dark text-base font-medium" style={{ ...FONTS.fontMedium, fontSize: 18 }}>
+                  {!loadingSend ?
+                  <Text
+                    className="text-dark text-base font-medium"
+                    style={{ ...FONTS.fontMedium, fontSize: 18 }}
+                  >
                     Enviar
                   </Text>
+                  :
+                  <ActivityIndicator size="small" color={COLORS.dark} />
+                  }
                 </TouchableOpacity>
               </View>
             </View>
           </View>
         )}
 
-        {showSuccessPopup && (
-          <View className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <View className="bg-white p-6 rounded-lg w-11/12 max-w-md">
-              <View className="flex items-center justify-center mb-4">
-                <View className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center">
-                  <Text className="text-4xl text-green-600">✓</Text>
-                </View>
-              </View>
-              <Text className="text-xl font-bold text-center text-gray-800 mb-2">
-                Ausência Justificada!
-              </Text>
-              <Text className="text-base text-center text-gray-600 mb-4">
-                Seu documento foi enviado para análise.
-              </Text>
-              <View className="mt-4 border-t border-gray-100 pt-4">
-                <Text className="text-sm text-center text-gray-500">
-                  Você receberá uma notificação quando o documento for
-                  analisado.
-                </Text>
-              </View>
-              <TouchableOpacity
-                className="mt-6 bg-green-600 py-3 px-6 rounded-lg"
-                onPress={() => {
-                  setShowSuccessPopup(false);
-                  onClose();
-                }}
-              >
-                <Text className="text-white text-center font-medium">
-                  Entendi
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
+        <RBSheet
+          ref={refRBSheet}
+          closeOnDragDown={true}
+          height={215}
+          openDuration={100}
+          customStyles={{
+            container: {
+              backgroundColor: theme.dark ? COLORS.background : COLORS.card,
+            },
+            draggableIcon: {
+              marginTop: 10,
+              marginBottom: 5,
+              height: 5,
+              width: 80,
+            },
+          }}
+        >
+          {activeSheet === "success" ? (
+            <SuccessSheet message={messageSheet} />
+          ) : (
+            <DangerSheet message={messageSheet} />
+          )}
+        </RBSheet>
       </ScrollView>
     </>
   );
