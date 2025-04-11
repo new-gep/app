@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
 import Buttons from "../../Components/Buttons";
-import { COLORS } from "../../../constants/theme";
+import { COLORS, FONTS } from "../../../constants/theme";
 import Button from "../../../components/Button/Button";
 import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { IMAGES } from "../../../constants/Images";
 
 type CardProps = {
   lockKey: string;
@@ -52,7 +53,6 @@ const AdmissionalCard = ({
     return titleMappings[value] || value;
   };
 
-
   return (
     <>
       <View className="h-6/6 p-4">
@@ -66,7 +66,16 @@ const AdmissionalCard = ({
             close={handleOpenModalDoc}
           />
 
-          <Text className="text-xl font-bold text-gray-800 mb-4 text-center">
+          <View className="absolute -top-4 left-2.5 bottom-2.5">
+            <Image
+              source={lockSignature[lockKey] ? IMAGES.lockOpen : IMAGES.lockClose}
+              style={{ width: Dimensions.get('window').width * 0.08, height: Dimensions.get('window').height * 0.04 }}
+              tintColor={lockSignature[lockKey] ? COLORS.success : COLORS.danger}
+              resizeMode="contain"
+            />
+          </View>
+
+          <Text className=" mb-4 text-center" style={{ ...FONTS.fontSemiBold, fontSize: 18 }}>
             {Mask('title', title)}
           </Text>
 
@@ -83,8 +92,8 @@ const AdmissionalCard = ({
               resizeMode="contain"
             />
           ) : (
-            <Text className="text-gray-500 mb-4 text-center">
-              Nenhuma assinatura salva.
+            <Text className="text-gray-500 text-center" style={{ ...FONTS.fontRegular, fontSize: 16 }}>
+              Visualize e confira o que está assinando.
             </Text>
           )}
 
@@ -101,11 +110,6 @@ const AdmissionalCard = ({
               text={'#000000'}
               color={COLORS.primary}
               onPress={handleOpenModalDoc}
-              icon={
-                lockSignature[lockKey] ? 
-                  <FontAwesome5 name="lock-open" size={24} color="#9ACD32" /> :
-                  <FontAwesome5 name="lock" size={24} color="#FFB343" />
-              }
             />
           </View>
         </View>

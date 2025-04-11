@@ -142,6 +142,8 @@ export const IMAGES = {
     arrowDown : require('../assets/images/icons/arrowDown.png'),
     arrowRight : require('../assets/images/icons/arrowRight.png'),
     picture : require('../assets/images/icons/picture.png'),
+    lockOpen : require('../assets/images/icons/lockOpen.png'),
+    lockClose : require('../assets/images/icons/lockClose.png'),
 
     onborder5 : require('../assets/picture/onboarding/1.png'),
     onborder4 : require('../assets/picture/onboarding/2.png'),

@@ -66,7 +66,6 @@ const admissionalExam: React.FC<Props> = ({ CPF, jobConected, setCurrentStep }) 
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      console.log('jobConected', jobConected)
       const response = await FindOnePicture(
         "Medical_Examination",
         CPF,
@@ -74,6 +73,12 @@ const admissionalExam: React.FC<Props> = ({ CPF, jobConected, setCurrentStep }) 
       );
       if(response && response.status === 200 && response.pictures?.status === 'approved'){
         const findJob = await FindAplicateInJob(CPF);
+        if(JSON.parse(findJob.jobs[0].candidates)[0].step == 1 ){
+          setStatusDocument(response.pictures?.status)
+          setPathDocument('true')
+          setCurrentStep(JSON.parse(findJob.jobs[0].candidates)[0].step)
+          return;
+        }
         setCurrentStep(JSON.parse(findJob.jobs[0].candidates)[0].step)
         return;
       }

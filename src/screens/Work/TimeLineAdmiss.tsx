@@ -28,6 +28,7 @@ import SignatureAdmission from "../Components/Signatures/signatureAdmission";
 import Header from "../../layout/Header";
 import TimelineFront from "../../components/Timeline/TimelineFront";
 import FindOnePicture from "~/src/hooks/findOne/onePicture";
+import Signature from "./Admission/Step/3/Signature";
 
 const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
   const navigation = useNavigation();
@@ -62,11 +63,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
 
   useEffect(() => {
     if (lockSignature) {
-      console.log('Estado atual do lockSignature:', lockSignature);
-      console.log('Chaves do lockSignature:', Object.keys(lockSignature));
-      console.log('Valores do lockSignature:', Object.values(lockSignature));
-
-      // Verifica se é um array e converte para objeto se necessário
+      //Verifica se é um array e converte para objeto se necessário
       const lockSignatureObj = Array.isArray(lockSignature) ?
         lockSignature.reduce((obj, value, index) => {
           if (typeof value === 'string') {
@@ -82,8 +79,6 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
         .filter(value => typeof value === 'boolean')
         .every(value => value === true);
 
-      console.log('LockSignature convertido:', lockSignatureObj);
-      console.log('Todos os documentos foram visualizados?', allTrue);
       setKeySignature(allTrue);
     }
   }, [lockSignature]);
@@ -158,6 +153,9 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
           </>
         )}
         {currentStep === 3 && (
+          <Signature currentStep={currentStep} CPF={CPF} jobConected={jobConected} />
+        )}
+        {currentStep === 0 && (
           <>
             {(signatureFound && signatureFound?.status === "approved") ||
             signatureFound?.status === "pending" ? (
@@ -234,7 +232,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
         )}
       </ScrollView>
 
-      {currentStep === 3 && !signatureFound?.status && (
+      {currentStep === 0 && !signatureFound?.status && (
         <View className=" p-4 border-t border-gray-200 mb-20">
           <Text className="text-center text-gray-600">
             Para assinar é necessário visualizar todos os documentos

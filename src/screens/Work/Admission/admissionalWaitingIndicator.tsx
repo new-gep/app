@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   RefreshControl,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp } from "@react-navigation/native";
@@ -57,18 +58,18 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
   };
 
   const fetchData = async () => {
-    try{
-      console.log('CPF', CPF)
-      if(!CPF) return;  
+    try {
+      console.log("CPF", CPF);
+      if (!CPF) return;
       const response = await FindAplicateInJob(CPF);
-      console.log(JSON.parse(response.jobs[0].candidates)[0].step)
-      setCurrentStep(JSON.parse(response.jobs[0].candidates)[0].step)
-    }catch(error){
-      console.log(error)
-    }finally{
+      console.log(JSON.parse(response.jobs[0].candidates)[0].step);
+      setCurrentStep(JSON.parse(response.jobs[0].candidates)[0].step);
+    } catch (error) {
+      console.log(error);
+    } finally {
       setRefreshing(false);
     }
-  }
+  };
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -76,17 +77,27 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
   }, []);
 
   return (
-    <View className={`bg-white ${currentStep === 2 &&'justify-center items-center' }`}>
+    <View
+      className={`bg-white ${
+        currentStep === 2 && "flex justify-center items-center"
+      }`}
+      style={{
+        height: currentStep === 2 ? Dimensions.get("window").height : "auto",
+      }}
+    >
       <SafeAreaView>
-        {currentStep === 2 && (
+        {(currentStep === 2) && (
           <Header
-            title="Kit Admissional"
+            title={'Kit Admissional'}
             leftIcon="back"
             leftAction={() => navigation.goBack()}
           />
         )}
+        {currentStep === 2 && (
+          <TimelineFront currentStep={currentStep} showProgress={true} />
+        )}
+
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }} 
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -95,27 +106,34 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
             />
           }
         >
-          <View className="flex-1 justify-start items-center px-6">
+          <View
+            className={`${
+              currentStep == 2 || currentStep == 3
+                ? "items-center"
+                : "flex-1 justify-start items-center px-6"
+            }`}
+          >
+            <Text className="" style={{ ...FONTS.fontSemiBold, fontSize: 18 }}>
+              {currentStep === 2
+                ? "Aguardando Kit Admissional"
+                : "Aguardando Análise"}
+            </Text>
+
+            <View className="w-full h-60% aspect-square">
+              <Image
+                source={require("../../../assets/images/gif/Timemanagement.gif")}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="contain"
+              />
+            </View>
+
             <Text
-              className=" mb-2"
-            style={{ ...FONTS.fontSemiBold, fontSize: 18 }}
-          >
-            {currentStep === 2 ? 'Aguardando Kit Admissional' : 'Aguardando Análise'}
-          </Text>
-
-          <View className="w-full h-60% aspect-square mb-4">
-            <Image
-              source={require("../../../assets/images/gif/Timemanagement.gif")}
-              style={{ width: "100%", height: "75%" }}
-              resizeMode="contain"
-            />
-          </View>
-
-          <Text
-            className="text-gray-500  text-center"
-            style={{ ...FONTS.fontRegular, fontSize: 14 }}
-          >
-            {getMessage()}
+              className={`text-gray-500  text-center ${
+                currentStep == 2 || currentStep == 3 && "px-5"
+              }`}
+              style={{ ...FONTS.fontRegular, fontSize: 14 }}
+            >
+              {getMessage()}
             </Text>
           </View>
         </ScrollView>

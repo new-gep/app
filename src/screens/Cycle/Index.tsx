@@ -31,7 +31,7 @@ const Default = () => {
         return; // Evita requisições desnecessárias se já tiver trabalho ou não tiver colaborador
       };
       const responseCollaborator = await FindCollaborator(collaborator.CPF);
-      if(responseCollaborator.status === 200 && responseCollaborator.collaborator?.id_work && responseCollaborator.collaborator?.id_work?.id){
+      if(responseCollaborator?.status === 200 && responseCollaborator?.collaborator?.id_work && responseCollaborator?.collaborator?.id_work?.id){
         setCPF(collaborator.CPF);
         setjobConected(responseCollaborator.collaborator);
         setHaswork(true);
@@ -48,7 +48,7 @@ const Default = () => {
       setHasProcessAdmission(response.processAdmission);
       return
     } catch (error) {
-      console.error("Erro ao buscar os cards:", error);
+      console.error("Erro ao buscar os collaborador:", error);
     }finally{
       setLoading(false);
     }
@@ -83,11 +83,9 @@ const Default = () => {
     }, [collaborator])
   );
 
-
-
   const onRefresh = async () => {
     await fetchJobs();
-  }
+  };
 
   return (
     <View className="flex-1 bg-white">

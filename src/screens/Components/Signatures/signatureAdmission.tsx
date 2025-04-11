@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Modal, PanResponder, Dimensions, Alert } from "react-native";
 import Canvas from "react-native-canvas";
-import ButtonOutline from "../../../components/Button/ButtonOutline";
+import Button from "../../../components/Button/Button";
 import uploadFile from "../../../hooks/upload/job";
 import CreateAvalidPicture from "../../../hooks/create/pictures";
 import UpdatePicture from "../../../hooks/update/picture";
+import Orientation from "react-native-orientation-locker";
+import { COLORS } from "~/src/constants/theme";
 
 const SignatureAdmission = ({
   visible,
@@ -14,12 +16,14 @@ const SignatureAdmission = ({
   cpf,
   where,
   jobId,
+  setStatusSignature
 }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const isDrawing = useRef(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleCanvas = (canvas) => {
+  const handleCanvas = (canvas:any) => {
     if (canvas && !canvasRef.current) {
       canvas.width = Dimensions.get("window").width;
       canvas.height = Dimensions.get("window").height - 65;
@@ -73,6 +77,7 @@ const SignatureAdmission = ({
 
   const saveCanvas = async () => {
     try {
+      setLoading(true);
       if (canvasRef.current) {
         const dataURL = await canvasRef.current.toDataURL();
 
@@ -91,7 +96,6 @@ const SignatureAdmission = ({
         };
 
         const response = await uploadFile(props);
-
         if (response?.status === 200) {
           const pictureProps = {
             picture: `Signature_Admission`,
@@ -101,11 +105,12 @@ const SignatureAdmission = ({
           };
 
           const pictureResponse = await CreateAvalidPicture(pictureProps);
-
+          console.log("pictureResponse", pictureResponse);
           if (pictureResponse.status === 409) {
             const responseUpdate = await UpdatePicture(cpf, pictureProps);
             if (responseUpdate.status === 200) {
               Alert.alert("Sucesso", "Assinatura atualizada com sucesso!");
+              setStatusSignature("pending");
               onClose(false);
               return;
             } else {
@@ -113,10 +118,10 @@ const SignatureAdmission = ({
               return;
             }
           }
-
+          setStatusSignature("pending");
           Alert.alert("Sucesso", "Assinatura salva com sucesso!");
           onClose(false);
-          onSaveSignature(fileName);
+          return
         } else {
           Alert.alert("Erro", "Ocorreu um erro ao enviar a assinatura. Tente novamente.");
         }
@@ -124,12 +129,22 @@ const SignatureAdmission = ({
     } catch (error) {
       console.error("Erro ao processar assinatura:", error);
       Alert.alert("Erro", "Ocorreu um erro ao salvar a assinatura. Por favor, tente novamente.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    console.log("Canvas montado ou visibilidade alterada:", !!canvasRef.current);
-  }, [visible]);
+  // useEffect(() => {
+  //   if (visible) {
+  //     Orientation.lockToLandscape(); // Força modo paisagem
+  //   } else {
+  //     Orientation.unlockAllOrientations(); // Volta ao normal
+  //   }
+  
+  //   return () => {
+  //     Orientation.unlockAllOrientations(); // Garante reset
+  //   };
+  // }, [visible]);
 
   return (
     <Modal visible={visible} animationType="slide" transparent={false}>
@@ -142,9 +157,9 @@ const SignatureAdmission = ({
         </View>
 
         <View className="flex-row justify-around items-center bg-white p-4 border-t border-gray-200">
-          <ButtonOutline onPress={clearCanvas} color="red" title="Apagar" size="sm" />
-          <ButtonOutline onPress={saveCanvas} color="green" title="Salvar" size="sm" />
-          <ButtonOutline onPress={() => onClose(false)} color="gray" title="Fechar" size="sm" />
+          <Button onPress={saveCanvas} loadColor={COLORS.white} loadSize={25} load={loading} color={COLORS.success} text={COLORS.white} title="Salvar" size="sm" />
+          <Button onPress={clearCanvas} color={COLORS.danger}  text={COLORS.white} title="Apagar" size="sm" />
+          <Button onPress={() => onClose(false)} color="gray" text="white" title="Fechar" size="sm" />
         </View>
       </View>
     </Modal>
