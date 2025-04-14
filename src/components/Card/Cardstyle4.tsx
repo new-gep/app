@@ -117,12 +117,11 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
         }
     };
 
-
     return (
         <View
             style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}
         >
-            <DocumentSend statusDocument={statusDocument} finishSendDocument={finishSendDocument} setStatusDocument={setStatusDocument} jobId={jobId} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
+            <DocumentSend    statusDocument={statusDocument} finishSendDocument={finishSendDocument} setStatusDocument={setStatusDocument} jobId={jobId} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
             <DocumentVisible documentName={documentName}  path={pathPictureSide} typeDocument={typePicture} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
             
             <View style={{ width: '40%', alignItems: 'center' }}>

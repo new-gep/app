@@ -31,6 +31,7 @@ const Default = () => {
         return; // Evita requisições desnecessárias se já tiver trabalho ou não tiver colaborador
       };
       const responseCollaborator = await FindCollaborator(collaborator.CPF);
+      // console.log(responseCollaborator.collaborator?.id_work)
       if(responseCollaborator?.status === 200 && responseCollaborator?.collaborator?.id_work && responseCollaborator?.collaborator?.id_work?.id){
         setCPF(collaborator.CPF);
         setjobConected(responseCollaborator.collaborator);
@@ -38,13 +39,15 @@ const Default = () => {
         return;
       };
       const response = await FindAplicateInJob(collaborator.CPF);
-      if (response.status !== 200) {
+      if (response.status !== 200 || !response.processAdmission) {
         setDocument(true);
+        setHaswork(false)
         setHasProcessAdmission(false);
         return;
       };
       setCPF(collaborator.CPF);
       setjobConected(response.jobs);
+      setHaswork(false)
       setHasProcessAdmission(response.processAdmission);
       return
     } catch (error) {

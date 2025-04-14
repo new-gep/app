@@ -87,6 +87,10 @@ export type RootStackParamList = {
     Point: undefined;
     Absence: undefined;
     Vacancy: undefined;
+    HomeWork:{
+      jobConected:any
+      CPF:any
+    };
     CardInformation: {
         cardData: any;
     };

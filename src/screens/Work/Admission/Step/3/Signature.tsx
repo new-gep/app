@@ -18,6 +18,8 @@ import AdmissionalContract from "../../admissionalContract";
 import SignatureAdmission from "~/src/screens/Components/Signatures/signatureAdmission";
 import Button from "~/src/components/Button/Button";
 import { COLORS, FONTS } from "~/src/constants/theme";
+import FindOneJob from "~/src/hooks/get/job/findOne";
+import fetchCollaborator from "~/src/function/fetchCollaborator";
 
 const Signature = ({
   currentStep,
@@ -44,12 +46,23 @@ const Signature = ({
           CPF,
           jobConected[0].id
         );
-        console.log("responseSignature", responseSignature);
         if (responseSignature && responseSignature?.status === 200) {
           setSignatureFound(responseSignature.pictures);
           setStatusSignature(responseSignature.pictures.status);
+          if(responseSignature.pictures.status === 'approved'){
+            FindOneJob(jobConected[0].id).then((res)=>{
+              if(res.status == 200){
+                if(res.job?.CPF_collaborator){
+                  navigation.navigate('HomeWork', { CPF, jobConected}) 
+                  fetchCollaborator()
+                  // setTimeout(()=> navigation.navigate('Work') , 3000)
+
+                }
+              }
+            })
+          }
         }else{
-            setStatusSignature('send');
+          setStatusSignature('send');
         }
       }
     } catch (error) {
@@ -61,12 +74,12 @@ const Signature = ({
   };
 
   const handleOpenModal = () => {
-    // if (!keySignature) {
-    //   return Alert.alert(
-    //     "Indisponível",
-    //     "Você não pode assinar no momento pois precisa primeiro visualizar todos os documentos."
-    //   );
-    // }
+    if (!keySignature) {
+      return Alert.alert(
+        "Indisponível",
+        "Você não pode assinar no momento pois precisa primeiro visualizar todos os documentos."
+      );
+    }
     setModalSignature(true);
   };
 

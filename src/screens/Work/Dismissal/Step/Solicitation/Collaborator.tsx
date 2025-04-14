@@ -27,7 +27,7 @@ const DismissalHomeCompany = () => {
   const theme = useTheme();
   const [hasDemissional, setHasDemissional] = useState<boolean>(false);
   const navigation = useNavigation<any>();
-  const [myDocsData, setMyDocsData] = useState<any[] | null>(null);
+  const [myDocsData, setMyDocsData] = useState<any | null>(null);
   const { width, height } = Dimensions.get("window");
   const { collaborator, fetchCollaborator } = useCollaborator();
   const [process, setProcess] = useState<boolean>(false);
@@ -42,13 +42,11 @@ const DismissalHomeCompany = () => {
       if (!collaborator?.CPF) return;
 
       const response = await FindPicture(collaborator.CPF);
-      console.log("response:", response);
       if (response.status == 200) {
         setError(false);
 
         // Configuração do documento de carta de demissão
         const documentInfo = await GetDocumentInfo("Dismissal_Hand");
-        console.log("documentInfo:", documentInfo);
         if (documentInfo) {
           let document_params = {
             path: documentInfo?.path,
@@ -69,9 +67,6 @@ const DismissalHomeCompany = () => {
             document_params.statusDocument = dismissalDoc.status;
             document_params.sendDocument = dismissalDoc.status === "reproved";
           }
-
-          console.log("document_params:", document_params);
-
           setMyDocsData([document_params]);
           setProcess(true);
 
@@ -88,7 +83,8 @@ const DismissalHomeCompany = () => {
           twoPicture: false,
           statusDocument: null,
         };
-        setMyDocsData([document_params]);
+        console.log(document_params)
+        setMyDocsData(document_params);
         return;
       } else {
         setError(true);
@@ -107,7 +103,6 @@ const DismissalHomeCompany = () => {
         signature: false,
       };
       const response = await FindFile(props.id, props.name, props.signature);
-      console.log("response:", response);
       return response && response.path && response.type
         ? { path: response.path, type: response.type }
         : null;
@@ -164,17 +159,19 @@ const DismissalHomeCompany = () => {
       <View style={{ marginTop: 50 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className={`px-2`}>
-              <View style={{ marginBottom: 30 }}>
-                {/* <Cardstyle4
-                  documentName={data.DocumentName}
-                  sendDocument={data.sendDocument}
-                  typeDocument={data.typeDocument}
-                  statusDocument={data.statusDocument}
-                  twoPicture={data.twoPicture}
-                  path={data.path}
+              { myDocsData &&
+                <View style={{ marginBottom: 30 }}>
+                <Cardstyle4
+                  documentName={myDocsData.DocumentName}
+                  sendDocument={myDocsData.sendDocument}
+                  typeDocument={myDocsData.typeDocument}
+                  statusDocument={myDocsData.statusDocument}
+                  twoPicture={myDocsData.twoPicture}
+                  path={myDocsData.path}
                   jobId={idWork}
-                /> */}
+                />
               </View>
+              }
 
           </View>
           <View className={`w-full h-64 items-center justify-center`}>

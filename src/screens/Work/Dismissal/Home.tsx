@@ -28,19 +28,21 @@ import Signature from "./Step/Signature";
 import FindOneJob from "../../../hooks/get/job/findOne";
 import CheckDocumentAdmissional from "../../../hooks/get/job/checkSignaure";
 import Header from "../../../layout/Header";
-import Button from '../../../components/Button/Button'
+import Button from "../../../components/Button/Button";
 
 const { width, height } = Dimensions.get("window");
 
 const DismissalHome = () => {
   const theme = useTheme();
-  const navigation = useNavigation<any>();;
+  const navigation = useNavigation<any>();
   const { collaborator, fetchCollaborator } = useCollaborator();
   const [jobConected, setJobConected] = useState<any>(null);
   const [process, setProcess] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [idWork, setIdWork] = useState<number | null>(null);
-  const [solicitationType, setSolicitationType] = useState<'company' | 'collaborator' | null>(null);
+  const [solicitationType, setSolicitationType] = useState<
+    "company" | "collaborator" | null
+  >(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   React.useEffect(() => {
@@ -50,7 +52,7 @@ const DismissalHome = () => {
     });
     return unsubscribe;
   }, [navigation]);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       if (collaborator) {
@@ -58,22 +60,19 @@ const DismissalHome = () => {
         if (response.status == 200) {
           if (response.collaborator.id_work) {
             setIdWork(response.collaborator.id_work);
-            const responseJob = await FindOneJob(response.collaborator.id_work)
-            if (responseJob.status == 200){
+            const responseJob = await FindOneJob(response.collaborator.id_work);
+            if (responseJob.status == 200) {
               const response = JSON.parse(responseJob.job.demission);
               setCurrentStep(response.step);
-              setSolicitationType(response.solicitation)
-              setJobConected(responseJob.job)
+              setSolicitationType(response.solicitation);
+              setJobConected(responseJob.job);
             }
           }
         }
-
       }
     };
     fetchData();
   }, [collaborator]);
-
-
 
   return (
     <View className="flex-1 bg-white ">
@@ -87,82 +86,71 @@ const DismissalHome = () => {
           </Text>
         </View>
       ) : (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
-        >
+        <>
           <Header
             title="Desligamento"
             leftIcon="back"
             leftAction={() => navigation.goBack()}
           />
-          <View className="px-5 mt-14">
-
-
-            {currentStep === 1 && (
-                solicitationType == 'company'? 
-                <Company jobConected={jobConected} CPF={collaborator?.CPF}/> 
-                :
-                solicitationType == 'collaborator'? 
-                <Collaborator /> 
-                :
-                <View className="h-full items-center justify-between">
-                  <View className="w-full items-center justify-center mt-2">
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
+          >
+            <View className="px-5 mt-14">
+              {currentStep === 1 &&
+                (solicitationType == "company" ? (
+                  <Company jobConected={jobConected} CPF={collaborator?.CPF} />
+                ) : solicitationType == "collaborator" ? (
+                  <Collaborator />
+                ) : (
+                  <View className="h-full items-center justify-between">
+                    <View className="w-full items-center justify-center mt-2">
                       <Text
-                      className="text-center"
-                      style={{
-                        ...FONTS.fontSemiBold,
-                        fontSize: 18,
-                        color: COLORS.title,
-                      }}
-                    >
-                      Nada por aqui!
-                    </Text>
-                    <Text className="text-center text-sm text-gray-400 font-normal">
-                      Você não está em um processo de demissão
-                    </Text>
-                  </View>
-                  
-                  <View className="w-full h-1/2">
-                    <Image 
-                      source={IMAGES.unique18} 
-                      style={{ width: '100%', height: '100%' }}
-                      resizeMode="contain"
-                    />
-                  </View>
+                        className="text-center"
+                        style={{
+                          ...FONTS.fontSemiBold,
+                          fontSize: 18,
+                          color: COLORS.title,
+                        }}
+                      >
+                        Nada por aqui!
+                      </Text>
+                      <Text className="text-center text-sm text-gray-400 font-normal">
+                        Você não está em um processo de demissão
+                      </Text>
+                    </View>
 
-                  <View className="mb-5">
-                  <Button 
+                    <View className="w-full h-1/2">
+                      <Image
+                        source={IMAGES.unique18}
+                        style={{ width: "100%", height: "100%" }}
+                        resizeMode="contain"
+                      />
+                    </View>
+
+                    <View className="mb-5">
+                      <Button
                         title={"Solicitar Desligamento"}
-                        onPress={() => setSolicitationType('collaborator')}
-                        text ={COLORS.title}
+                        onPress={() => setSolicitationType("collaborator")}
+                        text={COLORS.title}
                         color={COLORS.primary}
-                        style={{borderRadius:52 , width: width * 0.7}}
-                    />
+                        style={{ borderRadius: 52, width: width * 0.7 }}
+                      />
+                    </View>
                   </View>
-                </View>
-            )}
-            {currentStep === 2 && collaborator && collaborator.CPF && (
-              <Medical
-                jobConected={jobConected}
-                CPF={collaborator.CPF}
-              />
-            )}
-            {currentStep === 3 && collaborator && collaborator.CPF &&(
-              <Signature 
-                jobConected={jobConected} 
-                CPF={collaborator.CPF} 
-              />
-            )}
-            {currentStep === 4 && collaborator && collaborator.CPF &&(
-              <Signature 
-                jobConected={jobConected} 
-                CPF={collaborator.CPF} 
-              />
-            )}
-          </View>
-        </ScrollView>
-
+                ))}
+              {currentStep === 2 && collaborator && collaborator.CPF && (
+                <Medical jobConected={jobConected} CPF={collaborator.CPF} />
+              )}
+              {currentStep === 3 && collaborator && collaborator.CPF && (
+                <Signature jobConected={jobConected} CPF={collaborator.CPF} />
+              )}
+              {currentStep === 4 && collaborator && collaborator.CPF && (
+                <Signature jobConected={jobConected} CPF={collaborator.CPF} />
+              )}
+            </View>
+          </ScrollView>
+        </>
       )}
     </View>
   );
