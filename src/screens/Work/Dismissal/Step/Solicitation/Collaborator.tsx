@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { FONTS } from "../../../../../constants/theme";
+import { COLORS, FONTS } from "../../../../../constants/theme";
 import DismissalCard from "../../../../../components/Card/DismissalCard";
 import { useNavigation } from "@react-navigation/native";
 import Cardstyle4 from "../../../../../components/Card/Cardstyle4";
@@ -22,30 +24,37 @@ import FindFile from "../../../../../hooks/get/job/findFile";
 import FindOneJob from "../../../../../hooks/get/job/findOne";
 import GetColaboratorJob from "../../../../../hooks/get/job/findJobColaborator";
 import DismissalSteps from "../Medical";
+import WaitingIndicatorDismissal from "../WaitingIndicator";
+import FindOnePicture from "~/src/hooks/findOne/onePicture";
 
 const DismissalHomeCompany = () => {
   const theme = useTheme();
-  const [hasDemissional, setHasDemissional] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(true);
   const navigation = useNavigation<any>();
   const [myDocsData, setMyDocsData] = useState<any | null>(null);
   const { width, height } = Dimensions.get("window");
   const { collaborator, fetchCollaborator } = useCollaborator();
-  const [process, setProcess] = useState<boolean>(false);
+  const [statusDocument, setStatusDocument] = useState<any>(null);
   const [error, setError] = useState<boolean>(false);
-  const [idWork, setIdWork] = useState<any | null>(null);
-  const [solicitationType, setSolicitationType] = useState<
-    "company" | "collaborator" | null
-  >(null);
+  const [idWork, setIdWork] = useState<any>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const finishSendDocument = async (props: any) => {
+    if (props == 200) {
+      setStatusDocument("pending");
+    }
+  };
 
   const Picture = async () => {
     try {
       if (!collaborator?.CPF) return;
-
-      const response = await FindPicture(collaborator.CPF);
+      const response = await FindOnePicture(
+        "Dismissal_Hand",
+        collaborator.CPF,
+        idWork
+      );
       if (response.status == 200) {
         setError(false);
-
-        // Configuração do documento de carta de demissão
         const documentInfo = await GetDocumentInfo("Dismissal_Hand");
         if (documentInfo) {
           let document_params = {
@@ -54,36 +63,20 @@ const DismissalHomeCompany = () => {
             sendDocument: true,
             typeDocument: documentInfo?.type,
             twoPicture: false,
-            statusDocument: null,
+            statusDocument: response.pictures.status,
           };
-
-          const dismissalDoc = response.pictures.find(
-            (pic: { picture: string; status: string }) =>
-              pic.picture === "Dismissal_Hand"
-          );
-          // console.log(document_params.statusDocument)
-
-          if (dismissalDoc) {
-            document_params.statusDocument = dismissalDoc.status;
-            document_params.sendDocument = dismissalDoc.status === "reproved";
-          }
-          setMyDocsData([document_params]);
-          setProcess(true);
-
-          // Verifique se statusDocument é "approved" e navegue para DismissalSteps
-          // if (document_params.statusDocument === "approved") {
-          //   navigation.navigate("DismissalSteps");
-          // }
+          setMyDocsData(document_params);
+          setStatusDocument(response.pictures.status);
         }
+
         let document_params = {
           path: documentInfo?.path,
           DocumentName: "Carta a Punho",
           sendDocument: true,
           typeDocument: documentInfo?.type,
           twoPicture: false,
-          statusDocument: null,
+          statusDocument: response.pictures.status,
         };
-        console.log(document_params)
         setMyDocsData(document_params);
         return;
       } else {
@@ -92,6 +85,9 @@ const DismissalHomeCompany = () => {
     } catch (error) {
       console.error("Erro ao buscar imagens:", error);
       setError(true);
+    } finally {
+      setLoader(false);
+      setRefreshing(false);
     }
   };
 
@@ -111,10 +107,16 @@ const DismissalHomeCompany = () => {
     }
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Picture();
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       if (collaborator) {
-        setIdWork(collaborator.id_work)
+        //@ts-ignore
+        setIdWork(collaborator.id_work.id);
       }
     };
     fetchData();
@@ -124,65 +126,84 @@ const DismissalHomeCompany = () => {
     if (collaborator && idWork) {
       Picture();
     }
-  }, [collaborator, process, idWork]);
+  }, [collaborator, idWork]);
 
   return (
     <>
-      <View>
-        <View
-          className={`bg-primary w-full p-3 rounded-xl flex-row justify-between`}
+      {!loader ? (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[COLORS.dark]}
+            />
+          }
         >
-          <View className={`w-full`}>
-            <Text
-              className={`absolute w-full`}
-              style={{
-                ...FONTS.fontSemiBold,
-                fontSize: 22,
-                color: "#000000",
-                marginTop: -38,
-              }}
-            >
-              Carta de Demissão
-            </Text>
-            <Text
-              className={`mt-2`}
-              style={{ ...FONTS.fontRegular, fontSize: 14 }}
-            >
-              Envie sua carta a punho para iniciar o processo, uma vez enviada,
-              não será possível alterar e caso seja necessário, será necessário
-              solicitar um novo processo.
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={{ marginTop: 50 }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View className={`px-2`}>
-              { myDocsData &&
-                <View style={{ marginBottom: 30 }}>
-                <Cardstyle4
-                  documentName={myDocsData.DocumentName}
-                  sendDocument={myDocsData.sendDocument}
-                  typeDocument={myDocsData.typeDocument}
-                  statusDocument={myDocsData.statusDocument}
-                  twoPicture={myDocsData.twoPicture}
-                  path={myDocsData.path}
-                  jobId={idWork}
+          {statusDocument === "approved" || statusDocument === "pending" ? (
+            <View className="mt-5">
+              <WaitingIndicatorDismissal current={1} visible={true} />
+            </View>
+          ) : (
+            <>
+              <View className={`bg-primary w-full p-3 rounded-xl mt-10`}>
+                <View className={`w-full`}>
+                  <Text
+                    className={`w-full`}
+                    style={{
+                      ...FONTS.fontSemiBold,
+                      fontSize: 22,
+                      color: "#000000",
+                      marginTop: -38,
+                    }}
+                  >
+                    Carta de Demissão
+                  </Text>
+                  <Text
+                    className={`mt-2`}
+                    style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                  >
+                    Envie sua carta a punho para iniciar o processo, uma vez
+                    enviada, não será possível alterar e caso seja necessário,
+                    será necessário solicitar um novo processo.
+                  </Text>
+                </View>
+              </View>
+              <View className={`px-2 mt-10`}>
+                {myDocsData && (
+                  <View style={{ marginBottom: 30 }}>
+                    <Cardstyle4
+                      documentName={myDocsData.DocumentName}
+                      sendDocument={myDocsData.sendDocument}
+                      typeDocument={myDocsData.typeDocument}
+                      statusDocument={myDocsData.statusDocument}
+                      twoPicture={myDocsData.twoPicture}
+                      path={myDocsData.path}
+                      jobId={idWork}
+                      finishSendDocument={finishSendDocument}
+                    />
+                  </View>
+                )}
+              </View>
+              <View className={`w-full h-64 items-center justify-center`}>
+                <Image
+                  source={IMAGES.unique13}
+                  resizeMode="contain"
+                  className={`h-full w-full`}
                 />
               </View>
-              }
-
-          </View>
-          <View className={`w-full h-64 items-center justify-center`}>
-            <Image
-              source={IMAGES.unique13}
-              resizeMode="contain"
-              className={`h-full w-full`}
-            />
-          </View>
+            </>
+          )}
         </ScrollView>
-      </View>
+      ) : (
+        <View
+          className="items-center flex justify-center"
+          style={{ flex: 0, minHeight: height }}
+        >
+          <ActivityIndicator size={"large"} color={COLORS.dark} />
+        </View>
+      )}
     </>
   );
 };

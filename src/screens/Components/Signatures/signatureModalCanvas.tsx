@@ -7,6 +7,8 @@ import WaitingIndicator from "../../Work/Admission/admissionalWaitingIndicator";
 import CreateAvalidPicture from "../../../hooks/create/pictures";
 import UpdatePicture from "../../../hooks/update/picture";
 import CreateAvalidService from "../../../hooks/create/service";
+import { COLORS } from "~/src/constants/theme";
+import Button from "~/src/components/Button/Button";
 
 const SignatureModalCanvas = ({
   visible,
@@ -16,10 +18,12 @@ const SignatureModalCanvas = ({
   cpf,
   where,
   jobId,
+  setStatusSignature
 }: {
   visible: boolean;
   onClose: (value: boolean) => void;
   onSaveSignature: (value: string) => void;
+  setStatusSignature:any
   id: string;
   cpf: string;
   where: string;
@@ -28,11 +32,12 @@ const SignatureModalCanvas = ({
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const isDrawing = useRef(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleCanvas = (canvas) => {
+  const handleCanvas = (canvas:any) => {
     if (canvas) {
       canvas.width = Dimensions.get("window").width;
-      canvas.height = Dimensions.get("window").height * 0.7; // 70% da altura da tela
+      canvas.height = Dimensions.get("window").height - 65;
       const ctx = canvas.getContext("2d");
 
       // Configurações de estilo do contexto
@@ -102,6 +107,7 @@ const SignatureModalCanvas = ({
 
   const saveCanvas = async () => {
     try {
+      setLoading(true);
       if (canvasRef.current) {
         const dataURL = await canvasRef.current.toDataURL();
         let base64Data;
@@ -157,7 +163,6 @@ const SignatureModalCanvas = ({
         console.log("Dados sendo enviados para upload:", response);
         // return;
         if (response?.status === 200) {
-          // onSaveSignature(fileName);
         } else {
           alert("Ocorreu um erro ao enviar o arquivo. Tente novamente.");
           return;
@@ -168,6 +173,8 @@ const SignatureModalCanvas = ({
       alert(
         "Ocorreu um erro inesperado. Verifique sua conexão e tente novamente."
       );
+    }finally {
+      setLoading(false);
     }
 
     const currentDate = new Date();
@@ -208,6 +215,9 @@ const SignatureModalCanvas = ({
         status: "pending"
       });
       if (responseUpdate.status === 200) {
+        if(setStatusSignature){
+          setStatusSignature('pending')
+        }
         Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
           {
             text: "OK",
@@ -217,7 +227,9 @@ const SignatureModalCanvas = ({
       }
       return;
     }
-
+    if(setStatusSignature){
+      setStatusSignature('pending')
+    }
     Alert.alert("Sucesso", "Assinatura salva com sucesso!", [
       {
         text: "OK",
@@ -242,7 +254,7 @@ const SignatureModalCanvas = ({
         </View>
 
         {/* Botões na parte inferior */}
-        <View
+        {/* <View
           className={`flex ${
             Dimensions.get("window").width > Dimensions.get("window").height
               ? "flex-col"
@@ -269,6 +281,11 @@ const SignatureModalCanvas = ({
             title="Fechar"
             size="sm"
           />
+        </View> */}
+        <View className="flex-row justify-around items-center bg-white p-4 border-t border-gray-200">
+          <Button onPress={saveCanvas} loadColor={COLORS.white} loadSize={25} load={loading} color={COLORS.success} text={COLORS.white} title="Salvar" size="sm" />
+          <Button onPress={clearCanvas} color={COLORS.danger}  text={COLORS.white} title="Apagar" size="sm" />
+          <Button onPress={() => onClose(false)} color="gray" text="white" title="Fechar" size="sm" />
         </View>
       </View>
     </Modal>

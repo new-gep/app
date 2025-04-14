@@ -20,6 +20,7 @@ import Button from "~/src/components/Button/Button";
 import { COLORS, FONTS } from "~/src/constants/theme";
 import FindOneJob from "~/src/hooks/get/job/findOne";
 import fetchCollaborator from "~/src/function/fetchCollaborator";
+import AdmissionalCard from "../../AdmissionalCard";
 
 const Signature = ({
   currentStep,

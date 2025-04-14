@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { COLORS, FONTS } from "../../../constants/theme";
@@ -29,7 +30,7 @@ import FindOneJob from "../../../hooks/get/job/findOne";
 import CheckDocumentAdmissional from "../../../hooks/get/job/checkSignaure";
 import Header from "../../../layout/Header";
 import Button from "../../../components/Button/Button";
-
+import { useFocusEffect } from "@react-navigation/native";
 const { width, height } = Dimensions.get("window");
 
 const DismissalHome = () => {
@@ -40,12 +41,13 @@ const DismissalHome = () => {
   const [process, setProcess] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [idWork, setIdWork] = useState<number | null>(null);
+  const [loader, setLoader] = useState<any>(true);
   const [solicitationType, setSolicitationType] = useState<
     "company" | "collaborator" | null
   >(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
 
-  React.useEffect(() => {
+  const handleFocus = useCallback(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       setProcess(false);
       fetchCollaborator();
@@ -55,24 +57,34 @@ const DismissalHome = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (collaborator) {
-        const response = await FindCollaborator(collaborator.CPF);
-        if (response.status == 200) {
-          if (response.collaborator.id_work) {
-            setIdWork(response.collaborator.id_work);
-            const responseJob = await FindOneJob(response.collaborator.id_work);
-            if (responseJob.status == 200) {
-              const response = JSON.parse(responseJob.job.demission);
-              setCurrentStep(response.step);
-              setSolicitationType(response.solicitation);
-              setJobConected(responseJob.job);
+      try {
+        if (collaborator) {
+          const response = await FindCollaborator(collaborator.CPF);
+          if (response.status == 200) {
+            if (response.collaborator.id_work) {
+              setIdWork(response.collaborator.id_work.id);
+              const responseJob = await FindOneJob(
+                response.collaborator.id_work.id
+              );
+              if (responseJob.status == 200) {
+                const response = JSON.parse(responseJob.job.demission);
+                setCurrentStep(response.step);
+                setSolicitationType(response.solicitation);
+                setJobConected(responseJob.job);
+              }
             }
           }
         }
+      } catch (e) {
+        console.log(e);
+      }finally{
+        setTimeout(()=>{setLoader(false)},3000)
       }
     };
     fetchData();
   }, [collaborator]);
+
+  useFocusEffect(handleFocus);
 
   return (
     <View className="flex-1 bg-white ">
@@ -92,64 +104,76 @@ const DismissalHome = () => {
             leftIcon="back"
             leftAction={() => navigation.goBack()}
           />
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
-          >
-            <View className="px-5 mt-14">
-              {currentStep === 1 &&
-                (solicitationType == "company" ? (
-                  <Company jobConected={jobConected} CPF={collaborator?.CPF} />
-                ) : solicitationType == "collaborator" ? (
-                  <Collaborator />
-                ) : (
-                  <View className="h-full items-center justify-between">
-                    <View className="w-full items-center justify-center mt-2">
-                      <Text
-                        className="text-center"
-                        style={{
-                          ...FONTS.fontSemiBold,
-                          fontSize: 18,
-                          color: COLORS.title,
-                        }}
-                      >
-                        Nada por aqui!
-                      </Text>
-                      <Text className="text-center text-sm text-gray-400 font-normal">
-                        Você não está em um processo de demissão
-                      </Text>
-                    </View>
-
-                    <View className="w-full h-1/2">
-                      <Image
-                        source={IMAGES.unique18}
-                        style={{ width: "100%", height: "100%" }}
-                        resizeMode="contain"
-                      />
-                    </View>
-
-                    <View className="mb-5">
-                      <Button
-                        title={"Solicitar Desligamento"}
-                        onPress={() => setSolicitationType("collaborator")}
-                        text={COLORS.title}
-                        color={COLORS.primary}
-                        style={{ borderRadius: 52, width: width * 0.7 }}
-                      />
-                    </View>
-                  </View>
-                ))}
-              {currentStep === 2 && collaborator && collaborator.CPF && (
-                <Medical jobConected={jobConected} CPF={collaborator.CPF} />
-              )}
-              {currentStep === 3 && collaborator && collaborator.CPF && (
-                <Signature jobConected={jobConected} CPF={collaborator.CPF} />
-              )}
-              {currentStep === 4 && collaborator && collaborator.CPF && (
-                <Signature jobConected={jobConected} CPF={collaborator.CPF} />
-              )}
+          {loader ? (
+            <View
+              className="items-center flex justify-center"
+              style={{ flex: 0, minHeight: height }}
+            >
+              <ActivityIndicator size={"large"} color={COLORS.dark} />
             </View>
-          </ScrollView>
+          ) : (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
+            >
+              <View className="px-5 mt-5">
+                {currentStep === 1 &&
+                  (solicitationType == "company" ? (
+                    <Company
+                      jobConected={jobConected}
+                      CPF={collaborator?.CPF}
+                    />
+                  ) : solicitationType == "collaborator" ? (
+                    <Collaborator />
+                  ) : (
+                    <View className="h-full items-center justify-between">
+                      <View className="w-full items-center justify-center mt-2">
+                        <Text
+                          className="text-center"
+                          style={{
+                            ...FONTS.fontSemiBold,
+                            fontSize: 18,
+                            color: COLORS.title,
+                          }}
+                        >
+                          Nada por aqui!
+                        </Text>
+                        <Text className="text-center text-sm text-gray-400 font-normal">
+                          Você não está em um processo de demissão
+                        </Text>
+                      </View>
+
+                      <View className="w-full h-1/2">
+                        <Image
+                          source={IMAGES.unique18}
+                          style={{ width: "100%", height: "100%" }}
+                          resizeMode="contain"
+                        />
+                      </View>
+
+                      <View className="mb-5">
+                        <Button
+                          title={"Solicitar Desligamento"}
+                          onPress={() => setSolicitationType("collaborator")}
+                          text={COLORS.title}
+                          color={COLORS.primary}
+                          style={{ borderRadius: 52, width: width * 0.7 }}
+                        />
+                      </View>
+                    </View>
+                  ))}
+                {currentStep === 2 && collaborator && collaborator.CPF && (
+                  <Medical jobConected={jobConected} CPF={collaborator.CPF} />
+                )}
+                {currentStep === 3 && collaborator && collaborator.CPF && (
+                  <Signature jobConected={jobConected} CPF={collaborator.CPF} />
+                )}
+                {currentStep === 4 && collaborator && collaborator.CPF && (
+                  <Signature jobConected={jobConected} CPF={collaborator.CPF} />
+                )}
+              </View>
+            </ScrollView>
+          )}
         </>
       )}
     </View>

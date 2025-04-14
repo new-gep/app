@@ -176,6 +176,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             signature:false
                         }
                         const responseHand = await JobPicture(propsDocumentHand);
+                        console.log(responseHand)
                         if (responseHand.status !== 200) {
                             setNoRepeat(true);
                             setActiveSheet('danger');
@@ -232,8 +233,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     return;
             };
 
-            // console.log(statusDocument)
-
             if(documentName != 'medical' && documentName.toLowerCase() != 'dismissal_hand' && documentName.toLowerCase() != 'dismissal_medical_examination'){
                 const response = await UploadFile(path, documentName, doc, collaborator.CPF);
                 if (response.status === 400) {
@@ -264,7 +263,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                 };
             }
             
-
             if(statusDocument == 'reproved'){
                 const pictureUpdateParams: PropsUpdateAvalidPicture = {
                     picture: documentName == 'medical' ? 'Medical_Examination' : documentName,
@@ -272,13 +270,11 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     id_work: jobId || null,
                 };
                 const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
-                console.log(update.status)
+                console.log(update)
                 switch (update.status) {
                     case 200:
-                        console.log(finishSendDocument)
                         if(finishSendDocument){
                             finishSendDocument(200)
-                            console.log('aqui')
                         }
                         validateCollaborator()
                         setSendPicture(false)
@@ -327,17 +323,16 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                 };
 
                 const createResponse = await CreateAvalidPicture(pictureParams);
-          
                 if(documentName.toLowerCase() == 'dismissal_hand'){
                     const demissionData = {
                         motion_demission: "card",
                         demission: JSON.stringify({step:1, status:null, user:null, solicitation:'collaborator', observation:''})
                     };
                     const response = await UpdateJob(jobId, demissionData);
-                 
+                    console.log(response)
                     if(response.status !== 200){
                         setActiveSheet('danger');
-                        setMessageSheet(`Erro ao atualizar o job`);
+                        setMessageSheet(`Erro ao atualizar o trabalho`);
                         Sheet();
                         setLoad(false)
                         return
@@ -357,6 +352,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     setSendPicture(false)
                     validateCollaborator()
                     close()
+                    return
                 } 
                 else if (createResponse.status === 409) {
                     if(finishSendDocument){
