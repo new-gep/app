@@ -191,12 +191,11 @@ const Company = ({ jobConected, CPF }: Props) => {
 
   return (
     <>
-      {!statusSignature ||
-        (statusSignature === "reproved" && (
+      {(!statusSignature || statusSignature === "reproved") && 
           <View>
             <TimelineDemission currentStep={1} showProgress={true} />
           </View>
-        ))}
+      }
       {statusSignature === "approved" || statusSignature === "pending" ? (
         <WaitingIndicatorDismissal
           visible={true}
@@ -251,8 +250,7 @@ const Company = ({ jobConected, CPF }: Props) => {
       )}
 
       <>
-        {!statusSignature ||
-          (statusSignature === "reproved" && (
+        { (!statusSignature || statusSignature === "reproved") && (
             <View className="border-gray-200 px-4 ">
               <Button
                 style={{ marginTop: 20, opacity: keySignature ? 1 : 0.7 }}
@@ -262,7 +260,7 @@ const Company = ({ jobConected, CPF }: Props) => {
                 text={COLORS.white}
               />
             </View>
-          ))}
+          )}
       </>
 
       {jobConected && jobConected.id && (

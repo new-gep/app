@@ -70,6 +70,7 @@ import Absence from "../screens/Work/Absence/Home";
 import Company from "../screens/Work/Dismissal/Step/Solicitation/Company";
 import Vacancy  from "../screens/Vacancy/Home";
 import HomeWork from "../screens/Work/Home";
+import Dossie from "../screens/Work/Dossie/Index";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -138,6 +139,7 @@ const StackNavigator = () => {
         <Stack.Screen name="Tabs" component={Tabs} />
         <Stack.Screen name="Tables" component={Tables} />
         <Stack.Screen name="Toggles" component={Toggles} />
+        <Stack.Screen name="Dossie" component={Dossie} />
         <Stack.Screen name="HomeWork" component={HomeWork} />
         <Stack.Screen name="DismissalHome" component={DismissalHome} />
         <Stack.Screen name="TimelineAdmiss" component={TimelineAdmiss} />

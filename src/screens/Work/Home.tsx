@@ -75,17 +75,13 @@ export default function HomeWork({
         CPF: CPF,
       },
     },
-    // {
-    //   id: "4",
-    //   image: IMAGES.unique25,
-    //   title: "Dossiê",
-    //   subtitle: "Visualize e acompanhe sua documentação",
-    //   route: "DismissalHome" as keyof RootStackParamList,
-    //   params: {
-    //     jobConected: jobConected,
-    //     CPF: CPF,
-    //   },
-    // },
+    {
+      id: "4",
+      image: IMAGES.unique25,
+      title: "Dossiê",
+      subtitle: "Visualize e acompanhe sua documentação",
+      route: "Dossie" as keyof RootStackParamList,
+    },
     {
       id: "4",
       image: IMAGES.unique19,
