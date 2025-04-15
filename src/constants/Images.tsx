@@ -227,6 +227,7 @@ export const IMAGES = {
     unique22: require('../assets/picture/unique/unique22.png'),
     unique23: require('../assets/picture/unique/unique23.png'),
     unique24: require('../assets/picture/unique/unique24.png'),
+    unique25: require('../assets/picture/unique/unique25.png'),
 
     gif0: require('../assets/picture/gif/unique0.gif')
 }

@@ -36,7 +36,7 @@ const WaitingIndicatorDismissal: React.FC<WaitingIndicatorProps> = ({ visible, s
         <Text className="text-gray-600 text-sm font-bold text-center">
           {getMessage()}
         </Text>
-        <View className="w-full h-90%  aspect-square">
+        <View className="w-full h-80%  aspect-square">
           <Image 
             source={require('../../../../assets/images/gif/Timemanagement.gif')}
             style={{ width: '100%', height: '100%' }}
@@ -45,7 +45,6 @@ const WaitingIndicatorDismissal: React.FC<WaitingIndicatorProps> = ({ visible, s
         </View>
 
         
-
         <TouchableOpacity 
           onPress={() => navigation.navigate('Home')}
           className="mt-20"

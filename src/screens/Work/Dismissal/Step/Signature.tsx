@@ -6,6 +6,7 @@ import {
   View,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import CheckDocumentAdmissional from "../../../../hooks/get/job/checkSignaure";
 import AdmissionalCard from "../../Admission/AdmissionalCard";
@@ -24,7 +25,7 @@ import FindPicture from "../../../../hooks/findOne/picture";
 import Header from "../../../../layout/Header";
 import TimelineDemission from "~/src/components/Timeline/TimelineDemission";
 import Button from "~/src/components/Button/Button";
-import { COLORS } from "~/src/constants/theme";
+import { COLORS, FONTS } from "~/src/constants/theme";
 import FindOnePicture from "~/src/hooks/findOne/onePicture";
 
 type Props = {
@@ -44,6 +45,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
   const [statusSignature, setStatusSignature] = useState<any>("send");
   const [files, setFiles] = useState<any>(null);
   const [obligationDocs, setObligationDocs] = useState([]);
+  const [loader, setLoader] = useState<any>(true);
   const [dynamicDocs, setDynamicDocs] = useState([]);
   const [viewedDocuments, setViewedDocuments] = useState<Set<string>>(
     new Set()
@@ -89,6 +91,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
             setObligations(obligations);
             setDynamics(dynamics);
             const valueDynamic = Object.values(dynamics);
+
             const initialLockState = valueDynamic.reduce(
               (acc: any, key: any) => {
                 acc[key] = false;
@@ -114,7 +117,6 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
                 return dynamicDismissal;
               })
             );
-            console.log(dynamicDocuments[0].lockKey);
             setDynamicDocs(dynamicDocuments);
           }
 
@@ -150,6 +152,8 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
           }
         } catch (error) {
           console.error("Erro ao buscar dados:", error);
+        }finally{
+          setLoader(false)
         }
       }
     };
@@ -197,7 +201,6 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
     }
   }, [lockSignature]);
 
-
   return (
     <>
       <TimelineDemission currentStep={3} showProgress={true} />
@@ -212,7 +215,7 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
           />
         ))} */}
         <>
-          {statusSignature == "approved" || statusSignature == "pending"  ? (
+          {statusSignature == "approved" || statusSignature == "pending" ? (
             <View className="w-full h-full">
               <WaitingIndicatorDismissal
                 visible={true}
@@ -229,27 +232,41 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
                 <Text className="text-center text-gray-600 text-sm">
                   Por favor, assine os documentos novamente
                 </Text>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  pagingEnabled
-                  snapToAlignment="center"
-                  className="w-full"
-                >
-                  {dynamicDocs.map((doc, index) => (
-                    <DismissalCard
-                      lockKey={doc.lockKey}
-                      key={`dynamic-${index}`}
-                      title={doc.title}
-                      status={doc.status}
-                      path={doc.path}
-                      typeDocument={doc.typeDocument}
-                      onDocumentViewed={handleDocumentViewed}
-                      setLockSignature={setLockSignature}
-                      lockSignature={lockSignature}
-                    />
-                  ))}
-                </ScrollView>
+
+                {!loader ? (
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    pagingEnabled
+                    snapToAlignment="center"
+                    className="w-full"
+                  >
+                    {dynamicDocs.map((doc, index) => (
+                      <DismissalCard
+                        lockKey={doc.lockKey}
+                        key={`dynamic-${index}`}
+                        title={doc.title}
+                        status={doc.status}
+                        path={doc.path}
+                        typeDocument={doc.typeDocument}
+                        onDocumentViewed={handleDocumentViewed}
+                        setLockSignature={setLockSignature}
+                        lockSignature={lockSignature}
+                      />
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <View className="h-full w-full justify-center items-center flex">
+                    <Text
+                      className="text-center mb-5"
+                      style={{ ...FONTS.fontMedium, fontSize: 16 }}
+                    >
+                      Buscando documentos
+                    </Text>
+                    <ActivityIndicator size="large" color={COLORS.dark} />
+                  </View>
+                )}
+
                 <Text className="text-center text-gray-600 mt-4 mb-2 px-4">
                   {!allDocumentsViewed
                     ? "Para assinar é necessário visualizar todos os documentos"
@@ -274,27 +291,39 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
             </>
           ) : (
             <View className="flex w-full">
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                pagingEnabled
-                snapToAlignment="center"
-                className="w-full"
-              >
-                {dynamicDocs.map((doc, index) => (
-                  <DismissalCard
-                    lockKey={doc.lockKey}
-                    key={`dynamic-${index}`}
-                    title={doc.title}
-                    status={doc.status}
-                    path={doc.path}
-                    typeDocument={doc.typeDocument}
-                    onDocumentViewed={handleDocumentViewed}
-                    setLockSignature={setLockSignature}
-                    lockSignature={lockSignature}
-                  />
-                ))}
-              </ScrollView>
+              {!loader ? (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  pagingEnabled
+                  snapToAlignment="center"
+                  className="w-full"
+                >
+                  {dynamicDocs.map((doc, index) => (
+                    <DismissalCard
+                      lockKey={doc.lockKey}
+                      key={`dynamic-${index}`}
+                      title={doc.title}
+                      status={doc.status}
+                      path={doc.path}
+                      typeDocument={doc.typeDocument}
+                      onDocumentViewed={handleDocumentViewed}
+                      setLockSignature={setLockSignature}
+                      lockSignature={lockSignature}
+                    />
+                  ))}
+                </ScrollView>
+              ) : (
+                <View className="h-full w-full justify-center items-center flex">
+                  <Text
+                    className="text-center mb-5"
+                    style={{ ...FONTS.fontMedium, fontSize: 16 }}
+                  >
+                    Buscando documentos
+                  </Text>
+                  <ActivityIndicator size="large" color={COLORS.dark} />
+                </View>
+              )}
 
               <>
                 <Text className="text-center text-gray-600 mt-4 mb-2 px-4">

@@ -67,7 +67,7 @@ const DismissalHomeCompany = () => {
           };
           setMyDocsData(document_params);
           setStatusDocument(response.pictures.status);
-        }
+        };
 
         let document_params = {
           path: documentInfo?.path,

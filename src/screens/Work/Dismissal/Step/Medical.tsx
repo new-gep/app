@@ -116,28 +116,34 @@ const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) 
             sendDocument: true,
             typeDocument: documentInfo?.type,
             twoPicture: false,
-            statusDocument: response.pictures.status,
+            statusDocument: response.pictures?.status
           };
           setMyDocsData(document_params);
           setStatusDocument(response.pictures.status);
         }
-
         let document_params = {
-          path: documentInfo?.path,
+          path: null,
           DocumentName: "Exame Demissional",
           sendDocument: true,
-          typeDocument: documentInfo?.type,
+          typeDocument: null,
           twoPicture: false,
-          statusDocument: response.pictures.status,
+          statusDocument: response.pictures?.status
         };
         setMyDocsData(document_params);
         return;
       } else {
-        setError(true);
+        let document_params = {
+          path: null,
+          DocumentName: "Exame Demissional",
+          sendDocument: true,
+          typeDocument: null,
+          twoPicture: false,
+          statusDocument: null,
+        };
+        setMyDocsData(document_params);
       }
     } catch (error) {
       console.error("Erro ao buscar imagens:", error);
-      setError(true);
     } finally {
       setLoader(false);
       setRefreshing(false);

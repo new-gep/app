@@ -160,7 +160,6 @@ const SignatureModalCanvas = ({
         // console.log("Dados sendo enviados para upload:", props.id);
 
         const response = await uploadFile(props);
-        console.log("Dados sendo enviados para upload:", response);
         // return;
         if (response?.status === 200) {
         } else {
