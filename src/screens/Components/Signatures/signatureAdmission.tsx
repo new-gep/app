@@ -24,7 +24,7 @@ const SignatureAdmission = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleCanvas = (canvas:any) => {
-    if (canvas && !canvasRef.current) {
+    if (canvas) {
       canvas.width = Dimensions.get("window").width;
       canvas.height = Dimensions.get("window").height - 65;
       const ctx = canvas.getContext("2d");
@@ -133,6 +133,12 @@ const SignatureAdmission = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (visible && canvasRef.current) {
+      handleCanvas(canvasRef.current);
+    }
+  }, [visible]);
 
   // useEffect(() => {
   //   if (visible) {

@@ -144,6 +144,8 @@ export const IMAGES = {
     picture : require('../assets/images/icons/picture.png'),
     lockOpen : require('../assets/images/icons/lockOpen.png'),
     lockClose : require('../assets/images/icons/lockClose.png'),
+    pcd : require('../assets/images/icons/pcd.png'),
+    cakeDuotone : require('../assets/images/icons/cakeDuotone.png'),
 
     onborder5 : require('../assets/picture/onboarding/1.png'),
     onborder4 : require('../assets/picture/onboarding/2.png'),

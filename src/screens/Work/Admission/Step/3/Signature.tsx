@@ -26,10 +26,12 @@ const Signature = ({
   currentStep,
   CPF,
   jobConected,
+  fetchVerifyFinish
 }: {
   currentStep: number;
   CPF: string;
   jobConected: any;
+  fetchVerifyFinish:any
 }) => {
   const navigation = useNavigation();
   const [signatureFound, setSignatureFound] = useState<any>(null);
@@ -54,7 +56,8 @@ const Signature = ({
             FindOneJob(jobConected[0].id).then((res)=>{
               if(res.status == 200){
                 if(res.job?.CPF_collaborator){
-                  navigation.navigate('HomeWork', { CPF, jobConected}) 
+                  // navigation.navigate('HomeWork', { CPF, jobConected}) 
+                  fetchVerifyFinish()
                   fetchCollaborator()
                   // setTimeout(()=> navigation.navigate('Work') , 3000)
 

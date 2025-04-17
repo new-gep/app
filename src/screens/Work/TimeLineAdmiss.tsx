@@ -30,7 +30,7 @@ import TimelineFront from "../../components/Timeline/TimelineFront";
 import FindOnePicture from "~/src/hooks/findOne/onePicture";
 import Signature from "./Admission/Step/3/Signature";
 
-const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
+const Timeline = ({ jobConected, CPF, fetchVerifyFinish }: { jobConected: any; CPF: any, fetchVerifyFinish:any }) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [signature, setSignature] = useState<any>(null);
@@ -108,20 +108,8 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const response = await FindPicture(CPF);
-        // console.log(response);
-      };
-      fetchData();
-    }, [CPF])
-  );
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchData = async () => {
         if(CPF){
-        // const response = await FindPicture(CPF);
         const responseSignature = await FindOnePicture("Signature_Admission", CPF, jobConected[0].id);
-        // console.log("jobConected", jobConected[0].id)
         if (responseSignature?.status === 200) {
           setSignatureFound(responseSignature.pictures);
         } else {
@@ -153,7 +141,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
           </>
         )}
         {currentStep === 3 && (
-          <Signature currentStep={currentStep} CPF={CPF} jobConected={jobConected} />
+          <Signature fetchVerifyFinish={fetchVerifyFinish} currentStep={currentStep} CPF={CPF} jobConected={jobConected} />
         )}
         {currentStep === 0 && (
           <>
@@ -253,6 +241,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
         </View>
       )}
 
+      {/* {jobConected[0].id && 
       <SignatureAdmission
         jobId={jobConected[0].id}
         visible={modalVisible}
@@ -262,6 +251,7 @@ const Timeline = ({ jobConected, CPF }: { jobConected: any; CPF: any }) => {
         id={jobConected[0].id}
         where="Admission_Signature"
       />
+      } */}
     </View>
   );
 };

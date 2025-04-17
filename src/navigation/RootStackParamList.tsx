@@ -89,8 +89,8 @@ export type RootStackParamList = {
     Vacancy: undefined;
     Dossie : undefined;
     HomeWork:{
-      jobConected:any
-      CPF:any
+      jobConected?:any
+      CPF?:any
     };
     CardInformation: {
         cardData: any;

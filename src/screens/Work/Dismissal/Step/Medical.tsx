@@ -151,7 +151,7 @@ const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) 
   };
 
   const finishSendDocument = async (props: any) => {
-    if (props == 200) {
+    if (props == 200 || props == 201) {
       setStatusDocument("pending");
     }
   };

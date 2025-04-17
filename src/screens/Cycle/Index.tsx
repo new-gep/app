@@ -20,21 +20,21 @@ const Default = () => {
   const [hasProcessAdmission, setHasProcessAdmission] = useState<boolean | null>(null);
   const [document, setDocument] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [jobConected, setjobConected] = useState<any>();
-  const [CPF, setCPF] = useState<any>();
+  const [jobConected, setjobConected] = useState<any>(null);
+  const [workConected, setWorkConected] = useState<any>(null);
+  const [CPF, setCPF] = useState<any>(null);
   const navigation = useNavigation<NavigationProp<any>>();
 
   const fetchJobs = async () => {
     try{
-      if (!collaborator) {
+      if (!collaborator || !collaborator.CPF) {
         console.log('collaborator', collaborator)
         return; // Evita requisições desnecessárias se já tiver trabalho ou não tiver colaborador
       };
       const responseCollaborator = await FindCollaborator(collaborator.CPF);
-      // console.log(responseCollaborator.collaborator?.id_work)
-      if(responseCollaborator?.status === 200 && responseCollaborator?.collaborator?.id_work && responseCollaborator?.collaborator?.id_work?.id){
+      if(responseCollaborator?.status === 200 && responseCollaborator.collaborator && responseCollaborator?.collaborator?.id_work){
+        setWorkConected(responseCollaborator.collaborator);
         setCPF(collaborator.CPF);
-        setjobConected(responseCollaborator.collaborator);
         setHaswork(true);
         return;
       };
@@ -108,11 +108,11 @@ const Default = () => {
         }
         className="flex-1"
       >
-        <HomeWork jobConected={jobConected} CPF={CPF} />
+        <HomeWork jobConected={workConected} CPF={CPF} />
       </ScrollView>
       :
       hasProcessAdmission?
-        <Timeline jobConected={jobConected} CPF={CPF} />
+        <Timeline jobConected={jobConected} CPF={CPF} fetchVerifyFinish={fetchJobs}/>
       :
       document ?
       <ScrollView 

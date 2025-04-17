@@ -40,7 +40,7 @@ const DismissalHomeCompany = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const finishSendDocument = async (props: any) => {
-    if (props == 200) {
+    if (props == 200 || props == 201) {
       setStatusDocument("pending");
     }
   };

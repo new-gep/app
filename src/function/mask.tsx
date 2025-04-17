@@ -125,7 +125,7 @@ export default function Mask(type: MaskType, value: string | number): string {
       if (strValue.includes("T")) {
         const isoParts = strValue.split("T")[0].split("-");
         if (isoParts.length === 3) {
-          return `${isoParts[2]}-${isoParts[1]}-${isoParts[0]}`;
+          return `${isoParts[2]}/${isoParts[1]}/${isoParts[0]}`;
         }
       }
 
@@ -134,11 +134,10 @@ export default function Mask(type: MaskType, value: string | number): string {
         const parts = strValue.split("-");
         if (parts[0].length === 4) {
           // Formato ISO (YYYY-MM-DD)
-          return `${parts[2]}-${parts[1]}-${parts[0]}`;
+          return `${parts[2]}/${parts[1]}/${parts[0]}`;
         }
         return strValue; // Já está no formato DD-MM-YYYY
       }
-
       return strValue; // Fallback para outros casos
     }
     case "hiddenPhone": {

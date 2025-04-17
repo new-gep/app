@@ -117,7 +117,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
     },
     {
       id: "6",
-      image: IMAGES.WheelchairDuoTone,
+      image: IMAGES.pcd,
       title: "PCD",
       subtitle:
         collaborator &&

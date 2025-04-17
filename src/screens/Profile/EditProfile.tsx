@@ -694,7 +694,7 @@ const EditProfile = () => {
               placeholder="Data de nascimento"
               icon={
                 <Image
-                  source={IMAGES.cake}
+                  source={IMAGES.cakeDuotone}
                   style={[styles.icon, { tintColor: colors.title }]}
                 />
               }

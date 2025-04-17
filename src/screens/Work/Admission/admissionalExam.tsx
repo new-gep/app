@@ -45,7 +45,7 @@ const admissionalExam: React.FC<Props> = ({ CPF, jobConected, setCurrentStep }) 
   const [isLoading, setIsLoading] = useState(true);
 
   const finishSendDocument = (props: any) => {
-    if (props == 200) {
+    if (props == 200 || props == 201) {
       setStatusDocument("pending");
     }
   };
