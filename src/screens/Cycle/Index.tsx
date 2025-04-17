@@ -55,26 +55,6 @@ const Default = () => {
     }finally{
       setLoading(false);
     }
-    // try {
-    //   if(collaborator.id_work){
-    //     console.log('collaborator.id_work', collaborator.id_work)
-    //     setHaswork(true);
-    //     return;
-    //   }
-      
-    //   // Verifica se já temos os dados do processo de admissão
-    //   if (hasProcessAdmission !== null) {
-    //     return; // Evita requisição repetida se já soubermos o status
-    //   }
-      
-    //   const response = await FindAplicateInJob(collaborator.CPF);
-    //   if (response.status !== 200) {
-    //     return;
-    //   }
-    //   setHasProcessAdmission(response.processAdmission);
-    // } catch (error) {
-    //   console.error("Erro ao buscar os cards:", error);
-    // }
   };
 
   useFocusEffect(
