@@ -36,8 +36,7 @@ const Home = () => {
   const navigation = useNavigation<NavigationProp<any>>();
 
 
-  const handleSwipeRight = async (id) => {
-    console.log("missingData", missingData)
+  const handleSwipeRight = async (id:any) => {
     if (missingData) return;
 
     try {
@@ -57,17 +56,19 @@ const Home = () => {
       );
 
       const alreadyApplied = currentCandidates.some(
-        (c) => c.cpf === collaborator.CPF 
+        (c:any) => c.cpf === collaborator?.CPF 
       );
 
       if (alreadyApplied) {
+        setPreviousCards((prev) => [...prev, cards[0]]);
+        setCards((prevCards) => prevCards.slice(1));
         showPopupMessage("Você já aplicou para esta vaga!");
         return;
       }
 
       // 3. Criar novo candidato formatado
       const newCandidate = {
-        cpf: collaborator.CPF,
+        cpf: collaborator?.CPF,
         step: 0,
         status: null,
         verify: null,
@@ -93,6 +94,8 @@ const Home = () => {
 
       showPopupMessage("Candidatura realizada com sucesso!");
     } catch (error) {
+      setPreviousCards((prev) => [...prev, cards[0]]);
+      setCards((prevCards) => prevCards.slice(1));
       console.error("Erro no swipe:", error);
       showPopupMessage(error.message || "Erro ao aplicar");
       handleUndo(); // Reverte a ação visual
@@ -226,6 +229,7 @@ const Home = () => {
                     data={card}
                     onSwipeLeft={handleSwipeLeft} // Swipe para a esquerda (dislike)
                     onSwipeRight={handleSwipeRight} // Swipe para a direita (like e mostra popup)
+                    onSuperLike={handleSwipeRight}
                     isTopCard={index === 0}
                     zIndex={cards.length - index}
                     index={index}
@@ -234,7 +238,7 @@ const Home = () => {
               ))}
             </View>
 
-            <View className="absolute bottom-8 z-50 flex-row justify-between items-center w-full px-6">
+            {/* <View className="absolute bottom-8 z-50 flex-row justify-between items-center w-full px-6">
               <TouchableOpacity onPress={handleUndo} style={{ padding: 16, borderRadius: 9999 }}>
                 <MaterialIcons name="replay" size={32} color="#FFC107" />
               </TouchableOpacity>
@@ -252,7 +256,7 @@ const Home = () => {
               >
                 <FontAwesome name="heart" size={32} color="#4CAF50" />
               </TouchableOpacity>
-            </View>
+            </View> */}
           </>
         ) : (
           <View className="mt-5 flex justify-between items-center h-full">
