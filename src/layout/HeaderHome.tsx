@@ -32,6 +32,7 @@ type Props = {
   rightIcon4?: any;
   iconSimple?: any;
   collaborator?: any;
+  classStyle?: string;
 };
 
 const Header = ({
@@ -49,6 +50,7 @@ const Header = ({
   rightIcon2,
   rightIcon3,
   collaborator,
+  classStyle,
 }: Props) => {
   const theme = useTheme();
   const { colors }: { colors: any } = theme;
@@ -76,6 +78,7 @@ const Header = ({
       ]}
     >
       <View
+        className={classStyle}
         style={[
           GlobalStyleSheet.container,
           {
@@ -159,26 +162,26 @@ const Header = ({
           </TouchableOpacity>
         )}
         {rightIcon4 == "home" && (
-                            <View className="mt-4 px-4" style={{ alignItems: "flex-end" }}>
-                                <Text 
-                                style={{
-                                    ...FONTS.fontRegular,
-                                    fontSize: 14,
-                                    color: colors.title,
-                                }}
-                                >
-                                Bem-Vindo(a)!
-                                </Text>
-                                <Text
-                                style={{
-                                    ...FONTS.fontSemiBold,
-                                    fontSize: 24,
-                                    color: colors.title,
-                                }}
-                                >
-                                {collaborator && Mask("firstName", collaborator.name)}
-                                </Text>
-                            </View>
+          <View className="mt-4 px-4" style={{ alignItems: "flex-end" }}>
+            <Text
+              style={{
+                ...FONTS.fontRegular,
+                fontSize: 14,
+                color: colors.title,
+              }}
+            >
+              Bem-Vindo(a)!
+            </Text>
+            <Text
+              style={{
+                ...FONTS.fontSemiBold,
+                fontSize: 24,
+                color: colors.title,
+              }}
+            >
+              {collaborator && Mask("firstName", collaborator.name)}
+            </Text>
+          </View>
         )}
         {iconSimple && (
           <View style={[styles.actionBtn, {}]}>

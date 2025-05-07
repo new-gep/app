@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { FONTS } from '../../constants/theme';
 import { useTheme } from '@react-navigation/native';
+import Mask from '~/src/function/mask';
 
 interface AccordionCardIformationProps {
     information: {
@@ -46,19 +47,31 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
                 </View>
                 <View className="space-y-2">
                     <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Salário:</Text> R$ {props.information.salary || "Não informado"}
+                        <Text style={FONTS.fontMedium}>Salário:</Text>{Mask('amount',props.information.salary) || "Não informado"}
                     </Text>
                     <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Tipo de Contratação:</Text> {props.information.contract_type || "Não informado"}
+                        <Text style={FONTS.fontMedium}>Tipo de Contratação:</Text> {props.information.contract || "Não informado"}
                     </Text>
                     <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Jornada:</Text> {props.information.time?.journey || "Não informado"}
+                        <Text style={FONTS.fontMedium}>Localidade:</Text> {props.information.locality || "Não informado"}
                     </Text>
                     <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Carga Horária:</Text> {props.information.workload || "Não informado"}
+                        <Text style={FONTS.fontMedium}>Modelo:</Text> {props.information.model || "Não informado"}
                     </Text>
+                </View>
+            </View>
+
+            {/* Responsabilidade */}
+            <View>
+                <View className="flex-row items-center space-x-2 mb-3">
+                    <MaterialCommunityIcons name="clipboard-list-outline" size={24} color={colors.text} />
+                    <Text className="text-lg font-bold">
+                        Responsabilidade
+                    </Text>
+                </View>
+                <View className="space-y-2">
                     <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Descrição:</Text> {props.information.description || "Não informado"}
+                        {props.information.responsibility || "Não informado"}
                     </Text>
                 </View>
             </View>
@@ -73,7 +86,22 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
                 </View>
                 <View className="space-y-2">
                     <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        {props.information.obligations || "Não informado"}
+                        {props.information.requirements || "Não informado"}
+                    </Text>
+                </View>
+            </View>
+
+            {/* Competência */}
+            <View>
+                <View className="flex-row items-center space-x-2 mb-3">
+                    <FontAwesome name="list-alt" size={24} color={colors.text} />
+                    <Text className="text-lg font-bold">
+                        Competência
+                    </Text>
+                </View>
+                <View className="w-full items-start justify-start">
+                    <Text style={[FONTS.fontXs, { color: colors.text }]}>
+                        {props.information.skills || "Não informado"}
                     </Text>
                 </View>
             </View>
@@ -88,25 +116,11 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
                 </View>
                 <View className="space-y-2 items-start justify-start">
                     <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        {props.information.benefics || "Não informado"}
+                        {props.information.benefits || "Não informado"}
                     </Text>
                 </View>
             </View>
 
-            {/* Detalhes */}
-            <View>
-                <View className="flex-row items-center space-x-2 mb-3">
-                    <FontAwesome name="list-alt" size={24} color={colors.text} />
-                    <Text className="text-lg font-bold">
-                        Detalhes
-                    </Text>
-                </View>
-                <View className="w-full items-start justify-start">
-                    <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        {props.details || "Não informado"}
-                    </Text>
-                </View>
-            </View>
 
             {/* Empresa */}
             {/* <View>

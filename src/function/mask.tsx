@@ -35,13 +35,17 @@ export default function Mask(type: MaskType, value: string | number): string {
       }
       return maskedValue;
     }
-    case "amount": {
-      const formattedAmount = (Number(value) / 100).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
-      return formattedAmount;
-    }
+    case 'amount': {
+			if (value == '') {
+				return '';
+			}
+
+			const formattedAmount = (Number(value) / 100).toLocaleString('pt-BR', {
+				style: 'currency',
+				currency: 'BRL',
+			});
+			return formattedAmount;
+		}
     case "cpf": {
       return value
         .toString()

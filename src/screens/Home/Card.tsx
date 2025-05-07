@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { Dimensions, Image, View, Text, TouchableOpacity } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -15,6 +15,8 @@ import { useNavigation } from "@react-navigation/native";
 import LinearGradient from "react-native-linear-gradient";
 //@ts-ignore
 import Logo from "../../assets/picture/logo/logo_black.png";
+import Mask from "~/src/function/mask";
+import { FONTS } from "~/src/constants/theme";
 
 const { width, height } = Dimensions.get("window");
 const SWIPE_THRESHOLD_X = width * 0.3;
@@ -48,7 +50,7 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
   const likeOpacity = useSharedValue(0);
   const nopeOpacity = useSharedValue(0);
   const superLikeOpacity = useSharedValue(0);
-  const isAnimating = useSharedValue(false); // Flag para bloquear interações durante animação
+  const isAnimating = useSharedValue(false);
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
@@ -66,6 +68,10 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
       scale.value = 1 - index * 0.02;
     }
   }, [isTopCard, index]);
+
+  const navigateToCardInformation = () => {
+    navigation.navigate("CardInformation", { cardData: data });
+  };
 
   const gesture = Gesture.Pan()
     .enabled(isTopCard && !isAnimating.value)
@@ -124,9 +130,18 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
     .enabled(isTopCard && !isAnimating.value)
     .maxDuration(250)
     .onEnd(() => {
-      if (isAnimating.value) return;
-      if (Math.abs(translateX.value) < 5 && Math.abs(translateY.value) < 5) {
-        runOnJS(() => navigation.navigate("CardInformation", { cardData: data }))();
+      try{
+        console.log('aquii')
+        if (!navigation) {
+          console.error('Navigation não está definido');
+          return;
+        }
+        if (isAnimating.value) return;
+        if (Math.abs(translateX.value) < 5 && Math.abs(translateY.value) < 5) {
+          runOnJS(navigateToCardInformation)();
+        }
+      }catch(e){
+        console.log(e)
       }
     });
 
@@ -146,31 +161,34 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
   const likeStyle = useAnimatedStyle(() => ({
     opacity: likeOpacity.value,
     transform: [
-      { scale: interpolate(likeOpacity.value, [0, 1], [0.8, 1.4]) },
+      { scale: interpolate(likeOpacity.value, [0, 1], [0.8, 1.2]) },
       { rotate: "-20deg" },
     ],
     position: "absolute",
-    top: 60,
+    top: height * 0.45 + 20, // Abaixo da imagem (45% de altura + margem)
     left: 40,
+    zIndex: 10, // Acima da imagem e gradiente
   }));
 
   const nopeStyle = useAnimatedStyle(() => ({
     opacity: nopeOpacity.value,
     transform: [
-      { scale: interpolate(nopeOpacity.value, [0, 1], [0.8, 1.4]) },
+      { scale: interpolate(nopeOpacity.value, [0, 1], [0.8, 1.2]) },
       { rotate: "20deg" },
     ],
     position: "absolute",
     top: 60,
     right: 40,
+    zIndex: 10,
   }));
 
   const superLikeStyle = useAnimatedStyle(() => ({
     opacity: superLikeOpacity.value,
-    transform: [{ scale: interpolate(superLikeOpacity.value, [0, 1], [0.8, 1.4]) }],
+    transform: [{ scale: interpolate(superLikeOpacity.value, [0, 1], [0.8, 1.0]) }],
     position: "absolute",
-    bottom: 60,
+    bottom: 80, // Ajustado para não ser cortado
     alignSelf: "center",
+    zIndex: 10,
   }));
 
   const likeButtonStyle = useAnimatedStyle(() => ({
@@ -240,16 +258,23 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
     }
   };
 
+  // useEffect(()=>{
+  //   console.log(data)
+  // },[])
+
+  const buttonSize = 60;
+
   return (
-    <View className="w-full h-full">
+    <View style={{ width: "100%", height: "100%" }}>
       <GestureDetector gesture={composedGestures}>
         <Animated.View
-          className="w-[94%] rounded-3xl shadow-lg"
           style={[
             animatedStyle,
             {
+              width: "94%",
               height: height * 0.9,
               marginHorizontal: width * 0.03,
+              borderRadius: 24,
               overflow: "hidden",
               borderWidth: isTopCard ? 1 : 0,
               borderColor: isTopCard ? "#D1D5DB" : "transparent",
@@ -260,6 +285,7 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
               elevation: 12,
             },
           ]}
+          
         >
           <LinearGradient
             colors={["#FFFFFF", "#E5E7EB"]}
@@ -269,20 +295,27 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
             <Animated.Text
               style={[
                 likeStyle,
-                { fontSize: 52, fontWeight: "800", color: "#34C759", textTransform: "uppercase" },
+                {
+                  fontSize: 48, // Tamanho ajustado
+                  fontWeight: "800",
+                  color: "#34C759",
+                  textTransform: "uppercase",
+                },
               ]}
               accessibilityLabel="Like"
             >
               LIKE
             </Animated.Text>
             <Animated.Text
-              style={{
-                ...nopeStyle,
-                fontSize: 52,
-                fontWeight: "800",
-                color: "#FF3B30",
-                textTransform: "uppercase",
-              }}
+              style={[
+                nopeStyle,
+                {
+                  fontSize: 36, // Aumentado para maior visibilidade
+                  fontWeight: "800",
+                  color: "#FF3B30",
+                  textTransform: "uppercase",
+                },
+              ]}
               accessibilityLabel="Nope"
             >
               NOPE
@@ -290,7 +323,16 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
             <Animated.Text
               style={[
                 superLikeStyle,
-                { fontSize: 52, fontWeight: "800", color: "#5856D6", textTransform: "uppercase" },
+                {
+                  fontSize: 32, // Menor para não ser tão grande
+                  fontWeight: "600",
+                  color: "#5856D6",
+                  textTransform: "uppercase",
+                  opacity: 0.8, // Estilo "vazado"
+                  textShadowColor: "rgba(0, 0, 0, 0.2)",
+                  textShadowOffset: { width: 2, height: 2 },
+                  textShadowRadius: 4,
+                },
               ]}
               accessibilityLabel="Super Like"
             >
@@ -303,35 +345,35 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
               resizeMode="cover"
               style={{
                 width: "100%",
-                height: "65%",
+                height: "45%",
                 borderTopLeftRadius: 24,
                 borderTopRightRadius: 24,
               }}
             />
 
             {/* Informações principais */}
-            <View className="p-6 space-y-4">
-              <View className="flex-row justify-between items-start">
-                <View className="flex-1 mr-3">
-                  <Text className="text-3xl font-bold capitalize">{data.function}</Text>
-                  <Text className="text-base text-gray-600 uppercase mt-1">
+            <View style={{ padding: 24, gap: 16 }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <View style={{ flex: 1, marginRight: 12 }}>
+                  <Text style={{ fontSize: 24, textTransform: "capitalize", ...FONTS.fontBold }}>
+                    {data.function}
+                  </Text>
+                  <Text style={{ fontSize: 14, color: "#4B5563", textTransform: "uppercase",}}>
                     {data.company?.company_name || "Empresa confidencial"}
                   </Text>
                 </View>
                 {data.PCD === "1" && <FontAwesome name="wheelchair-alt" size={28} color="#1F2A44" />}
               </View>
 
-              <Text className="text-gray-500 text-lg">
-                {data.company.city && data.company.uf
-                  ? `${data.company.city} - ${data.company.uf}`
-                  : "Home Office"}
+              <Text style={{ fontSize: 14, color: "#6B7280", ...FONTS.fontMedium}}>
+                {data.locality && `${data.locality}`}
               </Text>
 
-              <Text className="text-gray-900 text-xl font-semibold">
-                {data.salary ? `R$ ${data.salary} por mês` : "R$ 8.000 por mês"}
+              <Text style={{fontSize: 20, fontWeight: "600", color: "#111827", ...FONTS.fontMedium }}>
+                {data.salary ? `${Mask("amount", data.salary)} por mês` : "A combinar"}
               </Text>
 
-              <Text className="text-gray-400 text-base">
+              <Text style={{ fontSize: 16, color: "#9CA3AF" }}>
                 Publicado há {calculateDaysAgo(data.create_at)} dias
               </Text>
             </View>
@@ -341,18 +383,21 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
 
       {/* Botões */}
       {isTopCard && (
-        <View className="absolute bottom-8 z-50 flex-row justify-around items-center w-full px-6">
+        <View style={{ position: "absolute", bottom: 32, zIndex: 50, flexDirection: "row", justifyContent: "space-around", alignItems: "center", width: "100%", paddingHorizontal: 24 }}>
           <TouchableOpacity
             onPress={() => handleButtonPress("undo")}
             style={{
-              padding: 16,
-              borderRadius: 9999,
+              width: buttonSize,
+              height: buttonSize,
+              borderRadius: buttonSize / 2,
               backgroundColor: "#FFFFFF",
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.2,
               shadowRadius: 4,
               elevation: 4,
+              justifyContent: "center",
+              alignItems: "center",
             }}
             accessibilityLabel="Undo"
           >
@@ -363,17 +408,29 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
             style={[
               nopeButtonStyle,
               {
-                padding: 16,
-                borderRadius: 9999,
+                width: buttonSize,
+                height: buttonSize,
+                borderRadius: buttonSize / 2,
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.2,
                 shadowRadius: 4,
                 elevation: 4,
+                justifyContent: "center",
+                alignItems: "center",
               },
             ]}
           >
-            <TouchableOpacity onPress={() => handleButtonPress("nope")} accessibilityLabel="Nope">
+            <TouchableOpacity
+              onPress={() => handleButtonPress("nope")}
+              accessibilityLabel="Nope"
+              style={{
+                width: buttonSize,
+                height: buttonSize,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <FontAwesome name="times" size={32} color="#FF5252" />
             </TouchableOpacity>
           </Animated.View>
@@ -382,17 +439,29 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
             style={[
               superLikeButtonStyle,
               {
-                padding: 16,
-                borderRadius: 9999,
+                width: buttonSize,
+                height: buttonSize,
+                borderRadius: buttonSize / 2,
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.2,
                 shadowRadius: 4,
                 elevation: 4,
+                justifyContent: "center",
+                alignItems: "center",
               },
             ]}
           >
-            <TouchableOpacity onPress={() => handleButtonPress("superLike")} accessibilityLabel="Super Like">
+            <TouchableOpacity
+              onPress={() => handleButtonPress("superLike")}
+              accessibilityLabel="Super Like"
+              style={{
+                width: buttonSize,
+                height: buttonSize,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <FontAwesome name="star" size={32} color="#5856D6" />
             </TouchableOpacity>
           </Animated.View>
@@ -401,17 +470,29 @@ const Card: React.FC<CardProps> = ({ data, onSwipeLeft, onSwipeRight, onSuperLik
             style={[
               likeButtonStyle,
               {
-                padding: 16,
-                borderRadius: 9999,
+                width: buttonSize,
+                height: buttonSize,
+                borderRadius: buttonSize / 2,
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.2,
                 shadowRadius: 4,
                 elevation: 4,
+                justifyContent: "center",
+                alignItems: "center",
               },
             ]}
           >
-            <TouchableOpacity onPress={() => handleButtonPress("like")} accessibilityLabel="Like">
+            <TouchableOpacity
+              onPress={() => handleButtonPress("like")}
+              accessibilityLabel="Like"
+              style={{
+                width: buttonSize,
+                height: buttonSize,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <FontAwesome name="heart" size={32} color="#4CAF50" />
             </TouchableOpacity>
           </Animated.View>

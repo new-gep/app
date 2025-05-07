@@ -77,6 +77,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
 
   useEffect(() => {
     const checkCandidateStatus = () => {
+      return
       // console.log('=== DEBUG CANDIDATE STATUS ===');
       // console.log('CardData:', cardData);
       // console.log('Candidates type:', typeof cardData?.candidates);
@@ -234,15 +235,15 @@ const CardInformation = ({ route }: CardInformationProps) => {
             { borderBottomColor: COLORS.inputborder },
           ]}
         >
-          <Image
+          {/* <Image
             // source={AbstractPicture[cardData.image]}
             source={Logo}
             resizeMode="contain"
             className="w-full h-[200px] mb-6"
-          />
+          /> */}
         </View>
 
-        <View style={[GlobalStyleSheet.card, { backgroundColor: COLORS.card }]} className="mt-8">           
+        <View style={[GlobalStyleSheet.card, { backgroundColor: COLORS.card }]} className="mt-3">           
           <AccordionCardIformation
             information={cardData}
             company={cardData.company as CompanyType}

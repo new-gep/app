@@ -25,6 +25,7 @@ import Header from "../../layout/Header";
 import { COLORS, FONTS } from "../../constants/theme";
 import Mask from "../../function/mask";
 import HeaderHome from "../../layout/HeaderHome";
+import Apply from "~/src/hooks/rabbit/job/Apply";
 const Home = () => {
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,28 +36,34 @@ const Home = () => {
   const { validateCollaborator, missingData } = useCollaboratorContext();
   const navigation = useNavigation<NavigationProp<any>>();
 
-
-  const handleSwipeRight = async (id:any) => {
+  const handleSwipeRight = async (id: any) => {
     if (missingData) return;
 
     try {
       // 1. Buscar detalhes da vaga
       const jobResponse = await FindOneJob(id);
-      console.log("jobResponse", jobResponse)
 
       if (jobResponse.status !== 200) {
         throw new Error("Erro ao buscar detalhes da vaga");
       }
 
+      type Candidate = {
+        picture: string;
+        name: string;
+        [key: string]: any;
+      };
+
       let currentCandidates = await Promise.all(
-        jobResponse.job.candidates?.map(async ({ picture, name, ...rest }) => {
-          // Aqui você pode realizar alguma operação assíncrona se necessário
-          return rest; // Remove picture e name
-        }) || []
+        jobResponse.job.candidates?.map(
+          async ({ picture, name, ...rest }: Candidate) => {
+            // Aqui você pode realizar alguma operação assíncrona se necessário
+            return rest; // Remove picture e name
+          }
+        ) || []
       );
 
       const alreadyApplied = currentCandidates.some(
-        (c:any) => c.cpf === collaborator?.CPF 
+        (c: any) => c.cpf === collaborator?.CPF
       );
 
       if (alreadyApplied) {
@@ -66,7 +73,7 @@ const Home = () => {
         return;
       }
 
-      // 3. Criar novo candidato formatado
+      // // 3. Criar novo candidato formatado
       const newCandidate = {
         cpf: collaborator?.CPF,
         step: 0,
@@ -77,23 +84,24 @@ const Home = () => {
 
       // 4. Atualizar lista de candidatos
       const updatedCandidates = [...currentCandidates, newCandidate];
-      
 
       // 5. Enviar para API
       const updateResponse = await UpdateJobDefault(id, {
         candidates: JSON.stringify(updatedCandidates), // Enviar array diretamente
       });
 
+      // const updateResponse = await Apply({ id, collaborator });
       if (updateResponse.status !== 200) {
         throw new Error("Erro ao atualizar vaga");
       }
 
       // 6. Atualizar UI somente após sucesso
       setPreviousCards((prev) => [...prev, cards[0]]);
-      setCards((prevCards) => prevCards.slice(1));
-
-      showPopupMessage("Candidatura realizada com sucesso!");
-    } catch (error) {
+      setCards((prevCards) => {
+        const newCards = prevCards.slice(1);
+        return newCards.length > 0 ? newCards : prevCards; // Evitar estado vazio
+      });
+    } catch (error: any) {
       setPreviousCards((prev) => [...prev, cards[0]]);
       setCards((prevCards) => prevCards.slice(1));
       console.error("Erro no swipe:", error);
@@ -115,19 +123,19 @@ const Home = () => {
 
   const handleUndo = () => {
     if (previousCards.length > 0) {
-      const lastCard = previousCards[previousCards.length - 1]; // Pega o último sem mutar o array
-      
+      let lastCard = previousCards[previousCards.length - 1]; // Pega o último sem mutar o array
+
       // Verifica se o card já está na lista atual
-      if (!cards.some((card) => card.id === lastCard.id)) {
+      //@ts-ignore
+      if (!cards.some((card: { id: any }) => card.id === lastCard.id)) {
         setPreviousCards((prev) => prev.slice(0, -1));
         setCards((prevCards) => [lastCard, ...prevCards]);
       }
-    } else {
       alert("Não há mais cards para voltar.");
     }
   };
 
-  const showPopupMessage = (message) => {
+  const showPopupMessage = (message: any) => {
     setPopupMessage(message);
     setShowPopup(true);
     setTimeout(() => setShowPopup(false), 2000);
@@ -143,12 +151,12 @@ const Home = () => {
       }
 
       const uniqueJobs = response.job.filter(
-        (job, index, self) =>
-          self.findIndex((j) => j.id === job.id) === index
+        (job: any, index: any, self: any) =>
+          self.findIndex((j: any) => j.id === job.id) === index
       );
 
       setCards(uniqueJobs);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Ocorreu um erro ao buscar os jobs:", error.message);
       alert("Erro ao buscar os jobs. Por favor, tente novamente.");
     } finally {
@@ -163,7 +171,7 @@ const Home = () => {
         await fetchCollaborator();
         validateCollaborator();
       };
-      
+
       loadData();
     }, [])
   );
@@ -190,9 +198,12 @@ const Home = () => {
   }, [missingData, navigation]);
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      return true; // Retorna true para impedir o comportamento padrão de voltar
-    });
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        return true; // Retorna true para impedir o comportamento padrão de voltar
+      }
+    );
 
     return () => backHandler.remove(); // Remove o listener quando o componente for desmontado
   }, []);
@@ -200,11 +211,11 @@ const Home = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <HeaderHome
-            title=''
-            leftIcon={'menu'}
-            rightIcon4={'home'}  
-            collaborator={collaborator}
-        />
+        title=""
+        leftIcon={"menu"}
+        rightIcon4={"home"}
+        collaborator={collaborator}
+      />
 
       <View className="flex-1 justify-center bg-white">
         {isLoading ? (
@@ -215,10 +226,10 @@ const Home = () => {
           <>
             <View className="flex-1 w-full">
               {/* No return, onde está mapeando os cards: */}
-              {cards.map((card, index) => (
+              {cards.map((card: any, index) => (
                 <View
                   key={`${card.id}_${index}`} // Alterar esta linha
-                  className="absolute w-full h-full items-center"
+                  className="absolute w-full h-full items-center p-2 mt-2"
                   style={{
                     top: 0,
                     justifyContent: "center",
@@ -233,6 +244,7 @@ const Home = () => {
                     isTopCard={index === 0}
                     zIndex={cards.length - index}
                     index={index}
+                    handleUndo={handleUndo}
                   />
                 </View>
               ))}
@@ -260,35 +272,38 @@ const Home = () => {
           </>
         ) : (
           <View className="mt-5 flex justify-between items-center h-full">
-              <View
+            <View
+              style={{
+                backgroundColor: "white",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
                 style={{
-                  backgroundColor: "white",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  ...FONTS.fontSemiBold,
+                  fontSize: 16,
+                  color: COLORS.title,
+                  marginBottom: 5,
+                  marginTop: 90,
                 }}
               >
-                <Text
-                  style={{
-                    ...FONTS.fontSemiBold,
-                    fontSize: 16,
-                    color: COLORS.title,
-                    marginBottom: 5,
-                    marginTop: 90,
-                  }}
-                >
-                  Sem mais vagas no momento
-                </Text>
-                <Text className="text-center text-sm text-gray-400 font-normal">
-                  Não há mais vagas no momento, volte mais tarde!
-                </Text>
+                Sem mais vagas no momento
+              </Text>
+              <Text className="text-center text-sm text-gray-400 font-normal">
+                Não há mais vagas no momento, volte mais tarde!
+              </Text>
 
-                <Image
-                  source={require("../../assets/images/brand/Waiting.png")}
-                  style={{ width: Dimensions.get('window').width * 0.7, height: Dimensions.get('window').height * 0.5 }}
-                  resizeMode="contain"
-                />
+              <Image
+                source={require("../../assets/images/brand/Waiting.png")}
+                style={{
+                  width: Dimensions.get("window").width * 0.7,
+                  height: Dimensions.get("window").height * 0.5,
+                }}
+                resizeMode="contain"
+              />
+            </View>
           </View>
-        </View>
         )}
       </View>
 
