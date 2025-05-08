@@ -70,7 +70,6 @@ export const GlobalStyleSheet = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: COLORS.inputborder,
         paddingHorizontal: 15,
-        paddingVertical: 15,
         borderStyle:'dashed'
     },
     cardBody: {

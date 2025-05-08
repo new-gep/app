@@ -42,38 +42,27 @@ const Home = () => {
     try {
       // 1. Buscar detalhes da vaga
       const jobResponse = await FindOneJob(id);
-
       if (jobResponse.status !== 200) {
         throw new Error("Erro ao buscar detalhes da vaga");
       }
 
-      type Candidate = {
-        picture: string;
-        name: string;
-        [key: string]: any;
-      };
-
-      let currentCandidates = await Promise.all(
+      // 2. Simplificar manipulação de candidatos
+      const currentCandidates =
         jobResponse.job.candidates?.map(
-          async ({ picture, name, ...rest }: Candidate) => {
-            // Aqui você pode realizar alguma operação assíncrona se necessário
-            return rest; // Remove picture e name
-          }
-        ) || []
-      );
+          ({ picture, name, ...rest }: Candidate) => rest
+        ) || [];
 
+      // 3. Verificar se já aplicou
       const alreadyApplied = currentCandidates.some(
         (c: any) => c.cpf === collaborator?.CPF
       );
-
       if (alreadyApplied) {
-        setPreviousCards((prev) => [...prev, cards[0]]);
-        setCards((prevCards) => prevCards.slice(1));
+        updateCardState();
         showPopupMessage("Você já aplicou para esta vaga!");
         return;
       }
 
-      // // 3. Criar novo candidato formatado
+      // 4. Criar novo candidato
       const newCandidate = {
         cpf: collaborator?.CPF,
         step: 0,
@@ -82,37 +71,49 @@ const Home = () => {
         observation: null,
       };
 
-      // 4. Atualizar lista de candidatos
-      const updatedCandidates = [...currentCandidates, newCandidate];
+      // 5. Atualizar lista de candidatos
+      let updatedCandidates = [...currentCandidates, newCandidate];
 
-      // 5. Enviar para API
       const updateResponse = await UpdateJobDefault(id, {
-        candidates: JSON.stringify(updatedCandidates), // Enviar array diretamente
+        candidates: JSON.stringify(updatedCandidates),
       });
 
-      // const updateResponse = await Apply({ id, collaborator });
       if (updateResponse.status !== 200) {
         throw new Error("Erro ao atualizar vaga");
       }
 
-      // 6. Atualizar UI somente após sucesso
-      setPreviousCards((prev) => [...prev, cards[0]]);
-      setCards((prevCards) => {
-        const newCards = prevCards.slice(1);
-        return newCards.length > 0 ? newCards : prevCards; // Evitar estado vazio
-      });
+      // 7. Atualizar UI após sucesso
+      updateCardState();
+      console.time("updateCardState");
     } catch (error: any) {
-      setPreviousCards((prev) => [...prev, cards[0]]);
-      setCards((prevCards) => prevCards.slice(1));
-      console.error("Erro no swipe:", error);
+      updateCardState();
+      console.error("Erro no aqui:", error);
       showPopupMessage(error.message || "Erro ao aplicar");
-      handleUndo(); // Reverte a ação visual
+      handleUndo();
     }
   };
 
+  // Função auxiliar para atualizar estado dos cards
+  const updateCardState = () => {
+    setCards((prevCards) => {
+      if (prevCards.length === 0) return prevCards;
+
+      const [firstCard, ...rest] = prevCards;
+      setPreviousCards((prev) => [...prev, firstCard]);
+
+      return rest.length > 0 ? rest : prevCards; // se não tiver mais cartas, mantém as atuais
+    });
+  };
+
   const handleSwipeLeft = () => {
-    setPreviousCards((prev) => [...prev, cards[0]]);
-    setCards((prevCards) => prevCards.slice(1));
+    setCards((prevCards) => {
+      if (prevCards.length === 0) return prevCards;
+
+      const [firstCard, ...rest] = prevCards;
+      setPreviousCards((prev) => [...prev, firstCard]);
+
+      return rest;
+    });
   };
 
   // const handleSuperLike = () => {
@@ -123,14 +124,16 @@ const Home = () => {
 
   const handleUndo = () => {
     if (previousCards.length > 0) {
-      let lastCard = previousCards[previousCards.length - 1]; // Pega o último sem mutar o array
+      const lastCard = previousCards[previousCards.length - 1];
 
       // Verifica se o card já está na lista atual
-      //@ts-ignore
       if (!cards.some((card: { id: any }) => card.id === lastCard.id)) {
         setPreviousCards((prev) => prev.slice(0, -1));
         setCards((prevCards) => [lastCard, ...prevCards]);
+      } else {
+        alert("Esse card já está na lista.");
       }
+    } else {
       alert("Não há mais cards para voltar.");
     }
   };
@@ -142,6 +145,7 @@ const Home = () => {
   };
 
   const fetchJobs = async () => {
+    console.log("caiu aqui");
     try {
       setIsLoading(true);
       const response = await GetAllJob();
@@ -164,31 +168,15 @@ const Home = () => {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const loadData = async () => {
-        await fetchJobs();
-        await fetchCollaborator();
-        validateCollaborator();
-      };
-
-      loadData();
-    }, [])
-  );
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      fetchCollaborator();
+    const loadData = async () => {
+      await fetchJobs();
+      await fetchCollaborator();
       validateCollaborator();
-      const backHandlerSubscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        () => {
-          return true;
-        }
-      );
-      return () => backHandlerSubscription.remove();
-    });
-    return unsubscribe;
+    };
+
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -225,10 +213,9 @@ const Home = () => {
         ) : Array.isArray(cards) && cards.length > 0 ? (
           <>
             <View className="flex-1 w-full">
-              {/* No return, onde está mapeando os cards: */}
-              {cards.map((card: any, index) => (
+              {cards.slice(0, 2).map((card: any, index) => (
                 <View
-                  key={`${card.id}_${index}`} // Alterar esta linha
+                  key={card.id} // Alterar esta linha
                   className="absolute w-full h-full items-center p-2 mt-2"
                   style={{
                     top: 0,
@@ -249,26 +236,6 @@ const Home = () => {
                 </View>
               ))}
             </View>
-
-            {/* <View className="absolute bottom-8 z-50 flex-row justify-between items-center w-full px-6">
-              <TouchableOpacity onPress={handleUndo} style={{ padding: 16, borderRadius: 9999 }}>
-                <MaterialIcons name="replay" size={32} color="#FFC107" />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleSwipeLeft}
-                style={{ padding: 16, borderRadius: 9999 }}
-              >
-                <FontAwesome name="times" size={32} color="#FF5252" />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleSwipeRight}
-                style={{ padding: 16, borderRadius: 9999 }}
-              >
-                <FontAwesome name="heart" size={32} color="#4CAF50" />
-              </TouchableOpacity>
-            </View> */}
           </>
         ) : (
           <View className="mt-5 flex justify-between items-center h-full">

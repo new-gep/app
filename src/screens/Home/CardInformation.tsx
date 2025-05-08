@@ -7,11 +7,13 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Header from "../../layout/Header";
 import AccordionCardIformation from "../../components/Accordion/AccordionCardIformation";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
-import { COLORS } from "../../constants/theme";
-import Button from '../../components/Button/Button';
+import { COLORS, FONTS } from "../../constants/theme";
+import Button from "../../components/Button/Button";
 import useCollaborator from "../../function/fetchCollaborator";
 import UpdateJobDefault from "../../hooks/update/job/default";
 import Logo from "../../assets/picture/logo/logo_black.png";
+import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import Mask from "~/src/function/mask";
 
 type CompanyType = {
   company_name: string;
@@ -24,7 +26,7 @@ type CompanyType = {
   uf: string;
   zip_code?: string;
   logo?: string;
-}
+};
 
 type CardInformationProps = {
   route: {
@@ -77,7 +79,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
 
   useEffect(() => {
     const checkCandidateStatus = () => {
-      return
+      return;
       // console.log('=== DEBUG CANDIDATE STATUS ===');
       // console.log('CardData:', cardData);
       // console.log('Candidates type:', typeof cardData?.candidates);
@@ -92,33 +94,32 @@ const CardInformation = ({ route }: CardInformationProps) => {
       }
 
       try {
-        const parsedCandidates = typeof cardData.candidates === 'string' 
-          ? JSON.parse(cardData.candidates) 
-          : cardData.candidates;
-
+        const parsedCandidates =
+          typeof cardData.candidates === "string"
+            ? JSON.parse(cardData.candidates)
+            : cardData.candidates;
 
         if (!Array.isArray(parsedCandidates)) {
-          console.log('Candidates is not an array after parsing');
+          console.log("Candidates is not an array after parsing");
           return;
         }
 
-        const isApplied = parsedCandidates.some(candidate => {
-          const candidateCpf = String(candidate.cpf).replace(/\D/g, '');
-          const collaboratorCpf = String(collaborator.CPF).replace(/\D/g, '');
-          
+        const isApplied = parsedCandidates.some((candidate) => {
+          const candidateCpf = String(candidate.cpf).replace(/\D/g, "");
+          const collaboratorCpf = String(collaborator.CPF).replace(/\D/g, "");
+
           // console.log('Comparing CPFs:', {
           //   candidateCpf,
           //   collaboratorCpf,
           //   isEqual: candidateCpf === collaboratorCpf
           // });
-          
+
           return candidateCpf === collaboratorCpf;
         });
 
         setIsCandidateApplied(isApplied);
-        
       } catch (error) {
-        console.error('Error checking candidate status:', error);
+        console.error("Error checking candidate status:", error);
       }
     };
 
@@ -128,24 +129,25 @@ const CardInformation = ({ route }: CardInformationProps) => {
   const handleRemoveApplication = async () => {
     try {
       setIsLoading(true);
-      
+
       if (!cardData?.candidates) {
-        throw new Error('Lista de candidatos inválida');
+        throw new Error("Lista de candidatos inválida");
       }
 
       // Garante que candidates seja um array
-      const currentCandidates = typeof cardData.candidates === 'string' 
-        ? JSON.parse(cardData.candidates) 
-        : cardData.candidates;
+      const currentCandidates =
+        typeof cardData.candidates === "string"
+          ? JSON.parse(cardData.candidates)
+          : cardData.candidates;
 
       if (!Array.isArray(currentCandidates)) {
-        throw new Error('Lista de candidatos inválida após parse');
+        throw new Error("Lista de candidatos inválida após parse");
       }
 
       // Filtra o candidato atual da lista
-      const updatedCandidates = currentCandidates.filter(candidate => {
-        const candidateCpf = String(candidate.cpf).replace(/\D/g, '');
-        const collaboratorCpf = String(collaborator?.CPF).replace(/\D/g, '');
+      const updatedCandidates = currentCandidates.filter((candidate) => {
+        const candidateCpf = String(candidate.cpf).replace(/\D/g, "");
+        const collaboratorCpf = String(collaborator?.CPF).replace(/\D/g, "");
         return candidateCpf !== collaboratorCpf;
       });
 
@@ -155,17 +157,17 @@ const CardInformation = ({ route }: CardInformationProps) => {
       });
 
       if (response.status === 200) {
-        alert('Candidatura removida com sucesso!');
+        alert("Candidatura removida com sucesso!");
         // Primeiro volta para a tela anterior
         navigation.goBack();
         // Depois atualiza a Home
         // navigation.navigate('Home');
       } else {
-        throw new Error('Erro ao remover candidatura');
+        throw new Error("Erro ao remover candidatura");
       }
     } catch (error) {
-      console.error('Erro ao remover candidatura:', error);
-      alert('Erro ao remover candidatura. Tente novamente.');
+      console.error("Erro ao remover candidatura:", error);
+      alert("Erro ao remover candidatura. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -184,7 +186,9 @@ const CardInformation = ({ route }: CardInformationProps) => {
       };
 
       // Garante que candidates seja um array
-      const currentCandidates = Array.isArray(cardData.candidates) ? cardData.candidates : [];
+      const currentCandidates = Array.isArray(cardData.candidates)
+        ? cardData.candidates
+        : [];
       const updatedCandidates = [...currentCandidates, newCandidate];
 
       const response = await UpdateJobDefault(cardData.id, {
@@ -192,14 +196,14 @@ const CardInformation = ({ route }: CardInformationProps) => {
       });
 
       if (response.status === 200) {
-        alert('Candidatura realizada com sucesso!');
+        alert("Candidatura realizada com sucesso!");
         navigation.goBack();
       } else {
-        throw new Error('Erro ao realizar candidatura');
+        throw new Error("Erro ao realizar candidatura");
       }
     } catch (error) {
-      console.error('Erro ao realizar candidatura:', error);
-      alert('Erro ao realizar candidatura. Tente novamente.');
+      console.error("Erro ao realizar candidatura:", error);
+      alert("Erro ao realizar candidatura. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -213,20 +217,131 @@ const CardInformation = ({ route }: CardInformationProps) => {
       <ScrollView className="flex-1 p-4">
         {/* Cabeçalho do Card */}
         <View className="mb-8">
-          <Text className="text-2xl font-bold text-dark">
+          <Text
+            className="text-dark capitalize"
+            style={{ ...FONTS.fontBold, fontSize: 25 }}
+          >
             {cardData.function}
           </Text>
-          <Text className="text-sm text-gray-600 mt-1 uppercase">
+          <Text className="text-sm text-gray-600 uppercase mb-6">
             {cardData.company?.company_name || "Empresa confidencial"}
           </Text>
+
+          <View className="mt-5 gap-2">
+            {cardData.DEI === "1" && (
+              <View className="flex-row items-center gap-2">
+                <View className="bg-dark p-2 rounded-full">
+                  <MaterialIcons name="interests" size={20} color="#fde047" />
+                </View>
+                <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
+                  Vaga Afirmativa
+                </Text>
+              </View>
+            )}
+            {cardData.PCD === "1" && (
+              <View className="flex-row items-center gap-2">
+                <View className="bg-dark p-2 rounded-full">
+                  <FontAwesome6
+                    name="wheelchair-move"
+                    size={20}
+                    color="#fde047"
+                  />
+                </View>
+                <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
+                  Vaga PCD
+                </Text>
+              </View>
+            )}
+            <View className="flex-row items-center gap-2">
+              <View className="bg-dark p-2 rounded-full">
+                <FontAwesome6
+                  name="map-location-dot"
+                  size={20}
+                  color="#fde047"
+                />
+              </View>
+              <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
+                {cardData.locality && `${cardData.locality}`}
+              </Text>
+            </View>
+            <View className="flex-row items-center gap-2">
+              <View className="bg-dark p-2 rounded-full">
+                <FontAwesome6 name="money-bills" size={20} color="#fde047" />
+              </View>
+              <Text style={{ fontSize: 15, ...FONTS.fontMedium }}>
+                {cardData.salary && Mask("amount", cardData.salary)}
+              </Text>
+            </View>
+
+            <View className="flex-row items-center gap-2">
+              <View className="bg-dark p-2 rounded-full">
+                <FontAwesome6 name="laptop" size={20} color="#fde047" />
+              </View>
+              <Text style={{ fontSize: 15, ...FONTS.fontMedium }}>
+                {cardData.model && `${cardData.model}`}
+              </Text>
+            </View>
+
+            <View className="flex-row items-center gap-2">
+              <View className="bg-dark p-2 px-3 rounded-full">
+                <FontAwesome5 name="clipboard" size={24} color="#fde047" />
+              </View>
+              <Text style={{ fontSize: 15, ...FONTS.fontMedium }}>
+                {cardData.contract && `${cardData.contract}`}
+              </Text>
+            </View>
+
+            
+
+            {/* <View className="w-full items-center">
+                    <View className="flex-row flex-wrap justify-center gap-1">
+                      {cardData.skills &&
+                        JSON.parse(cardData.skills).map((skill: any) => (
+                          <View
+                            key={skill}
+                            className="bg-green-800 px-2 py-1 rounded-lg"
+                          >
+                            <Text
+                              className="text-center"
+                              style={{ ...FONTS.font, color: "white" }}
+                            >
+                              {skill}
+                            </Text>
+                          </View>
+                        ))}
+                    </View>
+                  </View>
+
+                  <View className="w-full items-center">
+                    <View className="flex-row flex-wrap justify-center gap-1">
+                      {cardData.benefits &&
+                        JSON.parse(cardData.benefits).map((skill: any) => (
+                          <View
+                            key={skill}
+                            className="bg-blue-900 px-2 py-1 rounded-lg"
+                          >
+                            <Text
+                              className="text-center"
+                              style={{ ...FONTS.font, color: "white" }}
+                            >
+                              {skill}
+                            </Text>
+                          </View>
+                        ))}
+                    </View>
+                  </View> */}
+          </View>
+          {/*           
           <Text className="text-sm text-gray-600 mt-1">
-            {cardData.company?.city ? `${cardData.company.city}-${cardData.company.uf}` : "Localização não informada"}
+            {cardData.company?.city
+              ? `${cardData.company.city}-${cardData.company.uf}`
+              : "Localização não informada"}
           </Text>
           {cardData.PCD === "1" && (
             <View className="mt-2">
               <FontAwesome name="wheelchair-alt" size={24} color="black" />
             </View>
-          )}
+          )} */}
         </View>
 
         <View
@@ -243,7 +358,10 @@ const CardInformation = ({ route }: CardInformationProps) => {
           /> */}
         </View>
 
-        <View style={[GlobalStyleSheet.card, { backgroundColor: COLORS.card }]} className="mt-3">           
+        <View
+          style={[GlobalStyleSheet.card, { backgroundColor: COLORS.card }]}
+          className="mt-3"
+        >
           <AccordionCardIformation
             information={cardData}
             company={cardData.company as CompanyType}
@@ -255,7 +373,9 @@ const CardInformation = ({ route }: CardInformationProps) => {
         <View className="mt-8 mb-6 flex items-center">
           <Button
             title={isCandidateApplied ? "Remover Candidatura" : "Candidatar-se"}
-            onPress={isCandidateApplied ? handleRemoveApplication : handleApplyToJob}
+            onPress={
+              isCandidateApplied ? handleRemoveApplication : handleApplyToJob
+            }
             color={isCandidateApplied ? COLORS.dark : COLORS.primary}
             text={isCandidateApplied ? COLORS.primary : COLORS.dark}
             className="rounded-lg w-4/5"
