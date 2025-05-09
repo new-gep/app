@@ -9,6 +9,7 @@ import {
   BackHandler,
   Image,
   Dimensions,
+  TextInput,
 } from "react-native";
 import Card from "./Card";
 import GetAllJob from "../../hooks/get/job/all";
@@ -26,6 +27,7 @@ import { COLORS, FONTS } from "../../constants/theme";
 import Mask from "../../function/mask";
 import HeaderHome from "../../layout/HeaderHome";
 import Apply from "~/src/hooks/rabbit/job/Apply";
+import CardSearch from "./CardSearch";
 const Home = () => {
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,7 +147,6 @@ const Home = () => {
   };
 
   const fetchJobs = async () => {
-    console.log("caiu aqui");
     try {
       setIsLoading(true);
       const response = await GetAllJob();
@@ -167,7 +168,6 @@ const Home = () => {
       setIsLoading(false);
     }
   };
-
 
   useEffect(() => {
     const loadData = async () => {
@@ -196,6 +196,8 @@ const Home = () => {
     return () => backHandler.remove(); // Remove o listener quando o componente for desmontado
   }, []);
 
+  
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <HeaderHome
@@ -204,21 +206,23 @@ const Home = () => {
         rightIcon4={"home"}
         collaborator={collaborator}
       />
-
-      <View className="flex-1 justify-center bg-white">
+      <View className="absolute w-full z-50" style={{ top: "10%" }}>
+        <CardSearch/>
+      </View>
+      <View className="flex-1 justify-center ">
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color={COLORS.primary} />
           </View>
         ) : Array.isArray(cards) && cards.length > 0 ? (
           <>
-            <View className="flex-1 w-full">
-              {cards.slice(0, 2).map((card: any, index) => (
+            <View className="w-full">
+              {cards.slice(0, 4).map((card: any, index) => (
                 <View
                   key={card.id} // Alterar esta linha
                   className="absolute w-full h-full items-center p-2 mt-2"
                   style={{
-                    top: 0,
+                    top: 2 * index,
                     justifyContent: "center",
                     zIndex: cards.length - index,
                   }}

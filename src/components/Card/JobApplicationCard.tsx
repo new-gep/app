@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { HeartIcon } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Mask from '~/src/function/mask';
+import { FONTS } from '~/src/constants/theme';
 
 const FAVORITES_KEY = 'user_favorites';
 
@@ -44,7 +46,7 @@ const JobApplicationCard = ({ job, company }) => {
     }
   };
 
-  const calculateDaysAgo = (createDate) => {
+  const calculateDaysAgo = (createDate:any) => {
     const created = new Date(createDate);
     const now = new Date();
     const diffTime = Math.abs(now - created);
@@ -54,12 +56,6 @@ const JobApplicationCard = ({ job, company }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log('=== DEBUG NAVIGATION ===');
-        console.log('Job data being passed:', {
-          ...job,
-          candidates: job.candidates
-        });
-        
         navigation.navigate('CardInformation', { 
           cardData: {
             ...job,
@@ -69,22 +65,22 @@ const JobApplicationCard = ({ job, company }) => {
       }}
       style={[styles.card, 'shadow-md']}
     >
-      <View className="p-4">
+      <View className="p-4 bg-primary/30">
         <View className="flex-row justify-between items-center">
-          <Text className="text-lg font-bold text-gray-900 capitalize">{job.function}</Text>
+          <Text className=" capitalize" style={{...FONTS.fontBold}}>{job.function}</Text>
           <TouchableOpacity onPress={toggleFavorite}>
             <HeartIcon 
               size={24} 
-              className={isFavorite ? 'text-primary' : 'text-gray-400'} 
+              className={isFavorite ? 'text-red-500' : 'text-gray-400'} 
               fill={isFavorite ? 'currentColor' : 'none'} 
             />
           </TouchableOpacity>
         </View>
         <Text className="text-sm text-gray-500 mt-1">
-          {job.company ? `${job.company.city || ''}, ${job.company.uf || ''}` : 'Localização não informada'}
+          {job.company ? job.locality : 'Não informado'}
         </Text>
-        <Text className="text-base text-gray-900 mt-1">
-          {job.salary ? `R$ ${job.salary} por mês` : 'Não informado'}
+        <Text className="text-base text-gray-900 mt-1" style={{...FONTS.font}}>
+          {job.salary ? `${Mask('amount',job.salary)} por mês` : 'Não informado'}
         </Text>
         <Text className="text-sm text-gray-400 mt-1">
           {`Publicado há ${calculateDaysAgo(job.create_at)} dias`}

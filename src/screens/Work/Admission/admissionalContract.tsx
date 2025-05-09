@@ -47,13 +47,14 @@ const AdmissionalContract = ({
         const response = await CheckDocumentAdmissional(jobConected[0].id);
         const obligations = response.date.obligation;
         const dynamics = response.date.dynamic.document;
-
+        console.log('ID: ',jobConected[0].id)
+        console.log('dynamics: ',dynamics);
         // Remover campo medical das obrigações
         delete obligations.medical;
 
         // Criar lista de todas as chaves de documentos
         const allDocumentKeys = [
-          ...Object.keys(obligations),
+          // ...Object.keys(obligations),
           ...Object.values(dynamics),
         ];
 
@@ -107,8 +108,8 @@ const AdmissionalContract = ({
         setObligationDocs(obligationDocuments);
         setDynamicDocs(dynamicDocuments);
         // Atualizar estado combinado
-        const combined = { ...obligations, ...dynamics };
-
+        // const combined = { ...obligations, ...dynamics };
+        const combined = { ...dynamics };
         // Buscar arquivos
         const files = {};
         await Promise.all(
@@ -156,7 +157,7 @@ const AdmissionalContract = ({
           style={{ height: Dimensions.get('window').height * 0.4 }}
         >
           {/* Documentos Obrigatórios */}
-          {obligationDocs.map((doc:any, index:any) => {
+          {/* {obligationDocs.map((doc:any, index:any) => {
             if (!doc) {
               return; // Retorne null para não renderizar nada
             }
@@ -172,7 +173,7 @@ const AdmissionalContract = ({
                 lockSignature={lockSignature}
               />
             );
-          })}
+          })} */}
 
           {/* Documentos Dinâmicos */}
           {dynamicDocs.map((doc:any, index:any) => (

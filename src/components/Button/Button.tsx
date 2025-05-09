@@ -27,7 +27,7 @@ const Button = ({
     load,
     loadColor,
     loadSize,
-    icon
+    icon,
 }: Props) => {
     return (
         <TouchableOpacity 

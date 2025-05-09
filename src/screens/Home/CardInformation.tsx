@@ -11,7 +11,6 @@ import { COLORS, FONTS } from "../../constants/theme";
 import Button from "../../components/Button/Button";
 import useCollaborator from "../../function/fetchCollaborator";
 import UpdateJobDefault from "../../hooks/update/job/default";
-import Logo from "../../assets/picture/logo/logo_black.png";
 import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import Mask from "~/src/function/mask";
 
@@ -56,6 +55,13 @@ type CardInformationProps = {
         };
         workload: string;
         benefics: string;
+        DEI:string;
+        model: string;
+        skills: any;
+        benefits: any;
+        locality: string;
+        contract: string;
+        
         obligations: string;
         details: string;
         candidates?: Array<{
@@ -79,7 +85,6 @@ const CardInformation = ({ route }: CardInformationProps) => {
 
   useEffect(() => {
     const checkCandidateStatus = () => {
-      return;
       // console.log('=== DEBUG CANDIDATE STATUS ===');
       // console.log('CardData:', cardData);
       // console.log('Candidates type:', typeof cardData?.candidates);
@@ -378,7 +383,6 @@ const CardInformation = ({ route }: CardInformationProps) => {
             }
             color={isCandidateApplied ? COLORS.dark : COLORS.primary}
             text={isCandidateApplied ? COLORS.primary : COLORS.dark}
-            className="rounded-lg w-4/5"
           />
         </View>
       </ScrollView>

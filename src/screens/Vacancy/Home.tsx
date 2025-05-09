@@ -73,7 +73,7 @@ export default function Vacancy() {
       { jobConected && jobConected.length > 0 &&
         <View className="px-4 mt-4">
           <TextInput
-            placeholder="Buscar vaga..."
+            placeholder="Buscar Vaga..."
             placeholderTextColor="#9CA3AF"
             className="p-3 border border-gray-300 rounded-lg text-gray-900"
             value={searchQuery}

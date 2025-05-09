@@ -78,7 +78,7 @@ const Card: React.FC<CardProps> = React.memo(
         superLikeOpacity.value = withTiming(0, { duration: 300 });
         isAnimating.value = false;
       } else {
-        translateY.value = withTiming(index * 8, { duration: 200 }); // Mover o card de baixo
+        translateY.value = withTiming(index * 9, { duration: 200 }); // Mover o card de baixo
         scale.value = withTiming(1 - index * 0.02, { duration: 200 });
       }
     }, [isTopCard, index]);
@@ -307,16 +307,24 @@ const Card: React.FC<CardProps> = React.memo(
     const buttonSize = 60;
 
     return (
-      <View style={{ width: "100%", height: "90%" }}>
+      <View
+        style={{
+          width: "100%",
+          height: "40%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <GestureDetector gesture={composedGestures}>
           <Animated.View
             style={[
               animatedStyle,
               {
                 width: "94%",
-                height: height * 0.9,
+                height: height * 0.6,
                 marginHorizontal: width * 0.03,
                 borderRadius: 24,
+                alignSelf: "center",
                 overflow: "hidden",
                 borderWidth: isTopCard ? 1 : 0,
                 borderColor: isTopCard ? "#D1D5DB" : "transparent",
@@ -331,7 +339,7 @@ const Card: React.FC<CardProps> = React.memo(
             <View
               // colors={["#FFFFFF", "#E5E7EB"]}
               style={{ flex: 1, borderRadius: 24 }}
-              className="bg-primary"
+              className="bg-white"
             >
               {/* Textos de feedback */}
               <Animated.Text
@@ -363,6 +371,7 @@ const Card: React.FC<CardProps> = React.memo(
               >
                 NOPE
               </Animated.Text>
+
               <Animated.Text
                 style={[
                   superLikeStyle,
@@ -382,20 +391,57 @@ const Card: React.FC<CardProps> = React.memo(
                 SUPER LIKE
               </Animated.Text>
 
+              <View className="px-3 my-2">
+                <View className="flex-row justify-between ">
+                  <Text
+                    className="font-bold text-xl"
+                    style={{
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {data.function}
+                  </Text>
+                  <View className="flex-row gap-1">
+                    {data.PCD === "1" && (
+                      <FontAwesome6
+                        style={{ marginRight: 3 }}
+                        name="wheelchair-move"
+                        size={25}
+                        color="black"
+                      />
+                    )}
+                    {data.DEI === "1" && (
+                      <MaterialIcons name="interests" size={28} color="black" />
+                    )}
+                  </View>
+                </View>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: "#4B5563",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {data.company?.company_name || "Empresa confidencial"}
+                </Text>
+              </View>
+
               {/* Imagem da vaga */}
-              {/* <Image
-              source={Logo}
-              resizeMode="cover"
-              style={{
-                width: "100%",
-                height: "45%",
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-              }}
-            /> */}
+              <View className="items-center justify-center p-0 m-0">
+                <Image
+                  source={Logo}
+                  resizeMode="cover"
+                  style={{
+                    width: "70%",
+                    height: "60%",
+                    borderTopLeftRadius: 24,
+                    borderTopRightRadius: 24,
+                  }}
+                />
+              </View>
 
               {/* Informações principais */}
-              <View style={{ padding: 24, gap: 16 }}>
+              <View className="px-5">
                 <View
                   style={{
                     flexDirection: "row",
@@ -403,8 +449,8 @@ const Card: React.FC<CardProps> = React.memo(
                     alignItems: "flex-start",
                   }}
                 >
-                  <View style={{ flex: 1, marginRight: 12 }}>
-                    <Text
+                  <View style={{ flex: 1 }}>
+                    {/* <Text
                       style={{
                         fontSize: 24,
                         textTransform: "capitalize",
@@ -412,8 +458,8 @@ const Card: React.FC<CardProps> = React.memo(
                       }}
                     >
                       {data.function}
-                    </Text>
-                    <Text
+                    </Text> */}
+                    {/* <Text
                       style={{
                         fontSize: 14,
                         color: "#4B5563",
@@ -421,106 +467,55 @@ const Card: React.FC<CardProps> = React.memo(
                       }}
                     >
                       {data.company?.company_name || "Empresa confidencial"}
-                    </Text>
+                    </Text> */}
                   </View>
-                  {data.PCD === "1" && (
-                    <FontAwesome6
-                      style={{marginRight:3}}
-                      name="wheelchair-move"
-                      size={25}
-                      color="black"
-                    />
-                  )}
-                  {data.DEI === "1" && (
-                    <MaterialIcons name="interests" size={28} color="black" />
-                  )}
+                  <View className="flex-row items-center gap-2"></View>
                 </View>
-                <View className="px-3 mt-3 gap-2">
+                <View>
                   {data.DEI === "1" && (
-                    <View className="flex-row items-center gap-2">
-                      <MaterialIcons name="interests" size={20} color="black" />
-                      <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
-                        Vaga Afirmativa
-                      </Text>
-                    </View>
+                    // <View className="flex-row items-center gap-2">
+                    //   {/* <MaterialIcons name="interests" size={20} color="black" /> */}
+                    //   <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
+                    //     Vaga Afirmativa
+                    //   </Text>
+                    // </View>
+                    <></>
                   )}
                   {data.PCD === "1" && (
-                    <View className="flex-row items-center gap-2">
-                      <FontAwesome6
-                        name="wheelchair-move"
-                        size={24}
-                        color="black"
-                      />
-                      <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
-                        Vaga PCD
-                      </Text>
-                    </View>
+                    // <View className="flex-row items-center gap-2">
+                    //   {/* <FontAwesome6
+                    //     name="wheelchair-move"
+                    //     size={24}
+                    //     color="black"
+                    //   /> */}
+                    //   <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
+                    //     Vaga PCD
+                    //   </Text>
+                    // </View>
+                    <></>
                   )}
                   <View className="flex-row items-center gap-2">
-                    <FontAwesome6
+                    {/* <FontAwesome6
                       name="map-location-dot"
                       size={20}
                       color="black"
-                    />
-                    <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
+                    /> */}
+                    <Text className="text-sm text-gray-500 font-normal">
                       {data.locality && `${data.locality}`}
                     </Text>
                   </View>
                   <View className="flex-row items-center gap-2">
-                    <FontAwesome6 name="money-bills" size={20} color="black" />
-                    <Text style={{ fontSize: 15, ...FONTS.fontMedium }}>
+                    {/* <FontAwesome6 name="money-bills" size={20} color="black" /> */}
+                    <Text className="font-medium text-lg">
                       {data.salary && Mask("amount", data.salary)}
                     </Text>
                   </View>
+
                   <View className="flex-row items-center gap-2">
-                    <FontAwesome5 name="clipboard" size={27} color="black" />
-                    <Text className="px-1" style={{ fontSize: 15, ...FONTS.fontMedium }}>
-                      {data.contract &&  data.contract}
-                    </Text>
-                  </View>
-                  <View className="flex-row items-center gap-2">
-                    <FontAwesome6 name="laptop" size={20} color="black" />
-                    <Text style={{ fontSize: 15, ...FONTS.fontMedium }}>
+                    {/* <FontAwesome6 name="laptop" size={20} color="black" /> */}
+                    <Text className="text-gray-500 font-normal">
                       {data.model && `${data.model}`}
                     </Text>
-                  </View>
-
-                  <View className="w-full items-center">
-                    <View className="flex-row flex-wrap justify-center gap-1">
-                      {data.skills &&
-                        JSON.parse(data.skills).map((skill: any) => (
-                          <View
-                            key={skill}
-                            className="bg-green-800 px-2 py-1 rounded-lg"
-                          >
-                            <Text
-                              className="text-center"
-                              style={{ ...FONTS.font, color: "white" }}
-                            >
-                              {skill}
-                            </Text>
-                          </View>
-                        ))}
-                    </View>
-                  </View>
-
-                  <View className="w-full items-center">
-                    <View className="flex-row flex-wrap justify-center gap-1">
-                      {data.benefits &&
-                        JSON.parse(data.benefits).map((skill: any) => (
-                          <View
-                            key={skill}
-                            className="bg-blue-900 px-2 py-1 rounded-lg"
-                          >
-                            <Text
-                              className="text-center"
-                              style={{ ...FONTS.font, color: "white" }}
-                            >
-                              {skill}
-                            </Text>
-                          </View>
-                        ))}
-                    </View>
                   </View>
                 </View>
 
@@ -528,10 +523,7 @@ const Card: React.FC<CardProps> = React.memo(
                 {data.salary ? `${Mask("amount", data.salary)} por mês` : "A combinar"}
               </Text> */}
 
-                <Text
-                  className="text-gray-500 mt-5"
-                  style={{ ...FONTS.fontLg }}
-                >
+                <Text className="text-gray-500 mt-3">
                   Publicado há {calculateDaysAgo(data.create_at)} dias
                 </Text>
               </View>
@@ -541,131 +533,133 @@ const Card: React.FC<CardProps> = React.memo(
 
         {/* Botões */}
         {isTopCard && (
-          <View
-            style={{
-              position: "absolute",
-              bottom: 32,
-              zIndex: 50,
-              flexDirection: "row",
-              justifyContent: "space-around",
-              alignItems: "center",
-              width: "100%",
-              paddingHorizontal: 24,
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => handleButtonPress("undo")}
-              style={{
-                width: buttonSize,
-                height: buttonSize,
-                borderRadius: buttonSize / 2,
-                backgroundColor: "#FFFFFF",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.2,
-                shadowRadius: 4,
-                elevation: 4,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              accessibilityLabel="Undo"
-            >
-              <MaterialIcons name="replay" size={32} color="#FFC107" />
-            </TouchableOpacity>
+          // <View
+          //   style={{
+          //     position: "absolute",
+          //     bottom: 32,
+          //     zIndex: 50,
+          //     flexDirection: "row",
+          //     justifyContent: "space-around",
+          //     alignItems: "center",
+          //     width: "100%",
+          //     paddingHorizontal: 24,
+          //   }}
+          // >
+          //   <TouchableOpacity
+          //     onPress={() => handleButtonPress("undo")}
+          //     style={{
+          //       width: buttonSize,
+          //       height: buttonSize,
+          //       borderRadius: buttonSize / 2,
+          //       backgroundColor: "#FFFFFF",
+          //       shadowColor: "#000",
+          //       shadowOffset: { width: 0, height: 2 },
+          //       shadowOpacity: 0.2,
+          //       shadowRadius: 4,
+          //       elevation: 4,
+          //       justifyContent: "center",
+          //       alignItems: "center",
+          //     }}
+          //     accessibilityLabel="Undo"
+          //   >
+          //     <MaterialIcons name="replay" size={32} color="#FFC107" />
+          //   </TouchableOpacity>
 
-            <Animated.View
-              style={[
-                nopeButtonStyle,
-                {
-                  width: buttonSize,
-                  height: buttonSize,
-                  borderRadius: buttonSize / 2,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 4,
-                  elevation: 4,
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => handleButtonPress("nope")}
-                accessibilityLabel="Nope"
-                style={{
-                  width: buttonSize,
-                  height: buttonSize,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <FontAwesome name="times" size={32} color="#FF5252" />
-              </TouchableOpacity>
-            </Animated.View>
+          //   <Animated.View
+          //     style={[
+          //       nopeButtonStyle,
+          //       {
+          //         width: buttonSize,
+          //         height: buttonSize,
+          //         borderRadius: buttonSize / 2,
+          //         shadowColor: "#000",
+          //         shadowOffset: { width: 0, height: 2 },
+          //         shadowOpacity: 0.2,
+          //         shadowRadius: 4,
+          //         elevation: 4,
+          //         justifyContent: "center",
+          //         alignItems: "center",
+          //       },
+          //     ]}
+          //   >
+          //     <TouchableOpacity
+          //       onPress={() => handleButtonPress("nope")}
+          //       accessibilityLabel="Nope"
+          //       style={{
+          //         width: buttonSize,
+          //         height: buttonSize,
+          //         justifyContent: "center",
+          //         alignItems: "center",
+          //       }}
+          //     >
+          //       <FontAwesome name="times" size={32} color="#FF5252" />
+          //     </TouchableOpacity>
+          //   </Animated.View>
 
-            <Animated.View
-              style={[
-                superLikeButtonStyle,
-                {
-                  width: buttonSize,
-                  height: buttonSize,
-                  borderRadius: buttonSize / 2,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 4,
-                  elevation: 4,
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => handleButtonPress("superLike")}
-                accessibilityLabel="Super Like"
-                style={{
-                  width: buttonSize,
-                  height: buttonSize,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <FontAwesome name="star" size={32} color="#5856D6" />
-              </TouchableOpacity>
-            </Animated.View>
+          //   <Animated.View
+          //     style={[
+          //       superLikeButtonStyle,
+          //       {
+          //         width: buttonSize,
+          //         height: buttonSize,
+          //         borderRadius: buttonSize / 2,
+          //         shadowColor: "#000",
+          //         shadowOffset: { width: 0, height: 2 },
+          //         shadowOpacity: 0.2,
+          //         shadowRadius: 4,
+          //         elevation: 4,
+          //         justifyContent: "center",
+          //         alignItems: "center",
+          //       },
+          //     ]}
+          //   >
+          //     <TouchableOpacity
+          //       onPress={() => handleButtonPress("superLike")}
+          //       accessibilityLabel="Super Like"
+          //       style={{
+          //         width: buttonSize,
+          //         height: buttonSize,
+          //         justifyContent: "center",
+          //         alignItems: "center",
+          //       }}
+          //     >
+          //       <FontAwesome name="star" size={32} color="#5856D6" />
+          //     </TouchableOpacity>
+          //   </Animated.View>
 
-            <Animated.View
-              style={[
-                likeButtonStyle,
-                {
-                  width: buttonSize,
-                  height: buttonSize,
-                  borderRadius: buttonSize / 2,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 4,
-                  elevation: 4,
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => handleButtonPress("like")}
-                accessibilityLabel="Like"
-                style={{
-                  width: buttonSize,
-                  height: buttonSize,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <FontAwesome name="heart" size={32} color="#4CAF50" />
-              </TouchableOpacity>
-            </Animated.View>
-          </View>
+          //   <Animated.View
+          //     style={[
+          //       likeButtonStyle,
+          //       {
+          //         width: buttonSize,
+          //         height: buttonSize,
+          //         borderRadius: buttonSize / 2,
+          //         shadowColor: "#000",
+          //         shadowOffset: { width: 0, height: 2 },
+          //         shadowOpacity: 0.2,
+          //         shadowRadius: 4,
+          //         elevation: 4,
+          //         justifyContent: "center",
+          //         alignItems: "center",
+          //       },
+          //     ]}
+          //   >
+          //     <TouchableOpacity
+          //       onPress={() => handleButtonPress("like")}
+          //       accessibilityLabel="Like"
+          //       style={{
+          //         width: buttonSize,
+          //         height: buttonSize,
+          //         justifyContent: "center",
+          //         alignItems: "center",
+          //       }}
+          //     >
+          //       <FontAwesome name="heart" size={32} color="#4CAF50" />
+          //     </TouchableOpacity>
+          //   </Animated.View>
+          // </View>
+
+          <></>
         )}
       </View>
     );
