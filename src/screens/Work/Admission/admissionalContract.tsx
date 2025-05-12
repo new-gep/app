@@ -47,8 +47,7 @@ const AdmissionalContract = ({
         const response = await CheckDocumentAdmissional(jobConected[0].id);
         const obligations = response.date.obligation;
         const dynamics = response.date.dynamic.document;
-        console.log('ID: ',jobConected[0].id)
-        console.log('dynamics: ',dynamics);
+
         // Remover campo medical das obrigações
         delete obligations.medical;
 

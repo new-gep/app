@@ -50,13 +50,12 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
   return (
     <View className="space-y-3">
       {/* Responsabilidade */}
-
       <View>
         <View className="flex-row items-center space-x-2 mb-1 px-1">
           {/* <FontAwesome name="exclamation" size={24} color="black" /> */}
           <Text style={[FONTS.fontBold]}>Responsabilidade</Text>
         </View>
-        <View className="space-y-2 bg-primary/50 p-2 rounded-lg">
+        <View className="space-y-2 p-2 rounded-lg">
           <Text style={[FONTS.font, { color: colors.text }]}>
             {props.information.responsibility || "Não informado"}
           </Text>
@@ -69,7 +68,7 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
           {/* <FontAwesome name="check" size={24} color="black" /> */}
           <Text style={[FONTS.fontBold]}>Requisitos</Text>
         </View>
-        <View className="space-y-2 bg-primary/50 p-2 rounded-lg">
+        <View className="space-y-2  p-2 rounded-lg">
           <Text style={[FONTS.font, { color: colors.text }]}>
             {props.information.requirements || "Não informado"}
           </Text>
@@ -86,10 +85,10 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
           <View className="flex-row flex-wrap gap-1">
             {props.information.skills &&
               JSON.parse(props.information.skills).map((skill: any) => (
-                <View key={skill} className="bg-green-900 px-2 py-1 rounded-lg">
+                <View key={skill} className="px-2 py-1 rounded-lg border">
                   <Text
                     className="text-center"
-                    style={{ ...FONTS.font, color: "white" }}
+                    style={{ ...FONTS.font, color: "black" }}
                   >
                     {skill}
                   </Text>
@@ -100,7 +99,7 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
       </View>
 
       {/* Benefícios */}
-      <View>
+      <View className="mb-8">
         <View className="flex-row space-x-2 mb-1 mt-2">
           {/* <FontAwesome5 name="gift" size={24} color="black" /> */}
           <Text style={[FONTS.fontBold]}>Benefícios</Text>
@@ -109,10 +108,10 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
           <View className="flex-row flex-wrap  gap-1">
             {props.information.benefits &&
               JSON.parse(props.information.benefits).map((skill: any) => (
-                <View key={skill} className="bg-blue-900 px-2 py-1 rounded-lg">
+                <View key={skill} className="px-2 py-1 rounded-lg border">
                   <Text
                     className="text-center"
-                    style={{ ...FONTS.font, color: "white" }}
+                    style={{ ...FONTS.font, color: "black" }}
                   >
                     {skill}
                   </Text>
@@ -122,26 +121,6 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
         </View>
       </View>
 
-      {/* Empresa */}
-      {/* <View>
-                <Text className="w-40 text-lg font-bold text-primary mb-3 bg-dark rounded-xl p-4">
-                    Empresa
-                </Text>
-                <View className="space-y-2  items-start justify-start">
-                    <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Empresa:</Text> {props.company.company_name || "Não informado"}
-                    </Text>
-                    <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Telefone:</Text> {props.company.phone || "Não informado"}
-                    </Text>
-                    <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Email:</Text> {props.company.email || "Não informado"}
-                    </Text>
-                    <Text style={[FONTS.fontXs, { color: colors.text }]}>
-                        <Text style={FONTS.fontMedium}>Localização:</Text> {`${props.company.street || ""}, ${props.company.number || ""} - ${props.company.district || ""}, ${props.company.city || ""} - ${props.company.uf || ""}`}
-                    </Text>
-                </View>
-            </View> */}
     </View>
   );
 };

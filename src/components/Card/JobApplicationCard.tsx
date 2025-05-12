@@ -65,13 +65,13 @@ const JobApplicationCard = ({ job, company }) => {
       }}
       style={[styles.card, 'shadow-md']}
     >
-      <View className="p-4 bg-primary/30">
+      <View className="p-4 ">
         <View className="flex-row justify-between items-center">
           <Text className=" capitalize" style={{...FONTS.fontBold}}>{job.function}</Text>
           <TouchableOpacity onPress={toggleFavorite}>
             <HeartIcon 
               size={24} 
-              className={isFavorite ? 'text-red-500' : 'text-gray-400'} 
+              className={isFavorite ? 'text-primary' : 'text-gray-400'} 
               fill={isFavorite ? 'currentColor' : 'none'} 
             />
           </TouchableOpacity>

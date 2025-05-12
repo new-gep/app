@@ -55,13 +55,13 @@ type CardInformationProps = {
         };
         workload: string;
         benefics: string;
-        DEI:string;
+        DEI: string;
         model: string;
         skills: any;
         benefits: any;
         locality: string;
         contract: string;
-        
+
         obligations: string;
         details: string;
         candidates?: Array<{
@@ -221,7 +221,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
 
       <ScrollView className="flex-1 p-4">
         {/* Cabeçalho do Card */}
-        <View className="mb-8">
+        <View className="mb-5">
           <Text
             className="text-dark capitalize"
             style={{ ...FONTS.fontBold, fontSize: 25 }}
@@ -232,121 +232,81 @@ const CardInformation = ({ route }: CardInformationProps) => {
             {cardData.company?.company_name || "Empresa confidencial"}
           </Text>
 
-          <View className="mt-5 gap-2">
-            {cardData.DEI === "1" && (
-              <View className="flex-row items-center gap-2">
-                <View className="bg-dark p-2 rounded-full">
-                  <MaterialIcons name="interests" size={20} color="#fde047" />
+          <View>
+            <View className="flex-row items-center space-x-2 mb-1">
+              {/* <FontAwesome name="check" size={24} color="black" /> */}
+              <Text className="px-1" style={[FONTS.fontBold]}>
+                Informações
+              </Text>
+            </View>
+            <View className=" p-2 rounded-lg px-3">
+              {cardData.DEI === "1" && (
+                <View className="flex-row items-center gap-2">
+                  {/* <View className="bg-dark p-2 rounded-full">
+                    <MaterialIcons name="interests" size={20} color="#fde047" />
+                  </View> */}
+                  <Text style={[FONTS.font, { color: COLORS.text }]}>
+                    Vaga Afirmativa
+                  </Text>
                 </View>
-                <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
-                  Vaga Afirmativa
-                </Text>
-              </View>
-            )}
-            {cardData.PCD === "1" && (
+              )}
+
+              {cardData.PCD === "1" && (
+                <View className="flex-row items-center gap-2">
+                  {/* <View className="bg-dark p-2 rounded-full">
+                    <FontAwesome6
+                      name="wheelchair-move"
+                      size={20}
+                      color="#fde047"
+                    />
+                  </View> */}
+                  <Text style={[FONTS.font, { color: COLORS.text }]}>
+                    Vaga PCD
+                  </Text>
+                </View>
+              )}
+
               <View className="flex-row items-center gap-2">
-                <View className="bg-dark p-2 rounded-full">
+                {/* <View className="bg-dark p-2 rounded-full">
                   <FontAwesome6
-                    name="wheelchair-move"
+                    name="map-location-dot"
                     size={20}
                     color="#fde047"
                   />
-                </View>
-                <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
-                  Vaga PCD
+                </View> */}
+                <Text style={[FONTS.font, { color: COLORS.text }]}>
+                  {cardData.locality && `${cardData.locality}`}
                 </Text>
               </View>
-            )}
-            <View className="flex-row items-center gap-2">
-              <View className="bg-dark p-2 rounded-full">
-                <FontAwesome6
-                  name="map-location-dot"
-                  size={20}
-                  color="#fde047"
-                />
+
+              <View className="flex-row items-center gap-2">
+                {/* <View className="bg-dark p-2 rounded-full">
+                  <FontAwesome6 name="money-bills" size={20} color="#fde047" />
+                </View> */}
+                <Text style={[FONTS.font, { color: COLORS.text }]}>
+                  {cardData.salary && Mask("amount", cardData.salary)}
+                </Text>
               </View>
-              <Text style={{ fontSize: 14, ...FONTS.fontMedium }}>
-                {cardData.locality && `${cardData.locality}`}
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-              <View className="bg-dark p-2 rounded-full">
-                <FontAwesome6 name="money-bills" size={20} color="#fde047" />
+
+              <View className="flex-row items-center gap-2">
+                {/* <View className="bg-dark p-2 rounded-full">
+                  <FontAwesome6 name="laptop" size={20} color="#fde047" />
+                </View> */}
+                <Text style={[FONTS.font, { color: COLORS.text }]}>
+                  {cardData.model && `${cardData.model}`}
+                </Text>
               </View>
-              <Text style={{ fontSize: 15, ...FONTS.fontMedium }}>
-                {cardData.salary && Mask("amount", cardData.salary)}
-              </Text>
-            </View>
 
-            <View className="flex-row items-center gap-2">
-              <View className="bg-dark p-2 rounded-full">
-                <FontAwesome6 name="laptop" size={20} color="#fde047" />
+              <View className="flex-row items-center gap-2">
+                {/* <View className="bg-dark p-2 px-3 rounded-full">
+                  <FontAwesome5 name="clipboard" size={24} color="#fde047" />
+                </View> */}
+                <Text style={[FONTS.font, { color: COLORS.text }]}>
+                  {cardData.contract && `${cardData.contract}`}
+                </Text>
               </View>
-              <Text style={{ fontSize: 15, ...FONTS.fontMedium }}>
-                {cardData.model && `${cardData.model}`}
-              </Text>
             </View>
-
-            <View className="flex-row items-center gap-2">
-              <View className="bg-dark p-2 px-3 rounded-full">
-                <FontAwesome5 name="clipboard" size={24} color="#fde047" />
-              </View>
-              <Text style={{ fontSize: 15, ...FONTS.fontMedium }}>
-                {cardData.contract && `${cardData.contract}`}
-              </Text>
-            </View>
-
-            
-
-            {/* <View className="w-full items-center">
-                    <View className="flex-row flex-wrap justify-center gap-1">
-                      {cardData.skills &&
-                        JSON.parse(cardData.skills).map((skill: any) => (
-                          <View
-                            key={skill}
-                            className="bg-green-800 px-2 py-1 rounded-lg"
-                          >
-                            <Text
-                              className="text-center"
-                              style={{ ...FONTS.font, color: "white" }}
-                            >
-                              {skill}
-                            </Text>
-                          </View>
-                        ))}
-                    </View>
-                  </View>
-
-                  <View className="w-full items-center">
-                    <View className="flex-row flex-wrap justify-center gap-1">
-                      {cardData.benefits &&
-                        JSON.parse(cardData.benefits).map((skill: any) => (
-                          <View
-                            key={skill}
-                            className="bg-blue-900 px-2 py-1 rounded-lg"
-                          >
-                            <Text
-                              className="text-center"
-                              style={{ ...FONTS.font, color: "white" }}
-                            >
-                              {skill}
-                            </Text>
-                          </View>
-                        ))}
-                    </View>
-                  </View> */}
           </View>
-          {/*           
-          <Text className="text-sm text-gray-600 mt-1">
-            {cardData.company?.city
-              ? `${cardData.company.city}-${cardData.company.uf}`
-              : "Localização não informada"}
-          </Text>
-          {cardData.PCD === "1" && (
-            <View className="mt-2">
-              <FontAwesome name="wheelchair-alt" size={24} color="black" />
-            </View>
-          )} */}
         </View>
 
         <View
@@ -375,17 +335,65 @@ const CardInformation = ({ route }: CardInformationProps) => {
         </View>
 
         {/* Movendo o botão para dentro do ScrollView com margem adequada */}
-        <View className="mt-8 mb-6 flex items-center">
-          <Button
-            title={isCandidateApplied ? "Remover Candidatura" : "Candidatar-se"}
+        {/* <View
+          style={{
+            position: "absolute", // <- ESSENCIAL
+            bottom: 20,
+            right: 20,
+            zIndex: 10,
+          }}
+        >
+          <TouchableOpacity
             onPress={
               isCandidateApplied ? handleRemoveApplication : handleApplyToJob
             }
-            color={isCandidateApplied ? COLORS.dark : COLORS.primary}
-            text={isCandidateApplied ? COLORS.primary : COLORS.dark}
-          />
-        </View>
+            style={{
+              backgroundColor: isCandidateApplied
+                ? COLORS.dark
+                : COLORS.primary,
+              width: 60,
+              height: 60,
+              borderRadius: 30,
+              justifyContent: "center",
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+          >
+            {isCandidateApplied ? (
+              <FontAwesome name="minus" size={24} color={COLORS.primary} />
+            ) : (
+              <FontAwesome name="plus" size={24} color={COLORS.dark} />
+            )}
+          </TouchableOpacity>
+        </View> */}
       </ScrollView>
+      <View className="absolute z-10 right-5 bottom-5">
+        <TouchableOpacity
+          onPress={
+            isCandidateApplied ? handleRemoveApplication : handleApplyToJob
+          }
+          className={`w-[60px] h-[60px] rounded-full justify-center items-center ${
+            isCandidateApplied ? 'bg-red-600' : 'bg-success'
+          } opacity-80`}
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          {isCandidateApplied ? (
+            <FontAwesome name="minus" size={30} color={COLORS.white} />
+          ) : (
+            <FontAwesome name="plus" size={30} color={COLORS.white} />
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

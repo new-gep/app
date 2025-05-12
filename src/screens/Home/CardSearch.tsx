@@ -12,7 +12,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import SearchJob from "~/src/hooks/get/job/search";
 
 interface CardSearchProps {
-  setCards: (cards: any[]) => void;
+  setCards: any;
 }
 
 const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
