@@ -75,11 +75,12 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                 const resolvedPath = await path;
                 const resolvedType = await typeDocument; 
                 // console.log(documentName)
+
                 setSendPicture(sendDocument)
                 if (resolvedPath && resolvedType) {
                     setTypePicture(resolvedType)
                     setPathPictureSide(resolvedPath)
-                    
+
                     if (Array.isArray(resolvedPath) && resolvedPath.length > 1) {
                         const pathImage = resolvedPath[0];
                         setPathPicture(pathImage);
@@ -168,7 +169,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                                     :
                                     typePicture === 'pdf' ?
                                         <>       
-                                             <Pdf
+                                            <Pdf
                                                 trustAllCerts={false}
                                                 source={{ uri: pathPicture, cache: true }}
                                                 onLoadComplete={(numberOfPages,filePath) => {
@@ -178,7 +179,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                                                     // console.log(`Current page: ${page}`);
                                                 }}
                                                 onError={(error) => {
-                                                    // console.log(error);
+                                                    // console.log('erro: ',error);
                                                 }}
                                                 onPressLink={(uri) => {
                                                     // console.log(`Link pressed: ${uri}`);
