@@ -10,6 +10,9 @@ import {
   Image,
   Dimensions,
   TextInput,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Card from "./Card";
 import GetAllJob from "../../hooks/get/job/all";
@@ -28,12 +31,14 @@ import Mask from "../../function/mask";
 import HeaderHome from "../../layout/HeaderHome";
 import Apply from "~/src/hooks/rabbit/job/Apply";
 import CardSearch from "./CardSearch";
+
 const Home = () => {
   const [cards, setCards] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [previousCards, setPreviousCards] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { collaborator, fetchCollaborator } = useCollaborator();
   const { validateCollaborator, missingData } = useCollaboratorContext();
   const navigation = useNavigation<NavigationProp<any>>();
@@ -42,19 +47,16 @@ const Home = () => {
     if (missingData) return;
 
     try {
-      // 1. Buscar detalhes da vaga
       const jobResponse = await FindOneJob(id);
       if (jobResponse.status !== 200) {
         throw new Error("Erro ao buscar detalhes da vaga");
       }
 
-      // 2. Simplificar manipulação de candidatos
       const currentCandidates =
         jobResponse.job.candidates?.map(
           ({ picture, name, ...rest }: Candidate) => rest
         ) || [];
 
-      // 3. Verificar se já aplicou
       const alreadyApplied = currentCandidates.some(
         (c: any) => c.cpf === collaborator?.CPF
       );
@@ -64,7 +66,6 @@ const Home = () => {
         return;
       }
 
-      // 4. Criar novo candidato
       const newCandidate = {
         cpf: collaborator?.CPF,
         step: 0,
@@ -73,7 +74,6 @@ const Home = () => {
         observation: null,
       };
 
-      // 5. Atualizar lista de candidatos
       let updatedCandidates = [...currentCandidates, newCandidate];
 
       const updateResponse = await UpdateJobDefault(id, {
@@ -84,7 +84,6 @@ const Home = () => {
         throw new Error("Erro ao atualizar vaga");
       }
 
-      // 7. Atualizar UI após sucesso
       updateCardState();
       console.time("updateCardState");
     } catch (error: any) {
@@ -95,7 +94,6 @@ const Home = () => {
     }
   };
 
-  // Função auxiliar para atualizar estado dos cards
   const updateCardState = () => {
     setCards((prevCards) => {
       if (prevCards.length === 0) return prevCards;
@@ -103,7 +101,7 @@ const Home = () => {
       const [firstCard, ...rest] = prevCards;
       setPreviousCards((prev) => [...prev, firstCard]);
 
-      return rest.length > 0 ? rest : prevCards; // se não tiver mais cartas, mantém as atuais
+      return rest.length > 0 ? rest : prevCards;
     });
   };
 
@@ -118,17 +116,10 @@ const Home = () => {
     });
   };
 
-  // const handleSuperLike = () => {
-  //   setPreviousCards((prev) => [...prev, cards[0]]);
-  //   setCards((prevCards) => prevCards.slice(1));
-  //   showPopupMessage("Super like enviado!");
-  // };
-
   const handleUndo = () => {
     if (previousCards.length > 0) {
       const lastCard = previousCards[previousCards.length - 1];
 
-      // Verifica se o card já está na lista atual
       if (!cards.some((card: { id: any }) => card.id === lastCard.id)) {
         setPreviousCards((prev) => prev.slice(0, -1));
         setCards((prevCards) => [lastCard, ...prevCards]);
@@ -171,7 +162,7 @@ const Home = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      await fetchJobs();
+      // await fetchJobs();
       await fetchCollaborator();
       validateCollaborator();
     };
@@ -188,15 +179,25 @@ const Home = () => {
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      () => {
-        return true; // Retorna true para impedir o comportamento padrão de voltar
-      }
+      () => true
     );
 
-    return () => backHandler.remove(); // Remove o listener quando o componente for desmontado
+    return () => backHandler.remove();
   }, []);
 
-  
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setIsKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setIsKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -206,43 +207,48 @@ const Home = () => {
         rightIcon4={"home"}
         collaborator={collaborator}
       />
-      <View className="absolute w-full z-50" style={{ top: "10%" }}>
-        <CardSearch/>
+      <View className="absolute w-full z-50" style={{ top: isKeyboardVisible ? "18%" : "10%" }}>
+        <CardSearch setCards={setCards} />
       </View>
-      <View className="flex-1 justify-center ">
+      <View className="flex-1 justify-center">
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color={COLORS.primary} />
           </View>
         ) : Array.isArray(cards) && cards.length > 0 ? (
           <>
-            <View className="w-full">
-              {cards.slice(0, 4).map((card: any, index) => (
-                <View
-                  key={card.id} // Alterar esta linha
-                  className="absolute w-full h-full items-center p-2 mt-2"
-                  style={{
-                    top: 2 * index,
-                    justifyContent: "center",
-                    zIndex: cards.length - index,
-                  }}
-                >
-                  <Card
-                    data={card}
-                    onSwipeLeft={handleSwipeLeft} // Swipe para a esquerda (dislike)
-                    onSwipeRight={handleSwipeRight} // Swipe para a direita (like e mostra popup)
-                    onSuperLike={handleSwipeRight}
-                    isTopCard={index === 0}
-                    zIndex={cards.length - index}
-                    index={index}
-                    handleUndo={handleUndo}
-                  />
+            {!isKeyboardVisible && (
+              <View className="w-full">
+                <View className="w-full">
+                  {cards.slice(0, 4).map((card: any, index) => (
+                    <View
+                      key={card.id}
+                      className="absolute w-full h-full items-center p-2 mt-2"
+                      style={{
+                        top: 2 * index,
+                        justifyContent: "center",
+                        zIndex: cards.length - index,
+                      }}
+                    >
+                      <Card
+                        data={card}
+                        onSwipeLeft={handleSwipeLeft}
+                        onSwipeRight={handleSwipeRight}
+                        onSuperLike={handleSwipeRight}
+                        isTopCard={index === 0}
+                        zIndex={cards.length - index}
+                        index={index}
+                        handleUndo={handleUndo}
+                      />
+                    </View>
+                  ))}
                 </View>
-              ))}
-            </View>
+              </View>
+            )}
           </>
         ) : (
-          <View className="mt-5 flex justify-between items-center h-full">
+          !isKeyboardVisible && (
+          <View className="mt-10 flex justify-between items-center h-full">
             <View
               style={{
                 backgroundColor: "white",
@@ -259,12 +265,11 @@ const Home = () => {
                   marginTop: 90,
                 }}
               >
-                Sem mais vagas no momento
+                Não encontramos sua vaga
               </Text>
               <Text className="text-center text-sm text-gray-400 font-normal">
                 Não há mais vagas no momento, volte mais tarde!
               </Text>
-
               <Image
                 source={require("../../assets/images/brand/Waiting.png")}
                 style={{
@@ -274,11 +279,9 @@ const Home = () => {
                 resizeMode="contain"
               />
             </View>
-          </View>
+          </View>)
         )}
       </View>
-
-      {/* Modal de Popup */}
       <Modal
         transparent
         animationType="fade"

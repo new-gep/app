@@ -193,7 +193,8 @@ const Card: React.FC<CardProps> = React.memo(
         { rotateZ: `${rotate.value}deg` },
       ],
       zIndex: zIndex,
-      position: "absolute",
+      position: "relative", // Alterado de "absolute" para "relative"
+      marginTop: index * 10, // Ajuste dinâmico para evitar sobreposição
     }));
 
     const likeStyle = useAnimatedStyle(() => ({
