@@ -27,8 +27,15 @@ type ProfileScreenProps = StackScreenProps<RootStackParamList, "Profile">;
 
 const getZodiacSign = (date: string | null | undefined): { sign: string, icon: any } => {
   if (!date) return { sign: "Cadastro incompleto", icon: IMAGES.help };
-  
-  const [day, month] = date.split("-").map(Number);
+
+  const [dayStr, monthStr] = date.split("/");
+  const day = Number(dayStr);
+  const month = Number(monthStr);
+
+  if (isNaN(day) || isNaN(month)) {
+    return { sign: "Data inválida", icon: IMAGES.help };
+  }
+
   if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
     return { sign: "Áries", icon: require("../../assets/images/zoadicSign/aries.png") };
   if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
@@ -51,9 +58,10 @@ const getZodiacSign = (date: string | null | undefined): { sign: string, icon: a
     return { sign: "Capricórnio", icon: require("../../assets/images/zoadicSign/capricorn.png") };
   if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
     return { sign: "Aquário", icon: require("../../assets/images/zoadicSign/aquarius.png") };
-  
+
   return { sign: "Peixes", icon: require("../../assets/images/zoadicSign/Pisces.png") };
 };
+
 
 const Profile = ({ navigation }: ProfileScreenProps) => {
   const theme = useTheme();

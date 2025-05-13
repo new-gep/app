@@ -502,7 +502,7 @@ const Card: React.FC<CardProps> = React.memo(
                       color="black"
                     /> */}
                     <Text className="text-sm text-gray-500 font-normal">
-                      {data.locality && `${data.locality}`}
+                      {data.locality ? `${data.locality}` : "Localidade não informada"}
                     </Text>
                   </View>
                   <View className="flex-row items-center gap-2">
@@ -515,7 +515,7 @@ const Card: React.FC<CardProps> = React.memo(
                   <View className="flex-row items-center gap-2">
                     {/* <FontAwesome6 name="laptop" size={20} color="black" /> */}
                     <Text className="text-gray-500 font-normal">
-                      {data.model && `${data.model}`}
+                      {data.model ? `${data.model}` : "Modelo não informado"}
                     </Text>
                   </View>
                 </View>

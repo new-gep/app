@@ -81,9 +81,9 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
           {/* <FontAwesome name="star" size={24} color="black" /> */}
           <Text style={[FONTS.fontBold]}>Competência</Text>
         </View>
-        <View className="w-full items-center">
+        <View className="w-full ">
           <View className="flex-row flex-wrap gap-1">
-            {props.information.skills &&
+            {props.information.skills ?
               JSON.parse(props.information.skills).map((skill: any) => (
                 <View key={skill} className="px-2 py-1 rounded-lg border">
                   <Text
@@ -93,7 +93,10 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
                     {skill}
                   </Text>
                 </View>
-              ))}
+              ))
+              :
+              <Text>Não informado</Text>
+            }
           </View>
         </View>
       </View>
@@ -106,7 +109,7 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
         </View>
         <View className="w-full">
           <View className="flex-row flex-wrap  gap-1">
-            {props.information.benefits &&
+            {props.information.benefits ?
               JSON.parse(props.information.benefits).map((skill: any) => (
                 <View key={skill} className="px-2 py-1 rounded-lg border">
                   <Text
@@ -116,7 +119,10 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
                     {skill}
                   </Text>
                 </View>
-              ))}
+              ))
+              :
+              <Text>Não informado</Text>
+            }
           </View>
         </View>
       </View>

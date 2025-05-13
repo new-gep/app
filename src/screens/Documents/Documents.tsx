@@ -44,6 +44,10 @@ const Documents = () => {
   const Picture = async () => {
     try {
       const response = await FindPicture(collaborator.CPF);
+      if(response.status == 404){
+        setError(true);
+        return;
+      }
       if (response.status != 500) {
         setError(false);
         // const picturesFromAPI = response.pictures;
@@ -58,7 +62,6 @@ const Documents = () => {
               );
             })
           : [];
-        // console.log(picturesFromAPI)
 
         let tempPictureCard: { [key: string]: any } = {};
 
