@@ -159,16 +159,18 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
   const profilecartData = [
     {
       id: "1",
-      title: "Ponto Digital\nRH",
-      subtitle: "Gestão de Ponto",
+      go: "CV",
+      title: "CV",
+      subtitle: "Currículo",
       image: IMAGES.unique0,
     },
-    {
-      id: "2",
-      title: "Holerite Digital\nRH",
-      subtitle: "Gestão de Holerite",
-      image: IMAGES.unique1,
-    },
+    // {
+    //   id: "2",
+    //   go: "PayStub",
+    //   title: "Holerite Digital\nRH",
+    //   subtitle: "Gestão de Holerite",
+    //   image: IMAGES.unique1,
+    // },
   ];
 
   const getPicture = async () => {
@@ -365,13 +367,9 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                     return (
                       <TouchableOpacity
                         activeOpacity={0.8}
-                        // onPress={() => {
-                        //   if (data.id === "1") {
-                        //     navigation.navigate("Point");
-                        //   } else if (data.id === "2") {
-                        //     navigation.navigate("PayStub");
-                        //   }
-                        // }}
+                        onPress={() => {
+                          navigation.navigate(data.go);
+                        }}
                         key={index}
                         style={[
                           styles.arrivaldata,

@@ -88,6 +88,7 @@ export type RootStackParamList = {
     Absence: undefined;
     Vacancy: undefined;
     Dossie : undefined;
+    CV : undefined;
     HomeWork:{
       jobConected?:any
       CPF?:any

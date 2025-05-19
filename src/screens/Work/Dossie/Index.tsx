@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Dimensions,
+  Image,
+} from "react-native";
 import Header from "../../../layout/Header";
 import { GlobalStyleSheet } from "~/src/constants/StyleSheet";
 import { COLORS, FONTS } from "~/src/constants/theme";
@@ -8,10 +16,11 @@ import useCollaborator from "~/src/function/fetchCollaborator";
 import Cardstyle4 from "~/src/components/Card/Cardstyle4";
 
 export default function Dossie() {
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState("all");
   const [allDocumentAdmission, setAllDocumentAdmission] = useState<any>(null);
   const [allDocumentDismission, setAllDocumentDismission] = useState<any>(null);
-  const [allDocumentCollaborator, setAllDocumentCollaborator] = useState<any>(null);
+  const [allDocumentCollaborator, setAllDocumentCollaborator] =
+    useState<any>(null);
   const [isLoading, setIsLoading] = useState(true); // Estado para o spinner
   const { collaborator } = useCollaborator();
 
@@ -46,6 +55,7 @@ export default function Dossie() {
       return;
     }
     setAllDocumentAdmission(response.admissionFiles);
+    console.log("dismisall ", response.dismissal);
     setAllDocumentDismission(response.dismissal);
     setAllDocumentCollaborator(response.document.files);
     setIsLoading(false); // Desativa o spinner após carregar os dados
@@ -85,7 +95,8 @@ export default function Dossie() {
               alignItems: "center",
               height: 47,
               width: "32%",
-              backgroundColor: activeFilter === "all" ? COLORS.primary : COLORS.title,
+              backgroundColor:
+                activeFilter === "all" ? COLORS.primary : COLORS.title,
               borderRadius: 50,
             }}
           >
@@ -109,7 +120,8 @@ export default function Dossie() {
               alignItems: "center",
               height: 47,
               width: "32%",
-              backgroundColor: activeFilter === "ongoing" ? COLORS.primary : COLORS.title,
+              backgroundColor:
+                activeFilter === "ongoing" ? COLORS.primary : COLORS.title,
               borderRadius: 50,
             }}
           >
@@ -133,7 +145,8 @@ export default function Dossie() {
               alignItems: "center",
               height: 47,
               width: "32%",
-              backgroundColor: activeFilter === "completed" ? COLORS.primary : COLORS.title,
+              backgroundColor:
+                activeFilter === "completed" ? COLORS.primary : COLORS.title,
               borderRadius: 50,
             }}
           >
@@ -142,7 +155,8 @@ export default function Dossie() {
                 FONTS.fontRegular,
                 {
                   fontSize: 14,
-                  color: activeFilter === "completed" ? COLORS.dark : COLORS.card,
+                  color:
+                    activeFilter === "completed" ? COLORS.dark : COLORS.card,
                 },
               ]}
             >
@@ -152,7 +166,9 @@ export default function Dossie() {
         </View>
       </View>
       {isLoading ? (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
       ) : (
@@ -163,9 +179,14 @@ export default function Dossie() {
                 {allDocumentCollaborator &&
                   allDocumentCollaborator.length > 0 &&
                   allDocumentCollaborator.map((item: any) => (
-                    <View key={item.document} className="p-4 border-b border-gray-200">
+                    <View
+                      key={item.document}
+                      className="p-4 border-b border-gray-200"
+                    >
                       <Cardstyle4
-                        documentName={translateDocumentName(item.document.toLowerCase())}
+                        documentName={translateDocumentName(
+                          item.document.toLowerCase()
+                        )}
                         statusDocument={item.status}
                         sendDocument={false}
                         twoPicture={item.type}
@@ -180,9 +201,12 @@ export default function Dossie() {
               <View style={{ paddingBottom: "17%" }}>
                 {allDocumentAdmission &&
                   allDocumentAdmission.map((item: any) => (
-                    <View key={item.document} className="p-4 border-b border-gray-200">
+                    <View
+                      key={item.document}
+                      className="p-4 border-b border-gray-200"
+                    >
                       <Cardstyle4
-                        documentName={translateDocumentName(item.document.toLowerCase())}
+                        documentName={formatDynamicName(item.document)}
                         statusDocument={item.status}
                         sendDocument={false}
                         twoPicture={item.twoPicture}
@@ -195,9 +219,12 @@ export default function Dossie() {
             )}
             {activeFilter === "completed" && (
               <View style={{ paddingBottom: "17%" }}>
-                {allDocumentDismission &&
+                {allDocumentDismission && allDocumentDismission.length > 0 ? (
                   allDocumentDismission.map((item: any) => (
-                    <View key={item.document} className="p-4 border-b border-gray-200">
+                    <View
+                      key={item.document}
+                      className="p-4 border-b border-gray-200"
+                    >
                       <Cardstyle4
                         documentName={formatDynamicName(item.document)}
                         statusDocument={item.status}
@@ -207,7 +234,41 @@ export default function Dossie() {
                         typeDocument={item.contentType}
                       />
                     </View>
-                  ))}
+                  ))
+                ) : (
+                  <View className="flex justify-between items-center h-full">
+                    <View
+                      style={{
+                        backgroundColor: "white",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          ...FONTS.fontSemiBold,
+                          fontSize: 16,
+                          color: COLORS.title,
+                          marginBottom: 5,
+                          marginTop: 90,
+                        }}
+                      >
+                        Nada por aqui!
+                      </Text>
+                      <Text className="text-center text-sm text-gray-400 font-normal">
+                        Você ainda não possui documentos de demissão.
+                      </Text>
+                      <Image
+                        source={require("../../../assets/images/brand/WaitingExam.png")}
+                        style={{
+                          width: Dimensions.get("window").width * 0.8,
+                          height: Dimensions.get("window").height * 0.5,
+                        }}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  </View>
+                )}
               </View>
             )}
           </View>

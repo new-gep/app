@@ -63,7 +63,7 @@ const Card: React.FC<CardProps> = React.memo(
     const scale = useSharedValue(1 - index * 0.02);
     const likeOpacity = useSharedValue(0);
     const nopeOpacity = useSharedValue(0);
-    const superLikeOpacity = useSharedValue(0);
+    // const superLikeOpacity = useSharedValue(0);
     const isAnimating = useSharedValue(false);
     const navigation = useNavigation();
 
@@ -75,7 +75,7 @@ const Card: React.FC<CardProps> = React.memo(
         scale.value = withTiming(1, { duration: 300 });
         likeOpacity.value = withTiming(0, { duration: 300 });
         nopeOpacity.value = withTiming(0, { duration: 300 });
-        superLikeOpacity.value = withTiming(0, { duration: 300 });
+        // superLikeOpacity.value = withTiming(0, { duration: 300 });
         isAnimating.value = false;
       } else {
         translateY.value = withTiming(index * 9, { duration: 200 }); // Mover o card de baixo
@@ -105,11 +105,11 @@ const Card: React.FC<CardProps> = React.memo(
           [0, -SWIPE_THRESHOLD_X],
           [0, 1]
         );
-        superLikeOpacity.value = interpolate(
-          translationY,
-          [0, -SWIPE_THRESHOLD_Y],
-          [0, 1]
-        );
+        // superLikeOpacity.value = interpolate(
+        //   translationY,
+        //   [0, -SWIPE_THRESHOLD_Y],
+        //   [0, 1]
+        // );
       })
       .onEnd(({ translationX, translationY, velocityX, velocityY }) => {
         if (isAnimating.value) return;
@@ -133,17 +133,19 @@ const Card: React.FC<CardProps> = React.memo(
             }
           );
           translateY.value = withSpring(0, { damping: 30, stiffness: 180 });
-        } else if (translationY < -SWIPE_THRESHOLD_Y || velocityY < -600) {
-          translateY.value = withSpring(
-            -height * 2,
-            { damping: 30, stiffness: 180, velocity: velocityY },
-            () => {
-              runOnJS(onSuperLike)(data.id);
-              isAnimating.value = false;
-            }
-          );
-          translateX.value = withSpring(0, { damping: 30, stiffness: 180 });
-        } else {
+        } 
+        // else if (translationY < -SWIPE_THRESHOLD_Y || velocityY < -600) {
+        //   translateY.value = withSpring(
+        //     -height * 2,
+        //     { damping: 30, stiffness: 180, velocity: velocityY },
+        //     () => {
+        //       runOnJS(onSuperLike)(data.id);
+        //       isAnimating.value = false;
+        //     }
+        //   );
+        //   translateX.value = withSpring(0, { damping: 30, stiffness: 180 });
+        // } 
+        else {
           translateX.value = withSpring(0, { damping: 30, stiffness: 180 });
           translateY.value = withSpring(index * 8, {
             damping: 30,
@@ -156,7 +158,7 @@ const Card: React.FC<CardProps> = React.memo(
           });
           likeOpacity.value = withSpring(0);
           nopeOpacity.value = withSpring(0);
-          superLikeOpacity.value = withSpring(0);
+          // superLikeOpacity.value = withSpring(0);
           isAnimating.value = false;
         }
       });
@@ -166,7 +168,6 @@ const Card: React.FC<CardProps> = React.memo(
       .maxDuration(250)
       .onEnd(() => {
         try {
-          console.log("aquii");
           if (!navigation) {
             console.error("Navigation não está definido");
             return;
@@ -221,16 +222,16 @@ const Card: React.FC<CardProps> = React.memo(
       zIndex: 10,
     }));
 
-    const superLikeStyle = useAnimatedStyle(() => ({
-      opacity: superLikeOpacity.value,
-      transform: [
-        { scale: interpolate(superLikeOpacity.value, [0, 1], [0.8, 1.0]) },
-      ],
-      position: "absolute",
-      bottom: 80, // Ajustado para não ser cortado
-      alignSelf: "center",
-      zIndex: 10,
-    }));
+    // const superLikeStyle = useAnimatedStyle(() => ({
+    //   opacity: superLikeOpacity.value,
+    //   transform: [
+    //     { scale: interpolate(superLikeOpacity.value, [0, 1], [0.8, 1.0]) },
+    //   ],
+    //   position: "absolute",
+    //   bottom: 80, // Ajustado para não ser cortado
+    //   alignSelf: "center",
+    //   zIndex: 10,
+    // }));
 
     const likeButtonStyle = useAnimatedStyle(() => ({
       backgroundColor: interpolateColor(
@@ -284,26 +285,24 @@ const Card: React.FC<CardProps> = React.memo(
         );
         translateY.value = withSpring(0, { damping: 30, stiffness: 180 });
         nopeOpacity.value = withSpring(1);
-      } else if (action === "superLike") {
-        translateY.value = withSpring(
-          -height * 2,
-          { damping: 30, stiffness: 180 },
-          () => {
-            runOnJS(onSuperLike)(data.id);
-            isAnimating.value = false;
-          }
-        );
-        translateX.value = withSpring(0, { damping: 30, stiffness: 180 });
-        superLikeOpacity.value = withSpring(1);
-      } else if (action === "undo") {
+      } 
+      // else if (action === "superLike") {
+      //   translateY.value = withSpring(
+      //     -height * 2,
+      //     { damping: 30, stiffness: 180 },
+      //     () => {
+      //       runOnJS(onSuperLike)(data.id);
+      //       isAnimating.value = false;
+      //     }
+      //   );
+      //   translateX.value = withSpring(0, { damping: 30, stiffness: 180 });
+      //   superLikeOpacity.value = withSpring(1);
+      // } 
+      else if (action === "undo") {
         runOnJS(handleUndo)();
         isAnimating.value = false;
       }
     };
-
-    // useEffect(()=>{
-    //   console.log(data)
-    // },[])
 
     const buttonSize = 60;
 
@@ -373,7 +372,7 @@ const Card: React.FC<CardProps> = React.memo(
                 NOPE
               </Animated.Text>
 
-              <Animated.Text
+              {/* <Animated.Text
                 style={[
                   superLikeStyle,
                   {
@@ -390,7 +389,7 @@ const Card: React.FC<CardProps> = React.memo(
                 accessibilityLabel="Super Like"
               >
                 SUPER LIKE
-              </Animated.Text>
+              </Animated.Text> */}
 
               <View className="px-3 my-2">
                 <View className="flex-row justify-between ">
