@@ -15,6 +15,8 @@ type MaskType =
   | "hiddenEmail"
   | "emailBreakLine"
   | "fullName"
+  | "cep"
+  | "formatMonthYear"
   | "dateFormatBrazil";
 
 export default function Mask(type: MaskType, value: string | number): string {
@@ -35,17 +37,17 @@ export default function Mask(type: MaskType, value: string | number): string {
       }
       return maskedValue;
     }
-    case 'amount': {
-			if (value == '') {
-				return '';
-			}
+    case "amount": {
+      if (value == "") {
+        return "";
+      }
 
-			const formattedAmount = (Number(value) / 100).toLocaleString('pt-BR', {
-				style: 'currency',
-				currency: 'BRL',
-			});
-			return formattedAmount;
-		}
+      const formattedAmount = (Number(value) / 100).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+      return formattedAmount;
+    }
     case "cpf": {
       return value
         .toString()
@@ -121,7 +123,7 @@ export default function Mask(type: MaskType, value: string | number): string {
       return dataFormatada;
     }
     case "dateFormatBrazil": {
-      if (!value) return '';
+      if (!value) return "";
 
       const strValue = value.toString();
 
@@ -162,6 +164,25 @@ export default function Mask(type: MaskType, value: string | number): string {
 
       // Retorne o e-mail formatado com uma quebra de linha entre o usuário e o domínio
       return `${user}\n@${domain}`;
+    }
+    case "cep": {
+      return value
+        .toString()
+        .replace(/\D/g, "") // Remove tudo que não é número
+        .replace(/^(\d{5})(\d)/, "$1-$2") // Insere o hífen depois dos 5 primeiros números
+        .slice(0, 9);
+    }
+    case "formatMonthYear":{
+       const cleaned = value.toString().replace(/\D/g, '');
+
+        // Aplica a máscara MM/YYYY
+        if (cleaned.length <= 2) {
+          return cleaned;
+        } else if (cleaned.length <= 6) {
+          return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+        } else {
+          return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 6)}`;
+        }
     }
     default: {
       return value.toString();

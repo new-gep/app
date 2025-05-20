@@ -14,7 +14,7 @@ type PersonalInfoType = {
   city: string;
   uf: string;
   complement: string;
-  cep: string;
+  zip_code: string;
 
 };
 
@@ -55,7 +55,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
       city: "",
       uf: "",
       complement: "",
-      cep: "",
+      zip_code: "",
 
     });
     setData(null);
@@ -65,7 +65,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
   return (
     <>
       <View className="px-1 flex-row justify-between items-center mb-3">
-        <Text className="text-black font-bold text-lg">
+        <Text className="text-dark font-bold text-lg">
           Informações Pessoais
         </Text>
         {/* <View className="flex-row justify-between items-center">
@@ -144,7 +144,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
               <MaterialCommunityIcons
                 name="account-outline"
                 size={24}
-                color="black"
+                color="#4B4B4B"
               />
               <Text className="text-black">
                 {personalInfo && personalInfo.name && personalInfo.name} 
@@ -154,14 +154,14 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
               <MaterialCommunityIcons
                 name="cake-variant-outline"
                 size={24}
-                color="black"
+                color="#4B4B4B"
               />
               <Text className="text-black">
                 {(personalInfo && personalInfo.birth) && Mask('dateFormatBrazil',personalInfo.birth)}
               </Text>
             </View>
             <View className="flex-row gap-1">
-              <MaterialCommunityIcons name="whatsapp" size={24} color="black" />
+              <MaterialCommunityIcons name="whatsapp" size={24} color="#4B4B4B" />
               <Text className="text-black">
                 {(personalInfo && personalInfo.phone) && Mask('phone',personalInfo.phone)}
               </Text>
@@ -170,7 +170,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
               <MaterialCommunityIcons
                 name="email-outline"
                 size={24}
-                color="black"
+                color="#4B4B4B"
               />
               <Text className="text-black">
                 {(personalInfo && personalInfo.email) && personalInfo.email} 
@@ -181,10 +181,10 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
               <MaterialCommunityIcons
                 name="home-variant-outline"
                 size={24}
-                color="black"
+                color="#4B4B4B"
               />
               <Text className="text-black">
-                {(personalInfo.street && personalInfo.number && personalInfo.district && personalInfo.city && personalInfo.uf) && `${personalInfo.street} N° ${personalInfo.number}, ${personalInfo.district}, ${personalInfo.city} - ${personalInfo.uf}`}
+                {(personalInfo.street && personalInfo.number && personalInfo.district && personalInfo.city && personalInfo.uf && personalInfo.zip_code ) && `${personalInfo.street} N° ${personalInfo.number}, ${personalInfo.district}, ${personalInfo.city} - ${personalInfo.uf}, ${Mask('cep',personalInfo.zip_code)}`}
               </Text>
             </View>
             {/* <Text className="text-black">Atuação: {(data && data.sector) && data.sector}</Text> */}

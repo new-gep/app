@@ -1,33 +1,51 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Switch,
+  Alert,
+} from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Mask from "~/src/function/mask";
 
 type EducationItem = {
   degree: string;
   institution: string;
-  period: string;
+  currentlyStudying?: boolean | undefined;
+  start: string;
+  end: string;
 };
 
 type EducationProps = {
   education: EducationItem[];
-  setEducation: React.Dispatch<React.SetStateAction<EducationItem[]>>;
+  setEducation: any;
 };
 
 const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
-  // const [education, setEducation] = useState([
-  //   { degree: "", institution: "", period: "", },
-  // ]);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [savedEducation, setSavedEducation] = useState<any>([]);
 
   const addEducation = () => {
     setEducation([
       ...education,
-      { degree: "", institution: "", period: "", },
+      {
+        degree: "",
+        institution: "",
+        start: "",
+        end: "",
+        currentlyStudying: false,
+      },
     ]);
+    setSavedEducation([]);
   };
 
-  const updateEducation = (index: number, field: string, value: string) => {
+  const updateEducation = (
+    index: number,
+    field: string,
+    value: string | boolean
+  ) => {
     const updatedEducation = [...education];
     updatedEducation[index] = { ...updatedEducation[index], [field]: value };
     setEducation(updatedEducation);
@@ -38,20 +56,50 @@ const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
     setEducation(
       updatedEducation.length
         ? updatedEducation
-        : [{ degree: "", institution: "", period: "", }]
+        : [
+            {
+              degree: "",
+              institution: "",
+              start: "",
+              end: "",
+              currentlyStudying: false,
+            },
+          ]
     );
   };
 
   const saveData = () => {
-  const filteredEducation = education.filter(
-    item =>
-      item.degree.trim() !== "" ||
-      item.institution.trim() !== "" ||
-      item.period.trim() !== "" 
-  ); // remove vazios
-  setSavedEducation(filteredEducation);
-  setEditMode(false);
-};
+    const isValid = education.every((item) => {
+      const hasBasicInfo =
+        item.degree.trim() !== "" &&
+        item.institution.trim() !== "" &&
+        item.start.trim() !== "";
+
+      const hasEndOrStudying = item.currentlyStudying || item.end.trim() !== "";
+
+      return hasBasicInfo && hasEndOrStudying;
+    });
+
+    if (!isValid) {
+      Alert.alert(
+        "Campos incompletos",
+        "Preencha todos os campos obrigatórios antes de continuar."
+      );
+      return;
+    }
+
+    const filteredEducation = education.filter(
+      (item) =>
+        item.degree.trim() !== "" ||
+        item.institution.trim() !== "" ||
+        item.start.trim() !== "" ||
+        item.end.trim() !== "" ||
+        item.currentlyStudying
+    );
+
+    setSavedEducation(filteredEducation);
+    setEditMode(false);
+  };
 
   const editData = () => {
     setEditMode(true);
@@ -59,27 +107,67 @@ const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
 
   const resetData = () => {
     setEducation([
-      { degree: "", institution: "", period: "", },
+      {
+        degree: "",
+        institution: "",
+        start: "",
+        end: "",
+        currentlyStudying: false,
+      },
     ]);
     setSavedEducation([]);
     setEditMode(true);
   };
 
+  useEffect(() => {
+    const isValid = education.every((item) => {
+      const hasBasicInfo =
+        item.degree.trim() !== "" &&
+        item.institution.trim() !== "" &&
+        item.start.trim() !== "";
+
+      const hasEndOrStudying = item.currentlyStudying || item.end.trim() !== "";
+
+      return hasBasicInfo && hasEndOrStudying;
+    });
+
+    if (!isValid) {
+      return;
+    }
+
+    const filteredEducation = education.filter(
+      (item) =>
+        item.degree.trim() !== "" ||
+        item.institution.trim() !== "" ||
+        item.start.trim() !== "" ||
+        item.end.trim() !== "" ||
+        item.currentlyStudying
+    );
+
+    setSavedEducation(filteredEducation);
+  }, []);
+
   return (
     <>
       <View className="px-1 flex-row justify-between items-center mb-3">
-        <Text className="text-black font-bold text-lg">
-          Escolaridade
-        </Text>
+        <Text className="text-dark font-bold text-lg">Escolaridade</Text>
         <View className="flex-row justify-between items-center">
           <View className="flex-row">
             {editMode ? (
               <TouchableOpacity onPress={saveData}>
-                <MaterialCommunityIcons name="content-save-all-outline" size={24} color="black" />
+                <MaterialCommunityIcons
+                  name="content-save-all-outline"
+                  size={24}
+                  color="#10B981"
+                />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={editData}>
-                <MaterialCommunityIcons name="pencil-box-multiple-outline" size={24} color="black" />
+                <MaterialCommunityIcons
+                  name="pencil-box-multiple-outline"
+                  size={24}
+                  color="#3B82F6"
+                />
               </TouchableOpacity>
             )}
             {/* <TouchableOpacity onPress={resetData}>
@@ -98,23 +186,6 @@ const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
           shadowRadius: 4,
         }}
       >
-        {/* <View className="flex-row justify-between items-center">
-          <Text className="text-black font-bold text-lg">Escolaridade</Text>
-          <View className="flex-row">
-            {editMode ? (
-              <TouchableOpacity onPress={saveData}>
-                <Ionicons name="save" size={20} color="black" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={editData}>
-                <Ionicons name="pencil" size={20} color="black" />
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity onPress={resetData}>
-              <Ionicons name="trash" size={20} color="black" />
-            </TouchableOpacity> 
-          </View>
-        </View> */}
         {editMode ? (
           <View className="flex-col gap-8">
             {education.map((edu, index) => (
@@ -152,30 +223,68 @@ const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
                       updateEducation(index, "institution", text)
                     }
                   />
-                  <TextInput
-                    style={{
-                      elevation: 8, // Sombra para Android
-                      shadowColor: "#000", // Sombra para iOS
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 4,
-                    }}
-                    className="bg-white p-2 rounded-lg mt-2 text-black"
-                    placeholder="Período"
-                    // placeholderTextColor="#d1d5db"
-                    value={edu.period}
-                    onChangeText={(text) =>
-                      updateEducation(index, "period", text)
-                    }
-                  />
-                  
+                  <View className="flex-row mt-2 justify-between">
+                    <View className="flex-row gap-1 w-7/12 justify-between ">
+                      <TextInput
+                        style={{
+                          elevation: 8, // Sombra para Android
+                          shadowColor: "#000", // Sombra para iOS
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.1,
+                          shadowRadius: 4,
+                        }}
+                        className="bg-white p-2 rounded-lg text-black w-1/2"
+                        placeholder="Início"
+                        maxLength={7}
+                        keyboardType="numeric"
+                        value={Mask("formatMonthYear", edu.start)}
+                        onChangeText={(text) =>
+                          updateEducation(index, "start", text)
+                        }
+                      />
+
+                      {!edu.currentlyStudying && (
+                        <TextInput
+                          style={{
+                            elevation: 8, // Sombra para Android
+                            shadowColor: "#000", // Sombra para iOS
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.1,
+                            shadowRadius: 4,
+                          }}
+                          className="bg-white p-2 rounded-lg text-black w-1/2"
+                          placeholder="Fim"
+                          maxLength={7}
+                          keyboardType="numeric"
+                          value={Mask("formatMonthYear", edu.end)}
+                          onChangeText={(text) =>
+                            updateEducation(index, "end", text)
+                          }
+                        />
+                      )}
+                    </View>
+
+                    <View className="flex-row items-center mt-2">
+                      <Text className="text-black mr-1 text-xs">Cursando</Text>
+                      <Switch
+                        value={edu.currentlyStudying}
+                        onValueChange={(value) =>
+                          updateEducation(index, "currentlyStudying", value)
+                        }
+                      />
+                    </View>
+                  </View>
                 </View>
                 {index > 0 && (
                   <TouchableOpacity
                     onPress={() => removeEducation(index)}
                     className="ml-2"
                   >
-                    <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />
+                    <MaterialCommunityIcons
+                      name="trash-can-outline"
+                      size={24}
+                      color="black"
+                    />
                   </TouchableOpacity>
                 )}
               </View>
@@ -184,21 +293,28 @@ const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
               <Text className="text-black">+ Adicionar mais seções</Text>
             </TouchableOpacity>
           </View>
-        ) : (
-        savedEducation && savedEducation.length > 0 ?
-          <View>
-            {savedEducation.map((edu:any,index:any ) => (
-                <View key={index} className="mt-2">
-                  <Text className="text-black">Curso: {edu.degree}</Text>
-                  <Text className="text-black">
-                    Instituição: {edu.institution && edu.institution}
-                  </Text>
-                  <Text className="text-black">Período: {edu.period}</Text>
+        ) : savedEducation && savedEducation.length > 0 ? (
+          <View className="flex-col gap-3">
+            {savedEducation.map((edu: any, index: any) => (
+              <View key={index} className="bg-white rounded-lg">
+                <View className="flex-row">
+                  <Text className="text-black font-bold">Curso: </Text>
+                  <Text>{edu.degree}</Text>
                 </View>
-              )
-            )}
+                <View className="flex-row">
+                  <Text className="text-black font-bold">Instituição: </Text>
+                  <Text>{edu.institution}</Text>
+                </View>
+                <View className="flex-row">
+                  <Text className="text-black font-bold">Período: </Text>
+                  <Text>
+                    {edu.start} - {edu.currentlyStudying ? "Cursando" : edu.end}
+                  </Text>
+                </View>
+              </View>
+            ))}
           </View>
-          :
+        ) : (
           <View>
             <Text className="text-gray-500">
               Nenhuma escolaridade adicionada.

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -43,18 +43,24 @@ const Skills: React.FC<SkillsProps> = ({ skills, setSkills }) => {
     setEditMode(true);
   };
 
+  useEffect(() => {
+    const filteredSkills = skills.filter((skill) => skill.trim() !== ""); // remove vazios
+    setSavedSkills(filteredSkills);
+  },[])
+
   return (
     <>
       <View className="px-1 flex-row justify-between items-center mb-3">
-        <Text className="text-black font-bold text-lg">Competências</Text>
+        <Text className="text-dark font-bold text-lg">Competências</Text>
+        
         <View className="flex-row">
            {editMode ? (
               <TouchableOpacity onPress={saveData}>
-                <MaterialCommunityIcons name="content-save-all-outline" size={24} color="black" />
+                <MaterialCommunityIcons name="content-save-all-outline" size={24} color="#10B981" />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={editData}>
-                <MaterialCommunityIcons name="pencil-box-multiple-outline" size={24} color="black" />
+                <MaterialCommunityIcons name="pencil-box-multiple-outline" size={24} color="#3B82F6" />
               </TouchableOpacity>
             )}
           {/* <TouchableOpacity onPress={resetData}>
@@ -111,7 +117,7 @@ const Skills: React.FC<SkillsProps> = ({ skills, setSkills }) => {
             {savedSkills && savedSkills.length > 0 ? (
               savedSkills.map((skill, index) => (
                 <Text key={index} className="text-black">
-                  {skill}
+                  - {skill}
                 </Text>
               ))
             ) : (

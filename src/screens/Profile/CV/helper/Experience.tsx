@@ -1,8 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Switch,
+  Alert,
+} from "react-native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Mask from "~/src/function/mask";
 
-type ExperienceType = { role: string; company: string; period: string; responsibilities: string };
+type ExperienceType = {
+  role: string;
+  company: string;
+  responsibilities: string;
+  start: string;
+  end: string;
+  currentlyWork: boolean;
+};
 
 interface ExperienceProps {
   experience: ExperienceType[];
@@ -10,15 +25,28 @@ interface ExperienceProps {
 }
 
 const Experience = ({ experience, setExperience }: ExperienceProps) => {
-  // const [experience, setExperience] = useState<ExperienceType[]>([{ role: '', company: '', period: '', responsibilities: '' }]);
   const [editMode, setEditMode] = useState(false);
   const [savedExperience, setSavedExperience] = useState<ExperienceType[]>([]);
 
   const addExperience = () => {
-    setExperience([...experience, { role: '', company: '', period: '', responsibilities: '' }]);
+    setExperience([
+      ...experience,
+      {
+        role: "",
+        company: "",
+        responsibilities: "",
+        start: "",
+        end: "",
+        currentlyWork: false,
+      },
+    ]);
   };
 
-  const updateExperience = (index: number, field: string, value: string) => {
+  const updateExperience = (
+    index: number,
+    field: string,
+    value: string | boolean
+  ) => {
     const updatedExperience = [...experience];
     updatedExperience[index] = { ...updatedExperience[index], [field]: value };
     setExperience(updatedExperience);
@@ -26,46 +54,131 @@ const Experience = ({ experience, setExperience }: ExperienceProps) => {
 
   const removeExperience = (index: number) => {
     const updatedExperience = experience.filter((_, i) => i !== index);
-    setExperience(updatedExperience.length ? updatedExperience : [{ role: '', company: '', period: '', responsibilities: '' }]);
+    setExperience(
+      updatedExperience.length
+        ? updatedExperience
+        : [
+            {
+              role: "",
+              company: "",
+              responsibilities: "",
+              start: "",
+              end: "",
+              currentlyWork: false,
+            },
+          ]
+    );
   };
 
   const saveData = () => {
-  const filteredExperience = experience.filter(
-    item =>
-      item.role.trim() !== "" ||
-      item.company.trim() !== "" ||
-      item.period.trim() !== "" ||
-      item.responsibilities.trim() !== ""
-  );
-  setSavedExperience(filteredExperience);
-  setEditMode(false);
-};
+    const isValid = experience.every((item) => {
+      const hasBasicInfo =
+        item.company.trim() !== "" &&
+        item.role.trim() !== "" &&
+        item.start.trim() !== "" &&
+        item.responsibilities.trim() !== "";
+
+      const hasEndOrWorking = item.currentlyWork || item.end.trim() !== "";
+
+      return hasBasicInfo && hasEndOrWorking;
+    });
+
+    if (!isValid) {
+      Alert.alert(
+        "Campos incompletos",
+        "Preencha todos os campos obrigatórios antes de continuar."
+      );
+      return;
+    }
+
+    const filteredExperience = experience.filter(
+      (item) =>
+        item.company.trim() !== "" ||
+        item.start.trim() !== "" ||
+        item.end.trim() !== "" ||
+        item.responsibilities.trim() !== "" ||
+        item.role.trim() !== "" ||
+        item.currentlyWork
+    );
+
+    setSavedExperience(filteredExperience);
+    setEditMode(false);
+  };
 
   const editData = () => {
     setEditMode(true);
   };
 
   const resetData = () => {
-    setExperience([{ role: '', company: '', period: '', responsibilities: '' }]);
+    setExperience([
+      {
+        role: "",
+        company: "",
+        responsibilities: "",
+        start: "",
+        end: "",
+        currentlyWork: false,
+      },
+    ]);
     setSavedExperience([]);
     setEditMode(true);
   };
 
+  useEffect(() => {
+    const isValid = experience.every((item) => {
+      const hasBasicInfo =
+        item.company.trim() !== "" &&
+        item.role.trim() !== "" &&
+        item.start.trim() !== "" &&
+        item.responsibilities.trim() !== "";
+
+      const hasEndOrWorking = item.currentlyWork || item.end.trim() !== "";
+
+      return hasBasicInfo && hasEndOrWorking;
+    });
+
+    if (!isValid) {
+      return;
+    }
+
+    const filteredExperience = experience.filter(
+      (item) =>
+        item.company.trim() !== "" ||
+        item.start.trim() !== "" ||
+        item.end.trim() !== "" ||
+        item.responsibilities.trim() !== "" ||
+        item.role.trim() !== "" ||
+        item.currentlyWork
+    );
+
+    setSavedExperience(filteredExperience);
+  }, []);
+
   return (
     <>
       <View className="px-1 flex-row justify-between items-center mb-3">
-        <Text className="text-black font-bold text-lg">Experiência Profissional</Text>
-           {editMode ? (
-              <TouchableOpacity onPress={saveData}>
-                <MaterialCommunityIcons name="content-save-all-outline" size={24} color="black" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={editData}>
-                <MaterialCommunityIcons name="pencil-box-multiple-outline" size={24} color="black" />
-              </TouchableOpacity>
-            )}
+        <Text className="text-dark font-bold text-lg">
+          Experiência Profissional
+        </Text>
+        {editMode ? (
+          <TouchableOpacity onPress={saveData}>
+            <MaterialCommunityIcons
+              name="content-save-all-outline"
+              size={24}
+              color="#10B981"
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={editData}>
+            <MaterialCommunityIcons
+              name="pencil-box-multiple-outline"
+              size={24}
+              color="#3B82F6"
+            />
+          </TouchableOpacity>
+        )}
       </View>
-      <View 
+      <View
         className="p-4 bg-white rounded-xl mb-4 shadow-md"
         style={{
           elevation: 8, // Sombra para Android
@@ -75,25 +188,8 @@ const Experience = ({ experience, setExperience }: ExperienceProps) => {
           shadowRadius: 4,
         }}
       >
-        {/* <View className="flex-row justify-between items-center">
-          <Text className="text-black font-bold text-lg">Experiência Profissional</Text>
-          <View className="flex-row">
-            {editMode ? (
-              <TouchableOpacity onPress={saveData}>
-                <Ionicons name="save" size={20} color="black" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={editData}>
-                <Ionicons name="pencil" size={20} color="black" />
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity onPress={resetData}>
-              <Ionicons name="trash" size={20} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View> */}
         {editMode ? (
-          <View className='flex-col gap-8'>
+          <View className="flex-col gap-8">
             {experience.map((exp, index) => (
               <View key={index} className="mt-3 flex-row items-center">
                 <View className="flex-1">
@@ -109,7 +205,9 @@ const Experience = ({ experience, setExperience }: ExperienceProps) => {
                     placeholder="Cargo"
                     // placeholderTextColor="#d1d5db"
                     value={exp.role}
-                    onChangeText={(text) => updateExperience(index, 'role', text)}
+                    onChangeText={(text) =>
+                      updateExperience(index, "role", text)
+                    }
                   />
                   <TextInput
                     style={{
@@ -123,8 +221,61 @@ const Experience = ({ experience, setExperience }: ExperienceProps) => {
                     placeholder="Empresa"
                     // placeholderTextColor="#d1d5db"
                     value={exp.company}
-                    onChangeText={(text) => updateExperience(index, 'company', text)}
+                    onChangeText={(text) =>
+                      updateExperience(index, "company", text)
+                    }
                   />
+                  <View className="flex-row mt-2 justify-between">
+                    <View className="flex-row gap-1 w-7/12 justify-between ">
+                      <TextInput
+                        style={{
+                          elevation: 8, // Sombra para Android
+                          shadowColor: "#000", // Sombra para iOS
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.1,
+                          shadowRadius: 4,
+                        }}
+                        maxLength={7}
+                        keyboardType="numeric"
+                        className="bg-white p-2 rounded-lg text-black w-1/2"
+                        placeholder="Início"
+                        value={Mask("formatMonthYear", exp.start)}
+                        onChangeText={(text) =>
+                          updateExperience(index, "start", text)
+                        }
+                      />
+
+                      {!exp.currentlyWork && (
+                        <TextInput
+                          style={{
+                            elevation: 8, // Sombra para Android
+                            shadowColor: "#000", // Sombra para iOS
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.1,
+                            shadowRadius: 4,
+                          }}
+                          maxLength={7}
+                          keyboardType="numeric"
+                          className="bg-white p-2 rounded-lg text-black w-1/2"
+                          placeholder="Fim"
+                          value={Mask("formatMonthYear", exp.end)}
+                          onChangeText={(text) =>
+                            updateExperience(index, "end", text)
+                          }
+                        />
+                      )}
+                    </View>
+
+                    <View className="flex-row items-center mt-2">
+                      <Text className="text-black mr-1 text-xs">Atual</Text>
+                      <Switch
+                        value={exp.currentlyWork}
+                        onValueChange={(value) =>
+                          updateExperience(index, "currentlyWork", value)
+                        }
+                      />
+                    </View>
+                  </View>
                   <TextInput
                     style={{
                       elevation: 8, // Sombra para Android
@@ -132,33 +283,30 @@ const Experience = ({ experience, setExperience }: ExperienceProps) => {
                       shadowOffset: { width: 0, height: 2 },
                       shadowOpacity: 0.1,
                       shadowRadius: 4,
+                      textAlignVertical: "top",
                     }}
-                    className="bg-white p-2 rounded-lg mt-2 text-black"
-                    placeholder="Período"
-                    // placeholderTextColor="#d1d5db"
-                    value={exp.period}
-                    onChangeText={(text) => updateExperience(index, 'period', text)}
-                  />
-                  <TextInput
-                    style={{
-                      elevation: 8, // Sombra para Android
-                      shadowColor: "#000", // Sombra para iOS
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 4,
-                    }}
-                    className="bg-white p-2 rounded-lg mt-2 text-black"
+                    multiline
+                    className="bg-white p-2 rounded-lg mt-3 text-black h-20"
                     placeholder="Responsabilidades"
                     // placeholderTextColor="#d1d5db"
                     value={exp.responsibilities}
-                    onChangeText={(text) => updateExperience(index, 'responsibilities', text)}
+                    onChangeText={(text) =>
+                      updateExperience(index, "responsibilities", text)
+                    }
                   />
                 </View>
-                { index > 0 &&
-                  <TouchableOpacity onPress={() => removeExperience(index)} className="ml-2">
-                    <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />
+                {index > 0 && (
+                  <TouchableOpacity
+                    onPress={() => removeExperience(index)}
+                    className="ml-2"
+                  >
+                    <MaterialCommunityIcons
+                      name="trash-can-outline"
+                      size={24}
+                      color="black"
+                    />
                   </TouchableOpacity>
-                }
+                )}
               </View>
             ))}
             <TouchableOpacity onPress={addExperience} className="mt-2">
@@ -167,17 +315,40 @@ const Experience = ({ experience, setExperience }: ExperienceProps) => {
           </View>
         ) : (
           <View>
-            {(savedExperience && savedExperience.length > 0) ? savedExperience.map((exp, index) => (
-              <View key={index} className="mt-2">
-                <Text className="text-black">Cargo: {exp.role}</Text>
-                <Text className="text-black">Empresa: {exp.company}</Text>
-                <Text className="text-black">Período: {exp.period}</Text>
-                <Text className="text-black">Responsabilidades: {exp.responsibilities}</Text>
-              </View>
-            ))
-            :
-            <Text className="text-gray-500">Nenhuma experiência adicionada.</Text>
-          }
+            {savedExperience && savedExperience.length > 0 ? (
+              savedExperience.map((exp, index) => (
+                <View key={index} className="mt-2">
+                  <View className="flex-row">
+                    <Text className="text-black font-bold">Cargo: </Text>
+                    <Text>{exp.role}</Text>
+                  </View>
+                  <View className="flex-row">
+                    <Text className="text-black font-bold">Empresa: </Text>
+                    <Text className="text-black">{exp.company}</Text>
+                  </View>
+                  <View className="flex-row">
+                    <Text className="text-black font-bold">Período: </Text>
+                    <Text className="text-black">
+                      {exp.start} - {exp.currentlyWork ? "Atual" : exp.end}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text className="text-black font-bold">
+                      Responsabilidades:
+                    </Text>
+                    <Text className="text-black px-2">
+                      {exp.responsibilities.length > 80
+                        ? `${exp.responsibilities.substring(0, 80)}...`
+                        : exp.responsibilities}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <Text className="text-gray-500">
+                Nenhuma experiência adicionada.
+              </Text>
+            )}
           </View>
         )}
       </View>
