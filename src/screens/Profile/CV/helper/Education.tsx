@@ -21,9 +21,10 @@ type EducationItem = {
 type EducationProps = {
   education: EducationItem[];
   setEducation: any;
+  preview?: boolean;
 };
 
-const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
+const Education: React.FC<EducationProps> = ({ education, setEducation, preview }) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [savedEducation, setSavedEducation] = useState<any>([]);
 
@@ -151,7 +152,8 @@ const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
     <>
       <View className="px-1 flex-row justify-between items-center mb-3">
         <Text className="text-dark font-bold text-lg">Escolaridade</Text>
-        <View className="flex-row justify-between items-center">
+        { !preview &&
+          <View className="flex-row justify-between items-center">
           <View className="flex-row">
             {editMode ? (
               <TouchableOpacity onPress={saveData}>
@@ -174,7 +176,8 @@ const Education: React.FC<EducationProps> = ({ education, setEducation }) => {
                         <Ionicons name="trash" size={20} color="black" />
                         </TouchableOpacity> */}
           </View>
-        </View>
+          </View>
+        }
       </View>
       <View
         className="p-4 bg-white rounded-xl mb-4 shadow-md"

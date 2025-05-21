@@ -156,12 +156,12 @@ export default function CV() {
 
   return (
     <View className="flex-1 bg-white p-2">
-      <Header title="Currículo" leftIcon={"back"} iconSimple={"file"} />
       { !CVEdit ?
-        <Home/>
+        <Home cv={CVEdit} setCv={setCVEdit} collaborator={collaborator}/>
         :
         personalInfo ? (
           <>
+            <Header title="Currículo" leftIcon={"back"} iconSimple={"file"} dynamic={()=>{setCVEdit(false)}}/>
             <ScrollView className="p-4">
               <PersonalInfo
                 personalInfo={personalInfo}

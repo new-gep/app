@@ -5,9 +5,10 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 interface SkillsProps {
   skills: string[];
   setSkills: React.Dispatch<React.SetStateAction<string[]>>;
+  preview?: boolean;
 }
 
-const Skills: React.FC<SkillsProps> = ({ skills, setSkills }) => {
+const Skills: React.FC<SkillsProps> = ({ skills, setSkills, preview }) => {
   // const [skills, setSkills] = useState([""]);
   const [editMode, setEditMode] = useState(false);
   const [savedSkills, setSavedSkills] = useState<string[] | null>(null);
@@ -53,7 +54,8 @@ const Skills: React.FC<SkillsProps> = ({ skills, setSkills }) => {
       <View className="px-1 flex-row justify-between items-center mb-3">
         <Text className="text-dark font-bold text-lg">Competências</Text>
         
-        <View className="flex-row">
+        { !preview &&
+          <View className="flex-row">
            {editMode ? (
               <TouchableOpacity onPress={saveData}>
                 <MaterialCommunityIcons name="content-save-all-outline" size={24} color="#10B981" />
@@ -66,7 +68,8 @@ const Skills: React.FC<SkillsProps> = ({ skills, setSkills }) => {
           {/* <TouchableOpacity onPress={resetData}>
             <Ionicons name="trash" size={20} color="black" />
           </TouchableOpacity> */}
-        </View>
+          </View>
+        }
       </View>
       <View
         className="p-4 bg-white rounded-xl mb-10 shadow-md"

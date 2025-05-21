@@ -28,10 +28,11 @@ type Props = {
     rightIcon3?:string,
     rightIcon4?:any,
     iconSimple?:any
+    dynamic?:any
 }
 
 
-const Header = ({title, leftIcon,iconSimple, leftAction,transparent,productId,titleLeft,titleLeft2,titleRight,rightIcon1,rightIcon4,rightIcon2,rightIcon3} : Props) => {
+const Header = ({title, leftIcon,iconSimple, leftAction,transparent,productId,titleLeft,titleLeft2,titleRight,rightIcon1,rightIcon4,rightIcon2,rightIcon3,dynamic} : Props) => {
 
     const theme = useTheme();
     const { colors } : {colors : any} = theme;
@@ -61,7 +62,7 @@ const Header = ({title, leftIcon,iconSimple, leftAction,transparent,productId,ti
                     justifyContent: 'space-between',
                 }]}
                 >
-                    {leftIcon === 'back' && 
+                    {(leftIcon === 'back' && !dynamic) &&
                         <TouchableOpacity 
                         onPress={() => leftAction ? leftAction() : navigation.goBack()}
                         style={[styles.actionBtn,{backgroundColor:'#F6F6F6'}]}
@@ -69,6 +70,15 @@ const Header = ({title, leftIcon,iconSimple, leftAction,transparent,productId,ti
                             <Feather size={24} color={COLORS.title} name={'arrow-left'} />
                         </TouchableOpacity>
                     }
+                    { dynamic &&
+                        <TouchableOpacity 
+                        onPress={() => dynamic()}
+                        style={[styles.actionBtn,{backgroundColor:'#F6F6F6'}]}
+                        >
+                            <Feather size={24} color={COLORS.title} name={'arrow-left'} />
+                        </TouchableOpacity>
+                    }
+
                     <View style={{ flex: 1}}>
                         {productId
                             ?

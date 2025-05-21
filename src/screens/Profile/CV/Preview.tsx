@@ -1,44 +1,121 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import PersonalInfoPreview from './helper/PersonalInfoPreview';
-import EducationPreview from './helper/EducationPreview';
-import ExperiencePreview from './helper/ExperiencePreview';
-import SkillsPreview from './helper/SkillsPreview';
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import Modal from "react-native-modal";
+import { FONTS } from "~/src/constants/theme";
+import CVGep from "./helper/GepCV";
+import CVPDF from "./helper/PDFCV";
+import { FontAwesome } from "@expo/vector-icons";
+import FindBucketCollaborator from "~/src/hooks/bucket/collaborator";
+const CVPreview = ({ visible, setVisible, collaborator }: any) => {
+  const [GepView, setGepView] = useState<boolean>(false);
+  const [PDFView, setPDFView] = useState<boolean>(false);
+  const [path, setPath] = useState<any>(null);
 
-const CVPreview = () => {
-  const [showPreview, setShowPreview] = useState(false);
-  const [personalInfo, setPersonalInfo] = useState({ name: '', title: '', contact: '', employed: '', dob: '', cpf: '', educationLevel: '', experienceYears: '', sector: '' });
-  const [education, setEducation] = useState([{ degree: '', institution: '', period: '', dissertation: '' }]);
-  const [experience, setExperience] = useState([{ role: '', company: '', period: '', responsibilities: '' }]);
-  const [skills, setSkills] = useState(['']);
+  const fetchData = async () => {
+    const response = await FindBucketCollaborator(collaborator.CPF, 'cv');
+    if (response.status === 200) {
+      setPath(response.path);
+    }
+    return response.path;
+  }
 
-  const handlePreview = () => {
-    setShowPreview(true);
-  };
-
-  const handleBack = () => {
-    setShowPreview(false);
-  };
+  useEffect(() => {
+    fetchData();
+  })
 
   return (
-    <View className="bg-primary p-4 rounded-lg mb-4">
-      {!showPreview ? (
-        <TouchableOpacity onPress={handlePreview} className="bg-black p-2 rounded-lg">
-          <Text className="text-primary text-center">Gerar Currículo</Text>
-        </TouchableOpacity>
-      ) : (
+    <Modal
+      isVisible={visible}
+      animationIn="slideInUp"
+      animationOut="slideOutDown"
+      animationInTiming={300}
+      animationOutTiming={300}
+      backdropOpacity={0.8}
+      useNativeDriver={true}
+      onBackdropPress={() => {
+        setVisible(false)
+        setGepView(false)
+        setPDFView(false)
+      }}
+      className={`justify-end p-0 m-0 `}
+    >
+      {/* Add your modal content here */}
+      <View
+        className={`bg-white flex-row justify-between p-4 ${!GepView && !PDFView && "rounded-t-2xl"} `}
+      >
         <View>
-          <PersonalInfoPreview data={personalInfo} />
-          <EducationPreview data={education} />
-          <ExperiencePreview data={experience} />
-          <SkillsPreview data={skills} />
-          <TouchableOpacity onPress={handleBack} className="bg-black p-2 rounded-lg mt-2">
-            <Text className="text-primary text-center">Voltar</Text>
+          <Text className="text-lg" style={{...FONTS.fontBold}}>Currículo Preview</Text>
+          { (!GepView && !PDFView) && 
+            <Text className="text-sm text-gray-500" style={{...FONTS.fontRegular, fontSize: 14, lineHeight: 21}}>
+              O preview é a visualização do seu currículo, você pode visualizar o seu upload ou seu CV gerado no app.
+            </Text>
+          }
+        </View>
+        
+        { (GepView || PDFView) && 
+          <TouchableOpacity
+            onPress={()=>{
+              setGepView(false)
+              setPDFView(false)
+          }}
+          >
+            {/* <AntDesign name="closecircleo" size={24} color="black" /> */}
+            <FontAwesome name="close" size={24} color="black" />
+          </TouchableOpacity>
+        }
+      </View>
+
+      {PDFView && (
+          <View className="flex-1 bg-white">
+            <CVPDF path={path}/>
+          </View>
+        )}
+
+      {GepView && (
+        <View className="flex-1 bg-white">
+          <CVGep />
+        </View>
+      )}
+
+      {!GepView && !PDFView && (
+        <View className={`w-full bg-white items-center px-4 py-3`}>
+          <TouchableOpacity
+            className="w-1/2 mb-4 mt-4 p-2.5 bg-primary rounded-lg"
+            onPress={() => {
+              setGepView(true);
+            }}
+          >
+            <Text
+              className="text-dark text-center"
+              style={{
+                ...FONTS.fontMedium,
+                fontSize: 14,
+                lineHeight: 21,
+              }}
+            >
+              CV Gep
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="p-2.5 bg-primary rounded-lg w-1/2"
+            onPress={() => {
+              setPDFView(true);
+            }}
+          >
+            <Text
+              className="text-dark text-center"
+              style={{
+                ...FONTS.fontMedium,
+                fontSize: 14,
+                lineHeight: 21,
+              }}
+            >
+              CV PDF
+            </Text>
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </Modal>
   );
 };
 

@@ -22,9 +22,10 @@ type ExperienceType = {
 interface ExperienceProps {
   experience: ExperienceType[];
   setExperience: React.Dispatch<React.SetStateAction<ExperienceType[]>>;
+  preview?: boolean;
 }
 
-const Experience = ({ experience, setExperience }: ExperienceProps) => {
+const Experience = ({ experience, setExperience, preview }: ExperienceProps) => {
   const [editMode, setEditMode] = useState(false);
   const [savedExperience, setSavedExperience] = useState<ExperienceType[]>([]);
 
@@ -160,23 +161,27 @@ const Experience = ({ experience, setExperience }: ExperienceProps) => {
         <Text className="text-dark font-bold text-lg">
           Experiência Profissional
         </Text>
-        {editMode ? (
-          <TouchableOpacity onPress={saveData}>
-            <MaterialCommunityIcons
-              name="content-save-all-outline"
-              size={24}
-              color="#10B981"
-            />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={editData}>
-            <MaterialCommunityIcons
-              name="pencil-box-multiple-outline"
-              size={24}
-              color="#3B82F6"
-            />
-          </TouchableOpacity>
-        )}
+        { !preview &&
+          <View className="flex-row">
+          {editMode  ? (
+            <TouchableOpacity onPress={saveData}>
+              <MaterialCommunityIcons
+                name="content-save-all-outline"
+                size={24}
+                color="#10B981"
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={editData}>
+              <MaterialCommunityIcons
+                name="pencil-box-multiple-outline"
+                size={24}
+                color="#3B82F6"
+              />
+            </TouchableOpacity>
+          )}
+          </View>
+        }
       </View>
       <View
         className="p-4 bg-white rounded-xl mb-4 shadow-md"
