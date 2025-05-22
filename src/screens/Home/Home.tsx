@@ -30,7 +30,9 @@ import { COLORS, FONTS } from "../../constants/theme";
 import Mask from "../../function/mask";
 import HeaderHome from "../../layout/HeaderHome";
 import Apply from "~/src/hooks/rabbit/job/Apply";
+import ApplyJob from "~/src/hooks/update/job/applyJob";
 import CardSearch from "./CardSearch";
+
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -44,6 +46,21 @@ const Home = () => {
   const navigation = useNavigation<NavigationProp<any>>();
 
   const handleSwipeRight = async (id: any) => {
+    if (!collaborator) {
+      showPopupMessage("Você precisa estar logado para aplicar!");
+      return;
+    }
+    const response = await ApplyJob(id, collaborator?.CPF);
+    if (response.status === 200) {
+      showPopupMessage("Você aplicou para a vaga com sucesso!");
+      handleSwipeLeft();
+    }else if (response.status === 400) {
+      showPopupMessage("Você já aplicou para essa vaga!");
+      handleSwipeLeft();
+    }else{
+      showPopupMessage("Erro ao aplicar para a vaga!");
+    }
+    return
     if (missingData) return;
 
     try {
@@ -98,7 +115,6 @@ const Home = () => {
       }
 
       updateCardState();
-      console.time("updateCardState");
     } catch (error: any) {
       updateCardState();
       console.error("Erro no aqui:", error);
@@ -219,6 +235,7 @@ const Home = () => {
         leftIcon={"menu"}
         rightIcon4={"home"}
         collaborator={collaborator}
+        buttonRight={"tune"}
       />
       <View className="absolute w-full z-50" style={{ top: isKeyboardVisible ? "18%" : "10%" }}>
         <CardSearch setCards={setCards} />

@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { COLORS, FONTS } from "../constants/theme";
 import { GlobalStyleSheet } from "../constants/StyleSheet";
 import { FontAwesome } from "@expo/vector-icons";
@@ -31,6 +31,7 @@ type Props = {
   rightIcon3?: string;
   rightIcon4?: any;
   iconSimple?: any;
+  buttonRight?: any;
   collaborator?: any;
   classStyle?: string;
 };
@@ -50,6 +51,7 @@ const Header = ({
   rightIcon2,
   rightIcon3,
   collaborator,
+  buttonRight,
   classStyle,
 }: Props) => {
   const theme = useTheme();
@@ -186,7 +188,17 @@ const Header = ({
         {iconSimple && (
           <View style={[styles.actionBtn, {}]}>
             <FontAwesome size={22} color={colors.title} name={iconSimple} />
+            
           </View>
+        )}
+        {buttonRight && (
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => navigation.navigate("Filter")}
+            style={[styles.actionBtn, {}]}
+          >
+            <MaterialIcons size={30} color={colors.title} name={buttonRight} />
+          </TouchableOpacity>
         )}
       </View>
     </View>

@@ -11,6 +11,8 @@ import { COLORS, FONTS } from "../../constants/theme";
 import Button from "../../components/Button/Button";
 import useCollaborator from "../../function/fetchCollaborator";
 import UpdateJobDefault from "../../hooks/update/job/default";
+import UnapplyJob from "~/src/hooks/update/job/unapplyJob";
+import ApplyJob from "~/src/hooks/update/job/applyJob";
 import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import Mask from "~/src/function/mask";
 
@@ -72,12 +74,13 @@ type CardInformationProps = {
           observation: string | null;
         }>;
       };
+      onSwipeLeft:any
     };
   };
 };
 
 const CardInformation = ({ route }: CardInformationProps) => {
-  const { cardData } = route.params;
+  const { cardData, onSwipeLeft } = route.params;
   const navigation = useNavigation();
   const { collaborator } = useCollaborator();
   const [isLoading, setIsLoading] = useState(false);
@@ -134,42 +137,15 @@ const CardInformation = ({ route }: CardInformationProps) => {
   const handleRemoveApplication = async () => {
     try {
       setIsLoading(true);
-
-      if (!cardData?.candidates) {
-        throw new Error("Lista de candidatos inválida");
-      }
-
-      // Garante que candidates seja um array
-      const currentCandidates =
-        typeof cardData.candidates === "string"
-          ? JSON.parse(cardData.candidates)
-          : cardData.candidates;
-
-      if (!Array.isArray(currentCandidates)) {
-        throw new Error("Lista de candidatos inválida após parse");
-      }
-
-      // Filtra o candidato atual da lista
-      const updatedCandidates = currentCandidates.filter((candidate) => {
-        const candidateCpf = String(candidate.cpf).replace(/\D/g, "");
-        const collaboratorCpf = String(collaborator?.CPF).replace(/\D/g, "");
-        return candidateCpf !== collaboratorCpf;
-      });
-
-      // Atualiza a vaga removendo o candidato
-      const response = await UpdateJobDefault(cardData.id, {
-        candidates: JSON.stringify(updatedCandidates),
-      });
-
+      const response = await UnapplyJob(cardData.id, collaborator?.CPF);
       if (response.status === 200) {
         alert("Candidatura removida com sucesso!");
-        // Primeiro volta para a tela anterior
+        // onSwipeLeft()
         navigation.goBack();
-        // Depois atualiza a Home
-        // navigation.navigate('Home');
       } else {
         throw new Error("Erro ao remover candidatura");
       }
+      return;
     } catch (error) {
       console.error("Erro ao remover candidatura:", error);
       alert("Erro ao remover candidatura. Tente novamente.");
@@ -181,31 +157,21 @@ const CardInformation = ({ route }: CardInformationProps) => {
   const handleApplyToJob = async () => {
     try {
       setIsLoading(true);
-
-      const newCandidate = {
-        cpf: collaborator?.CPF,
-        step: 0,
-        status: null,
-        verify: null,
-        observation: null,
-      };
-
-      // Garante que candidates seja um array
-      const currentCandidates = Array.isArray(cardData.candidates)
-        ? cardData.candidates
-        : [];
-      const updatedCandidates = [...currentCandidates, newCandidate];
-
-      const response = await UpdateJobDefault(cardData.id, {
-        candidates: JSON.stringify(updatedCandidates),
-      });
-
+      const response = await ApplyJob(cardData.id, collaborator?.CPF);
       if (response.status === 200) {
+        onSwipeLeft()
         alert("Candidatura realizada com sucesso!");
         navigation.goBack();
-      } else {
+      } 
+      else if (response.status === 400) {
+        onSwipeLeft()
+        alert("Você já se candidatou a esta vaga.");
+      }
+      else {
         throw new Error("Erro ao realizar candidatura");
       }
+      return;
+      
     } catch (error) {
       console.error("Erro ao realizar candidatura:", error);
       alert("Erro ao realizar candidatura. Tente novamente.");
@@ -377,10 +343,10 @@ const CardInformation = ({ route }: CardInformationProps) => {
             isCandidateApplied ? handleRemoveApplication : handleApplyToJob
           }
           className={`w-[60px] h-[60px] rounded-full justify-center items-center ${
-            isCandidateApplied ? 'bg-red-600' : 'bg-success'
+            isCandidateApplied ? "bg-red-600" : "bg-success"
           } opacity-80`}
           style={{
-            shadowColor: '#000',
+            shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.25,
             shadowRadius: 3.84,

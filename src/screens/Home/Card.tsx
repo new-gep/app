@@ -84,7 +84,10 @@ const Card: React.FC<CardProps> = React.memo(
     }, [isTopCard, index]);
 
     const navigateToCardInformation = () => {
-      navigation.navigate("CardInformation", { cardData: data });
+      navigation.navigate("CardInformation", { 
+        cardData: data,
+        onSwipeLeft: onSwipeLeft,
+      });
     };
 
     const gesture = Gesture.Pan()

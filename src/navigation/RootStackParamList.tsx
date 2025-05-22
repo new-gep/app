@@ -95,6 +95,7 @@ export type RootStackParamList = {
     };
     CardInformation: {
         cardData: any;
+        onSwipeLeft: () => void;
     };
 };
 
