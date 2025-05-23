@@ -199,11 +199,11 @@ const Home = () => {
     loadData();
   }, []);
 
-  useEffect(() => {
-    if (missingData) {
-      // navigation.navigate("CheckCadasterCollaboratorDocument");
-    }
-  }, [missingData, navigation]);
+  // useEffect(() => {
+  //   if (missingData) {
+  //     navigation.navigate("CheckCadasterCollaboratorDocument");
+  //   }
+  // }, [missingData, navigation]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(

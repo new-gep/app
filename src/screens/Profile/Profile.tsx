@@ -9,6 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { GlobalStyleSheet } from "../../constants/StyleSheet";
+import RNFS from "react-native-fs";
 import { IMAGES } from "../../constants/Images";
 import { COLORS, FONTS } from "../../constants/theme";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -22,10 +23,13 @@ import FindBucketCollaborator from "../../hooks/bucket/collaborator";
 import useCollaborator from "../../function/fetchCollaborator";
 import DevelopmentModal from "../../components/Modal/Development";
 import Feather from "@expo/vector-icons/build/Feather";
+import SaveCacheFile from "~/src/hooks/utils/SaveCacheFile";
 
 type ProfileScreenProps = StackScreenProps<RootStackParamList, "Profile">;
 
-const getZodiacSign = (date: string | null | undefined): { sign: string, icon: any } => {
+const getZodiacSign = (
+  date: string | null | undefined
+): { sign: string; icon: any } => {
   if (!date) return { sign: "Cadastro incompleto", icon: IMAGES.help };
 
   const [dayStr, monthStr] = date.split("/");
@@ -37,31 +41,66 @@ const getZodiacSign = (date: string | null | undefined): { sign: string, icon: a
   }
 
   if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
-    return { sign: "Áries", icon: require("../../assets/images/zoadicSign/aries.png") };
+    return {
+      sign: "Áries",
+      icon: require("../../assets/images/zoadicSign/aries.png"),
+    };
   if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
-    return { sign: "Touro", icon: require("../../assets/images/zoadicSign/Taurus.png") };
+    return {
+      sign: "Touro",
+      icon: require("../../assets/images/zoadicSign/Taurus.png"),
+    };
   if ((month === 5 && day >= 21) || (month === 6 && day <= 20))
-    return { sign: "Gêmeos", icon: require("../../assets/images/zoadicSign/gemini.png") };
+    return {
+      sign: "Gêmeos",
+      icon: require("../../assets/images/zoadicSign/gemini.png"),
+    };
   if ((month === 6 && day >= 21) || (month === 7 && day <= 22))
-    return { sign: "Câncer", icon: require("../../assets/images/zoadicSign/cancer.png") };
+    return {
+      sign: "Câncer",
+      icon: require("../../assets/images/zoadicSign/cancer.png"),
+    };
   if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
-    return { sign: "Leão", icon: require("../../assets/images/zoadicSign/leo.png") };
+    return {
+      sign: "Leão",
+      icon: require("../../assets/images/zoadicSign/leo.png"),
+    };
   if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
-    return { sign: "Virgem", icon: require("../../assets/images/zoadicSign/virgo.png") };
+    return {
+      sign: "Virgem",
+      icon: require("../../assets/images/zoadicSign/virgo.png"),
+    };
   if ((month === 9 && day >= 23) || (month === 10 && day <= 22))
-    return { sign: "Libra", icon: require("../../assets/images/zoadicSign/libra.png") };
+    return {
+      sign: "Libra",
+      icon: require("../../assets/images/zoadicSign/libra.png"),
+    };
   if ((month === 10 && day >= 23) || (month === 11 && day <= 21))
-    return { sign: "Escorpião", icon: require("../../assets/images/zoadicSign/scorpio.png") };
+    return {
+      sign: "Escorpião",
+      icon: require("../../assets/images/zoadicSign/scorpio.png"),
+    };
   if ((month === 11 && day >= 22) || (month === 12 && day <= 21))
-    return { sign: "Sagitário", icon: require("../../assets/images/zoadicSign/Sagittarius.png") };
+    return {
+      sign: "Sagitário",
+      icon: require("../../assets/images/zoadicSign/Sagittarius.png"),
+    };
   if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
-    return { sign: "Capricórnio", icon: require("../../assets/images/zoadicSign/capricorn.png") };
+    return {
+      sign: "Capricórnio",
+      icon: require("../../assets/images/zoadicSign/capricorn.png"),
+    };
   if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
-    return { sign: "Aquário", icon: require("../../assets/images/zoadicSign/aquarius.png") };
+    return {
+      sign: "Aquário",
+      icon: require("../../assets/images/zoadicSign/aquarius.png"),
+    };
 
-  return { sign: "Peixes", icon: require("../../assets/images/zoadicSign/Pisces.png") };
+  return {
+    sign: "Peixes",
+    icon: require("../../assets/images/zoadicSign/Pisces.png"),
+  };
 };
-
 
 const Profile = ({ navigation }: ProfileScreenProps) => {
   const theme = useTheme();
@@ -87,14 +126,21 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
       id: "3",
       image: IMAGES.cake,
       title: "Data de Nascimento",
-      subtitle: collaborator && Mask("dateFormatBrazil", collaborator.birth) ? Mask("dateFormatBrazil", collaborator.birth) : "Cadastro incompleto",
+      subtitle:
+        collaborator && Mask("dateFormatBrazil", collaborator.birth)
+          ? Mask("dateFormatBrazil", collaborator.birth)
+          : "Cadastro incompleto",
     },
     {
       id: "3.1",
       image: null,
       title: "Signo",
-      subtitle: collaborator && getZodiacSign(Mask("dateFormatBrazil", collaborator.birth)).sign,
-      iconName: collaborator && getZodiacSign(Mask("dateFormatBrazil", collaborator.birth)).icon,
+      subtitle:
+        collaborator &&
+        getZodiacSign(Mask("dateFormatBrazil", collaborator.birth)).sign,
+      iconName:
+        collaborator &&
+        getZodiacSign(Mask("dateFormatBrazil", collaborator.birth)).icon,
     },
     {
       id: "4",
@@ -174,13 +220,22 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
   ];
 
   const getPicture = async () => {
+    const storedImagePath = await AsyncStorage.getItem("collaboratorImage");
+    if (storedImagePath && (await RNFS.exists(storedImagePath))) {
+      setPath(`${storedImagePath}`);
+      return;
+    }
     try {
       const response = await FindBucketCollaborator(
+        //@ts-ignore
         collaborator.CPF,
         "Picture"
       );
-      if (response.status == 200) {
-        setPath(response.path);
+
+      if (response.status === 200 && response.path) {
+        SaveCacheFile(response.path, "collaboratorImage", setPath);
+      } else {
+        console.warn("Resposta inválida da API ou sem base64.");
       }
     } catch (error) {
       console.error("Erro ao resgatar a imagem:", error);
@@ -237,14 +292,22 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                 <Image
                   className={`w-full h-full rounded-full`}
                   source={{ uri: path }}
+                  onError={(e) =>
+                    console.warn("Erro ao renderizar:", e.nativeEvent.error)
+                  }
                 />
               ) : (
-                <Image
-                  className={`w-16 h-16 rounded`}
-                  source={IMAGES.user2}
-                  tintColor={`white`}
-                />
+                <>
+                  <Image
+                    className={`w-16 h-16 rounded`}
+                    source={IMAGES.user2}
+                    tintColor={`white`}
+                  />
+                </>
               )}
+            </View>
+            <View>
+              {!path && <Text className="text-red-500">*Foto obrigatoria</Text>}
             </View>
             <Text
               style={{
@@ -305,7 +368,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                           style={{
                             width: 24,
                             height: 24,
-                            tintColor: COLORS.primary
+                            tintColor: COLORS.primary,
                           }}
                           source={data.iconName}
                         />

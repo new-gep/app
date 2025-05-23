@@ -33,7 +33,8 @@ import * as FileSystem from "expo-file-system";
 import UploadFile from "../../hooks/upload/picture";
 import FindBucketCollaborator from "../../hooks/bucket/collaborator";
 import * as ImageManipulator from 'expo-image-manipulator';
-
+import SaveCacheFile from "~/src/hooks/utils/SaveCacheFile";
+import RNFS from "react-native-fs";
 
 type inputUpdateDates = {
   name: string;
@@ -109,12 +110,12 @@ const EditProfile = () => {
 
   const convertToBase64 = async (fileUri: any) => {
     try {
-      // console.log(fileUri);
+      console.log(fileUri);
       // Lê o arquivo e converte para Base64
       const base64 = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-
+      SaveCacheFile(base64, "collaboratorImage");
       // Atualiza o estado com a string Base64
       setPath(`data:image/jpeg;base64,${base64}`);
     } catch (error) {
@@ -206,6 +207,7 @@ const EditProfile = () => {
   };
 
   const handleSendPicture = async () => {
+    console.log('1auqi')
     let response = await GetPathPicture("camera");
     if (response == "cancel") {
       alert(
@@ -228,12 +230,8 @@ const EditProfile = () => {
     };
     //@ts-ignore
     const compressedImage = await compressImage(response);
-
     response = compressedImage;
-    // console.log(response);
 
-    convertToBase64(response);
-    console.log("collaborator", response);
     if (typeof response === "string" && collaborator) {
       const fileUpload = await UploadFile(
         response,
@@ -241,24 +239,16 @@ const EditProfile = () => {
         "complet",
         collaborator.CPF
       );
-      console.log("fileUpload", fileUpload);
+      
       switch (fileUpload.status) {
         case 200:
+          console.log('fileUpload', fileUpload);
+          convertToBase64(response);
           setMessageSheet("Foto Atualizada");
           setActiveSheet("success");
           Sheet();
           validateCollaborator();
-          const existingData = await AsyncStorage.getItem("picture");
-          let pictureData = existingData ? JSON.parse(existingData) : {};
-
-          // Passo 2: Mesclar o novo dado com os existentes
-          pictureData = {
-            ...pictureData, // Preserva os dados existentes
-            Picture: response, // Sobrescreve ou adiciona novos dados
-          };
-
-          // Passo 3: Salvar de volta o objeto atualizado no AsyncStorage
-          await AsyncStorage.setItem("picture", JSON.stringify(pictureData));
+          
           return;
         default:
           setMessageSheet("Algo deu errado");
@@ -274,14 +264,22 @@ const EditProfile = () => {
   };
 
   const getPicture = async () => {
+    const storedImagePath = await AsyncStorage.getItem("collaboratorImage");
+    if (storedImagePath && (await RNFS.exists(storedImagePath))) {
+      setPath(`${storedImagePath}`);
+      return;
+    }
     try {
       const response = await FindBucketCollaborator(
+        //@ts-ignore
         collaborator.CPF,
         "Picture"
       );
-      // console.log(response);
-      if (response.status == 200) {
-        setPath(response.path);
+
+      if (response.status === 200 && response.path) {
+        SaveCacheFile(response.path, "collaboratorImage", setPath);
+      } else {
+        console.warn("Resposta inválida da API ou sem base64.");
       }
     } catch (error) {
       console.error("Erro ao resgatar a imagem:", error);
