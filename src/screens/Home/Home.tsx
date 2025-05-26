@@ -232,10 +232,9 @@ const Home = () => {
     <SafeAreaView className="flex-1 bg-white">
       <HeaderHome
         title=""
-        leftIcon={"menu"}
+        // leftIcon={"menu"}
         rightIcon4={"home"}
         collaborator={collaborator}
-        buttonRight={"tune"}
       />
       <View className="absolute w-full z-50" style={{ top: isKeyboardVisible ? "18%" : "10%" }}>
         <CardSearch setCards={setCards} />

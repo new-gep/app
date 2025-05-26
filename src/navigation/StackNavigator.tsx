@@ -6,7 +6,6 @@ import {
 import { RootStackParamList } from "./RootStackParamList";
 import { StatusBar, View, Text } from "react-native";
 import { useTheme } from "@react-navigation/native";
-
 import Onboarding from "../screens/Auth/Onboarding";
 import WelCome from "../screens/Auth/WelCome";
 import SignUp from "../screens/Auth/SignUp";
@@ -73,6 +72,7 @@ import HomeWork from "../screens/Work/Home";
 import Dossie from "../screens/Work/Dossie/Index";
 import CV from "../screens/Profile/CV/Index";
 import Filter from "../screens/Home/filter/Index";
+import About from "../screens/Profile/About/Index";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -143,6 +143,7 @@ const StackNavigator = () => {
         <Stack.Screen name="Toggles" component={Toggles} />
         <Stack.Screen name="CV" component={CV} />
         <Stack.Screen name="Filter" component={Filter} />
+        <Stack.Screen name="About" component={About} />
         <Stack.Screen name="Dossie" component={Dossie} />
         <Stack.Screen name="HomeWork" component={HomeWork} />
         <Stack.Screen name="DismissalHome" component={DismissalHome} />

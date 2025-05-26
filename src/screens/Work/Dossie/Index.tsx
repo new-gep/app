@@ -55,7 +55,6 @@ export default function Dossie() {
       return;
     }
     setAllDocumentAdmission(response.admissionFiles);
-    console.log("dismisall ", response.dismissal);
     setAllDocumentDismission(response.dismissal);
     setAllDocumentCollaborator(response.document.files);
     setIsLoading(false); // Desativa o spinner após carregar os dados

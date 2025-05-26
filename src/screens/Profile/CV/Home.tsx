@@ -38,7 +38,8 @@ export default function Home({ cv, setCv, collaborator }: any) {
         <View className="flex-row flex-wrap justify-between">
           {/* Card 1 - Perfil */}
           <TouchableOpacity
-            className="w-[48%] aspect-square bg-yellow-100 rounded-2xl justify-center items-center mb-4"
+            style={Style.container}
+            className="w-[48%] aspect-square rounded-2xl justify-center items-center mb-4 bg-white"
             onPress={() => {
               setCv(true);
             }}
@@ -49,7 +50,8 @@ export default function Home({ cv, setCv, collaborator }: any) {
 
           {/* Card 2 - Upload CV */}
           <TouchableOpacity
-            className="w-[48%] aspect-square bg-yellow-100 rounded-2xl justify-center items-center mb-4"
+            style={Style.container}
+            className="w-[48%] aspect-square bg-white rounded-2xl justify-center items-center mb-4"
             onPress={() => {
               setUpload(true);
             }}
@@ -60,7 +62,8 @@ export default function Home({ cv, setCv, collaborator }: any) {
 
           {/* Card 3 - Visualizar CV */}
           <TouchableOpacity
-            className="w-[48%] aspect-square bg-yellow-100 rounded-2xl justify-center items-center mb-4"
+            style={Style.container}
+            className="w-[48%] aspect-square bg-white rounded-2xl justify-center items-center mb-4"
             onPress={() => {
               setPreview(true);
             }}
@@ -68,8 +71,37 @@ export default function Home({ cv, setCv, collaborator }: any) {
             <MaterialIcons name="remove-red-eye" size={24} color="black" />
             <Text className="mt-2 text-center font-semibold">Visualizar</Text>
           </TouchableOpacity>
+
+          {/* Card 4 - IA */}
+          <TouchableOpacity
+            style={Style.container}
+            className="w-[48%] aspect-square bg-white rounded-2xl justify-center items-center mb-4"
+            onPress={() => {
+              setPreview(true);
+            }}
+          >
+            <MaterialIcons name="layers" size={24} color="black" />
+            <Text className="mt-2 text-center font-semibold">IA</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </>
   );
 }
+
+const Style = {
+  container: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  text: {
+    backgroundColor: "white",
+    padding: 8,
+    borderRadius: 8,
+    marginTop: 8,
+    color: "black",
+  },
+};

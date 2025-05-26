@@ -19,26 +19,27 @@ const InterestsFilter = ({ title, options }: InterestsFilterProps) => {
   };
 
   return (
-    <View className="bg-[#252525] rounded-lg p-4 mb-4">
+    <View style={styles.card} className="bg-[#252525] rounded-lg p-4 mb-4">
       <View className="flex-row justify-between items-center mb-2">
-        <Text className="text-white" style={{ ...FONTS.fontMedium, fontSize: 16 }}>
+        <Text className="text-dark" style={{ ...FONTS.fontMedium, fontSize: 16 }}>
           {title}
         </Text>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <Text className="text-[#FF375F] text-sm">Selecionar</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View className="flex-row flex-wrap">
         {options.map((option) => (
           <TouchableOpacity
             key={option}
+            style={styles.select}
             className={`m-1 px-4 py-2 rounded-full ${
-              selected.includes(option) ? 'bg-[#FF375F]' : 'bg-[#333]'
+              selected.includes(option) ? 'bg-primary' : 'bg-white'
             }`}
             onPress={() => toggleOption(option)}
           >
             <Text
-              className={selected.includes(option) ? 'text-white' : 'text-gray-400'}
+              className={selected.includes(option) ? 'text-dark' : 'text-gray-400'}
               style={{ ...FONTS.fontRegular, fontSize: 14 }}
             >
               {option}
@@ -48,6 +49,24 @@ const InterestsFilter = ({ title, options }: InterestsFilterProps) => {
       </View>
     </View>
   );
+};
+
+const styles = {
+  card: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    backgroundColor: "#FFFFFF",
+  },
+  select: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
 };
 
 export default InterestsFilter;

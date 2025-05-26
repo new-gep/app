@@ -13,17 +13,17 @@ export default function Filter() {
       <Header  title="Filtro" leftIcon={"back"}/>
       <ScrollView className="px-4">
         <LocationFilter />
-        <AgeRangeFilter />
-        <InterestsFilter title="Interesses" options={['Viagem', 'Música', 'Comida']} />
-        <InterestsFilter title="Idiomas que eu falo" options={['Português', 'Inglês', 'Espanhol']} />
-        <InterestsFilter title="Tipo de relacionamento" options={['Monogamia', 'Não-monogamia ética', 'Relacionamento aberto', 'Poliamor', 'Curto explorar']} />
-        <InterestsFilter title="To procurando" options={['Relacionamento sério', 'Algo sério, mas vamos ver...', 'Nada sério, mas depende...', 'Algo casual', 'Novas amizades', 'Ainda não sei']} />
+        {/* <AgeRangeFilter /> */}
+        <InterestsFilter title="Contrato" options={['CLT', 'Contrato', 'PJ']} />
+        <InterestsFilter title="Modalidade" options={['Presencial', 'Híbrido', 'Remoto']} />
+        <InterestsFilter title="Horários" options={['Manhã', 'Tarde', 'Noite', 'Madrugada', 'Fins de semana', 'Horário flexível']} />
+        <InterestsFilter title="Pagamento" options={['Por hora', 'Por dia', 'Por semana', 'Por projeto', 'Por mês', 'A combinar']} />
       </ScrollView>
       <TouchableOpacity
-        className="bg-[#FF375F] py-4 rounded-t-[20px] mx-4 mb-4"
+        className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
         onPress={() => console.log('CONCLUÍDO pressed')}
       >
-        <Text className="text-white text-center" style={{ ...FONTS.fontBold, fontSize: 16 }}>
+        <Text className="text-dark text-center" style={{ ...FONTS.fontBold, fontSize: 16 }}>
           CONCLUÍDO
         </Text>
       </TouchableOpacity>

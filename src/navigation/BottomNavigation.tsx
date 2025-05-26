@@ -7,6 +7,7 @@ import WorkScreen from '../screens/Work/Work';
 import VacancyScreen from '../screens/Vacancy/Home';
 import HomeScreen from '../screens/Home/Home';
 import ProfileScreen from '../screens/Profile/Profile';
+import ProfilScreen from '../screens/Profile/Profil';
 import DocumentsScreen from '../screens/Documents/Documents';
 import BottomMenu from '../layout/BottomMenu';
 import { useTheme } from '@react-navigation/native';
@@ -23,31 +24,27 @@ const BottomNavigation = () => {
 
     return (
         <Tab.Navigator
-            initialRouteName='Home'
             screenOptions={{
                 headerShown : false
             }}
             tabBar={(props:any) => <BottomMenu {...props}/>}
         >
             <Tab.Screen 
-                name='Home'
+                name='Início'
                 component={HomeScreen}
             />
             <Tab.Screen 
-                name='Work'
+                name='Vagas'
                 component={VacancyScreen}
             />
             <Tab.Screen 
-                name='Documents'
+                name='Trabalho'
                 component={Default}
             />
             <Tab.Screen 
-                name='Profile'
-                component={ProfileScreen}
+                name='Configurações'
+                component={ProfilScreen}
             />
-            
-
-            
         </Tab.Navigator>
     )
 }

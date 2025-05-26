@@ -7,4 +7,9 @@ export type BottomTabParamList = {
     Profile: undefined;
     Work:undefined;
     Vacancy:undefined;
+
+    Início: undefined;
+    Vagas: undefined;
+    Trabalho: undefined;
+    Configurações: undefined;
 };

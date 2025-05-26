@@ -22,83 +22,84 @@ import CheckCadasterCollaboratorProfile from "../utils/checkCadasterCollaborator
 import FindBucketCollaborator from "../../hooks/bucket/collaborator";
 import useCollaborator from "../../function/fetchCollaborator";
 import DevelopmentModal from "../../components/Modal/Development";
-import Feather from "@expo/vector-icons/build/Feather";
 import SaveCacheFile from "~/src/hooks/utils/SaveCacheFile";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 type ProfileScreenProps = StackScreenProps<RootStackParamList, "Profile">;
 
 const getZodiacSign = (
   date: string | null | undefined
 ): { sign: string; icon: any } => {
-  if (!date) return { sign: "Cadastro incompleto", icon: IMAGES.help };
+  
+  if (!date) return { sign: "Cadastro incompleto", icon: '?' };
 
   const [dayStr, monthStr] = date.split("/");
   const day = Number(dayStr);
   const month = Number(monthStr);
 
   if (isNaN(day) || isNaN(month)) {
-    return { sign: "Data inválida", icon: IMAGES.help };
+    return { sign: "Data inválida", icon: '?' };
   }
 
   if ((month === 3 && day >= 21) || (month === 4 && day <= 19))
     return {
       sign: "Áries",
-      icon: require("../../assets/images/zoadicSign/aries.png"),
+      icon: 'zodiac-aries',
     };
   if ((month === 4 && day >= 20) || (month === 5 && day <= 20))
     return {
       sign: "Touro",
-      icon: require("../../assets/images/zoadicSign/Taurus.png"),
+      icon: 'zodiac-taurus',
     };
   if ((month === 5 && day >= 21) || (month === 6 && day <= 20))
     return {
       sign: "Gêmeos",
-      icon: require("../../assets/images/zoadicSign/gemini.png"),
+      icon: 'zodiac-gemini',
     };
   if ((month === 6 && day >= 21) || (month === 7 && day <= 22))
     return {
       sign: "Câncer",
-      icon: require("../../assets/images/zoadicSign/cancer.png"),
+      icon: 'zodiac-cancer',
     };
   if ((month === 7 && day >= 23) || (month === 8 && day <= 22))
     return {
       sign: "Leão",
-      icon: require("../../assets/images/zoadicSign/leo.png"),
+      icon: 'zodiac-leo',
     };
   if ((month === 8 && day >= 23) || (month === 9 && day <= 22))
     return {
       sign: "Virgem",
-      icon: require("../../assets/images/zoadicSign/virgo.png"),
+      icon: 'zodiac-virgo',
     };
   if ((month === 9 && day >= 23) || (month === 10 && day <= 22))
     return {
       sign: "Libra",
-      icon: require("../../assets/images/zoadicSign/libra.png"),
+      icon: 'zodiac-libra',
     };
   if ((month === 10 && day >= 23) || (month === 11 && day <= 21))
     return {
       sign: "Escorpião",
-      icon: require("../../assets/images/zoadicSign/scorpio.png"),
+      icon: 'zodiac-scorpio',
     };
   if ((month === 11 && day >= 22) || (month === 12 && day <= 21))
     return {
       sign: "Sagitário",
-      icon: require("../../assets/images/zoadicSign/Sagittarius.png"),
+      icon: 'zodiac-sagittarius',
     };
   if ((month === 12 && day >= 22) || (month === 1 && day <= 19))
     return {
       sign: "Capricórnio",
-      icon: require("../../assets/images/zoadicSign/capricorn.png"),
+      icon: 'zodiac-capricorn',
     };
   if ((month === 1 && day >= 20) || (month === 2 && day <= 18))
     return {
       sign: "Aquário",
-      icon: require("../../assets/images/zoadicSign/aquarius.png"),
+      icon: 'zodiac-aquarius',
     };
 
   return {
     sign: "Peixes",
-    icon: require("../../assets/images/zoadicSign/Pisces.png"),
+    icon: 'zodiac-pisces',
   };
 };
 
@@ -115,21 +116,25 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
       image: IMAGES.call,
       title: "Celular",
       subtitle: collaborator && `+55 ${Mask("phone", collaborator.phone)}`,
+      iconName: "phone-outline",
     },
     {
       id: "2",
       image: IMAGES.email,
       title: "E-mail",
       subtitle: collaborator && Mask("emailBreakLine", collaborator.email),
+      iconName: "email-outline",
     },
     {
       id: "3",
       image: IMAGES.cake,
       title: "Data de Nascimento",
       subtitle:
+      
         collaborator && Mask("dateFormatBrazil", collaborator.birth)
           ? Mask("dateFormatBrazil", collaborator.birth)
           : "Cadastro incompleto",
+      iconName: "cake-variant-outline",
     },
     {
       id: "3.1",
@@ -141,6 +146,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
       iconName:
         collaborator &&
         getZodiacSign(Mask("dateFormatBrazil", collaborator.birth)).icon,
+      
     },
     {
       id: "4",
@@ -154,6 +160,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
           ? `${Object.keys(collaborator.children).length} Filhos`
           : "Cadastro incompleto"
         : "Cadastro incompleto",
+      iconName: "baby-face-outline",
     },
     {
       id: "5",
@@ -168,6 +175,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
               : "Não"
             : "Cadastro incompleto"
         }`,
+      iconName: "heart-outline",
     },
     {
       id: "6",
@@ -182,6 +190,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
               : "Não"
             : "Cadastro incompleto"
         }`,
+      iconName: "human-wheelchair",
     },
     {
       id: "7",
@@ -199,6 +208,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
             ? `${collaborator.street} N° ${collaborator.number}, ${collaborator.district}, ${collaborator.city} - ${collaborator.uf}`
             : "Cadastro incompleto"
         }`,
+      iconName: "map-marker-outline",
     },
   ];
 
@@ -221,7 +231,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
 
   const getPicture = async () => {
     const storedImagePath = await AsyncStorage.getItem("collaboratorImage");
-    if (storedImagePath && (await RNFS.exists(storedImagePath))) {
+    if (storedImagePath ) {
       setPath(`${storedImagePath}`);
       return;
     }
@@ -238,6 +248,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
         console.warn("Resposta inválida da API ou sem base64.");
       }
     } catch (error) {
+      // console.log("Erro ao buscar imagem:", error);
       console.error("Erro ao resgatar a imagem:", error);
     }
   };
@@ -280,7 +291,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
           <View
             style={[
               GlobalStyleSheet.container,
-              { alignItems: "center", marginTop: 50, padding: 0 },
+              { alignItems: "center", marginTop: 10, padding: 0 },
             ]}
           >
             <View
@@ -329,7 +340,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
           <View
             style={[
               GlobalStyleSheet.container,
-              { paddingHorizontal: 40, marginTop: 20 },
+              {  marginTop: 20 },
             ]}
           >
             <View>
@@ -341,7 +352,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                       GlobalStyleSheet.flexcenter,
                       {
                         width: "100%",
-                        gap: 20,
+                        gap: 10,
                         justifyContent: "flex-start",
                         marginBottom: 25,
                         alignItems: "flex-start",
@@ -349,36 +360,9 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                     ]}
                   >
                     <View
-                      style={{ backgroundColor: COLORS.dark }}
-                      className="rounded-full h-12 w-12 items-center justify-center"
+                      className="px-3 items-center justify-center"
                     >
-                      {data.image ? (
-                        <Image
-                          style={[
-                            GlobalStyleSheet.image3,
-                            {
-                              tintColor: COLORS.primary,
-                              backgroundColor: COLORS.dark,
-                            },
-                          ]}
-                          source={data.image}
-                        />
-                      ) : data.iconName ? (
-                        <Image
-                          style={{
-                            width: 24,
-                            height: 24,
-                            tintColor: COLORS.primary,
-                          }}
-                          source={data.iconName}
-                        />
-                      ) : (
-                        <Feather
-                          name="help-circle"
-                          size={24}
-                          color={COLORS.primary}
-                        />
-                      )}
+                      <MaterialCommunityIcons name={data.iconName} size={26} color="black" />
                     </View>
                     <View className={`w-5/6 `}>
                       <Text
