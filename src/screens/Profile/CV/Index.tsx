@@ -161,7 +161,7 @@ export default function CV() {
         :
         personalInfo ? (
           <>
-            <Header title="Currículo" leftIcon={"back"} iconSimple={"file"} dynamic={()=>{setCVEdit(false)}}/>
+            <Header title="Currículo" leftIcon={"back"} dynamic={()=>{setCVEdit(false)}}/>
             <ScrollView className="p-4">
               <PersonalInfo
                 personalInfo={personalInfo}

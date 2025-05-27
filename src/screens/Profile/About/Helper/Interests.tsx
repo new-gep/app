@@ -31,18 +31,16 @@ const InterestsFilter = ({
 
   return (
     <View>
-      <ModalDates visible={modalVisible} setVisible={setModalVisible} dates={selected} />
-
+      <ModalDates visible={modalVisible} setVisible={setModalVisible} dates={options} />
       <TouchableOpacity
         className="flex-row items-center justify-between"
         onPress={() => {
-          console.log("Navegando para:");
           setModalVisible(true)
           // navigation.navigate(item.go);
         }}
       >
         <View className="flex-row items-center w-1/12 h-1/2">
-          {/* <MaterialCommunityIcons name={icon} size={19} color="black" /> */}
+          {/* @ts-ignore */}
           <Image source={IMAGES[icon]} className="h-full w-full" resizeMode="contain"/>
         </View>
 
@@ -57,25 +55,7 @@ const InterestsFilter = ({
           <MaterialIcons name="keyboard-arrow-right" size={21} color="black" />
         </View>
       </TouchableOpacity>
-      {/* <View className="flex-row flex-wrap">
-        {options.map((option) => (
-          <TouchableOpacity
-            key={option}
-            style={styles.select}
-            className={`m-1 px-4 py-2 rounded-full ${
-              selected.includes(option) ? 'bg-primary' : 'bg-white'
-            }`}
-            onPress={() => toggleOption(option)}
-          >
-            <Text
-              className={selected.includes(option) ? 'text-dark' : 'text-gray-400'}
-              style={{ ...FONTS.fontRegular, fontSize: 14 }}
-            >
-              {option}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View> */}
+      
     </View>
   );
 };

@@ -4,22 +4,57 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { FONTS } from "~/src/constants/theme";
 import Header from "../../../layout/Header";
 import CVPreview from "./Preview";
-import CVUpload  from "./Upload";
-
+import CVUpload from "./Upload";
+import List from "~/src/components/Menu/List";
 
 export default function Home({ cv, setCv, collaborator }: any) {
   const [preview, setPreview] = React.useState<boolean>(false);
-  const [upload, setUpload]   = React.useState<boolean>(false);
+  const [upload, setUpload] = React.useState<boolean>(false);
+  const ListMenu = [
+    {
+      icon:'document_outline',
+      title:'CV',
+      variable: cv,
+      setVariable: setCv
+    },
+     {
+      icon:'upload_outline',
+      title:'Upload',
+      variable: upload,
+      setVariable: setUpload
+    },
+     {
+      icon:'robot_outline',
+      title:'IA',
+      // go:'Profile',
+      // variable: ia,
+      // setVariable: setIA
+    },
+    {
+      icon:'eye_outline',
+      title:'Visualizar',
+      variable: preview,
+      setVariable: setPreview
+    },
 
+  ]
 
   return (
     <>
-      <CVPreview visible={preview} setVisible={setPreview} collaborator={collaborator}/>
-      <CVUpload  visible={upload}  setVisible={setUpload} collaborator={collaborator}/>
+      <CVPreview
+        visible={preview}
+        setVisible={setPreview}
+        collaborator={collaborator}
+      />
+      <CVUpload
+        visible={upload}
+        setVisible={setUpload}
+        collaborator={collaborator}
+      />
 
-      <Header title="Currículo" leftIcon={"back"} iconSimple={"file"} />
+      <Header title="Currículo" leftIcon={"back"} />
       <ScrollView className="flex-1 bg-white px-4 py-6">
-        <View className="mb-5">
+        {/* <View className="mb-5">
           <Text
             style={{ ...FONTS.fontBold, fontSize: 32 }}
             className="text-black"
@@ -33,57 +68,12 @@ export default function Home({ cv, setCv, collaborator }: any) {
             Crie seu currículo, envie seu CV e seja encontrado pelas melhores
             oportunidades.
           </Text>
-        </View>
+        </View> */}
 
-        <View className="flex-row flex-wrap justify-between">
-          {/* Card 1 - Perfil */}
-          <TouchableOpacity
-            style={Style.container}
-            className="w-[48%] aspect-square rounded-2xl justify-center items-center mb-4 bg-white"
-            onPress={() => {
-              setCv(true);
-            }}
-          >
-            <MaterialIcons name="article" size={24} color="black" />
-            <Text className="mt-2 text-center font-semibold">CV</Text>
-          </TouchableOpacity>
 
-          {/* Card 2 - Upload CV */}
-          <TouchableOpacity
-            style={Style.container}
-            className="w-[48%] aspect-square bg-white rounded-2xl justify-center items-center mb-4"
-            onPress={() => {
-              setUpload(true);
-            }}
-          >
-            <MaterialIcons name="cloud-upload" size={24} color="black" />
-            <Text className=" mt-2 text-center font-semibold">Upload</Text>
-          </TouchableOpacity>
 
-          {/* Card 3 - Visualizar CV */}
-          <TouchableOpacity
-            style={Style.container}
-            className="w-[48%] aspect-square bg-white rounded-2xl justify-center items-center mb-4"
-            onPress={() => {
-              setPreview(true);
-            }}
-          >
-            <MaterialIcons name="remove-red-eye" size={24} color="black" />
-            <Text className="mt-2 text-center font-semibold">Visualizar</Text>
-          </TouchableOpacity>
+        <List items={ListMenu} />
 
-          {/* Card 4 - IA */}
-          <TouchableOpacity
-            style={Style.container}
-            className="w-[48%] aspect-square bg-white rounded-2xl justify-center items-center mb-4"
-            onPress={() => {
-              setPreview(true);
-            }}
-          >
-            <MaterialIcons name="layers" size={24} color="black" />
-            <Text className="mt-2 text-center font-semibold">IA</Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
     </>
   );

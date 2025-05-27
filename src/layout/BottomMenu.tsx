@@ -152,8 +152,8 @@ const BottomMenu = ({ state, navigation, descriptors }: Props) => {
                                     }}> */}
                   <Image
                     style={{
-                      height: 28,
-                      width: 28,
+                      height: 25,
+                      width: 25,
                       resizeMode: "contain",
                       tintColor: isFocused
                         ? theme.dark

@@ -1,45 +1,170 @@
-import React, { useState } from "react";
-import { View, Text, Switch, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Switch,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+} from "react-native";
 import Slider from "@react-native-community/slider";
 import { FONTS } from "~/src/constants/theme";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from "~/src/components/Icon/Icon";
+import Mask from "~/src/function/mask";
+import FindCep from "~/src/hooks/findOne/cep";
 
 const LocationFilter = () => {
   const [distance, setDistance] = useState(2);
   const [showFarPeople, setShowFarPeople] = useState(false);
+  const [newLocation, setNewLocation] = useState("");
+  const [locations, setLocations] = useState<string[]>([]);
+  const [showInput, setShowInput] = useState(false);
+  const [foundLocation, setFoundLocation] = useState<{
+    label: string;
+    cep: string;
+  } | null>(null);
+
+  const addLocation = () => {
+    if (foundLocation) {
+      setLocations((prev) => [...prev, foundLocation.label]);
+      setNewLocation("");
+      setShowInput(false);
+      setFoundLocation(null);
+    }
+  };
+
+  const removeLocation = (index: number) => {
+    setLocations((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const findCep = async () => {
+    const clearCep = Mask("remove", newLocation);
+    if (clearCep.length !== 8) {
+      setFoundLocation(null);
+      return;
+    }
+
+    const response = await FindCep(clearCep);
+    if (response?.erro) {
+      Alert.alert("Erro", "CEP não encontrado, tente novamente!");
+      setFoundLocation(null);
+      return;
+    }
+
+    const label = `${response.localidade}, ${response.uf}`;
+    setFoundLocation({ label, cep: clearCep });
+  };
+
+  useEffect(() => {
+    if (newLocation.length === 9) findCep();
+    else setFoundLocation(null);
+  }, [newLocation]);
 
   return (
     <>
       <View className="mb-4">
-        <View 
-          style={styles.card}
-          className=" rounded-lg p-4 mt-2"
-        >
+        <View style={styles.card} className="bg-white rounded-lg p-4 mt-2">
           <Text
             className="text-dark mb-2"
-            style={{ ...FONTS.fontMedium, fontSize: 16 }}
+            style={{ ...FONTS.fontRegular, fontSize: 14 }}
           >
             Localização
           </Text>
+
+          {/* Local fixo */}
           <View className="flex-row items-center mb-2">
-            <Ionicons name="location" size={16}  />
+            <View className="h-5 w-5">
+              <Icon name="location_outline" />
+            </View>
             <Text
-              className="text-dark ml-2"
+              className="text-dark ml-1"
               style={{ ...FONTS.fontRegular, fontSize: 14 }}
             >
               São Paulo, Brasil
             </Text>
           </View>
-          <TouchableOpacity className="mb-2">
-            <Text className="text-gray-500 text-sm">Adicionar novo local</Text>
-          </TouchableOpacity>
+
+          {/* Locais adicionais */}
+          {locations.map((loc, index) => (
+            <View
+              key={index}
+              className="flex-row items-center justify-between mb-1"
+            >
+              <View className="flex-row items-center">
+                <View className="h-5 w-5">
+                  <Icon name="location_outline" />
+                </View>
+                <Text
+                  className="text-dark ml-1"
+                  style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                >
+                  {loc}
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => removeLocation(index)}>
+                <View className="h-5 w-5">
+                  <Icon name="delete_outline" />
+                </View>
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          {/* Adicionar novo local */}
+          {showInput ? (
+            <View className="mt-2">
+              <TextInput
+                maxLength={10}
+                placeholder="Digite o CEP"
+                style={styles.card}
+                className="p-2 rounded-lg bg-white"
+                value={Mask("cep", newLocation)}
+                keyboardType="numeric"
+                onChangeText={setNewLocation}
+              />
+              {foundLocation && (
+                <View className="flex-row items-center py-1 px-3">
+                  <View className="h-6 w-6">
+                    <Icon name="subDirectory" color="gray" />
+                  </View>
+                  <Text className="ml-2 text-gray-600">
+                    {foundLocation.label}
+                  </Text>
+                </View>
+              )}
+
+              <View className="flex-row justify-between items-center">
+                <TouchableOpacity
+                  className="mt-3"
+                  onPress={() => {
+                    setShowInput(false);
+                    setNewLocation("");
+                    setFoundLocation(null);
+                  }}
+                >
+                  <Text className="text-sm text-gray-500">Voltar</Text>
+                </TouchableOpacity>
+                {foundLocation && (
+                  <TouchableOpacity className="mt-3" onPress={addLocation}>
+                    <Text className="text-sm text-green-500">Adicionar</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          ) : (
+            <TouchableOpacity
+              className="mt-3"
+              onPress={() => setShowInput(true)}
+            >
+              <Text className="text-gray-500 text-sm">
+                + Adicionar novo local
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
-        <Text>Mude a localização aq</Text>
       </View>
-      <View 
-        style={styles.card}
-        className="bg-[#252525] rounded-lg p-4 mb-4"
-      >
+
+      {/* Distância */}
+      <View style={styles.card} className="bg-white rounded-lg p-4 mb-4">
         <Text
           className="text-dark mb-2"
           style={{ ...FONTS.fontRegular, fontSize: 14 }}
@@ -55,8 +180,7 @@ const LocationFilter = () => {
           minimumTrackTintColor="#fde047"
           maximumTrackTintColor="#666"
           thumbTintColor="#fde047"
-          className="mb-4 "
-          
+          className="mb-4"
         />
         <Text
           className="text-dark mb-2"
@@ -85,12 +209,11 @@ const LocationFilter = () => {
 
 const styles = {
   card: {
-    elevation: 8, // Sombra para Android
-    shadowColor: "#000", // Sombra para iOS
+    elevation: 8,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    backgroundColor: "#FFFFFF",
   },
 };
 

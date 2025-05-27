@@ -22,11 +22,9 @@ const DrawerNavigation = () => {
           zIndex: 999,
         }}
       >
-        {/* @ts-ignore */}
-        <SideMenu
+        {/* <SideMenu
           isOpen={isOpen}
           menu={<DrawerMenu />}
-          // onChange={(e) => console.log(e)}
           onChange={(e) => {
             e === false ? dispatch(closeDrawer()) : null;
           }}
@@ -34,9 +32,9 @@ const DrawerNavigation = () => {
             toValue: value,
             useNativeDriver: true,
           })}
-        >
+        > 
+        </SideMenu> */}
           <BottomNavigation />
-        </SideMenu>
       </View>
     </>
   );
