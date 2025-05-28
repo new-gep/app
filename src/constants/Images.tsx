@@ -176,7 +176,17 @@ export const IMAGES = {
     volunter_outline: require('../assets/picture/icons/volunter.png'),
     bus_outline:require('../assets/picture/icons/bus.png'),
     delete_outline:require('../assets/picture/icons/delete.png'),
+    house_outline:require('../assets/picture/icons/house.png'),
+    car_outline:require('../assets/picture/icons/car.png'),
+    styler_outline:require('../assets/picture/icons/styler.png'),
+    health_outline:require('../assets/picture/icons/health.png'),
+    celebration_outline:require('../assets/picture/icons/celebration.png'),
+    computer_outline:require('../assets/picture/icons/computer.png'),
+    tools_outline :require('../assets/picture/icons/tools.png'),
+    build_outline:require('../assets/picture/icons/build.png'),
+    selfCare_outline:require('../assets/picture/icons/selfCare.png'),
     subDirectory:require('../assets/picture/icons/subDirectory.png'),
+
 
 
     door : require('../assets/images/icons/door.png'),

@@ -97,6 +97,7 @@ export type RootStackParamList = {
         cardData: any;
         onSwipeLeft: () => void;
     };
+    Service:undefined;
 };
 
 declare global {

@@ -1,0 +1,577 @@
+import React from "react";
+import { View, Text, ScrollView } from "react-native";
+import Header from "~/src/layout/Header";
+import List from "~/src/components/Menu/List";
+import InterestsFilter from "../About/Helper/Interests";
+import { useNavigation } from "@react-navigation/native";
+
+export default function Service() {
+  const [menu, setMenu] = React.useState<string>("default");
+  const navigation = useNavigation<any>();
+  const changeMenu = (option: string) => {
+    if (option === "default") {
+      navigation.goBack();
+      return;
+    }
+    if (option === menu) {
+      setMenu("default");
+      return;
+    }
+    setMenu(option);
+  };
+
+  const renderLists = (itemsArray: any[]) => {
+    return (
+      <View style={Style.container} className="bg-white rounded-lg p-4 mb-4">
+        {itemsArray.map((item: any, index: number) => {
+          const isLast = index === itemsArray.length - 1;
+          console.log(item.option);
+          return (
+            <React.Fragment key={index}>
+              <InterestsFilter
+                border={!isLast} // se for último, border = false; caso contrário true
+                title={item.title}
+                icon={"undefined"}
+                options={item.option}
+              />
+            </React.Fragment>
+          );
+        })}
+      </View>
+    );
+  };
+
+  const services = [
+    {
+      icon: "build_outline",
+      title: "Assistência Técnica",
+      action: () => changeMenu("service"),
+    },
+    {
+      icon: "school_outline",
+      title: "Aulas",
+      action: () => changeMenu("school"),
+    },
+    {
+      icon: "car_outline",
+      title: "Autos",
+      action: () => changeMenu("autos"),
+    },
+    {
+      icon: "handShake_outline",
+      title: "Consultoria",
+      action: () => changeMenu("handShake"),
+    },
+    {
+      icon: "computer_outline",
+      title: "Design e Tecnologia",
+      action: () => changeMenu("computer"),
+    },
+    {
+      icon: "celebration_outline",
+      title: "Eventos",
+      action: () => changeMenu("event"),
+    },
+    {
+      icon: "styler_outline",
+      title: "Moda e Beleza",
+      action: () => changeMenu("styler"),
+    },
+    {
+      icon: "tools_outline",
+      title: "Reformas e Reparos",
+      action: () => changeMenu("reform"),
+    },
+    {
+      icon: "health_outline",
+      title: "Saúde",
+      action: () => changeMenu("health"),
+    },
+    {
+      icon: "house_outline",
+      title: "Serviços Domésticos",
+      action: () => changeMenu("house"),
+    },
+  ];
+  const assistance = [
+    {
+      // icon: "build_outline",
+      title: "Aparelhos Eletrônicos",
+      option: [
+        "Aparelho de Som",
+        "Aquecedor a Gás",
+        "Ar Condicionado",
+        "Câmera",
+        "DVD / Blu-Ray",
+        "Home Theater",
+        "Televisão",
+        "Video Game",
+      ],
+    },
+    {
+      // icon: "build_outline",
+      title: "Eletrodomésticos",
+      option: [
+        "Adega Climatizada",
+        "Fogão e Cooktop",
+        "Geladeira e Freezer",
+        "Lava Louça",
+        "Máquina de Costura",
+        "Máquina de Lavar",
+        "Microondas",
+        "Secadora de Roupas",
+      ],
+    },
+    {
+      // icon: "build_outline",
+      title: "Informática e Telefonia",
+      option: [
+        "Cabeamento e Redes",
+        "Celular",
+        "Computador Desktop",
+        "Fone de Ouvido",
+        "Impressora",
+        "Notebook",
+        "Tablet",
+        "Telefone Fixo",
+        "Telefonia PABX",
+      ],
+    },
+  ];
+  const school = [
+    {
+      // icon: "build_outline",
+      title: "Acadêmicos",
+      //   go: "Service",
+      option: [
+        "Concursos",
+        "Escolares e Reforço",
+        "Educação Especial",
+        "Ensino Superior",
+        "Ensino Profissionalizante",
+        "Idiomas",
+        "Moda",
+        "Pré-Vestibular",
+        "Saúde",
+        "Tarefas",
+      ],
+    },
+    {
+      // icon: "build_outline",
+      title: "Artes e Entretenimento",
+      //   go: "Service",
+      option: [
+        "Artes",
+        "Artesanato",
+        "Beleza",
+        "Bem-Estar",
+        "Circo",
+        "Fotografia",
+        "Moda",
+        "Música",
+        "Paisagismo",
+        "TV e Teatro",
+      ],
+    },
+    {
+      // icon: "build_outline",
+      title: "Esportes",
+      //   go: "Service",
+      option: ["Dança", "Esportes", "Jogos", "Lazer", "Luta"],
+    },
+    {
+      // icon: "build_outline",
+      title: "Tecnologia",
+      option: [
+        "Desenvolvimento Web",
+        "Esportes Eletrônicos",
+        "Informática",
+        "Marketing Digital",
+      ],
+    },
+  ];
+  const auto = [
+    {
+      title: "Auto Elétrica",
+      option: [
+        "Alarme automotivo",
+        "Ar condicionado",
+        "Auto elétrico",
+        "Som automotivo",
+      ],
+    },
+    {
+      title: "Funilaria e Pintura",
+      option: [
+        "Funilaria",
+        "Higienização e Polimento",
+        "Martelinho de Ouro",
+        "Pintura",
+      ],
+    },
+    {
+      title: "Vidraçaria Automotiva",
+      option: ["Insulfilm", "Vidraçaria Automotiva"],
+    },
+    {
+      title: "Mecânica",
+      option: ["Guincho", "Mecânica Geral"],
+    },
+    {
+      title: "Venda de Automóveis",
+      option: ["Venda de Automóveis"],
+    },
+  ];
+  const consultancy = [
+    {
+      title: "Mídia",
+      option: [
+        "Assessoria de Imprensa",
+        "Escrita e Conteúdo",
+        "Pesquisa em Geral",
+        "Produção de Conteúdo",
+        "Tradutores",
+      ],
+    },
+    {
+      title: "Negócios",
+      option: [
+        "Administração de Imóveis",
+        "Assessor de Investimentos",
+        "Auxílio administrativo",
+        "Contador",
+        "Corretor",
+        "Despachante",
+        "Economia e Finanças",
+        "Digitalizar documentos",
+        "Recrutamento e Seleção",
+        "Segurança do trabalho",
+      ],
+    },
+    {
+      title: "Jurídico",
+      option: [
+        "Advogado",
+        "Mediação de Conflitos",
+        "Testamento e Planejamento Patrimonial",
+      ],
+    },
+    {
+      title: "Pessoal",
+      option: [
+        "Consultor pessoal",
+        "Consultoria especializada",
+        "Guia de Turismo",
+      ],
+    },
+  ];
+  const designTec = [
+    {
+      title: "Tecnologia",
+      option: [
+        "Apps para smartphone",
+        "Desenvolvimento de games",
+        "Desenvolvimento de sites",
+        "Marketing digital",
+        "UI design",
+      ],
+    },
+    {
+      title: "Gráfica",
+      option: [
+        "Convites",
+        "Criação de logos",
+        "Diagramador",
+        "Materiais promocionais",
+        "Produção gráfica",
+      ],
+    },
+    {
+      title: "Áudio / Visual",
+      option: [
+        "Animação motion",
+        "Áudio e Vídeo",
+        "Edição de fotos",
+        "Fotografia",
+        "Ilustração",
+        "Modelagem 2D e 3D",
+        "Restauração de Fotos",
+        "Web Design",
+      ],
+    },
+  ];
+  const event = [
+    {
+      title: "Equipe e Suporte",
+      option: [
+        "Assessor de eventos",
+        "Carros de casamento",
+        "Celebrantes",
+        "Equipamento para festas",
+        "Garçons e copeiras",
+        "Local para eventos",
+        "Manobrista",
+        "Organização de Eventos",
+        "Recepcionista",
+        "Seguranças",
+      ],
+    },
+    {
+      title: "Comes e bebes",
+      option: [
+        "Bartender",
+        "Buffet completo",
+        "Chocolateiro",
+        "Churrasqueiro",
+        "Confeiteira",
+      ],
+    },
+    {
+      title: "Música e animação",
+      option: [
+        "Animação de festas",
+        "Bandas e cantores",
+        "DJs",
+        "Ônibus Balada",
+      ],
+    },
+    {
+      title: "Serviços Complementares",
+      option: [
+        "Brindes e lembrancinhas",
+        "Convites",
+        "Decoração",
+        "Edição de vídeos",
+        "Fotografia",
+        "Florista",
+      ],
+    },
+  ];
+  const fashion = [
+    {
+      title: "Beleza",
+      option: [
+        "Bronzeamento",
+        "Depilação",
+        "Design de sobrancelha",
+        "Design de cílios",
+        "Manicure e pedicure",
+        "Maquiadores",
+        "Micropigmentação",
+        "Podólogo",
+        "Alfaiate",
+      ],
+    },
+    {
+      title: "Cabelo",
+      option: ["Cabeleireiros", "Barbeiros"],
+    },
+    {
+      title: "Estilo",
+      option: [
+        "Alfaiate",
+        "Corte e costura",
+        "Personal stylist",
+        "Sapateiro",
+        "Visagista",
+      ],
+    },
+    {
+      title: "Artes e Magia",
+      option: ["Artesanato", "Esotérico"],
+    },
+  ];
+  const reform = [
+    {
+      title: "Aluguel de Maquinário",
+      option: ["Aluguel de Maquinário"],
+    },
+    {
+      title: "Construção",
+      option: [
+        "Arquitetos",
+        "Design de Interiores",
+        "Empreiteiro",
+        "Engenheiro",
+        "Limpeza pós obra",
+        "Marmorarias e Granitos",
+        "Pedreiro",
+        "Poço Artesiano",
+        "Remoção de Entulho",
+      ],
+    },
+    {
+      title: "Instalação",
+      option: [
+        "Antenista",
+        "Automação residencial",
+        "Instalação de eletrônicos",
+        "Instalador tv digital",
+        "Segurança eletrônica",
+        "Toldo e coberturas",
+      ],
+    },
+    {
+      title: "Reformas e Reparos",
+      option: [
+        "Encanador",
+        "Eletricista",
+        "Gás",
+        "Gesso e drywall",
+        "Pavimentação",
+        "Pintor",
+        "Serralheria e solda",
+        "Vidraceiro",
+      ],
+    },
+    {
+      title: "Serviços Gerais",
+      option: [
+        "Chaveiro",
+        "Dedetizador",
+        "Desentupidor",
+        "Desinfecção",
+        "Impermeabilizador",
+        "Marceneiro",
+        "Marido de aluguel",
+        "Mudanças e carretos",
+        "Tapeceiro",
+      ],
+    },
+    {
+      title: "Para Casa",
+      option: [
+        "Banheira",
+        "Coifas e exaustores",
+        "Decorador",
+        "Instalador de papel de parede",
+        "Jardinagem",
+        "Montador de móveis",
+        "Paisagista",
+        "Piscina",
+        "Redes de proteção",
+      ],
+    },
+  ];
+  const health = [
+    {
+      // icon: "build_outline",
+      title: "Biomedicina Estética",
+      option: ["Biomedicina estética", "Remoção de tatuagem"],
+    },
+    {
+      // icon: "build_outline",
+      title: "Para o Corpo",
+      option: [
+        "Cozinheira",
+        "Dentista",
+        "Fisioterapeuta",
+        "Fonoaudiólogo",
+        "Médico",
+        "Nutricionista",
+        "Quiropraxia",
+        "Terapias alternativas",
+        "Terapia ocupacional",
+      ],
+    },
+    {
+      // icon: "build_outline",
+      title: "Para a Mente",
+      option: [
+        "Aconselhamento conjugal e familiar",
+        "Coach",
+        "Doula",
+        "Psicanalista",
+        "Psicólogo",
+      ],
+    },
+    {
+      // icon: "build_outline",
+      title: "Para a família",
+      option: ["Cuidador de pessoas", "Enfermeira"],
+    },
+  ];
+  const domestics = [
+    {
+      // icon: "build_outline",
+      title: "Para a Casa",
+      option: [
+        "Diarista",
+        "Limpeza de piscina",
+        "Passadeira",
+        "Tapaceiro",
+        "Lavadeira",
+        "Personal shopper",
+      ],
+    },
+    {
+      // icon: "build_outline",
+      title: "Para a Família",
+      option: [
+        "Babá",
+        "Cozinheira",
+        "Entregador",
+        "Motorista",
+        "Personal Organizer",
+        "Segurança Particular",
+      ],
+    },
+    {
+      // icon: "build_outline",
+      title: "Para os Pets",
+      option: ["Adestrador de cães", "Passeador de cães", "Serviços para pets"],
+    },
+  ];
+
+  return (
+    <View className="bg-white h-full">
+      <Header
+        title="Meu Serviço"
+        leftAction={() => changeMenu(menu)}
+        leftIcon={"back"}
+      />
+      <ScrollView className="p-6">
+        {menu === "default" ? (
+          <List items={services} />
+        ) : menu === "service" ? (
+          renderLists(assistance)
+        ) : menu === "school" ? (
+          renderLists(school)
+        ) : menu === "autos" ? (
+          renderLists(auto)
+        ) : menu === "handShake" ? (
+          renderLists(consultancy)
+        ) : menu === "computer" ? (
+          renderLists(designTec)
+        ) : menu === "event" ? (
+          renderLists(event)
+        ) : menu === "styler" ? (
+          renderLists(fashion)
+        ) : menu === "reform" ? (
+          renderLists(reform)
+        ) : menu === "health" ? (
+          renderLists(health)
+        ) : menu === "house" ? (
+          renderLists(domestics)
+        ) : null}
+      </ScrollView>
+    </View>
+  );
+}
+
+const Style = {
+  container: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  text: {
+    backgroundColor: "white",
+    padding: 8,
+    borderRadius: 8,
+    marginTop: 8,
+    color: "black",
+  },
+};

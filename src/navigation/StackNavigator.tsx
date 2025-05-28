@@ -73,6 +73,7 @@ import Dossie from "../screens/Work/Dossie/Index";
 import CV from "../screens/Profile/CV/Index";
 import Filter from "../screens/Home/filter/Index";
 import About from "../screens/Profile/About/Index";
+import Service from "../screens/Profile/Service/Index";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -150,6 +151,7 @@ const StackNavigator = () => {
         <Stack.Screen name="TimelineAdmiss" component={TimelineAdmiss} />
         <Stack.Screen name="DismissalSteps" component={DismissalSteps} />
         <Stack.Screen name="PayStub" component={PayStub} />
+        <Stack.Screen name="Service" component={Service} />
         <Stack.Screen name="Point" component={Point} />
         <Stack.Screen name="Absence" component={Absence} />
         <Stack.Screen name="CardInformation" component={CardInformation} />

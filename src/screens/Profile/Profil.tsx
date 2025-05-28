@@ -51,11 +51,11 @@ export default function Profile() {
       // go: "CV",
     },
   ];
-  const test = [
+  const service = [
     {
       icon: "volunter_outline",
       title: "Serviço",
-      // go: "CV",
+      go: "Service",
     },
     {
       icon: "star_outline",
@@ -68,7 +68,6 @@ export default function Profile() {
       // go: "CV",
     },
   ];
- 
   const conf = [
     {
       icon: "key_outline",
@@ -105,7 +104,7 @@ export default function Profile() {
           <List items={about} />
         </View>
         <View className="mt-5">
-          <List items={test} />
+          <List items={service} />
         </View>
         <View className="mt-5 mb-5">
           <List items={conf} />

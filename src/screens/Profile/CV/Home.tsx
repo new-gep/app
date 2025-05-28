@@ -53,7 +53,7 @@ export default function Home({ cv, setCv, collaborator }: any) {
       />
 
       <Header title="Currículo" leftIcon={"back"} />
-      <ScrollView className="flex-1 bg-white px-4 py-6">
+      <ScrollView className="flex-1 bg-white p-6">
         {/* <View className="mb-5">
           <Text
             style={{ ...FONTS.fontBold, fontSize: 32 }}
