@@ -25,13 +25,12 @@ export default function Service() {
       <View style={Style.container} className="bg-white rounded-lg p-4 mb-4">
         {itemsArray.map((item: any, index: number) => {
           const isLast = index === itemsArray.length - 1;
-          console.log(item.option);
           return (
             <React.Fragment key={index}>
               <InterestsFilter
                 border={!isLast} // se for último, border = false; caso contrário true
                 title={item.title}
-                icon={"undefined"}
+                icon={item.icon}
                 options={item.option}
               />
             </React.Fragment>
@@ -95,7 +94,7 @@ export default function Service() {
   ];
   const assistance = [
     {
-      // icon: "build_outline",
+      icon: "radio_outline",
       title: "Aparelhos Eletrônicos",
       option: [
         "Aparelho de Som",
@@ -109,7 +108,7 @@ export default function Service() {
       ],
     },
     {
-      // icon: "build_outline",
+      icon: "kitchen_outline",
       title: "Eletrodomésticos",
       option: [
         "Adega Climatizada",
@@ -123,7 +122,7 @@ export default function Service() {
       ],
     },
     {
-      // icon: "build_outline",
+      icon: "deskPhone_outline",
       title: "Informática e Telefonia",
       option: [
         "Cabeamento e Redes",
@@ -140,7 +139,7 @@ export default function Service() {
   ];
   const school = [
     {
-      // icon: "build_outline",
+      icon: "book2_outline",
       title: "Acadêmicos",
       //   go: "Service",
       option: [
@@ -157,7 +156,7 @@ export default function Service() {
       ],
     },
     {
-      // icon: "build_outline",
+      icon: "theater_outline",
       title: "Artes e Entretenimento",
       //   go: "Service",
       option: [
@@ -174,13 +173,13 @@ export default function Service() {
       ],
     },
     {
-      // icon: "build_outline",
+      icon: "soccer_outline",
       title: "Esportes",
       //   go: "Service",
       option: ["Dança", "Esportes", "Jogos", "Lazer", "Luta"],
     },
     {
-      // icon: "build_outline",
+      icon: "code_outline",
       title: "Tecnologia",
       option: [
         "Desenvolvimento Web",
@@ -192,6 +191,7 @@ export default function Service() {
   ];
   const auto = [
     {
+      icon:"power_outline",
       title: "Auto Elétrica",
       option: [
         "Alarme automotivo",
@@ -201,6 +201,7 @@ export default function Service() {
       ],
     },
     {
+      icon:"roller_outline",
       title: "Funilaria e Pintura",
       option: [
         "Funilaria",
@@ -210,20 +211,24 @@ export default function Service() {
       ],
     },
     {
+      icon:"glassBroken_outline",
       title: "Vidraçaria Automotiva",
       option: ["Insulfilm", "Vidraçaria Automotiva"],
     },
     {
+      icon:"carRepair_outline",
       title: "Mecânica",
       option: ["Guincho", "Mecânica Geral"],
     },
     {
+      icon:"carSell_outline",
       title: "Venda de Automóveis",
       option: ["Venda de Automóveis"],
     },
   ];
   const consultancy = [
     {
+      icon:'camera_outline',
       title: "Mídia",
       option: [
         "Assessoria de Imprensa",
@@ -234,6 +239,7 @@ export default function Service() {
       ],
     },
     {
+      icon:'paid_outline',
       title: "Negócios",
       option: [
         "Administração de Imóveis",
@@ -249,6 +255,7 @@ export default function Service() {
       ],
     },
     {
+      icon:'balance_outline',
       title: "Jurídico",
       option: [
         "Advogado",
@@ -257,6 +264,7 @@ export default function Service() {
       ],
     },
     {
+      icon:'user_outline',
       title: "Pessoal",
       option: [
         "Consultor pessoal",
@@ -267,6 +275,7 @@ export default function Service() {
   ];
   const designTec = [
     {
+      icon:'code_outline',
       title: "Tecnologia",
       option: [
         "Apps para smartphone",
@@ -277,6 +286,7 @@ export default function Service() {
       ],
     },
     {
+      icon:'image_outline',
       title: "Gráfica",
       option: [
         "Convites",
@@ -287,6 +297,7 @@ export default function Service() {
       ],
     },
     {
+      icon:'stockMedia_outline',
       title: "Áudio / Visual",
       option: [
         "Animação motion",

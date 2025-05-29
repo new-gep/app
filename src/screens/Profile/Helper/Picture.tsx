@@ -3,6 +3,7 @@ import { IMAGES } from "../../../constants/Images";
 import { FONTS } from "../../../constants/theme";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
+import Icon from "~/src/components/Icon/Icon";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FindBucketCollaborator from "~/src/hooks/bucket/collaborator";
@@ -45,37 +46,47 @@ export default function Picture({ collaborator }: { collaborator?: any }) {
   }, [collaborator]);
 
   return (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("EditProfile")}
-      style={Style.container}
-      className="bg-white rounded-lg p-4 justify-between mb-4 flex-row"
-    >
-      <View className="flex-row items-center w-2/12">
-        <View className={`w-14 h-14 rounded-full border-gray-200 bg-gray-200 mr-2 ${!path && "p-2"}`}>
-          <Image
-            className={`w-full h-full ${path ? "rounded-full" : ""}`}
-            source={path ? { uri: path } : IMAGES.user2}
-            tintColor={path ? undefined : "gray"}
-            onError={(e) =>
-              console.warn("Erro ao renderizar:", e.nativeEvent.error)
-            }
-          />
+    <View style={Style.container} className="bg-white rounded-lg mb-4">
+      <TouchableOpacity
+        onPress={() => navigation.navigate("EditProfile")}
+        className="bg-white justify-between flex-row p-4 rounded-lg"
+      >
+        <View className="flex-row items-center w-3/12">
+          <View className={`w-16 h-16 rounded-full border-gray-200 bg-gray-200 ${!path && "p-2"}`}>
+            <Image
+              className={`w-full h-full ${path ? "rounded-full" : ""}`}
+              source={path ? { uri: path } : IMAGES.user2}
+              tintColor={path ? undefined : "gray"}
+              onError={(e) =>
+                console.warn("Erro ao renderizar:", e.nativeEvent.error)
+              }
+            />
+          </View>
         </View>
-      </View>
-      <View className="w-7/12">
-        <View className="w-full">
-          <Text style={{ ...FONTS.font, fontSize: 17 }} className="text-dark">
-            {collaborator && Mask("fullName", collaborator.name)}
-          </Text>
-          <Text style={{ ...FONTS.font, fontSize: 14, color: "gray" }}>
-            Recado
-          </Text>
+        <View className="w-7/12">
+          <View className="w-full">
+            <Text style={{ ...FONTS.font, fontSize: 17 }} className="text-dark">
+              {collaborator && Mask("fullName", collaborator.name)}
+            </Text>
+            <Text style={{ ...FONTS.font, fontSize: 14, color: "gray" }}>
+              Recado
+            </Text>
+          </View>
         </View>
-      </View>
-      <View className="w-2/12 items-end  justify-center">
+        <View className="w-2/12 items-end  justify-center">
+          <MaterialIcons name="keyboard-arrow-right" size={21} color="black" />
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity className="border-t border-[#e5e7eb] items-end justify-between flex-row rounded-b-lg p-2 px-4">
+        <View className="flex-row">
+          <View className="h-5 w-5 mr-2">
+            <Icon name='eye_outline'/>
+          </View>
+          <Text>Visualizar Perfil</Text>
+        </View>
         <MaterialIcons name="keyboard-arrow-right" size={21} color="black" />
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>     
+    </View>
   );
 }
 

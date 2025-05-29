@@ -185,7 +185,25 @@ export const IMAGES = {
     tools_outline :require('../assets/picture/icons/tools.png'),
     build_outline:require('../assets/picture/icons/build.png'),
     selfCare_outline:require('../assets/picture/icons/selfCare.png'),
+    deskPhone_outline:require('../assets/picture/icons/deskPhone.png'),
+    kitchen_outline:require('../assets/picture/icons/kitchen.png'),
+    radio_outline:require('../assets/picture/icons/radio.png'),
+    book2_outline:require('../assets/picture/icons/book2.png'),
+    theater_outline:require('../assets/picture/icons/theater.png'),
+    soccer_outline:require('../assets/picture/icons/soccer.png'),
+    code_outline:require('../assets/picture/icons/code.png'),
+    carSell_outline:require('../assets/picture/icons/carSell.png'),
+    carRepair_outline:require('../assets/picture/icons/carRepair.png'),
+    glassBroken_outline:require('../assets/picture/icons/glassBroken.png'),
+    roller_outline:require('../assets/picture/icons/roller.png'),
+    power_outline:require('../assets/picture/icons/power.png'),
+    balance_outline:require('../assets/picture/icons/balance.png'),
+    camera_outline:require('../assets/picture/icons/camera.png'),
+    trendingUp_outline:require('../assets/picture/icons/trendingUp.png'),
+    paid_outline:require('../assets/picture/icons/paid.png'),
+    stockMedia_outline:require('../assets/picture/icons/stockMedia.png'),
     subDirectory:require('../assets/picture/icons/subDirectory.png'),
+
 
 
 
