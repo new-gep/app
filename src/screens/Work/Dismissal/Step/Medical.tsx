@@ -26,7 +26,7 @@ import TimelineDemission from "../../../../components/Timeline/TimelineDemission
 import WaitingIndicatorDismissal from "./WaitingIndicator";
 import FindOnePicture from "~/src/hooks/findOne/onePicture";
 
-const DismissalExamination = ({jobConected, CPF}: {jobConected: any, CPF: any}) => {
+const DismissalExamination = ({jobConected, CPF}: {jobConected?: any, CPF?: any}) => {
   const theme = useTheme();
   const [loader, setLoader] = useState<boolean>(true);
 

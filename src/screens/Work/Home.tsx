@@ -36,10 +36,7 @@ import type { NavigationProp } from "@react-navigation/native";
 import Header from "../../layout/Header";
 
 
-export default function HomeWork({
-  jobConected,
-  CPF,
-}) {
+export default function HomeWork({ jobConected, CPF, }: any) {
 
   const ObligationData = [
     {

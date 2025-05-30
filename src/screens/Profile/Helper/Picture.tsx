@@ -77,7 +77,9 @@ export default function Picture({ collaborator }: { collaborator?: any }) {
           <MaterialIcons name="keyboard-arrow-right" size={21} color="black" />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity className="border-t border-[#e5e7eb] items-end justify-between flex-row rounded-b-lg p-2 px-4">
+      <TouchableOpacity className="border-t border-[#e5e7eb] items-end justify-between flex-row rounded-b-lg p-2 px-4"
+        onPress={() => navigation.navigate("Review")}
+      >
         <View className="flex-row">
           <View className="h-5 w-5 mr-2">
             <Icon name='eye_outline'/>

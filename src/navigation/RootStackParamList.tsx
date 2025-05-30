@@ -89,14 +89,23 @@ export type RootStackParamList = {
     Vacancy: undefined;
     Dossie : undefined;
     CV : undefined;
+    Wallet:undefined;
+    Help:undefined;
+    Review:undefined;
+    Signature:undefined;
+    Gallery:undefined;
+    About:undefined;
+    Filter:undefined;
+    Documents:undefined;
+    Social:undefined;
     HomeWork:{
       jobConected?:any
       CPF?:any
-    };
+    } | undefined;
     CardInformation: {
         cardData: any;
         onSwipeLeft: () => void;
-    };
+    }| undefined;
     Service:undefined;
 };
 

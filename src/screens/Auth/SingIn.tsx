@@ -61,6 +61,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
     };
 
     const handleSingIn = async () => {
+        console.log('aqui')
         if(waitProcessSingIn){
             return
         }

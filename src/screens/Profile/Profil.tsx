@@ -12,7 +12,7 @@ export default function Profile() {
   const { collaborator, fetchCollaborator } = useCollaborator();
   const logout = async () => {
     await AsyncStorage.clear();
-  }
+  };
 
   const about = [
     {
@@ -35,20 +35,30 @@ export default function Profile() {
     //   title: "Serviço",
     //   // go: "CV",
     // },
-    {
-      icon: "imageLibrary_outline",
-      title: "Galeria",
-      // go: "CV",
-    },
+    // {
+    //   icon: "imageLibrary_outline",
+    //   title: "Galeria",
+    //   go: "Gallery",
+    // },
     // {
     //   // icon: "signature_outline",
     //   title: "Redes Sociais",
     //   // go: "CV",
     // },
     {
+      icon: "folder_outline",
+      title: "Documentos",
+      go: "Documents",
+    },
+    {
       icon: "signature_outline",
       title: "Assinatura",
-      // go: "CV",
+      go: "Signature",
+    },
+    {
+      icon: "social_outline",
+      title: "Redes sociais",
+      go: "CV",
     },
   ];
   const service = [
@@ -59,25 +69,30 @@ export default function Profile() {
     },
     {
       icon: "star_outline",
-      title: "Como quero trabalhar",
+      title: "Como trabalhar",
       go: "Filter",
+    },
+    {
+      icon: "imageLibrary_outline",
+      title: "Galeria",
+      go: "Gallery",
     },
     {
       icon: "wallet_outline",
       title: "Carteira",
-      // go: "CV",
+      go: "Wallet",
     },
   ];
   const conf = [
     {
       icon: "key_outline",
       title: "Mudar a Senha",
-      // go: "Settings",
+      go: "ChangePassword",
     },
     {
       icon: "help_outline",
       title: "Ajuda",
-      // go: "Help",
+      go: "Help",
     },
     {
       icon: "logout_outline",

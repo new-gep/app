@@ -30,7 +30,7 @@ import TimelineFront from "../../components/Timeline/TimelineFront";
 import FindOnePicture from "~/src/hooks/findOne/onePicture";
 import Signature from "./Admission/Step/3/Signature";
 
-const Timeline = ({ jobConected, CPF, fetchVerifyFinish }: { jobConected: any; CPF: any, fetchVerifyFinish:any }) => {
+const Timeline = ({ jobConected, CPF, fetchVerifyFinish }: { jobConected?: any; CPF?: any, fetchVerifyFinish?:any }) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [signature, setSignature] = useState<any>(null);

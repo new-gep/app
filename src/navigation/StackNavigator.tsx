@@ -74,6 +74,14 @@ import CV from "../screens/Profile/CV/Index";
 import Filter from "../screens/Home/filter/Index";
 import About from "../screens/Profile/About/Index";
 import Service from "../screens/Profile/Service/Index";
+import Wallet from "../screens/Profile/Wallet/Index";
+import ChangePassword from "../screens/Profile/ChangePassword/Index";
+import Gallery from "../screens/Profile/Gallery/Index";
+import Signature from "../screens/Profile/Signature/Index";
+import Help from "../screens/Profile/Help/Index";
+import Review from "../screens/Profile/Review/Index";
+import Documents from "../screens/Documents/Documents";
+import Social from "../screens/Profile/Social/Index";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -154,6 +162,14 @@ const StackNavigator = () => {
         <Stack.Screen name="Service" component={Service} />
         <Stack.Screen name="Point" component={Point} />
         <Stack.Screen name="Absence" component={Absence} />
+        <Stack.Screen name="Review" component={Review} />
+        <Stack.Screen name="ChangePassword" component={ChangePassword} />
+        <Stack.Screen name="Help" component={Help} />
+        <Stack.Screen name="Signature" component={Signature} />
+        <Stack.Screen name="Gallery" component={Gallery} />
+        <Stack.Screen name="Wallet" component={Wallet} />
+        <Stack.Screen name="Documents" component={Documents} />
+        <Stack.Screen name="Social" component={Social} />
         <Stack.Screen name="CardInformation" component={CardInformation} />
       </Stack.Navigator>
     </View>

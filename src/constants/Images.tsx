@@ -202,6 +202,11 @@ export const IMAGES = {
     trendingUp_outline:require('../assets/picture/icons/trendingUp.png'),
     paid_outline:require('../assets/picture/icons/paid.png'),
     stockMedia_outline:require('../assets/picture/icons/stockMedia.png'),
+    animatedVideo_outline:require('../assets/picture/icons/animatedVideo.png'),
+    folder_outline:require('../assets/picture/icons/folder.png'),
+    social_outline:require('../assets/picture/icons/@.png'),
+    money_outline:require('../assets/picture/icons/money.png'),
+    receipt_outline:require('../assets/picture/icons/receipt.png'),
     subDirectory:require('../assets/picture/icons/subDirectory.png'),
 
 
