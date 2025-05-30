@@ -58,7 +58,7 @@ export default function Profile() {
     {
       icon: "social_outline",
       title: "Redes sociais",
-      go: "CV",
+      go: "Social",
     },
   ];
   const service = [
