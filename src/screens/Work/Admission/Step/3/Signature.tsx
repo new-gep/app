@@ -26,16 +26,16 @@ const Signature = ({
   currentStep,
   CPF,
   jobConected,
-  fetchVerifyFinish
+  fetchVerifyFinish,
 }: {
   currentStep: number;
   CPF: string;
   jobConected: any;
-  fetchVerifyFinish:any
+  fetchVerifyFinish: any;
 }) => {
   const navigation = useNavigation();
   const [signatureFound, setSignatureFound] = useState<any>(null);
-  const [statusSignature, setStatusSignature] = useState<any>('send');
+  const [statusSignature, setStatusSignature] = useState<any>("send");
   const [lockSignature, setLockSignature] = useState<any>(false);
   const [keySignature, setKeySignature] = useState<any>(false);
   const [modalSignature, setModalSignature] = useState<any>(false);
@@ -52,25 +52,24 @@ const Signature = ({
         if (responseSignature && responseSignature?.status === 200) {
           setSignatureFound(responseSignature.pictures);
           setStatusSignature(responseSignature.pictures.status);
-          if(responseSignature.pictures.status === 'approved'){
-            FindOneJob(jobConected[0].id).then((res)=>{
-              if(res.status == 200){
-                if(res.job?.CPF_collaborator){
-                  // navigation.navigate('HomeWork', { CPF, jobConected}) 
-                  fetchVerifyFinish()
-                  fetchCollaborator()
+          if (responseSignature.pictures.status === "approved") {
+            FindOneJob(jobConected[0].id).then((res) => {
+              if (res.status == 200) {
+                if (res.job?.CPF_collaborator) {
+                  // navigation.navigate('HomeWork', { CPF, jobConected})
+                  fetchVerifyFinish();
+                  fetchCollaborator();
                   // setTimeout(()=> navigation.navigate('Work') , 3000)
-
                 }
               }
-            })
+            });
           }
-        }else{
-          setStatusSignature('send');
+        } else {
+          setStatusSignature("send");
         }
       }
     } catch (error) {
-        setStatusSignature('send');
+      setStatusSignature("send");
       console.log("Erro ao buscar assinatura", error);
     } finally {
       setRefreshing(false);
@@ -120,7 +119,7 @@ const Signature = ({
   }, []);
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Header
         title={"Assinatura"}
         leftIcon="back"
@@ -136,37 +135,44 @@ const Signature = ({
         where="Admission_Signature"
         setStatusSignature={setStatusSignature}
       />
-      <>
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => onRefresh()}
-            />
-          }
-        >
-          <TimelineFront currentStep={currentStep} showProgress={true} />
-          {statusSignature ? (
-            statusSignature == "approved" || statusSignature == "pending" ? (
-              <View>
-                <WaitingIndicator currentStep={currentStep} visible={true} status={"pending"} message="Assinatura em analise, aguarde a aprovação."/>
-              </View>
-            ) 
-             : (
-              <>
-                <Text
-                  className={`text-center ${
-                    statusSignature == "reproved"
-                      ? "text-red-600"
-                      : "text-gray-600"
-                  } px-5 mb-5`}
-                  style={{ ...FONTS.fontMedium, fontSize: 16 }}
-                >
-                  {statusSignature == "reproved"
-                    ? "Assinatura recusada, por favor assine novamente."
-                    : "Assinatura pendente, visualize todos os documentos para assinar."}
-                </Text>
-                <View className="mb-5">
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 100, // garante espaço no fim
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => onRefresh()}
+          />
+        }
+      >
+        <TimelineFront currentStep={currentStep} showProgress={true} />
+        {statusSignature ? (
+          statusSignature == "approved" || statusSignature == "pending" ? (
+            <View>
+              <WaitingIndicator
+                currentStep={currentStep}
+                visible={true}
+                status={"pending"}
+                message="Assinatura em analise, aguarde a aprovação."
+              />
+            </View>
+          ) : (
+            <>
+              <Text
+                className={`text-center ${
+                  statusSignature == "reproved"
+                    ? "text-red-600"
+                    : "text-gray-600"
+                } px-5 mb-5`}
+                style={{ ...FONTS.fontMedium, fontSize: 16 }}
+              >
+                {statusSignature == "reproved"
+                  ? "Assinatura recusada, por favor assine novamente."
+                  : "Assinatura pendente, visualize todos os documentos para assinar."}
+              </Text>
+              <View className="mb-5">
                   <AdmissionalContract
                     CPF={CPF}
                     jobConected={jobConected}
@@ -174,22 +180,21 @@ const Signature = ({
                     lockSignature={lockSignature}
                   />
                 </View>
-                <View className="border-gray-200 px-4 ">
-                  <Button
-                    style={{ marginTop: 20, opacity: keySignature ? 1 : 0.7 }}
-                    title="Assinar"
-                    onPress={handleOpenModal}
-                    color={COLORS.dark}
-                    text={COLORS.white}
-                  />
-                </View>
-              </>
-            )
-          ) : (
-            ""
-          )}
-        </ScrollView>
-      </>
+              <View className="border-gray-200 px-4 mb-10 bg-white">
+                <Button
+                  style={{ opacity: keySignature ? 1 : 0.7 }}
+                  title="Assinar"
+                  onPress={handleOpenModal}
+                  color={COLORS.dark}
+                  text={COLORS.white}
+                />
+              </View>
+            </>
+          )
+        ) : (
+          ""
+        )}
+      </ScrollView>
       {/* <WaitingIndicator currentStep={currentStep} visible={true} status={"pending"} /> */}
     </View>
   );

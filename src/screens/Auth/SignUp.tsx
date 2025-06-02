@@ -24,6 +24,7 @@ import CheckCollaborator from "../../hooks/utils/CheckCollaborator";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { FormValues, validateForm } from "../../function/validateField";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Header from "~/src/layout/Header";
 type SignUpScreenProps = StackScreenProps<RootStackParamList, "SignUp">;
 
 const SignUp = ({ navigation }: SignUpScreenProps) => {
@@ -137,31 +138,7 @@ const SignUp = ({ navigation }: SignUpScreenProps) => {
       >
         <DangerSheet message={message} />
       </RBSheet>
-      <View className={`px-10 py-5 h-40 flex-row justify-center items-center`}>
-        <TouchableOpacity
-          onPress={handleGoBack}
-          activeOpacity={0.5}
-          style={[
-            styles.imagebackground,
-            {
-              backgroundColor: "#F6F6F6",
-              zIndex: 99,
-            },
-          ]}
-        >
-          <Feather name="arrow-left" size={24} color={COLORS.title} />
-        </TouchableOpacity>
-        <View
-          className={`h-60`}
-          style={{ flex: 1, alignItems: "center", marginLeft: -40 }}
-        >
-          <Image
-            className="h-full w-full"
-            resizeMode="contain"
-            source={theme.dark ? IMAGES.appnamedark : IMAGES.appname}
-          />
-        </View>
-      </View>
+      <Header leftIcon="back"/>
       {!waitProcess ? (
         <ScrollView style={{ flex: 1 }}>
           <View
@@ -322,8 +299,8 @@ const SignUp = ({ navigation }: SignUpScreenProps) => {
                   }
                 />
               </View>
-              <Text className={"px-1"}>Li e concordo com os</Text>
-              <Text className={"text-terciary font-bold"}>Termos de uso</Text>
+              <Text className={"px-1 "}>Li e concordo com os <Text className={"text-terciary font-bold underline"}>Termos de uso</Text></Text>
+              
             </View>
             <View className={"mb-10"} style={{ marginTop: 30 }}>
               <Button

@@ -208,7 +208,7 @@ const Card: React.FC<CardProps> = React.memo(
         { rotate: "-20deg" },
       ],
       position: "absolute",
-      top: height * 0.45 + 20, // Abaixo da imagem (45% de altura + margem)
+      top: height * 0.28 + 20, // Abaixo da imagem (45% de altura + margem)
       left: 40,
       zIndex: 10, // Acima da imagem e gradiente
     }));
@@ -311,11 +311,11 @@ const Card: React.FC<CardProps> = React.memo(
 
     return (
       <View
+        className="items-center justify-end"
         style={{
           width: "100%",
-          height: "40%",
-          justifyContent: "center",
-          alignItems: "center",
+          height: "50%",
+          marginTop:'68%',
         }}
       >
         <GestureDetector gesture={composedGestures}>
@@ -323,8 +323,9 @@ const Card: React.FC<CardProps> = React.memo(
             style={[
               animatedStyle,
               {
+                
                 width: "94%",
-                height: height * 0.6,
+                height: height * 0.45,
                 marginHorizontal: width * 0.03,
                 borderRadius: 24,
                 alignSelf: "center",
@@ -341,7 +342,7 @@ const Card: React.FC<CardProps> = React.memo(
           >
             <View
               // colors={["#FFFFFF", "#E5E7EB"]}
-              style={{ flex: 1, borderRadius: 24 }}
+              style={{ flex: 1, borderRadius: 24, }}
               className="bg-white"
             >
               {/* Textos de feedback */}

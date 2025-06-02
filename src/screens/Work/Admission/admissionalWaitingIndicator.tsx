@@ -79,13 +79,15 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
   return (
     <View
       className={`bg-white ${
-        currentStep === 2 && "flex justify-center items-center"
+        currentStep === 2 && "h-full flex justify-center items-center"
       }`}
       style={{
         height: currentStep === 2 ? Dimensions.get("window").height : "auto",
       }}
     >
-      <SafeAreaView>
+      <SafeAreaView
+        style={{ flex: 1}}
+      >
         {(currentStep === 2) && (
           <Header
             title={'Kit Admissional'}
@@ -107,10 +109,11 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
           }
         >
           <View
+              style={{ flex: 1}}
             className={`${
               currentStep == 2 || currentStep == 3
                 ? "items-center"
-                : "flex-1 justify-start items-center px-6"
+                : "justify-start items-center px-6"
             }`}
           >
             <Text className="" style={{ ...FONTS.fontSemiBold, fontSize: 18 }}>
@@ -119,22 +122,13 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
                 : "Aguardando Análise"}
             </Text>
 
-            <View className="w-full h-60% aspect-square">
+            <View className="w-full aspect-square">
               <Image
                 source={require("../../../assets/images/gif/Timemanagement.gif")}
                 style={{ width: "100%", height: "100%" }}
                 resizeMode="contain"
               />
             </View>
-
-            <Text
-              className={`text-gray-500  text-center ${
-                currentStep == 2 || currentStep == 3 && "px-5"
-              }`}
-              style={{ ...FONTS.fontRegular, fontSize: 14 }}
-            >
-              {getMessage()}
-            </Text>
           </View>
         </ScrollView>
       </SafeAreaView>

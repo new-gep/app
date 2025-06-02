@@ -139,7 +139,6 @@ const AdmissionalContract = ({
   return (
     <View className="w-full " style={{ height: Dimensions.get('window').height * 0.4 }}>
       { !loading ?
-        <SafeAreaView>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -152,7 +151,7 @@ const AdmissionalContract = ({
           showsHorizontalScrollIndicator={false} // Alterado para true
           pagingEnabled
           snapToAlignment="center"
-          className="w-full"
+          className="w-full px-5"
           style={{ height: Dimensions.get('window').height * 0.4 }}
         >
           {/* Documentos Obrigatórios */}
@@ -188,7 +187,6 @@ const AdmissionalContract = ({
             />
           ))}
         </ScrollView>
-      </SafeAreaView>
       :
       <View className="h-full w-full justify-center items-center flex">
         <Text className="text-center mb-5" style={{...FONTS.fontMedium, fontSize: 16}}>Buscando documentos</Text>

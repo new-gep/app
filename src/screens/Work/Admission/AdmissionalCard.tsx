@@ -55,7 +55,7 @@ const AdmissionalCard = ({
 
   return (
     <>
-      <View className="h-6/6 p-4">
+      <View className="h-3/12 p-4">
         <View className="h-full w-80 mx-auto bg-white rounded-2xl shadow-lg border-2 border-gray-200 shadow-gray-300 p-4">
           <DocumentVisible
             path={path}
@@ -79,26 +79,14 @@ const AdmissionalCard = ({
             {Mask('title', title)}
           </Text>
 
-          {signature ? (
-            <Image
-              source={{ uri: signature }}
-              style={{
-                width: '100%',
-                height: 120,
-                borderWidth: 1,
-                borderColor: "#ddd",
-                marginBottom: 16,
-              }}
-              resizeMode="contain"
-            />
-          ) : (
-            <Text className="text-gray-500 text-center" style={{ ...FONTS.fontRegular, fontSize: 16 }}>
-              Visualize e confira o que está assinando.
-            </Text>
-          )}
+
+            
 
           <View className="flex-1 justify-end">
-            <Button
+            <TouchableOpacity className="bg-primary py-3 rounded-xl" onPress={handleOpenModalDoc}>
+              <Text className="text-center font-bold text-lg">Visualizar</Text>
+            </TouchableOpacity>
+            {/* <Button
               title={"Visualizar"}
               style={{
                 marginBottom: 8,
@@ -110,7 +98,7 @@ const AdmissionalCard = ({
               text={'#000000'}
               color={COLORS.primary}
               onPress={handleOpenModalDoc}
-            />
+            /> */}
           </View>
         </View>
       </View>

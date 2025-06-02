@@ -15,6 +15,7 @@ import SendCodeByEmail from '../../hooks/utils/SendCodeByEmail'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import SuccessSheet from '../../components/BottomSheet/SuccessSheet'
 import DangerSheet from '../../components/BottomSheet/DangerSheet'
+import Header from '~/src/layout/Header'
 
 
 type OTPAuthenticationScreenProps = StackScreenProps<RootStackParamList, 'OTPAuthentication'>;
@@ -107,6 +108,7 @@ const OTPAuthentication = ({navigation} : OTPAuthenticationScreenProps) => {
 
   return (
     <SafeAreaView style={{flex:1,backgroundColor: colors.card,}}>
+        <Header leftIcon="back"/>
         {!waitProcess ?
             <>
                 <View className={`h-full w-full items-center justify-center gap-1`}>
@@ -127,7 +129,7 @@ const OTPAuthentication = ({navigation} : OTPAuthenticationScreenProps) => {
             </>
             :
             <>
-                <View className={`px-10`} style={[GlobalStyleSheet.container,GlobalStyleSheet.flexcenter,{paddingVertical:50}]}>
+                <View className={`px-10`} style={[GlobalStyleSheet.container,GlobalStyleSheet.flexcenter,]}>
                     <RBSheet
                         ref={refRBSheet}
                         closeOnDragDown={true}
@@ -153,30 +155,13 @@ const OTPAuthentication = ({navigation} : OTPAuthenticationScreenProps) => {
                             <DangerSheet message={messageSheet} />
                         }
                     </RBSheet>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('ForgotPassword')}
-                        activeOpacity={0.5}
-                        style={[styles.imagebackground,{
-                            backgroundColor:'#F6F6F6',
-                            zIndex:99
-                        }]}
-                    >
-                        <Feather name='arrow-left' size={24} color={COLORS.title}/>
-                    </TouchableOpacity>
-                    <View className={`h-20 w-full `}>
-                        <Image
-                            style={{top:'-95%', left:'6%'}}
-                            className={`h-60 w-60 absolute`}
-                            source={theme.dark ? IMAGES.appnamedark :IMAGES.appname}
-                        />
-                    </View>
                 </View>
                 <View style={{flex:1}}>
                     <View style={[GlobalStyleSheet.container,{flexGrow:1,paddingHorizontal:30,paddingBottom:0}]}>
                         <ScrollView>
                             <Text style={[styles.title1,{color:colors.title,textAlign:'center'}]}>Digite o Código</Text>
                             <Text style={[FONTS.fontRegular,{fontSize:14,color:colors.title,textAlign:'center'}]}>Um código de verificação foi enviado{"\n"}{formValues.email}</Text>
-                            <View>
+                            <View className='items-center '>
                                 <View style={{marginBottom:20}}>
                                     <View>
                                         {reset ? null : (
@@ -205,14 +190,14 @@ const OTPAuthentication = ({navigation} : OTPAuthenticationScreenProps) => {
                                 </TouchableOpacity>
                             </Text>
                         </ScrollView>
-                        <View style={{marginBottom:10}}>
+                        {/* <View style={{marginBottom:10}}>
                             <View style={[GlobalStyleSheet.bottombtn]}>
                                 <Text style={[FONTS.fontRegular,{fontSize:14,color:colors.title}]}>Voltar para</Text>
                                 <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('SingIn')}>
                                     <Text style={styles.title4}>Acesso</Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </View> */}
                     </View>
                 </View>
             </>

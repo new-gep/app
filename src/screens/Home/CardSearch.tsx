@@ -10,16 +10,17 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import SearchJob from "~/src/hooks/get/job/search";
+import { useScreen } from "~/src/hooks/utils/useScreen";
 
 interface CardSearchProps {
   setCards: any;
 }
 
 const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
-  const [searchText, setSearchText] = useState(""); // Estado para controlar o texto do input
-  const [suggestions, setSuggestions] = useState<string[]>([]); // Estado para controlar as sugestões
+  const [searchText, setSearchText] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const { wp, hp } = useScreen(); // 📱 dimensões da tela
 
-  // Mock de dados de vagas (substitua por dados reais da API)
   const jobs = [
     "Desenvolvedor Frontend",
     "Desenvolvedor Backend",
@@ -31,7 +32,6 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
     "Product Manager",
   ];
 
-  // Atualiza as sugestões com base no texto digitado
   const handleSearch = (text: string) => {
     setSearchText(text);
     if (text.length > 0) {
@@ -44,16 +44,14 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
     }
   };
 
-  // Limpa o texto e as sugestões
   const clearSearch = () => {
     setSearchText("");
     setSuggestions([]);
-    Keyboard.dismiss(); // Fecha o teclado
+    Keyboard.dismiss();
   };
 
-  // Função para pesquisar a vaga
   const searchJob = async (text?: string) => {
-    const query = text || searchText; // Usa o texto passado ou o estado atual
+    const query = text || searchText;
     if (query.trim().length === 0) {
       Alert.alert("Erro", "Por favor, digite ou selecione uma vaga para pesquisar.");
       return;
@@ -71,59 +69,55 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
     );
 
     setCards(uniqueJobs);
-    // Aqui você pode implementar a lógica de pesquisa, como chamar uma API ou navegar para outra tela
-    // Alert.alert("Pesquisar", `Você pesquisou por: ${query}`);
-    setSuggestions([]); // Limpa as sugestões
-    Keyboard.dismiss(); // Fecha o teclado
+    setSuggestions([]);
+    Keyboard.dismiss();
   };
 
   return (
-    <View className="absolute w-full py-3 px-4 z-50">
-      {/* Campo de pesquisa */}
+    <View style={{ width: "100%", paddingHorizontal: wp(4), paddingVertical: hp(1.5), zIndex: 50 }}>
       <View
-        className="w-full bg-white rounded-xl flex-row items-center shadow-md"
         style={{
-          elevation: 8, // Sombra para Android
-          shadowColor: "#000", // Sombra para iOS
+          width: "100%",
+          backgroundColor: "#fff",
+          borderRadius: wp(3),
+          flexDirection: "row",
+          alignItems: "center",
+          elevation: 8,
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
         }}
       >
-        {/* Ícone de Lupa */}
-        <Icon
-          name="search"
-          size={24}
-          color="#9CA3AF"
-          style={{ marginLeft: 12, marginRight: 8 }}
-        />
+        <Icon name="search" size={wp(5.5)} color="#9CA3AF" style={{ marginLeft: wp(3), marginRight: wp(2) }} />
 
-        {/* TextInput */}
         <TextInput
           placeholder="Pesquisar vagas"
           placeholderTextColor="#9CA3AF"
-          className="flex-1 py-3 text-base text-black"
           style={{
-            fontFamily: "System",
+            flex: 1,
+            paddingVertical: hp(1.2),
+            fontSize: wp(4),
+            color: "#000",
           }}
           value={searchText}
-          onChangeText={handleSearch} // Atualiza o texto e as sugestões
-          onSubmitEditing={() => searchJob()} // Chama a pesquisa ao pressionar "Enter"
+          onChangeText={handleSearch}
+          onSubmitEditing={() => searchJob()}
         />
 
-        {/* Ícone de "X" (limpar) */}
         {searchText.length > 0 && (
-          <TouchableOpacity onPress={clearSearch} style={{ marginRight: 12 }}>
-            <Icon name="close" size={24} color="#9CA3AF" />
+          <TouchableOpacity onPress={clearSearch} style={{ marginRight: wp(3) }}>
+            <Icon name="close" size={wp(5.5)} color="#9CA3AF" />
           </TouchableOpacity>
         )}
       </View>
 
-      {/* Lista de sugestões */}
       {suggestions.length > 0 && (
         <View
-          className="bg-white rounded-lg mt-2 shadow-md"
           style={{
+            backgroundColor: "#fff",
+            borderRadius: wp(2),
+            marginTop: hp(1),
             elevation: 8,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -132,21 +126,21 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
           }}
         >
           <FlatList
-            data={suggestions.slice(0, 5)} // Limita a 5 sugestões
+            data={suggestions.slice(0, 5)}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
-                  setSearchText(item); // Preenche o campo com a vaga selecionada
-                  searchJob(item); // Chama a pesquisa com o texto selecionado
+                  setSearchText(item);
+                  searchJob(item);
                 }}
                 style={{
-                  padding: 12,
+                  padding: wp(3),
                   borderBottomWidth: 1,
                   borderBottomColor: "#E5E7EB",
                 }}
               >
-                <Text style={{ fontSize: 16, color: "#374151" }}>{item}</Text>
+                <Text style={{ fontSize: wp(4), color: "#374151" }}>{item}</Text>
               </TouchableOpacity>
             )}
           />

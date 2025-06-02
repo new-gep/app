@@ -135,7 +135,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
         </View> */}
         <ScrollView style={{flexGrow:1,}} showsVerticalScrollIndicator={false}>
 
-            <View className={'mt-10'}  style={[GlobalStyleSheet.container,{flexGrow:1,paddingBottom:0,paddingHorizontal:30,paddingTop:0}]}>
+            <View className={'mt-10 mb-5'}  style={[GlobalStyleSheet.container,{flexGrow:1,paddingBottom:0,paddingHorizontal:30,paddingTop:0}]}>
                 <View style={{}}>
                     <View style={{marginBottom:30}}>
                         <Text style={[styles.title1,{color:colors.title}]}>Acesso</Text>
@@ -198,7 +198,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
                     <View 
                      className={`px-3 py-2 mt-2`}
                     >
-                        <View className={`flex flex-row gap-2`}>
+                        <View className={`flex flex-row items-center justify-center gap-2`}>
                             <Text style={[styles.text,{color:colors.title}]}>Esqueceu a Senha?</Text>
                             <TouchableOpacity
                                 activeOpacity={0.5}
@@ -228,7 +228,7 @@ const SingIn = ({route, navigation} : SingInScreenProps) => {
 const styles = StyleSheet.create({
     text:{
         ...FONTS.fontRegular,
-        fontSize:14,
+        fontSize:12,
         color:COLORS.title,
     },
     title1:{

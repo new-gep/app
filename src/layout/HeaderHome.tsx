@@ -16,7 +16,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import Mask from "../function/mask";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "../redux/actions/drawerAction";
-
+import { Dimensions } from "react-native";
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 type Props = {
   title?: string;
   leftIcon?: string;
@@ -63,9 +64,7 @@ const Header = ({
     <View
       style={[
         {
-          height: 65,
-          alignItems: "center",
-          justifyContent: "center",
+          height: SCREEN_HEIGHT * 0.11,
           zIndex: 99,
         },
         transparent && {
@@ -164,11 +163,11 @@ const Header = ({
           </TouchableOpacity>
         )}
         {rightIcon4 == "home" && (
-          <View className="mt-4 px-4" style={{ alignItems: "flex-end" }}>
+          <View className="px-4" style={{ alignItems: "flex-end"  }}>
             <Text
               style={{
                 ...FONTS.fontRegular,
-                fontSize: 14,
+                fontSize: 13,
                 color: colors.title,
               }}
             >
@@ -207,7 +206,7 @@ const Header = ({
 
 const styles = StyleSheet.create({
   header: {
-    height: 60,
+    height: SCREEN_HEIGHT * 0.14,
     backgroundColor: COLORS.card,
     flexDirection: "row",
     alignItems: "center",

@@ -14,11 +14,11 @@ interface ListItem {
   action?:any
 }
 
-export default function List({ items }: { items: ListItem[] }) {
+export default function List({ items, isUnique }: { items: ListItem[],  isUnique?:boolean }) {
   const navigation = useNavigation<any>();
 
   return (
-    <View className="bg-white rounded-lg px-3" style={Style.container}>
+    <View className="bg-white rounded-lg px-3" style={!isUnique ? Style.container : undefined}>
       {items.map((item: ListItem, index: number) => (
         <TouchableOpacity
           key={index}

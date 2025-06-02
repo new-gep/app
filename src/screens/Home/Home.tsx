@@ -13,6 +13,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import Card from "./Card";
 import GetAllJob from "../../hooks/get/job/all";
@@ -232,120 +233,121 @@ const Home = () => {
     <SafeAreaView className="flex-1 bg-white">
       <HeaderHome
         title=""
-        // leftIcon={"menu"}
         rightIcon4={"home"}
         collaborator={collaborator}
       />
-      <View className="absolute w-full z-50" style={{ top: isKeyboardVisible ? "18%" : "10%" }}>
+      <View className="w-full z-50 mt-1">
         <CardSearch setCards={setCards} />
       </View>
-      <View className="flex-1 justify-center">
-        {isLoading ? (
-          <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color={COLORS.primary} />
-          </View>
-        ) : Array.isArray(cards) && cards.length > 0 ? (
-          <>
-            {!isKeyboardVisible && (
-              <View className="w-full">
+        <View className="flex-1 justify-center">
+          {isLoading ? (
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color={COLORS.primary} />
+            </View>
+          ) : 
+          
+            Array.isArray(cards) && cards.length > 0 ?  (
+            <>
+              {!isKeyboardVisible && (
                 <View className="w-full">
-                  {cards.slice(0, 4).map((card: any, index) => (
-                    <View
-                      key={card.id}
-                      className="absolute w-full h-full items-center p-2 mt-2"
+                  <View className="w-full">
+                    {cards.slice(0, 4).map((card: any, index) => (
+                      <View
+                        key={card.id}
+                        className="absolute w-full h-full items-center px-3"
+                        style={{
+                          top: 2 * index,
+                          justifyContent: "center",
+                          zIndex: cards.length - index,
+                        }}
+                      >
+                        <Card
+                          data={card}
+                          onSwipeLeft={handleSwipeLeft}
+                          onSwipeRight={handleSwipeRight}
+                          onSuperLike={handleSwipeRight}
+                          isTopCard={index === 0}
+                          zIndex={cards.length - index}
+                          index={index}
+                          handleUndo={handleUndo}
+                        />
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+            </>
+          ) : (
+            <ScrollView>
+              {!isKeyboardVisible && (
+                cards === false ? 
+                <View className="mt-10 flex justify-between items-center h-full">
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text
                       style={{
-                        top: 2 * index,
-                        justifyContent: "center",
-                        zIndex: cards.length - index,
+                        ...FONTS.fontSemiBold,
+                        fontSize: 16,
+                        color: COLORS.title,
+                        marginBottom: 5,
                       }}
                     >
-                      <Card
-                        data={card}
-                        onSwipeLeft={handleSwipeLeft}
-                        onSwipeRight={handleSwipeRight}
-                        onSuperLike={handleSwipeRight}
-                        isTopCard={index === 0}
-                        zIndex={cards.length - index}
-                        index={index}
-                        handleUndo={handleUndo}
-                      />
-                    </View>
-                  ))}
+                      Busque sua vaga
+                    </Text>
+                    <Text className="text-center text-sm text-gray-400 font-normal">
+                      Pesquise sua vaga pelo nome ou palavra-chave
+                    </Text>
+                    <Image
+                      source={require("../../assets/images/brand/search.png")}
+                      style={{
+                        width: Dimensions.get("window").width * 0.8,
+                        height: Dimensions.get("window").height * 0.5,
+                      }}
+                      resizeMode="contain"
+                    />
+                  </View>
                 </View>
-              </View>
-            )}
-          </>
-        ) : (
-          !isKeyboardVisible && (
-            cards === false ? 
-            <View className="mt-10 flex justify-between items-center h-full">
-              <View
-                style={{
-                  backgroundColor: "white",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    ...FONTS.fontSemiBold,
-                    fontSize: 16,
-                    color: COLORS.title,
-                    marginBottom: 5,
-                    marginTop: 90,
-                  }}
-                >
-                  Busque sua vaga
-                </Text>
-                <Text className="text-center text-sm text-gray-400 font-normal">
-                  Pesquise sua vaga pelo nome ou palavra-chave
-                </Text>
-                <Image
-                  source={require("../../assets/images/brand/search.png")}
-                  style={{
-                    width: Dimensions.get("window").width * 0.8,
-                    height: Dimensions.get("window").height * 0.5,
-                  }}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
-            :
-            <View className="mt-10 flex justify-between items-center h-full">
-              <View
-                style={{
-                  backgroundColor: "white",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    ...FONTS.fontSemiBold,
-                    fontSize: 16,
-                    color: COLORS.title,
-                    marginBottom: 5,
-                    marginTop: 90,
-                  }}
-                >
-                  Não encontramos sua vaga
-                </Text>
-                <Text className="text-center text-sm text-gray-400 font-normal">
-                  Não há mais vagas no momento, busque outra!
-                </Text>
-                <Image
-                  source={require("../../assets/images/brand/Waiting.png")}
-                  style={{
-                    width: Dimensions.get("window").width * 0.7,
-                    height: Dimensions.get("window").height * 0.5,
-                  }}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
-          )
-        )}
-      </View>
+                :
+                <View className="mt-10 flex justify-between items-center h-full px-5">
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        ...FONTS.fontSemiBold,
+                        fontSize: 16,
+                        color: COLORS.title,
+                        marginBottom: 5,
+                      }}
+                    >
+                      Não encontramos sua vaga
+                    </Text>
+                    <Text className="text-center text-sm text-gray-400 font-normal">
+                      Não há mais vagas no momento, busque outra!
+                    </Text>
+                    <Image
+                      source={require("../../assets/images/brand/Waiting.png")}
+                      style={{
+                        width: Dimensions.get("window").width * 0.7,
+                        height: Dimensions.get("window").height * 0.5,
+                      }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </View>
+              )}
+            </ScrollView>
+          )}
+        </View>
       <Modal
         transparent
         animationType="fade"

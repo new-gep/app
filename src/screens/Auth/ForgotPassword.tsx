@@ -1,5 +1,6 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native'
 import React, { useRef, useState } from 'react'
+import Header from '~/src/layout/Header'
 import { COLORS, FONTS } from '../../constants/theme'
 import { GlobalStyleSheet } from '../../constants/StyleSheet'
 import { useTheme } from '@react-navigation/native'
@@ -48,7 +49,6 @@ const ForgotPassword = ({navigation} :ForgotPasswordScreenProps) => {
             return
         };
         const dates = await FindCollaborator(formValues.cpf);
-        console.log(dates)
         switch (dates.status) {
                 case 200:
                     let email = dates.collaborator.email
@@ -115,25 +115,7 @@ const ForgotPassword = ({navigation} :ForgotPasswordScreenProps) => {
 
             <DangerSheet  message={messageSheet} />
         </RBSheet>
-        <View className={`items-center px-8 flex-row py-12 `}>
-            <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.5}
-                style={[styles.imagebackground,{
-                    backgroundColor:'#F6F6F6',
-                    zIndex:99
-                }]}
-            >
-                <Feather name='arrow-left' size={24} color={COLORS.title}/>
-            </TouchableOpacity>
-            <View className='justify-center items-center h-20'>
-                <Image
-                    className='h-60 w-60'
-                    resizeMode='contain'
-                    source={theme.dark ? IMAGES.appnamedark :IMAGES.appname}
-                />
-            </View>
-        </View>
+        <Header leftIcon="back"/>
         <ScrollView style={{flexGrow:1,}} showsVerticalScrollIndicator={false}>
             <View style={[GlobalStyleSheet.container,{flexGrow:1,paddingBottom:0,paddingHorizontal:30,paddingTop:0}]}>
                 <View style={{}}>
@@ -170,12 +152,6 @@ const ForgotPassword = ({navigation} :ForgotPasswordScreenProps) => {
                 onPress={handleSendCode} 
                 style={{borderRadius:52}}
             />
-           <View style={[GlobalStyleSheet.bottombtn]}>
-                <Text style={[FONTS.fontRegular,{fontSize:14,color:colors.title}]}>Voltar para</Text>
-                <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('SingIn')}>
-                    <Text style={styles.title4}>Acesso</Text>
-                </TouchableOpacity>
-            </View>
         </View>
     </SafeAreaView>
   )
