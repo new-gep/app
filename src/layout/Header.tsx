@@ -58,7 +58,7 @@ const Header = ({
     <View
       style={[
         {
-          height: SCREEN_HEIGHT * 0.14,
+          height: SCREEN_HEIGHT * 0.10,
           alignItems: "center",
           justifyContent: "center",
           zIndex: 99,

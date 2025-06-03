@@ -36,7 +36,9 @@ export default function ChangePassword() {
   return (
     <View className="h-full bg-white">
       <Header title="Mudar a Senha" leftIcon="back" />
-      <ScrollView className="py-3 px-8">
+      <ScrollView className="py-3 px-8"
+        contentContainerStyle={{paddingBottom:50}}
+      >
         <View style={styles.card} className="mb-4 rounded-lg"></View>
         <Text className="text-black ">Senha atual</Text>
         <View style={styles.card} className="mb-4 rounded-lg">

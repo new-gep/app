@@ -6,9 +6,11 @@ import {
   TextInput,
   StyleSheet,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Header from "~/src/layout/Header";
+import { FONTS } from "~/src/constants/theme";
 
 const SOCIALS = [
   { key: "instagram", label: "Instagram", icon: "instagram" },
@@ -29,14 +31,14 @@ export default function SocialCardForm() {
   return (
     <View className="h-full bg-white">
       <Header title="Redes Sociais" leftIcon="back" />
-      <ScrollView className="p-6">
+      <ScrollView className="p-6" contentContainerStyle={{paddingBottom: 20}}>
         {/* <Text style={styles.title}>Adicione suas redes sociais</Text> */}
 
         {SOCIALS.map((item) => (
-          <View key={item.key} style={styles.card}>
-            <MaterialCommunityIcons
+          <View key={item.key} className="bg-white flex-row rounded-lg items-center p-3 mb-5" style={styles.container}>
+            <FontAwesome5
               name={item.icon}
-              size={28}
+              size={22}
               color="#444"
               style={styles.icon}
             />
@@ -53,11 +55,29 @@ export default function SocialCardForm() {
           </View>
         ))}
       </ScrollView>
+      <TouchableOpacity
+        className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
+        onPress={() => console.log("CONCLUÍDO pressed")}
+      >
+        <Text
+          className="text-dark text-center"
+          style={{ ...FONTS.fontBold, fontSize: 16 }}
+        >
+          CONCLUÍDO
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
   title: {
     fontSize: 18,
     fontWeight: "600",

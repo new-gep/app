@@ -313,6 +313,7 @@ export default function Service() {
   ];
   const event = [
     {
+      icon:"groups_outline",
       title: "Equipe e Suporte",
       option: [
         "Assessor de eventos",
@@ -328,6 +329,7 @@ export default function Service() {
       ],
     },
     {
+      icon:"chef_outline",
       title: "Comes e bebes",
       option: [
         "Bartender",
@@ -338,6 +340,7 @@ export default function Service() {
       ],
     },
     {
+      icon:"note_outline",
       title: "Música e animação",
       option: [
         "Animação de festas",
@@ -347,6 +350,7 @@ export default function Service() {
       ],
     },
     {
+      icon:"add_outline",
       title: "Serviços Complementares",
       option: [
         "Brindes e lembrancinhas",
@@ -360,6 +364,7 @@ export default function Service() {
   ];
   const fashion = [
     {
+       icon:"makeup_outline",
       title: "Beleza",
       option: [
         "Bronzeamento",
@@ -374,10 +379,12 @@ export default function Service() {
       ],
     },
     {
+      icon:"selfCare_outline",
       title: "Cabelo",
       option: ["Cabeleireiros", "Barbeiros"],
     },
     {
+      icon:"shirt_outline",
       title: "Estilo",
       option: [
         "Alfaiate",
@@ -388,16 +395,19 @@ export default function Service() {
       ],
     },
     {
+      icon:"star_outline",
       title: "Artes e Magia",
       option: ["Artesanato", "Esotérico"],
     },
   ];
   const reform = [
     {
+      icon:"machine_outline",
       title: "Aluguel de Maquinário",
       option: ["Aluguel de Maquinário"],
     },
     {
+      icon:"gardenCart_outline",
       title: "Construção",
       option: [
         "Arquitetos",
@@ -412,6 +422,7 @@ export default function Service() {
       ],
     },
     {
+      icon:"engineering_outline",
       title: "Instalação",
       option: [
         "Antenista",
@@ -423,6 +434,7 @@ export default function Service() {
       ],
     },
     {
+      icon:"build_outline",
       title: "Reformas e Reparos",
       option: [
         "Encanador",
@@ -436,6 +448,7 @@ export default function Service() {
       ],
     },
     {
+      icon:"boxRepair_outline",
       title: "Serviços Gerais",
       option: [
         "Chaveiro",
@@ -450,6 +463,7 @@ export default function Service() {
       ],
     },
     {
+      icon: "house_outline",
       title: "Para Casa",
       option: [
         "Banheira",
@@ -466,12 +480,12 @@ export default function Service() {
   ];
   const health = [
     {
-      // icon: "build_outline",
+      icon: "vaccine_outline",
       title: "Biomedicina Estética",
       option: ["Biomedicina estética", "Remoção de tatuagem"],
     },
     {
-      // icon: "build_outline",
+      icon: "personInjury_outline",
       title: "Para o Corpo",
       option: [
         "Cozinheira",
@@ -486,7 +500,7 @@ export default function Service() {
       ],
     },
     {
-      // icon: "build_outline",
+      icon: "brain_outline",
       title: "Para a Mente",
       option: [
         "Aconselhamento conjugal e familiar",
@@ -497,14 +511,14 @@ export default function Service() {
       ],
     },
     {
-      // icon: "build_outline",
+      icon: "family_outline",
       title: "Para a família",
       option: ["Cuidador de pessoas", "Enfermeira"],
     },
   ];
   const domestics = [
     {
-      // icon: "build_outline",
+      icon: "house_outline",
       title: "Para a Casa",
       option: [
         "Diarista",
@@ -516,7 +530,7 @@ export default function Service() {
       ],
     },
     {
-      // icon: "build_outline",
+      icon: "family_outline",
       title: "Para a Família",
       option: [
         "Babá",
@@ -528,7 +542,7 @@ export default function Service() {
       ],
     },
     {
-      // icon: "build_outline",
+      icon: "pet_outline",
       title: "Para os Pets",
       option: ["Adestrador de cães", "Passeador de cães", "Serviços para pets"],
     },
@@ -541,7 +555,13 @@ export default function Service() {
         leftAction={() => changeMenu(menu)}
         leftIcon={"back"}
       />
-      <ScrollView className="p-6">
+      <ScrollView 
+        className="p-6"
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 100, // garante espaço no fim
+        }}
+      >
         {menu === "default" ? (
           <List items={services} />
         ) : menu === "service" ? (

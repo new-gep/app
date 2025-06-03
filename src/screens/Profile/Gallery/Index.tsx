@@ -53,7 +53,7 @@ export default function Gallery() {
   return (
     <View className="h-full bg-white">
       <Header title="Galeria" leftIcon="back" />
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{paddingBottom:50}}>
         {/* FOTOS */}
         <Text style={styles.sectionTitle}>Fotos</Text>
         <View style={styles.grid}>
