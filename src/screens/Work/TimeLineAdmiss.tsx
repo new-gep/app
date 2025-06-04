@@ -60,7 +60,6 @@ const Timeline = ({ jobConected, CPF, fetchVerifyFinish }: { jobConected?: any; 
     setModalVisible(false);
   };
 
-
   useEffect(() => {
     if (lockSignature) {
       //Verifica se é um array e converte para objeto se necessário

@@ -34,7 +34,7 @@ const BottomNavigation = () => {
                 component={HomeScreen}
             />
             <Tab.Screen 
-                name='Vagas'
+                name='Favoritos'
                 component={VacancyScreen}
             />
             <Tab.Screen 
@@ -42,7 +42,7 @@ const BottomNavigation = () => {
                 component={Default}
             />
             <Tab.Screen 
-                name='Configurações'
+                name='Menu'
                 component={ProfilScreen}
             />
         </Tab.Navigator>

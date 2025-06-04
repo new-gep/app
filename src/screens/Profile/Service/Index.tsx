@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import Header from "~/src/layout/Header";
 import List from "~/src/components/Menu/List";
 import InterestsFilter from "../About/Helper/Interests";
 import { useNavigation } from "@react-navigation/native";
+import { FONTS } from "~/src/constants/theme";
 
 export default function Service() {
   const [menu, setMenu] = React.useState<string>("default");
@@ -53,7 +54,7 @@ export default function Service() {
     },
     {
       icon: "car_outline",
-      title: "Autos",
+      title: "Mecânica e Transportes",
       action: () => changeMenu("autos"),
     },
     {
@@ -191,17 +192,18 @@ export default function Service() {
   ];
   const auto = [
     {
-      icon:"power_outline",
-      title: "Auto Elétrica",
+      icon: "build_outline",
+      title: "Mecânica",
       option: [
         "Alarme automotivo",
         "Ar condicionado",
         "Auto elétrico",
         "Som automotivo",
+        "Mecânica Geral"
       ],
     },
     {
-      icon:"roller_outline",
+      icon: "roller_outline",
       title: "Funilaria e Pintura",
       option: [
         "Funilaria",
@@ -211,24 +213,29 @@ export default function Service() {
       ],
     },
     {
-      icon:"glassBroken_outline",
+      icon: "glassBroken_outline",
       title: "Vidraçaria Automotiva",
       option: ["Insulfilm", "Vidraçaria Automotiva"],
     },
     {
-      icon:"carRepair_outline",
-      title: "Mecânica",
-      option: ["Guincho", "Mecânica Geral"],
+      icon: "carRepair_outline",
+      title: "Guincho",
+      option: ["Guincho"],
     },
     {
-      icon:"carSell_outline",
-      title: "Venda de Automóveis",
-      option: ["Venda de Automóveis"],
+      icon: "box_outline",
+      title: "Entregas",
+      option: ["Moto", "Carro de passeio", "Fiorino", "Van", "KIA bongo", "HR", "Vuc"],
+    },
+    {
+      icon: "money_outline",
+      title: "Vendas",
+      option: ["Venda de Automóveis", "Auto Peças"],
     },
   ];
   const consultancy = [
     {
-      icon:'camera_outline',
+      icon: "camera_outline",
       title: "Mídia",
       option: [
         "Assessoria de Imprensa",
@@ -239,7 +246,7 @@ export default function Service() {
       ],
     },
     {
-      icon:'paid_outline',
+      icon: "paid_outline",
       title: "Negócios",
       option: [
         "Administração de Imóveis",
@@ -255,7 +262,7 @@ export default function Service() {
       ],
     },
     {
-      icon:'balance_outline',
+      icon: "balance_outline",
       title: "Jurídico",
       option: [
         "Advogado",
@@ -264,7 +271,7 @@ export default function Service() {
       ],
     },
     {
-      icon:'user_outline',
+      icon: "user_outline",
       title: "Pessoal",
       option: [
         "Consultor pessoal",
@@ -275,7 +282,7 @@ export default function Service() {
   ];
   const designTec = [
     {
-      icon:'code_outline',
+      icon: "code_outline",
       title: "Tecnologia",
       option: [
         "Apps para smartphone",
@@ -286,7 +293,7 @@ export default function Service() {
       ],
     },
     {
-      icon:'image_outline',
+      icon: "image_outline",
       title: "Gráfica",
       option: [
         "Convites",
@@ -297,7 +304,7 @@ export default function Service() {
       ],
     },
     {
-      icon:'stockMedia_outline',
+      icon: "stockMedia_outline",
       title: "Áudio / Visual",
       option: [
         "Animação motion",
@@ -313,7 +320,7 @@ export default function Service() {
   ];
   const event = [
     {
-      icon:"groups_outline",
+      icon: "groups_outline",
       title: "Equipe e Suporte",
       option: [
         "Assessor de eventos",
@@ -329,7 +336,7 @@ export default function Service() {
       ],
     },
     {
-      icon:"chef_outline",
+      icon: "chef_outline",
       title: "Comes e bebes",
       option: [
         "Bartender",
@@ -340,7 +347,7 @@ export default function Service() {
       ],
     },
     {
-      icon:"note_outline",
+      icon: "note_outline",
       title: "Música e animação",
       option: [
         "Animação de festas",
@@ -350,7 +357,7 @@ export default function Service() {
       ],
     },
     {
-      icon:"add_outline",
+      icon: "add_outline",
       title: "Serviços Complementares",
       option: [
         "Brindes e lembrancinhas",
@@ -364,7 +371,7 @@ export default function Service() {
   ];
   const fashion = [
     {
-       icon:"makeup_outline",
+      icon: "makeup_outline",
       title: "Beleza",
       option: [
         "Bronzeamento",
@@ -379,12 +386,12 @@ export default function Service() {
       ],
     },
     {
-      icon:"selfCare_outline",
+      icon: "selfCare_outline",
       title: "Cabelo",
       option: ["Cabeleireiros", "Barbeiros"],
     },
     {
-      icon:"shirt_outline",
+      icon: "shirt_outline",
       title: "Estilo",
       option: [
         "Alfaiate",
@@ -395,19 +402,19 @@ export default function Service() {
       ],
     },
     {
-      icon:"star_outline",
+      icon: "star_outline",
       title: "Artes e Magia",
       option: ["Artesanato", "Esotérico"],
     },
   ];
   const reform = [
     {
-      icon:"machine_outline",
+      icon: "machine_outline",
       title: "Aluguel de Maquinário",
       option: ["Aluguel de Maquinário"],
     },
     {
-      icon:"gardenCart_outline",
+      icon: "gardenCart_outline",
       title: "Construção",
       option: [
         "Arquitetos",
@@ -422,7 +429,7 @@ export default function Service() {
       ],
     },
     {
-      icon:"engineering_outline",
+      icon: "engineering_outline",
       title: "Instalação",
       option: [
         "Antenista",
@@ -434,7 +441,7 @@ export default function Service() {
       ],
     },
     {
-      icon:"build_outline",
+      icon: "build_outline",
       title: "Reformas e Reparos",
       option: [
         "Encanador",
@@ -448,7 +455,7 @@ export default function Service() {
       ],
     },
     {
-      icon:"boxRepair_outline",
+      icon: "boxRepair_outline",
       title: "Serviços Gerais",
       option: [
         "Chaveiro",
@@ -555,7 +562,7 @@ export default function Service() {
         leftAction={() => changeMenu(menu)}
         leftIcon={"back"}
       />
-      <ScrollView 
+      <ScrollView
         className="p-6"
         contentContainerStyle={{
           flexGrow: 1,
@@ -586,6 +593,17 @@ export default function Service() {
           renderLists(domestics)
         ) : null}
       </ScrollView>
+      <TouchableOpacity
+        className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
+        onPress={() => console.log("CONCLUÍDO pressed")}
+      >
+        <Text
+          className="text-dark text-center"
+          style={{ ...FONTS.fontBold, fontSize: 16 }}
+        >
+          CONCLUÍDO
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

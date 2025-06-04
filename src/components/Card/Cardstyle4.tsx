@@ -16,7 +16,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import DocumentSend from '../Modal/DocumentSend'
 import { ActivityIndicator } from 'react-native-paper'
 import Pdf from 'react-native-pdf';
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 interface Props {
     // Props para documento
     documentName?: string;
@@ -125,7 +125,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
             <DocumentSend    statusDocument={statusDocument} finishSendDocument={finishSendDocument} setStatusDocument={setStatusDocument} jobId={jobId} setSendPicture={setSendPicture} setTypeDocument={setTypePicture} setPath={setNewPathPicture} close={handleCloseSendDocument} visible={sendModalDocument} documentName={documentName} twoPicture={twoPicture} />
             <DocumentVisible documentName={documentName}  path={pathPictureSide} typeDocument={typePicture} visible={viewingDocument} twoPicture={twoPicture} close={handleCloseVisibleDocument}/>
             
-            <View style={{ width: '40%', alignItems: 'center' }}>
+            <View style={{ width: '50%', alignItems: 'center' }}>
                 <TouchableOpacity onPress={handlePress}>
                     <View
                         style={{
@@ -161,7 +161,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                                                 <FeatherIcon
                                                     style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -15 }] }}
                                                     color={COLORS.primary}
-                                                    size={30}
+                                                    size={rf(30)}
                                                     name="eye-off"
                                                 />
                                             )}
@@ -202,7 +202,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                                                     <FeatherIcon
                                                         style={{ position: 'absolute', top: '50%', left: '50%', transform: [{ translateX: -15 }, { translateY: -15 }] }}
                                                         color={COLORS.primary}
-                                                        size={30}
+                                                        size={rf(30)}
                                                         name="eye-off"
                                                     />
                                                 )
@@ -211,8 +211,8 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                                         </>
                                     :
                                         <View className={`items-center px-5`}>
-                                            <Ionicons name="document-text-outline" size={30} color="black" />
-                                            <Text style={{ ...FONTS.fontMedium }} className={`text-xs mt-3 text-center`}>
+                                            <Ionicons name="document-text-outline" size={rf(30)} color="black" />
+                                            <Text style={{ ...FONTS.fontMedium, fontSize:rf(13) }} className={`text-xs mt-3 text-center`}>
                                                 Documento {"\n"} pendente
                                             </Text>
                                         </View>
@@ -233,16 +233,16 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
             <View
                 style={{
                     width: '60%',
-                    paddingHorizontal: 10,
+                    paddingHorizontal: 5,
                 }}
             >
                 <View>
-                    <Text style={{ ...FONTS.fontMedium, fontSize: 16, color: colors.title, paddingRight: 40 }}>{documentName}</Text>
-                    <Text style={{ ...FONTS.fontRegular, fontSize: 12, color: theme.dark ? 'rgba(255,255,255,.7)' : '#6A6A6A', marginTop: 5 }}>{typePicture =='picture' ? 'Imagem' : typePicture =='pdf' ? 'PDF' : 'Pendente'}</Text>
+                    <Text style={{ ...FONTS.fontMedium, fontSize: rf(16), color: colors.title, paddingRight: 40 }}>{documentName}</Text>
+                    <Text style={{ ...FONTS.fontRegular, fontSize: rf(12), color: theme.dark ? 'rgba(255,255,255,.7)' : '#6A6A6A', marginTop: 5 }}>{typePicture =='picture' ? 'Imagem' : typePicture =='pdf' ? 'PDF' : 'Pendente'}</Text>
                 </View>
-                <View className={`flex-col flex gap-2`} >
+                <View className={`flex-col flex gap-2 mt-6`} >
                     
-                    <View
+                    {/* <View
                         style={{
                             padding: 5,
                             paddingHorizontal: 10,
@@ -252,27 +252,15 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                             justifyContent: 'center',
                             gap: 10,
                         }}
+                        className=''
                     >
-                        {/* <Image
-                            style={[GlobalStyleSheet.image2, { tintColor: show ? COLORS.card : COLORS.primary }]}
-                            source={IMAGES.shoppingbag}
-                        /> */}
-                        <Text style={{ ...FONTS.fontMedium, fontSize: 16, color: statusDocument == 'approved' ? COLORS.success : statusDocument == 'approved' ?  COLORS.danger :  COLORS.dark }}>{statusDocument == 'approved' ? 'Aprovado' :  statusDocument == 'reproved' ? 'Recusado' : statusDocument == 'pending' ? 'Em Análise' :'Pendente'}</Text>
-                    </View>
+                        <Text style={{ ...FONTS.fontMedium, fontSize: rf(16), color: statusDocument == 'approved' ? COLORS.success : statusDocument == 'approved' ?  COLORS.danger :  COLORS.dark }}>{statusDocument == 'approved' ? 'Aprovado' :  statusDocument == 'reproved' ? 'Recusado' : statusDocument == 'pending' ? 'Em Análise' :'Pendente'}</Text>
+                    </View> */}
                    
                     {(!pathPicture || statusDocument === 'reproved') && (
                         <TouchableOpacity
                             activeOpacity={0.8}
-                            style={{
-                                padding: 10,
-                                paddingHorizontal: 15,
-                                backgroundColor: COLORS.primary,
-                                borderRadius: 30,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 10,
-                            }}
+                            className='py-4 px-2 bg-primary w-5/6 rounded-3xl items-center justify-center'
                             onPress={()=>setSendModalDocument(true)}
                         >
                             <Text className={`text-dark`} style={{ ...FONTS.fontMedium, fontSize: 14, lineHeight: 21 }}>
@@ -285,16 +273,7 @@ const Cardstyle4 = ({documentName, sendDocument, typeDocument, statusDocument, s
                         <TouchableOpacity
                             onPress={()=>setViewingDocument(true)}
                             activeOpacity={0.8}
-                            style={{
-                                padding: 10,
-                                paddingHorizontal: 20,
-                                backgroundColor: COLORS.dark,
-                                borderRadius: 30,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 10,
-                            }}
+                            className='py-4 px-2 bg-dark w-5/6 rounded-3xl items-center justify-center'
                         >
                             <Text className={`text-white`} style={{ ...FONTS.fontMedium, fontSize: 14, lineHeight: 21}}>
                                 Visualizar

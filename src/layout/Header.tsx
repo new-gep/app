@@ -13,7 +13,7 @@ import { COLORS, FONTS } from "../constants/theme";
 import { GlobalStyleSheet } from "../constants/StyleSheet";
 import { FontAwesome } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 type Props = {
   title?: string;
   leftIcon?: string;
@@ -120,7 +120,7 @@ const Header = ({
             <Text
               style={{
                 ...FONTS.fontSemiBold,
-                fontSize: 18,
+                fontSize: rf(22),
                 color: colors.title,
                 textAlign: titleLeft ? "left" : "center",
                 paddingLeft: titleLeft2 ? 10 : 10,

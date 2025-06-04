@@ -15,7 +15,7 @@ import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { Title } from "react-native-paper";
 import AdmissionalCarousel from "./AdmissionalCarousel";
 import { COLORS, FONTS } from "~/src/constants/theme";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 type Props = {
   jobConected: any;
   CPF: any;
@@ -152,7 +152,7 @@ const AdmissionalContract = ({
           pagingEnabled
           snapToAlignment="center"
           className="w-full px-5"
-          style={{ height: Dimensions.get('window').height * 0.4 }}
+          style={{ height: rf(Dimensions.get('window').height * 0.4) }}
         >
           {/* Documentos Obrigatórios */}
           {/* {obligationDocs.map((doc:any, index:any) => {
@@ -189,7 +189,7 @@ const AdmissionalContract = ({
         </ScrollView>
       :
       <View className="h-full w-full justify-center items-center flex">
-        <Text className="text-center mb-5" style={{...FONTS.fontMedium, fontSize: 16}}>Buscando documentos</Text>
+        <Text className="text-center mb-5" style={{...FONTS.fontMedium, fontSize: rf(16)}}>Buscando documentos</Text>
         <ActivityIndicator size="large" color={COLORS.dark} />
       </View>
 

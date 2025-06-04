@@ -6,7 +6,7 @@ import Button from "../../../components/Button/Button";
 import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { IMAGES } from "../../../constants/Images";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 type CardProps = {
   lockKey: string;
   title: any;
@@ -56,7 +56,7 @@ const AdmissionalCard = ({
   return (
     <>
       <View className="h-3/12 p-4">
-        <View className="h-full w-80 mx-auto bg-white rounded-2xl shadow-lg border-2 border-gray-200 shadow-gray-300 p-4">
+        <View className={`h-4/6 w-${rf(80)} mx-auto bg-white rounded-2xl shadow-lg border-2 border-gray-200 shadow-gray-300 p-4 justify-around`}>
           <DocumentVisible
             path={path}
             typeDocument={typeDocument}
@@ -75,16 +75,16 @@ const AdmissionalCard = ({
             />
           </View>
 
-          <Text className=" mb-4 text-center" style={{ ...FONTS.fontSemiBold, fontSize: 18 }}>
+          <Text className=" mb-4 text-center" style={{ ...FONTS.fontBlack, fontSize: rf(18) }}>
             {Mask('title', title)}
           </Text>
 
 
             
 
-          <View className="flex-1 justify-end">
-            <TouchableOpacity className="bg-primary py-3 rounded-xl" onPress={handleOpenModalDoc}>
-              <Text className="text-center font-bold text-lg">Visualizar</Text>
+          <View className="justify-center">
+            <TouchableOpacity style={{height:rf(40)}} className={`bg-primary rounded-xl items-center justify-center`} onPress={handleOpenModalDoc}>
+              <Text className="text-center font-bold">Visualizar</Text>
             </TouchableOpacity>
             {/* <Button
               title={"Visualizar"}

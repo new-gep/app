@@ -149,7 +149,7 @@ export default function Vacancy() {
 
               <Button
                 title={"Ver Vagas"}
-                onPress={() => navigation.navigate("Home")}
+                onPress={() => navigation.navigate("Início")}
                 text={COLORS.title}
                 color={COLORS.primary}
                 style={{ borderRadius: 52, width: width * 0.7 }}

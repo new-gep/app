@@ -19,6 +19,7 @@ const SOCIALS = [
   { key: "twitter", label: "Twitter", icon: "twitter" },
   { key: "tiktok", label: "TikTok", icon: "tiktok" },
   { key: "youtube", label: "YouTube", icon: "youtube" },
+  { key: "site", label: "Site", icon: "chrome" },
 ];
 
 export default function SocialCardForm() {
@@ -31,11 +32,15 @@ export default function SocialCardForm() {
   return (
     <View className="h-full bg-white">
       <Header title="Redes Sociais" leftIcon="back" />
-      <ScrollView className="p-6" contentContainerStyle={{paddingBottom: 20}}>
+      <ScrollView className="p-6" contentContainerStyle={{ paddingBottom: 20 }}>
         {/* <Text style={styles.title}>Adicione suas redes sociais</Text> */}
 
         {SOCIALS.map((item) => (
-          <View key={item.key} className="bg-white flex-row rounded-lg items-center p-3 mb-5" style={styles.container}>
+          <View
+            key={item.key}
+            className="bg-white flex-row rounded-lg items-center p-3 mb-5"
+            style={styles.container}
+          >
             <FontAwesome5
               name={item.icon}
               size={22}
@@ -45,7 +50,11 @@ export default function SocialCardForm() {
             {/* <Text style={styles.label}>{item.label}</Text> */}
             <TextInput
               style={styles.input}
-              placeholder={`Link ou @ do ${item.label}`}
+              placeholder={
+                item.label.toLowerCase() === "site"
+                  ? "Link do seu Site"
+                  : `Link ou @ do ${item.label}`
+              }
               placeholderTextColor="#999"
               value={socialLinks[item.key] || ""}
               onChangeText={(value) => handleChange(item.key, value)}

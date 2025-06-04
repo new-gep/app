@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { COLORS, SIZES, FONTS } from '../../constants/theme';
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 type Props = {
     title : string,
     onPress ?: (e : any) => void,
@@ -38,12 +38,12 @@ const Button = ({
                 style={[styles.button,color && {
                     backgroundColor:color,
                 },size === 'sm' && {
-                    height:36,
-                    paddingHorizontal:10,
+                    height:rf(36),
+                    paddingHorizontal:rf(10),
                     borderRadius:4
                 },size === 'lg' && {
-                    height:55,
-                    paddingHorizontal:30,
+                    height:rf(55),
+                    paddingHorizontal:rf(30),
                 },style && {...style}]}
             >
                 {load ? (
@@ -55,8 +55,8 @@ const Button = ({
                     <>
                         <Text style={[
                             styles.buttnTitle,
-                            size === 'sm' && { fontSize:14 },
-                            size === 'lg' && { fontSize:18 },
+                            size === 'sm' && { fontSize:rf(14) },
+                            size === 'lg' && { fontSize:rf(18) },
                             color && {color: COLORS.white},
                             text && {color: text}
                         ]}>
@@ -72,7 +72,7 @@ const Button = ({
 
 const styles = StyleSheet.create({
     button : {
-        height:60,
+        height:rf(60),
         borderRadius:8,
         flexDirection:'row',
         alignItems:'center',

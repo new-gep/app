@@ -131,7 +131,7 @@ const admissionalExam: React.FC<Props> = ({ CPF, jobConected, setCurrentStep }) 
       />
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom:100 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

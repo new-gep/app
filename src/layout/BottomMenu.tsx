@@ -166,18 +166,18 @@ const BottomMenu = ({ state, navigation, descriptors }: Props) => {
                         ? isFocused
                           ? IMAGES.home_filled
                           : IMAGES.home_outline
-                        : label === "Vagas"
+                        : label === "Favoritos"
                         ? isFocused
-                          ? IMAGES.save_filled
-                          : IMAGES.save_outline
+                          ? IMAGES.heart_filled
+                          : IMAGES.heart_outline
                         : label === "Trabalho"
                         ? isFocused
                           ? IMAGES.work_filled
                           : IMAGES.work_outline
-                        : label === "Configurações"
+                        : label === "Menu"
                         ? isFocused
-                          ? IMAGES.setting_filled
-                          : IMAGES.setting_outline
+                          ? IMAGES.menu_filled
+                          : IMAGES.menu_outline
                         : IMAGES.Home
                     }
                   />

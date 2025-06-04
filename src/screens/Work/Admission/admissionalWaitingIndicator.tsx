@@ -16,7 +16,7 @@ import Header from "../../../layout/Header";
 import TimelineFront from "../../../components/Timeline/TimelineFront";
 import { COLORS, FONTS } from "~/src/constants/theme";
 import FindAplicateInJob from "~/src/hooks/get/job/findAplicateJob";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 type WaitingIndicatorProps = {
   visible: boolean;
   status?: "approved" | "pending";
@@ -100,6 +100,7 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
         )}
 
         <ScrollView
+          contentContainerStyle={{ flexGrow: 1, paddingBottom:100 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -116,7 +117,7 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
                 : "justify-start items-center px-6"
             }`}
           >
-            <Text className="" style={{ ...FONTS.fontSemiBold, fontSize: 18 }}>
+            <Text className="" style={{ ...FONTS.fontSemiBold, fontSize: rf(18) }}>
               {currentStep === 2
                 ? "Aguardando Kit Admissional"
                 : "Aguardando Análise"}

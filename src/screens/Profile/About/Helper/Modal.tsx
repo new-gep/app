@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView,Dimensions  } from "react-native";
 import Modal from "react-native-modal";
 import { FONTS } from "~/src/constants/theme";
+import Icon from "~/src/components/Icon/Icon";
 const screenHeight = Dimensions.get("window").height;
 export default function ModalDates({ visible, setVisible, dates }: any) {
   const [selected, setSelected] = useState<string[]>([]);
@@ -46,7 +47,7 @@ export default function ModalDates({ visible, setVisible, dates }: any) {
               >
                 <Text
                   className={
-                    selected.includes(date) ? "text-dark" : "text-gray-400"
+                    selected.includes(date) ? "text-dark" : "text-gray-500"
                   }
                   style={{ ...FONTS.fontRegular, fontSize: 14 }}
                 >

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 type TimelineProps = {
   currentStep: number;
   showProgress?: boolean;
@@ -51,7 +51,8 @@ const TimelineFront: React.FC<TimelineProps> = ({ currentStep, showProgress = tr
                 className={`w-5 h-5 rounded-full border-2 ${getColor(step.id)}`}
               />
               <Text 
-                className={`text-xs mt-4 text-center ${
+                style={{fontSize:rf(9)}}
+                className={` mt-4 text-center ${
                   currentStep >= step.id ? 'text-dark' : 'text-gray-500'
                 }`}
               >

@@ -4,6 +4,8 @@ import Octicons from "@expo/vector-icons/Octicons";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { IMAGES } from "~/src/constants/Images";
+import { FONTS } from "~/src/constants/theme";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 
 interface ListItem {
   title: string;
@@ -14,48 +16,55 @@ interface ListItem {
   action?:any
 }
 
-export default function List({ items, isUnique }: { items: ListItem[],  isUnique?:boolean }) {
+export default function List({ items, isUnique, title }: { items: ListItem[],  isUnique?:boolean, title?:string }) {
   const navigation = useNavigation<any>();
 
   return (
-    <View className="bg-white rounded-lg px-3" style={!isUnique ? Style.container : undefined}>
-      {items.map((item: ListItem, index: number) => (
-        <TouchableOpacity
-          key={index}
-          className="flex-row items-center justify-between mb-2"
-          onPress={() => {
-            if(item.go){
-                navigation.navigate(item.go);
-            }
-            if(item.setVariable){
-                item.setVariable(!item.variable);
-            }
-            if(item.action){
-              item.action()
-            }
-          }}
-        >
-          <View className="flex-row items-center w-1/12 h-1/2">
-            {/* @ts-ignore */}
-            <Image source={IMAGES[item.icon]} className="h-full w-full" resizeMode="contain" />
-          </View>
-
-          <View
-            className="flex-row justify-between items-center w-11/12"
-            style={{
-              borderBottomWidth: index !== items.length - 1 ? 1 : 0,
-              borderColor: "#e5e7eb", // equivalente a Tailwind `border-gray-200`
+    <View>
+      { title &&
+        <Text style={{...FONTS.fontMedium, fontSize:rf(17)}} className="my-2">
+          {title}
+        </Text>
+      }
+      <View className="bg-white rounded-lg px-3" style={!isUnique ? Style.container : undefined}>
+        {items.map((item: ListItem, index: number) => (
+          <TouchableOpacity
+            key={index}
+            className="flex-row items-center justify-between mb-2"
+            onPress={() => {
+              if(item.go){
+                  navigation.navigate(item.go);
+              }
+              if(item.setVariable){
+                  item.setVariable(!item.variable);
+              }
+              if(item.action){
+                item.action()
+              }
             }}
           >
-            <Text style={Style.text}>{item.title}</Text>
-            <MaterialIcons
-              name="keyboard-arrow-right"
-              size={21}
-              color="black"
-            />
-          </View>
-        </TouchableOpacity>
-      ))}
+            <View className="flex-row items-center w-1/12 h-1/2">
+              {/* @ts-ignore */}
+              <Image source={IMAGES[item.icon]} className="h-full w-full" resizeMode="contain" />
+            </View>
+
+            <View
+              className="flex-row justify-between items-center w-11/12"
+              style={{
+                borderBottomWidth: index !== items.length - 1 ? 1 : 0,
+                borderColor: "#e5e7eb", // equivalente a Tailwind `border-gray-200`
+              }}
+            >
+              <Text style={[Style.text, FONTS.fontLight]}>{item.title}</Text>
+              <MaterialIcons
+                name="keyboard-arrow-right"
+                size={21}
+                color="black"
+              />
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 }
@@ -70,7 +79,7 @@ const Style = {
   },
   text: {
     backgroundColor: "white",
-    padding: 8,
+    padding: 7,
     borderRadius: 8,
     marginTop: 8,
     color: "black",

@@ -21,7 +21,7 @@ import { COLORS, FONTS } from "~/src/constants/theme";
 import FindOneJob from "~/src/hooks/get/job/findOne";
 import fetchCollaborator from "~/src/function/fetchCollaborator";
 import AdmissionalCard from "../../AdmissionalCard";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 const Signature = ({
   currentStep,
   CPF,
@@ -166,13 +166,13 @@ const Signature = ({
                     ? "text-red-600"
                     : "text-gray-600"
                 } px-5 mb-5`}
-                style={{ ...FONTS.fontMedium, fontSize: 16 }}
+                style={{ ...FONTS.fontLight, fontSize: rf(15) }}
               >
                 {statusSignature == "reproved"
                   ? "Assinatura recusada, por favor assine novamente."
                   : "Assinatura pendente, visualize todos os documentos para assinar."}
               </Text>
-              <View className="mb-5">
+              <View >
                   <AdmissionalContract
                     CPF={CPF}
                     jobConected={jobConected}

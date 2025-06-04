@@ -27,12 +27,9 @@ export default function About() {
             icon="chat_outline"
             title="Comunicação"
             options={[
-              "Fico no WhatsApp o dia todo",
-              "Fico o dia inteiro no Whats",
+              "Curto conversa no WhatsApp",
               "Gosto de falar no telefone",
               "Adoro chamada de vídeo",
-              "Demoro pra responder no WhatsApp",
-              "Odeio falar por mensagem",
               "Melhor falar pessoalmente",
             ]}
           />
@@ -79,13 +76,19 @@ export default function About() {
             border={true}
             icon="book_outline"
             title="Interesses"
-            options={["CLT", "Contrato", "PJ"]}
+            options={["Criatividade", "Esportes", "Cultura & Arte", "Autoconhecimento", "Filmes & Séries", "Meditação", "Academia", "Cinema", "Leitura", "Viagens", "Cozinhar", "Stand-up", "Filosofia", "Podcasts", "Jogos"]}
           />
           <InterestsFilter
             border={true}
             icon="heart_outline"
             title="Linguagem do amor"
-            options={["Presencial", "Híbrido", "Remoto"]}
+            options={["Gestos de serviço", "Presentes", "Toque físico", "Elogios", "Tempo de qualidade"]}
+          />
+          <InterestsFilter
+            border={true}
+            icon="balance_outline"
+            title="Valores"
+            options={["Espiritualidade", "Relações", "Autonomia", "Justiça", "Aprendizado", "Cooperação", "Sustentabilidade", "Propósito"]}
           />
           <InterestsFilter
             border={true}

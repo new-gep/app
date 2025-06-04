@@ -13,7 +13,7 @@ import AgeRangeFilter from "./Helper/Range";
 // import InterestsFilter from './Helper/Interests';
 import InterestsFilter from "../../Profile/About/Helper/Interests";
 import Header from "~/src/layout/Header";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 export default function Filter() {
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -26,7 +26,7 @@ export default function Filter() {
             border={true}
             title="Contrato"
             icon="handShake_outline"
-            options={["CLT", "Contrato", "PJ", "Autônomo", "Freelancer"]}
+            options={["CLT", "Contrato", "PJ", "Autônomo", "Freelancer", "A combinar"]}
           />
           <InterestsFilter
             border={true}
@@ -82,7 +82,7 @@ export default function Filter() {
       >
         <Text
           className="text-dark text-center"
-          style={{ ...FONTS.fontBold, fontSize: 16 }}
+          style={{ ...FONTS.fontBold, fontSize: rf(16) }}
         >
           CONCLUÍDO
         </Text>

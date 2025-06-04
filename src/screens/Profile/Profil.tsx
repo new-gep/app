@@ -3,7 +3,7 @@ import { View, Text, Animated } from "react-native";
 import Picture from "./Helper/Picture";
 import HeaderStyle4 from "~/src/components/Headers/HeaderStyle4";
 import useCollaborator from "~/src/function/fetchCollaborator";
-// import List from "./Helper/List";
+import Percentage from "./Percentage/Index";
 import List from "~/src/components/Menu/List";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -20,6 +20,7 @@ export default function Profile() {
       title: "Sobre Mim",
       go: "About",
     },
+
     // {
     //   icon: "star_outline",
     //   title: "Trabalho",
@@ -29,6 +30,11 @@ export default function Profile() {
       icon: "document_outline",
       title: "Currículo",
       go: "CV",
+    },
+    {
+      icon: "imageLibrary_outline",
+      title: "Galeria",
+      go: "Gallery",
     },
     // {
     //   // icon: "signature_outline",
@@ -74,7 +80,7 @@ export default function Profile() {
     },
     {
       icon: "imageLibrary_outline",
-      title: "Galeria",
+      title: "Anúncio",
       go: "Gallery",
     },
     {
@@ -116,16 +122,17 @@ export default function Profile() {
       >
         <Picture collaborator={collaborator} />
         <View>
-          <List items={about} />
+          <List items={about} title={'Meu Perfil'}/>
         </View>
         <View className="mt-5">
-          <List items={service} />
+          <List items={service} title={'Meu Serviço'}/>
         </View>
         <View className="mt-5 mb-5">
-          <List items={conf} />
+          <List items={conf} title={'Configurações'}/>
         </View>
         <Text className="text-gray-400 text-right">Gep version 2.0v</Text>
       </Animated.ScrollView>
+      <Percentage />
     </View>
   );
 }
