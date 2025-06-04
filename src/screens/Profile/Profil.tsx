@@ -110,7 +110,7 @@ export default function Profile() {
 
   return (
     <View className="flex-1">
-      <HeaderStyle4 title="Configurações" scrollY={scrollY} />
+      <HeaderStyle4 title="Menu" scrollY={scrollY} />
       <Animated.ScrollView
         className="bg-white px-6"
         contentContainerStyle={{ paddingTop: 90 }}
