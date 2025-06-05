@@ -29,12 +29,13 @@ import type { NavigationProp } from "@react-navigation/native";
 import Header from "../../layout/Header";
 import { COLORS, FONTS } from "../../constants/theme";
 import Mask from "../../function/mask";
-import HeaderHome from "../../layout/HeaderHome";
+// import HeaderHome from "../../layout/HeaderHome";
 import Apply from "~/src/hooks/rabbit/job/Apply";
 import ApplyJob from "~/src/hooks/update/job/applyJob";
 import CardSearch from "./CardSearch";
-
-
+import BannerImage from "./Helper/BannerImage";
+import BannerCircle from "./Helper/BannerCircle";
+import HeaderHome from "~/src/layout/Headerome";
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,13 +56,13 @@ const Home = () => {
     if (response.status === 200) {
       showPopupMessage("Você aplicou para a vaga com sucesso!");
       handleSwipeLeft();
-    }else if (response.status === 400) {
+    } else if (response.status === 400) {
       showPopupMessage("Você já aplicou para essa vaga!");
       handleSwipeLeft();
-    }else{
+    } else {
       showPopupMessage("Erro ao aplicar para a vaga!");
     }
-    return
+    return;
     if (missingData) return;
 
     try {
@@ -125,22 +126,22 @@ const Home = () => {
   };
 
   const updateCardState = () => {
-    setCards((prevCards:any) => {
+    setCards((prevCards: any) => {
       if (prevCards.length === 0) return prevCards;
 
       const [firstCard, ...rest] = prevCards;
-      setPreviousCards((prev:any) => [...prev, firstCard]);
+      setPreviousCards((prev: any) => [...prev, firstCard]);
 
       return rest.length > 0 ? rest : prevCards;
     });
   };
 
   const handleSwipeLeft = () => {
-    setCards((prevCards:any) => {
+    setCards((prevCards: any) => {
       if (prevCards.length === 0) return prevCards;
 
       const [firstCard, ...rest] = prevCards;
-      setPreviousCards((prev:any) => [...prev, firstCard]);
+      setPreviousCards((prev: any) => [...prev, firstCard]);
 
       return rest;
     });
@@ -151,8 +152,8 @@ const Home = () => {
       const lastCard = previousCards[previousCards.length - 1];
 
       if (!cards.some((card: { id: any }) => card.id === lastCard.id)) {
-        setPreviousCards((prev:any) => prev.slice(0, -1));
-        setCards((prevCards:any) => [lastCard, ...prevCards]);
+        setPreviousCards((prev: any) => prev.slice(0, -1));
+        setCards((prevCards: any) => [lastCard, ...prevCards]);
       } else {
         alert("Esse card já está na lista.");
       }
@@ -231,22 +232,19 @@ const Home = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <HeaderHome
-        title=""
-        rightIcon4={"home"}
-        collaborator={collaborator}
-      />
-      <View className="w-full z-50 mt-1">
-        <CardSearch setCards={setCards} />
-      </View>
+      <ScrollView>
+
+        <View className="w-full z-50 mt-1">
+          <CardSearch setCards={setCards} />
+        </View>
+        <BannerImage/>
+        <BannerCircle/>
         <View className="flex-1 justify-center">
           {isLoading ? (
             <View className="flex-1 justify-center items-center">
               <ActivityIndicator size="large" color={COLORS.primary} />
             </View>
-          ) : 
-          
-            Array.isArray(cards) && cards.length > 0 ?  (
+          ) : Array.isArray(cards) && cards.length > 0 ? (
             <>
               {!isKeyboardVisible && (
                 <View className="w-full">
@@ -278,76 +276,78 @@ const Home = () => {
               )}
             </>
           ) : (
-            <ScrollView>
-              {!isKeyboardVisible && (
-                cards === false ? 
-                <View className="mt-10 flex justify-between items-center h-full">
-                  <View
-                    style={{
-                      backgroundColor: "white",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text
+            
+              !isKeyboardVisible &&
+                (cards === false ? (
+                  <View className="mt-10 flex justify-between items-center h-full">
+                    <View
                       style={{
-                        ...FONTS.fontSemiBold,
-                        fontSize: 16,
-                        color: COLORS.title,
-                        marginBottom: 5,
+                        backgroundColor: "white",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      Busque sua vaga
-                    </Text>
-                    <Text className="text-center text-sm text-gray-400 font-normal">
-                      Pesquise sua vaga pelo nome ou palavra-chave
-                    </Text>
-                    <Image
-                      source={require("../../assets/images/brand/search.png")}
-                      style={{
-                        width: Dimensions.get("window").width * 0.8,
-                        height: Dimensions.get("window").height * 0.5,
-                      }}
-                      resizeMode="contain"
-                    />
+                      <Text
+                        style={{
+                          ...FONTS.fontSemiBold,
+                          fontSize: 16,
+                          color: COLORS.title,
+                          marginBottom: 5,
+                        }}
+                      >
+                        Busque sua vaga
+                      </Text>
+                      <Text className="text-center text-sm text-gray-400 font-normal">
+                        Pesquise sua vaga pelo nome ou palavra-chave
+                      </Text>
+                      <Image
+                        source={require("../../assets/images/brand/search.png")}
+                        style={{
+                          width: Dimensions.get("window").width * 0.8,
+                          height: Dimensions.get("window").height * 0.5,
+                        }}
+                        resizeMode="contain"
+                      />
+                    </View>
                   </View>
-                </View>
-                :
-                <View className="mt-10 flex justify-between items-center h-full px-5">
-                  <View
-                    style={{
-                      backgroundColor: "white",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text
+                ) : (
+                  <View className="mt-10 flex justify-between items-center h-full px-5">
+                    <View
                       style={{
-                        ...FONTS.fontSemiBold,
-                        fontSize: 16,
-                        color: COLORS.title,
-                        marginBottom: 5,
+                        backgroundColor: "white",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      Não encontramos sua vaga
-                    </Text>
-                    <Text className="text-center text-sm text-gray-400 font-normal">
-                      Não há mais vagas no momento, busque outra!
-                    </Text>
-                    <Image
-                      source={require("../../assets/images/brand/Waiting.png")}
-                      style={{
-                        width: Dimensions.get("window").width * 0.7,
-                        height: Dimensions.get("window").height * 0.5,
-                      }}
-                      resizeMode="contain"
-                    />
+                      <Text
+                        style={{
+                          ...FONTS.fontSemiBold,
+                          fontSize: 16,
+                          color: COLORS.title,
+                          marginBottom: 5,
+                        }}
+                      >
+                        Não encontramos sua vaga
+                      </Text>
+                      <Text className="text-center text-sm text-gray-400 font-normal">
+                        Não há mais vagas no momento, busque outra!
+                      </Text>
+                      <Image
+                        source={require("../../assets/images/brand/Waiting.png")}
+                        style={{
+                          width: Dimensions.get("window").width * 0.7,
+                          height: Dimensions.get("window").height * 0.5,
+                        }}
+                        resizeMode="contain"
+                      />
+                    </View>
                   </View>
-                </View>
-              )}
-            </ScrollView>
+                ))
+
           )}
         </View>
+      </ScrollView>
+    
       <Modal
         transparent
         animationType="fade"

@@ -82,6 +82,7 @@ import Help from "../screens/Profile/Help/Index";
 import Review from "../screens/Profile/Review/Index";
 import Documents from "../screens/Documents/Documents";
 import Social from "../screens/Profile/Social/Index";
+import Announcement from "../screens/Profile/Announcement/Index";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -166,6 +167,7 @@ const StackNavigator = () => {
         <Stack.Screen name="ChangePassword" component={ChangePassword} />
         <Stack.Screen name="Help" component={Help} />
         <Stack.Screen name="Signature" component={Signature} />
+        <Stack.Screen name="Announcement" component={Announcement} />
         <Stack.Screen name="Gallery" component={Gallery} />
         <Stack.Screen name="Wallet" component={Wallet} />
         <Stack.Screen name="Documents" component={Documents} />

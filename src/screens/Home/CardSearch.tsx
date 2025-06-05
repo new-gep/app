@@ -19,6 +19,7 @@ interface CardSearchProps {
 const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState("pessoa");
   const { wp, hp } = useScreen(); // 📱 dimensões da tela
 
   const jobs = [
@@ -74,50 +75,49 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
   };
 
   return (
-    <View style={{ width: "100%", paddingHorizontal: wp(4), paddingVertical: hp(1.5), zIndex: 50 }}>
-      <View
-        style={{
-          width: "100%",
-          backgroundColor: "#fff",
-          borderRadius: wp(3),
-          flexDirection: "row",
-          alignItems: "center",
-          elevation: 8,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-        }}
-      >
-        <Icon name="search" size={wp(5.5)} color="#9CA3AF" style={{ marginLeft: wp(3), marginRight: wp(2) }} />
-
-        <TextInput
-          placeholder="Pesquisar vagas"
-          placeholderTextColor="#9CA3AF"
-          style={{
-            flex: 1,
-            paddingVertical: hp(1.2),
-            fontSize: wp(4),
-            color: "#000",
-          }}
-          value={searchText}
-          onChangeText={handleSearch}
-          onSubmitEditing={() => searchJob()}
-        />
-
-        {searchText.length > 0 && (
-          <TouchableOpacity onPress={clearSearch} style={{ marginRight: wp(3) }}>
-            <Icon name="close" size={wp(5.5)} color="#9CA3AF" />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {suggestions.length > 0 && (
+    <View>
+      <View className="px-5 pt-5">
+            {/* Toggle */}
+            <View className="flex-row bg-gray-200 rounded-full self-start p-1">
+              <TouchableOpacity
+                onPress={() => setActiveTab("pessoa")}
+                className={`px-5 py-2 rounded-full ${
+                  activeTab === "pessoa" ? "bg-indigo-600" : ""
+                }`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    activeTab === "pessoa" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  Pessoa
+                </Text>
+              </TouchableOpacity>
+      
+              <TouchableOpacity
+                onPress={() => setActiveTab("empresa")}
+                className={`px-5 py-2 rounded-full ${
+                  activeTab === "empresa" ? "bg-indigo-600" : ""
+                }`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    activeTab === "empresa" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  Empresa
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+      <View style={{ width: "100%", paddingHorizontal: wp(4), paddingVertical: hp(1.5), zIndex: 50 }}>
         <View
           style={{
+            width: "100%",
             backgroundColor: "#fff",
-            borderRadius: wp(2),
-            marginTop: hp(1),
+            borderRadius: wp(3),
+            flexDirection: "row",
+            alignItems: "center",
             elevation: 8,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -125,27 +125,64 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
             shadowRadius: 4,
           }}
         >
-          <FlatList
-            data={suggestions.slice(0, 5)}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setSearchText(item);
-                  searchJob(item);
-                }}
-                style={{
-                  padding: wp(3),
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#E5E7EB",
-                }}
-              >
-                <Text style={{ fontSize: wp(4), color: "#374151" }}>{item}</Text>
-              </TouchableOpacity>
-            )}
+          <Icon name="search" size={wp(5.5)} color="#9CA3AF" style={{ marginLeft: wp(3), marginRight: wp(2) }} />
+
+          <TextInput
+            placeholder="Pesquisar vagas"
+            placeholderTextColor="#9CA3AF"
+            style={{
+              flex: 1,
+              paddingVertical: hp(1.2),
+              fontSize: wp(4),
+              color: "#000",
+            }}
+            value={searchText}
+            onChangeText={handleSearch}
+            onSubmitEditing={() => searchJob()}
           />
+
+          {searchText.length > 0 && (
+            <TouchableOpacity onPress={clearSearch} style={{ marginRight: wp(3) }}>
+              <Icon name="close" size={wp(5.5)} color="#9CA3AF" />
+            </TouchableOpacity>
+          )}
         </View>
-      )}
+
+        {suggestions.length > 0 && (
+          <View
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: wp(2),
+              marginTop: hp(1),
+              elevation: 8,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+            }}
+          >
+            <FlatList
+              data={suggestions.slice(0, 5)}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    setSearchText(item);
+                    searchJob(item);
+                  }}
+                  style={{
+                    padding: wp(3),
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#E5E7EB",
+                  }}
+                >
+                  <Text style={{ fontSize: wp(4), color: "#374151" }}>{item}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        )}
+      </View>
     </View>
   );
 };

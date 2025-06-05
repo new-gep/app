@@ -51,7 +51,7 @@ const InterestsFilter = ({
             borderColor: "#e5e7eb", // equivalente a Tailwind `border-gray-200`
           }}
         >
-          <Text style={styles.text}>{title}</Text>
+          <Text style={[FONTS.fontLight, styles.text]}>{title}</Text>
           <MaterialIcons name="keyboard-arrow-right" size={21} color="black" />
         </View>
       </TouchableOpacity>

@@ -184,9 +184,9 @@ const Signature = ({
                   <TouchableOpacity 
                     style={{ opacity: keySignature ? 1 : 0.7 }} 
                     onPress={handleOpenModal}
-                    className="bg-dark w-4/6 py-2 rounded-xl"
+                    className="bg-primary w-4/6 py-2 rounded-xl"
                   >
-                    <Text style={{...FONTS.fontBold}} className="text-center text-white">ASSINAR</Text>
+                    <Text style={{...FONTS.fontBold}} className="text-center text-dark">ASSINAR</Text>
                   </TouchableOpacity>
                 </View>
               {/* <View className="border-gray-200 px-4 mb-10 bg-white">

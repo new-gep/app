@@ -79,9 +79,9 @@ export default function Profile() {
       go: "Filter",
     },
     {
-      icon: "imageLibrary_outline",
+      icon: "campaign_outline",
       title: "Anúncio",
-      go: "Gallery",
+      go: "Announcement",
     },
     {
       icon: "wallet_outline",

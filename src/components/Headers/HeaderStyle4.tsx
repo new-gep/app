@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { FONTS } from "~/src/constants/theme";
 import { BlurView } from "expo-blur";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
 const HEADER_MAX_HEIGHT = 35;
 const HEADER_MIN_HEIGHT = 20;
 const HEADER_MAX_FONT = 28;
