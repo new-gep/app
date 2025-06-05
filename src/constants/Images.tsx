@@ -222,6 +222,7 @@ export const IMAGES = {
   shirt_outline: require("../assets/picture/icons/shirt.png"),
   makeup_outline: require("../assets/picture/icons/makeup.png"),
   box_outline: require("../assets/picture/icons/box.png"),
+  touchApp_outline: require("../assets/picture/icons/touchApp.png"),
   subDirectory: require("../assets/picture/icons/subDirectory.png"),
   menu: require("../assets/picture/icons/menu.png"),
   menu_outline: require("../assets/picture/icons/menu_outline.png"),

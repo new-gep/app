@@ -138,7 +138,7 @@ const Signature = ({
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: 100, // garante espaço no fim
+          paddingBottom: 130, // garante espaço no fim
         }}
         refreshControl={
           <RefreshControl
@@ -180,7 +180,16 @@ const Signature = ({
                     lockSignature={lockSignature}
                   />
                 </View>
-              <View className="border-gray-200 px-4 mb-10 bg-white">
+                <View className="items-center">
+                  <TouchableOpacity 
+                    style={{ opacity: keySignature ? 1 : 0.7 }} 
+                    onPress={handleOpenModal}
+                    className="bg-dark w-4/6 py-2 rounded-xl"
+                  >
+                    <Text style={{...FONTS.fontBold}} className="text-center text-white">ASSINAR</Text>
+                  </TouchableOpacity>
+                </View>
+              {/* <View className="border-gray-200 px-4 mb-10 bg-white">
                 <Button
                   style={{ opacity: keySignature ? 1 : 0.7 }}
                   title="Assinar"
@@ -188,7 +197,7 @@ const Signature = ({
                   color={COLORS.dark}
                   text={COLORS.white}
                 />
-              </View>
+              </View> */}
             </>
           )
         ) : (

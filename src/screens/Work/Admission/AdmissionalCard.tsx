@@ -7,36 +7,37 @@ import DocumentVisible from "../../../components/Modal/DocumentVisible";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { IMAGES } from "../../../constants/Images";
 import { rf } from "~/src/hooks/utils/responsiveFont";
+import Icon from "~/src/components/Icon/Icon";
 type CardProps = {
   lockKey: string;
   title: any;
   status: any;
   path: any;
   typeDocument: string;
-  setLockSignature: (any) => void;
+  setLockSignature: (any:any) => void;
   lockSignature: any;
 };
 
-const AdmissionalCard = ({ 
+const AdmissionalCard = ({
   lockKey,
-  title, 
-  status, 
-  path, 
-  typeDocument, 
-  setLockSignature, 
-  lockSignature 
+  title,
+  status,
+  path,
+  typeDocument,
+  setLockSignature,
+  lockSignature,
 }: CardProps) => {
   const [signature, setSignature] = useState<string | null>(null);
   const [modalVisibleDoc, setModalVisibleDoc] = useState(false);
 
   const handleOpenModalDoc = () => {
     setModalVisibleDoc(!modalVisibleDoc);
-    
+
     // Atualiza o estado apenas se ainda não foi visualizado
     if (!lockSignature[lockKey]) {
-      setLockSignature(prev => ({
+      setLockSignature((prev:any) => ({
         ...prev,
-        [lockKey]: true
+        [lockKey]: true,
       }));
     }
   };
@@ -47,7 +48,7 @@ const AdmissionalCard = ({
       experience: "Contrato de Experiência",
       extension: "Acordo de Prorrogação de Horas",
       compensation: "Acordo de Compensação de Horas",
-      voucher: "Solicitação de Vale Transporte"
+      voucher: "Solicitação de Vale Transporte",
     };
 
     return titleMappings[value] || value;
@@ -56,7 +57,13 @@ const AdmissionalCard = ({
   return (
     <>
       <View className="h-3/12 p-4">
-        <View className={`h-4/6 w-${rf(80)} mx-auto bg-white rounded-2xl shadow-lg border-2 border-gray-200 shadow-gray-300 p-4 justify-around`}>
+        <TouchableOpacity
+          style={Style.container}
+          onPress={handleOpenModalDoc}
+          className={`h-4/6 w-${rf(
+            80
+          )} mx-auto bg-white rounded-2xl shadow-lg  p-4 justify-around`}
+        >
           <DocumentVisible
             path={path}
             typeDocument={typeDocument}
@@ -66,44 +73,56 @@ const AdmissionalCard = ({
             close={handleOpenModalDoc}
           />
 
-          <View className="absolute -top-4 left-2.5 bottom-2.5">
+          <View className="absolute -top-2 left-2.5 bottom-2.5">
             <Image
-              source={lockSignature[lockKey] ? IMAGES.lockOpen : IMAGES.lockClose}
-              style={{ width: Dimensions.get('window').width * 0.08, height: Dimensions.get('window').height * 0.04 }}
-              tintColor={lockSignature[lockKey] ? COLORS.success : COLORS.danger}
+              source={
+                lockSignature[lockKey] ? IMAGES.lockOpen : IMAGES.lockClose
+              }
+              style={{
+                width: Dimensions.get("window").width * 0.08,
+                height: Dimensions.get("window").height * 0.04,
+              }}
+              tintColor={
+                lockSignature[lockKey] ? COLORS.success : COLORS.danger
+              }
               resizeMode="contain"
             />
           </View>
-
-          <Text className=" mb-4 text-center" style={{ ...FONTS.fontBlack, fontSize: rf(18) }}>
-            {Mask('title', title)}
-          </Text>
-
-
-            
-
-          <View className="justify-center">
-            <TouchableOpacity style={{height:rf(40)}} className={`bg-primary rounded-xl items-center justify-center`} onPress={handleOpenModalDoc}>
-              <Text className="text-center font-bold">Visualizar</Text>
-            </TouchableOpacity>
-            {/* <Button
-              title={"Visualizar"}
-              style={{
-                marginBottom: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                width: '100%',
-                justifyContent: 'center'
-              }}
-              text={'#000000'}
-              color={COLORS.primary}
-              onPress={handleOpenModalDoc}
-            /> */}
+          <View>
+            <Text
+              className=" mb-4 text-center"
+              style={{ ...FONTS.fontBlack, fontSize: rf(18), margin:0 }}
+            >
+              {Mask("title", title)}
+            </Text>
+            <View className="flex-row items-end">
+              <View className="h-5 w-5 flex-row">
+                <Icon name={"touchApp_outline"} color="#6b7280" />
+              </View>
+              <Text className="text-gray-500" style={{ ...FONTS.fontBlack, fontSize: rf(12), marginLeft:3 }}>clique para abrir</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </>
   );
+};
+
+const Style = {
+  container: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  text: {
+    backgroundColor: "white",
+    padding: 7,
+    borderRadius: 8,
+    marginTop: 8,
+    color: "black",
+  },
 };
 
 export default AdmissionalCard;
