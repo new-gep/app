@@ -90,7 +90,7 @@ const Header = ({
 
             style={[styles.actionBtn, { backgroundColor: "#F6F6F6" }]}
           >
-            <Feather size={24} color={COLORS.title} name={"arrow-left"} />
+            <Feather size={rf(24)} color={COLORS.title} name={"arrow-left"} />
           </TouchableOpacity>
         )}
         {dynamic && (
@@ -98,7 +98,7 @@ const Header = ({
             onPress={() => dynamic()}
             style={[styles.actionBtn, { backgroundColor: "#F6F6F6" }]}
           >
-            <Feather size={24} color={COLORS.title} name={"arrow-left"} />
+            <Feather size={rf(24)} color={COLORS.title} name={"arrow-left"} />
           </TouchableOpacity>
         )}
 
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
     ...FONTS.fontMedium,
   },
   actionBtn: {
-    height: 45,
-    width: 45,
+    height: rf(45),
+    width: rf(45),
     borderRadius: 45,
     alignItems: "center",
     justifyContent: "center",
