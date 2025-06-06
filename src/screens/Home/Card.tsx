@@ -312,11 +312,7 @@ const Card: React.FC<CardProps> = React.memo(
     return (
       <View
         className="items-center justify-end"
-        style={{
-          width: "100%",
-          height: "50%",
-          marginTop:'68%',
-        }}
+  
       >
         <GestureDetector gesture={composedGestures}>
           <Animated.View
@@ -326,7 +322,6 @@ const Card: React.FC<CardProps> = React.memo(
                 
                 width: "94%",
                 height: height * 0.45,
-                marginHorizontal: width * 0.03,
                 borderRadius: 24,
                 alignSelf: "center",
                 overflow: "hidden",

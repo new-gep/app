@@ -99,6 +99,9 @@ export type RootStackParamList = {
     Documents:undefined;
     Social:undefined;
     Announcement:undefined;
+    AnnouncementCreate:undefined;
+    AnnouncementActive:undefined;
+    AnnouncementHistory:undefined;
     HomeWork:{
       jobConected?:any
       CPF?:any

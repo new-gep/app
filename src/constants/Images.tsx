@@ -229,6 +229,8 @@ export const IMAGES = {
   search_outline: require("../assets/picture/icons/search.png"),
   addCircle_outline: require("../assets/picture/icons/addCircle.png"),
   flash_outline: require("../assets/picture/icons/flash.png"),
+  notification_outline: require("../assets/picture/icons/notification.png"),
+  pageInfo_outline: require("../assets/picture/icons/pageInfo.png"),
   menu: require("../assets/picture/icons/menu.png"),
   menu_outline: require("../assets/picture/icons/menu_outline.png"),
   menu_filled: require("../assets/picture/icons/menu_filled.png"),

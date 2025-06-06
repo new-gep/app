@@ -8,26 +8,26 @@ export default function Announcement() {
     {
       icon: "search_outline",
       title: "Buscar",
-    //   variable: cv,
-    //   setVariable: setCv,
+      // go: 'cv',
+      //   setVariable: setCv,
     },
     {
       icon: "flash_outline",
       title: "Ativos",
-    //   variable: cv,
-    //   setVariable: setCv,
+      go: 'AnnouncementActive',
+      //   setVariable: setCv,
     },
     {
       icon: "addCircle_outline",
       title: "Criar Anúncio",
-    //   variable: cv,
-    //   setVariable: setCv,
+      go: 'AnnouncementCreate',
+      //   setVariable: setCv,
     },
     {
       icon: "history_outline",
       title: "Histórico",
-    //   variable: upload,
-    //   setVariable: setUpload,
+      go: 'AnnouncementHistory',
+      //   setVariable: setUpload,
     },
   ];
 

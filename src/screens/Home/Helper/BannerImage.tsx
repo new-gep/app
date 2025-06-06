@@ -11,7 +11,7 @@ const { width } = Dimensions.get("window");
 
 export default function BannerImage() {
   return (
-    <View style={{ marginTop: 16 }}>
+    <View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

@@ -73,6 +73,7 @@ const BottomMenu = ({ state, navigation, descriptors }: Props) => {
         }}
       >
         <View
+          className=""
           style={[
             GlobalStyleSheet.container,
             {
@@ -144,47 +145,60 @@ const BottomMenu = ({ state, navigation, descriptors }: Props) => {
             };
 
             return (
-              <View key={index} style={styles.tabItem}>
-                <TouchableOpacity onPress={onPress} style={styles.tabLink}>
-                  {/* <Animated.View
-                                        style={{
-                                            transform: [{translateY: iconTranslateY}],
-                                    }}> */}
-                  <Image
-                    style={{
-                      height: 25,
-                      width: 25,
-                      resizeMode: "contain",
-                      tintColor: isFocused
-                        ? theme.dark
-                          ? COLORS.card
-                          : COLORS.dark
-                        : COLORS.dark,
-                    }}
-                    source={
-                      label === "Início"
-                        ? isFocused
-                          ? IMAGES.home_filled
-                          : IMAGES.home_outline
-                        : label === "Favoritos"
-                        ? isFocused
-                          ? IMAGES.heart_filled
-                          : IMAGES.heart_outline
-                        : label === "Trabalho"
-                        ? isFocused
-                          ? IMAGES.work_filled
-                          : IMAGES.work_outline
-                        : label === "Menu"
-                        ? isFocused
-                          ? IMAGES.menu_filled
-                          : IMAGES.menu_outline
-                        : IMAGES.Home
-                    }
-                  />
-                  {/* </Animated.View> */}
-                  <Text style={[styles.navText]}>{label}</Text>
-                </TouchableOpacity>
-              </View>
+              <View
+  key={index}
+  style={styles.tabItem}
+>
+  <TouchableOpacity onPress={onPress} style={styles.tabLink}>
+    {/* Border top pequena */}
+    {isFocused && (
+      <View
+        style={{
+          position: "absolute",
+          top: -8,
+          width: "70%",  // largura menor, metade do item
+          borderTopWidth: 1,
+          borderTopColor: COLORS.dark,
+          borderRadius: 2,
+        }}
+      />
+    )}
+
+    <Image
+      style={{
+        height: 25,
+        width: 25,
+        resizeMode: "contain",
+        tintColor: isFocused
+          ? theme.dark
+            ? COLORS.card
+            : COLORS.dark
+          : COLORS.dark,
+      }}
+      source={
+        label === "Início"
+          ? isFocused
+            ? IMAGES.home_filled
+            : IMAGES.home_outline
+          : label === "Favoritos"
+          ? isFocused
+            ? IMAGES.heart_filled
+            : IMAGES.heart_outline
+          : label === "Trabalho"
+          ? isFocused
+            ? IMAGES.work_filled
+            : IMAGES.work_outline
+          : label === "Menu"
+          ? isFocused
+            ? IMAGES.menu_filled
+            : IMAGES.menu_outline
+          : IMAGES.Home
+      }
+    />
+    <Text style={[styles.navText]}>{label}</Text>
+  </TouchableOpacity>
+</View>
+
             );
           })}
         </View>

@@ -36,6 +36,7 @@ import CardSearch from "./CardSearch";
 import BannerImage from "./Helper/BannerImage";
 import BannerCircle from "./Helper/BannerCircle";
 import HeaderHome from "~/src/layout/Headerome";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,6 +47,7 @@ const Home = () => {
   const { collaborator, fetchCollaborator } = useCollaborator();
   const { validateCollaborator, missingData } = useCollaboratorContext();
   const navigation = useNavigation<NavigationProp<any>>();
+  const { height: windowHeight } = Dimensions.get("window");
 
   const handleSwipeRight = async (id: any) => {
     if (!collaborator) {
@@ -231,139 +233,102 @@ const Home = () => {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView>
+   <SafeAreaView className="flex-1 bg-white">
+    <ScrollView
+      contentContainerStyle={{
 
-        <View className="w-full z-50 mt-1">
-          <CardSearch setCards={setCards} />
-        </View>
-        <BannerImage/>
-        <BannerCircle/>
-        <View className="flex-1 justify-center">
-          {isLoading ? (
-            <View className="flex-1 justify-center items-center">
-              <ActivityIndicator size="large" color={COLORS.primary} />
-            </View>
-          ) : Array.isArray(cards) && cards.length > 0 ? (
-            <>
-              {!isKeyboardVisible && (
-                <View className="w-full">
-                  <View className="w-full">
-                    {cards.slice(0, 4).map((card: any, index) => (
-                      <View
-                        key={card.id}
-                        className="absolute w-full h-full items-center px-3"
-                        style={{
-                          top: 2 * index,
-                          justifyContent: "center",
-                          zIndex: cards.length - index,
-                        }}
-                      >
-                        <Card
-                          data={card}
-                          onSwipeLeft={handleSwipeLeft}
-                          onSwipeRight={handleSwipeRight}
-                          onSuperLike={handleSwipeRight}
-                          isTopCard={index === 0}
-                          zIndex={cards.length - index}
-                          index={index}
-                          handleUndo={handleUndo}
-                        />
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              )}
-            </>
-          ) : (
-            
-              !isKeyboardVisible &&
-                (cards === false ? (
-                  <View className="mt-10 flex justify-between items-center h-full">
-                    <View
-                      style={{
-                        backgroundColor: "white",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          ...FONTS.fontSemiBold,
-                          fontSize: 16,
-                          color: COLORS.title,
-                          marginBottom: 5,
-                        }}
-                      >
-                        Busque sua vaga
-                      </Text>
-                      <Text className="text-center text-sm text-gray-400 font-normal">
-                        Pesquise sua vaga pelo nome ou palavra-chave
-                      </Text>
-                      <Image
-                        source={require("../../assets/images/brand/search.png")}
-                        style={{
-                          width: Dimensions.get("window").width * 0.8,
-                          height: Dimensions.get("window").height * 0.5,
-                        }}
-                        resizeMode="contain"
-                      />
-                    </View>
-                  </View>
-                ) : (
-                  <View className="mt-10 flex justify-between items-center h-full px-5">
-                    <View
-                      style={{
-                        backgroundColor: "white",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Text
-                        style={{
-                          ...FONTS.fontSemiBold,
-                          fontSize: 16,
-                          color: COLORS.title,
-                          marginBottom: 5,
-                        }}
-                      >
-                        Não encontramos sua vaga
-                      </Text>
-                      <Text className="text-center text-sm text-gray-400 font-normal">
-                        Não há mais vagas no momento, busque outra!
-                      </Text>
-                      <Image
-                        source={require("../../assets/images/brand/Waiting.png")}
-                        style={{
-                          width: Dimensions.get("window").width * 0.7,
-                          height: Dimensions.get("window").height * 0.5,
-                        }}
-                        resizeMode="contain"
-                      />
-                    </View>
-                  </View>
-                ))
+        flexGrow: 1,
+      }}
+      keyboardShouldPersistTaps="handled"
+    >
+      {/* Topo da tela */}
+      <View className="w-full z-50 mt-1">
+        <CardSearch setCards={setCards} />
+      </View>
 
-          )}
-        </View>
-      </ScrollView>
-    
-      <Modal
-        transparent
-        animationType="fade"
-        visible={showPopup}
-        onRequestClose={() => setShowPopup(false)}
+      <BannerImage />
+      <BannerCircle />
+
+      {/* Container relativo para os cards */}
+      <View
+        style={{
+          height: windowHeight * 0.60, // altura fixa para comportar os cards (ajuste como preferir)
+          position: "relative",
+          marginTop: 20,
+          paddingHorizontal: 10,
+        }}
       >
-        <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-          <View className="bg-white rounded-lg p-6 shadow-lg">
-            <Text className="text-lg font-semibold text-center">
-              {popupMessage}
-            </Text>
+        {isLoading ? (
+          <View className="justify-center items-center py-10">
+            <ActivityIndicator size="large" color={COLORS.primary} />
           </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
-  );
+        ) : Array.isArray(cards) && cards.length > 0 ? (
+          cards.map((card: any, index: number) => (
+            <View
+              key={card.id}
+              style={{
+                right:10,
+                position: "absolute",
+                width: "100%",
+                top: index * 5, // espaçamento entre cards (pode ajustar)
+                zIndex: cards.length - index,
+                // você pode adicionar sombra, bordas, etc aqui se quiser
+              }}
+            >
+              <Card
+                data={card}
+                onSwipeLeft={handleSwipeLeft}
+                onSwipeRight={handleSwipeRight}
+                onSuperLike={handleSwipeRight}
+                isTopCard={index === 0}
+                zIndex={cards.length - index}
+                index={index}
+                handleUndo={handleUndo}
+              />
+            </View>
+          ))
+        ) : !isKeyboardVisible ? (
+          <View className="flex justify-center items-center px-5">
+            <Text
+              style={{
+                ...FONTS.fontSemiBold,
+                fontSize: rf(16),
+                color: COLORS.title,
+                marginBottom: 5,
+              }}
+            >
+              {cards === false
+                ? "Busque sua vaga"
+                : "Não encontramos sua vaga"}
+            </Text>
+            <Text style={{
+                ...FONTS.fontLight,
+                fontSize: rf(13),
+            }} className="text-center text-gray-400 font-normal">
+              {cards === false
+                ? "Pesquise sua vaga pelo nome ou palavra-chave"
+                : "Não há mais vagas no momento, busque outra!"}
+            </Text>
+            <Image
+              source={
+                cards === false
+                  ? require("../../assets/images/brand/search.png")
+                  : require("../../assets/images/brand/Waiting.png")
+              }
+              style={{
+                width: Dimensions.get("window").width * 0.8,
+                height: Dimensions.get("window").height * 0.5,
+              }}
+              resizeMode="contain"
+            />
+          </View>
+        ) : null}
+      </View>
+    </ScrollView>
+  </SafeAreaView>
+);
+
+
 };
 
 export default Home;

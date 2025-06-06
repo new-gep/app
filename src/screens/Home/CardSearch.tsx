@@ -11,7 +11,7 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 import SearchJob from "~/src/hooks/get/job/search";
 import { useScreen } from "~/src/hooks/utils/useScreen";
-
+import IconNative from "~/src/components/Icon/Icon";
 interface CardSearchProps {
   setCards: any;
 }
@@ -54,7 +54,10 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
   const searchJob = async (text?: string) => {
     const query = text || searchText;
     if (query.trim().length === 0) {
-      Alert.alert("Erro", "Por favor, digite ou selecione uma vaga para pesquisar.");
+      Alert.alert(
+        "Erro",
+        "Por favor, digite ou selecione uma vaga para pesquisar."
+      );
       return;
     }
 
@@ -76,76 +79,91 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
 
   return (
     <View>
-      <View className="px-5 pt-5">
-            {/* Toggle */}
-            <View className="flex-row bg-gray-200 rounded-full self-start p-1">
-              <TouchableOpacity
-                onPress={() => setActiveTab("pessoa")}
-                className={`px-5 py-2 rounded-full ${
-                  activeTab === "pessoa" ? "bg-indigo-600" : ""
-                }`}
-              >
-                <Text
-                  className={`font-semibold ${
-                    activeTab === "pessoa" ? "text-white" : "text-gray-700"
-                  }`}
-                >
-                  Pessoa
-                </Text>
-              </TouchableOpacity>
-      
-              <TouchableOpacity
-                onPress={() => setActiveTab("empresa")}
-                className={`px-5 py-2 rounded-full ${
-                  activeTab === "empresa" ? "bg-indigo-600" : ""
-                }`}
-              >
-                <Text
-                  className={`font-semibold ${
-                    activeTab === "empresa" ? "text-white" : "text-gray-700"
-                  }`}
-                >
-                  Empresa
-                </Text>
-              </TouchableOpacity>
-            </View>
+      <View className="px-4 pt-5 flex-row justify-between items-center">
+        {/* Toggle */}
+        <View style={Style.container} className="flex-row bg-white rounded-full self-start p-1">
+          <TouchableOpacity
+            style={activeTab === "pessoa" && Style.container}
+            onPress={() => setActiveTab("pessoa")}
+            className={`px-5 py-2 rounded-full ${
+              activeTab === "pessoa" ? "bg-primary" : ""
+            }`}
+          >
+            <Text
+              className={`font-semibold ${
+                activeTab === "pessoa" ? "text-black" : "text-gray-500"
+              }`}
+            >
+              Pessoa
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setActiveTab("empresa")}
+            style={activeTab === "empresa" && Style.container}
+            className={`px-5 py-2 rounded-full ${
+              activeTab === "empresa" ? "bg-primary" : ""
+            }`}
+          >
+            <Text
+              className={`font-semibold ${
+                activeTab === "empresa" ? "text-black" : "text-gray-500"
+              }`}
+            >
+              Empresa
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View className="bg-white rounded-full p-2">
+          <View className="h-7 w-7">
+            <IconNative name={"notification_outline"}/>
           </View>
-      <View style={{ width: "100%", paddingHorizontal: wp(4), paddingVertical: hp(1.5), zIndex: 50 }}>
-        <View
-          style={{
-            width: "100%",
-            backgroundColor: "#fff",
-            borderRadius: wp(3),
-            flexDirection: "row",
-            alignItems: "center",
-            elevation: 8,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-          }}
-        >
-          <Icon name="search" size={wp(5.5)} color="#9CA3AF" style={{ marginLeft: wp(3), marginRight: wp(2) }} />
+        </View>
+      </View>
+      {/* // */}
+      <View
+        style={{
+          width: "100%",
+          paddingVertical: hp(1.5),
+          zIndex: 50,
+        }}
+      >
+        <View className="w-full px-4 py-2 z-50">
+          <View className="w-full flex-row items-center space-x-2">
+            {/* Campo de busca */}
+            <View style={Style.container} className="flex-1 flex-row  items-center bg-white rounded-xl shadow-md">
+              <Icon
+                name="search"
+                size={22}
+                color="#9CA3AF"
+                style={{ marginLeft: 12, marginRight: 8 }}
+              />
+              <TextInput
+                placeholder="Pesquisar"
+                placeholderTextColor="#9CA3AF"
+                className="flex-1 h-10 py-1 text-base text-black"
+                value={searchText}
+                onChangeText={handleSearch}
+                onSubmitEditing={() => searchJob()}
+              />
+              {searchText.length > 0 && (
+                <TouchableOpacity onPress={clearSearch} className="mr-3">
+                  <Icon name="close" size={22} color="#9CA3AF" />
+                </TouchableOpacity>
+              )}
+            </View>
 
-          <TextInput
-            placeholder="Pesquisar vagas"
-            placeholderTextColor="#9CA3AF"
-            style={{
-              flex: 1,
-              paddingVertical: hp(1.2),
-              fontSize: wp(4),
-              color: "#000",
-            }}
-            value={searchText}
-            onChangeText={handleSearch}
-            onSubmitEditing={() => searchJob()}
-          />
-
-          {searchText.length > 0 && (
-            <TouchableOpacity onPress={clearSearch} style={{ marginRight: wp(3) }}>
-              <Icon name="close" size={wp(5.5)} color="#9CA3AF" />
+            {/* Botão de filtro */}
+            <TouchableOpacity
+              style={Style.container}
+              // onPress={openFilters}
+              className=" p-2 rounded-xl bg-white shadow-md justify-center items-center"
+            >
+              <View className="h-7 w-7">
+                <IconNative name="pageInfo_outline"/>
+              </View>
             </TouchableOpacity>
-          )}
+          </View>
         </View>
 
         {suggestions.length > 0 && (
@@ -176,7 +194,9 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
                     borderBottomColor: "#E5E7EB",
                   }}
                 >
-                  <Text style={{ fontSize: wp(4), color: "#374151" }}>{item}</Text>
+                  <Text style={{ fontSize: wp(4), color: "#374151" }}>
+                    {item}
+                  </Text>
                 </TouchableOpacity>
               )}
             />
@@ -185,6 +205,23 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
       </View>
     </View>
   );
+};
+
+const Style = {
+  container: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  text: {
+    backgroundColor: "white",
+    padding: 8,
+    borderRadius: 8,
+    marginTop: 8,
+    color: "black",
+  },
 };
 
 export default CardSearch;

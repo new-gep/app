@@ -83,6 +83,9 @@ import Review from "../screens/Profile/Review/Index";
 import Documents from "../screens/Documents/Documents";
 import Social from "../screens/Profile/Social/Index";
 import Announcement from "../screens/Profile/Announcement/Index";
+import Create from "../screens/Profile/Announcement/Create/Index";
+import Active from "../screens/Profile/Announcement/Active/Index";
+import History from "../screens/Profile/Announcement/History/Index";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -171,6 +174,9 @@ const StackNavigator = () => {
         <Stack.Screen name="Gallery" component={Gallery} />
         <Stack.Screen name="Wallet" component={Wallet} />
         <Stack.Screen name="Documents" component={Documents} />
+        <Stack.Screen name="AnnouncementCreate" component={Create} />
+        <Stack.Screen name="AnnouncementActive" component={Active} />
+        <Stack.Screen name="AnnouncementHistory" component={History} />
         <Stack.Screen name="Social" component={Social} />
         <Stack.Screen name="CardInformation" component={CardInformation} />
       </Stack.Navigator>
