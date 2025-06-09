@@ -12,11 +12,14 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import SearchJob from "~/src/hooks/get/job/search";
 import { useScreen } from "~/src/hooks/utils/useScreen";
 import IconNative from "~/src/components/Icon/Icon";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+
 interface CardSearchProps {
   setCards: any;
 }
 
 const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
+  const navigation = useNavigation<NavigationProp<any>>();
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("pessoa");
@@ -81,7 +84,10 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
     <View>
       <View className="px-4 pt-5 flex-row justify-between items-center">
         {/* Toggle */}
-        <View style={Style.container} className="flex-row bg-white rounded-full self-start p-1">
+        <View
+          style={Style.container}
+          className="flex-row bg-white rounded-full self-start p-1"
+        >
           <TouchableOpacity
             style={activeTab === "pessoa" && Style.container}
             onPress={() => setActiveTab("pessoa")}
@@ -115,9 +121,14 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
           </TouchableOpacity>
         </View>
         <View className="bg-white rounded-full p-2">
-          <View className="h-7 w-7">
-            <IconNative name={"notification_outline"}/>
-          </View>
+          <TouchableOpacity
+            className="h-7 w-7"
+            onPress={() => {
+              navigation.navigate("Notification");
+            }}
+          >
+            <IconNative name={"notification_outline"} />
+          </TouchableOpacity>
         </View>
       </View>
       {/* // */}
@@ -131,7 +142,10 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
         <View className="w-full px-4 py-2 z-50">
           <View className="w-full flex-row items-center space-x-2">
             {/* Campo de busca */}
-            <View style={Style.container} className="flex-1 flex-row  items-center bg-white rounded-xl shadow-md">
+            <View
+              style={Style.container}
+              className="flex-1 flex-row  items-center bg-white rounded-xl shadow-md"
+            >
               <Icon
                 name="search"
                 size={22}
@@ -160,7 +174,7 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
               className=" p-2 rounded-xl bg-white shadow-md justify-center items-center"
             >
               <View className="h-7 w-7">
-                <IconNative name="pageInfo_outline"/>
+                <IconNative name="pageInfo_outline" />
               </View>
             </TouchableOpacity>
           </View>

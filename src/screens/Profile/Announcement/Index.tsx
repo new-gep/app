@@ -6,12 +6,6 @@ import Header from "~/src/layout/Header";
 export default function Announcement() {
   const Announcement = [
     {
-      icon: "search_outline",
-      title: "Buscar",
-      // go: 'cv',
-      //   setVariable: setCv,
-    },
-    {
       icon: "flash_outline",
       title: "Ativos",
       go: 'AnnouncementActive',

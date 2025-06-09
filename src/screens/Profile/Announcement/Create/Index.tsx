@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import Header from "~/src/layout/Header";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // ou outro pacote de ícones
-import Icon from "~/src/components/Icon/Icon";
-import { FONTS } from '~/src/constants/theme'
+import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
+import Icon from "~/src/components/Icon/Icon";
+import Form from "./Form";
 const services = [
   { icon: "build_outline", title: "Assistência Técnica" },
   { icon: "school_outline", title: "Aulas" },
@@ -20,53 +20,64 @@ const services = [
 ];
 
 export default function Create() {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  // Lista de imagens (simulado por string aqui)
+
   return (
     <View className="bg-white h-full">
-      <Header leftIcon="back" title="Criar Anúncio" />
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <View className="mb-4">
-            <Text style={[FONTS.fontBlack, {fontSize:rf(26)}]}>
-                Escolha uma Categoria
+      {!selectedCategory ? (
+        <>
+          <Header
+            leftIcon="back"
+            title={"Criar Anúncio"}
+          />
+          <ScrollView contentContainerStyle={{ padding: 16 }}>
+            <Text style={[FONTS.fontBlack, { fontSize: rf(26) }]}>
+              Escolha uma Categoria
             </Text>
-            <Text className="text-gray-500" style={[FONTS.fontLight, {fontSize:rf(13)}]}>
-                Escolha qual serviço você deseja anunciar 
-            </Text>
-        </View>
-
-        <View className="flex flex-row flex-wrap justify-between">
-          {services.map((service, index) => (
-            <TouchableOpacity
-              key={index}
-              style={Style.container}
-              className="bg-white rounded-2xl p-5 w-[48%] mb-4 items-center shadow-sm justify-center"
-              activeOpacity={0.7}
-              onPress={() => console.log("Selecionado:", service.title)}
+            <Text
+              className="text-gray-500 mb-4"
+              style={[FONTS.fontLight, { fontSize: rf(13) }]}
             >
-              <View className="h-7 w-7">
-                <Icon name={service.icon} color="#4B5563" />
-              </View>
-              <Text style={[FONTS.fontLight, {fontSize:rf(12)}]} className="text-center text-gray-700">{service.title}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+              Escolha qual serviço você deseja anunciar
+            </Text>
+
+            <View className="flex flex-row flex-wrap justify-between">
+              {services.map((service, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={Style.container}
+                  className="bg-white rounded-2xl p-5 w-[48%] mb-4 items-center shadow-sm justify-center"
+                  activeOpacity={0.7}
+                  onPress={() => setSelectedCategory(service)}
+                >
+                  <View className="h-7 w-7">
+                    <Icon name={service.icon} color="#4B5563" />
+                  </View>
+                  <Text
+                    style={[FONTS.fontLight, { fontSize: rf(12) }]}
+                    className="text-center text-gray-700"
+                  >
+                    {service.title}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+        </>
+      ) : (
+        <Form setSelectedCategory={setSelectedCategory} title={selectedCategory.title}/>
+      )}
     </View>
   );
 }
 
 const Style = {
   container: {
-    elevation: 8, // Sombra para Android
-    shadowColor: "#000", // Sombra para iOS
+    elevation: 8,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-  },
-  text: {
-    backgroundColor: "white",
-    padding: 8,
-    borderRadius: 8,
-    marginTop: 8,
-    color: "black",
   },
 };

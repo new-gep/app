@@ -66,6 +66,7 @@ export default function Filter() {
             title="Pagamento"
             icon="savings_outline"
             options={[
+              "Fixo",
               "Por hora",
               "Por dia",
               "Por semana",

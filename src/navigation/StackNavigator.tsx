@@ -16,7 +16,6 @@ import OTPAuthentication from "../screens/Auth/OTPAuthentication";
 import NewPassword from "../screens/Auth/NewPassword";
 import DrawerNavigation from "./DrawerNavigation";
 import BottomNavigation from "./BottomNavigation";
-import Notification from "../screens/Notification/Notification";
 import Search from "../screens/Search/Search";
 import Products from "../screens/Category/Products";
 import ProductsDetails from "../screens/Category/ProductsDetails";
@@ -86,6 +85,7 @@ import Announcement from "../screens/Profile/Announcement/Index";
 import Create from "../screens/Profile/Announcement/Create/Index";
 import Active from "../screens/Profile/Announcement/Active/Index";
 import History from "../screens/Profile/Announcement/History/Index";
+import Notification from "../screens/Home/Helper/Notification";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
