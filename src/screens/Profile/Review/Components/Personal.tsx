@@ -84,7 +84,7 @@ const Style = {
     shadowRadius: 4,
   },
   tag: {
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "#fde047",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 16,

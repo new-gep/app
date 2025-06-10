@@ -20,7 +20,7 @@ export default function Picture() {
         />
         {1 && (
           <View className="absolute bottom-0 right-0 bg-white rounded-full p-0.5">
-            <CircleCheck size={24} color="#16a34a" />
+            <CircleCheck size={24} color="#fde047" />
           </View>
         )}
       </View>
@@ -29,9 +29,9 @@ export default function Picture() {
       </Text>
       <Text className="text-base text-custom-gray-500 mb-3">{data.sex}</Text>
       {1 && (
-        <View className="flex-row items-center bg-green-200 px-3 py-1.5 rounded-xl">
-          <CircleCheckBig size={20} color="#16a34a" />
-          <Text style={{...FONTS.font, color:'#16a34a'}} className="ml-1.5 text-sm font-semibold text-green-600">
+        <View className="flex-row items-center bg-primary px-3 py-1.5 rounded-xl">
+          <CircleCheckBig size={20} color="#2f2f2f" />
+          <Text style={{...FONTS.font }} className="ml-1.5 text-sm font-semibold text-dark">
             Verificado
           </Text>
         </View>
