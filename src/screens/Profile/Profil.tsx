@@ -122,13 +122,13 @@ export default function Profile() {
       >
         <Picture collaborator={collaborator} />
         <View>
-          <List items={about} title={'Meu Perfil'}/>
+          <List items={about} title={'Meu Perfil'} newIcon={true}/>
         </View>
         <View className="mt-5">
-          <List items={service} title={'Meu Serviço'}/>
+          <List items={service} title={'Meu Serviço'} newIcon={true}/>
         </View>
         <View className="mt-5 mb-5">
-          <List items={conf} title={'Configurações'}/>
+          <List items={conf} title={'Configurações'} newIcon={true}/>
         </View>
         <Text className="text-gray-400 text-right">Gep version 2.0v</Text>
       </Animated.ScrollView>

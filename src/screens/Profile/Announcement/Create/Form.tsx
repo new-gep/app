@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
@@ -23,6 +24,8 @@ export default function Form({ title, setSelectedCategory }: any) {
   const [contact, setContact] = useState("");
   const [adType, setAdType] = useState("selecione");
   const [images, setImages] = useState<string[]>([]);
+  const screenWidth = Dimensions.get("window").width;
+  const boxSize = (screenWidth - 50) / 3;
 
   const handleImageUpload = () => {
     if (images.length >= 3) return;
@@ -38,170 +41,177 @@ export default function Form({ title, setSelectedCategory }: any) {
       <Header
         leftIcon="back"
         leftAction={() => {
-            if(selectAdTypeView){
-                setSelectAdTypeView(false)
-            }else{
-                setSelectedCategory(null);
-            }
+          if (selectAdTypeView) {
+            setSelectAdTypeView(false);
+          } else {
+            setSelectedCategory(null);
+          }
         }}
         title={title}
       />
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom:55 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 55 }}>
         {!selectAdTypeView ? (
-            <>
+          <>
             <Text
-                style={[FONTS.fontBlack, { fontSize: rf(20), marginBottom: 16 }]}
+              style={[FONTS.fontBlack, { fontSize: rf(20), marginBottom: 16 }]}
             >
-                Informações do Serviço
+              Informações do Serviço
             </Text>
-             <TextInput
-                className="border border-gray-300 rounded-lg p-3 mb-4"
-                placeholder="Titulo"
-                value={included}
-                onChangeText={setIncluded}
+            <TextInput
+              className="border border-gray-300 rounded-lg p-3 mb-4"
+              placeholder="Titulo"
+              value={included}
+              onChangeText={setIncluded}
             />
             {/* Tipo de preço */}
             <Text style={FONTS.fontLight}>Forma de Pagamento:</Text>
             <ScrollView
-                horizontal
-                className="px-3"
-                contentContainerStyle={{ paddingRight: 18 }}
+              horizontal
+              className="px-3"
+              contentContainerStyle={{ paddingRight: 18 }}
             >
-                <View className="flex flex-row gap-4 mb-4 py-1">
+              <View className="flex flex-row gap-4 mb-4 py-1">
                 {[
-                    "Por mês",
-                    "Por tarefa",
-                    "Por semana",
-                    "Por dia",
-                    "Fixo",
-                    "Por hora",
-                    "A combinar",
+                  "Por mês",
+                  "Por tarefa",
+                  "Por semana",
+                  "Por dia",
+                  "Fixo",
+                  "Por hora",
+                  "A combinar",
                 ].map((type) => (
-                    <TouchableOpacity
+                  <TouchableOpacity
                     style={Styles.card}
                     key={type}
                     className={`px-4 py-2 rounded-full ${
-                        priceType === type ? "bg-primary" : "bg-white"
+                      priceType === type ? "bg-primary" : "bg-white"
                     }`}
                     onPress={() => setPriceType(type)}
-                    >
+                  >
                     <Text
-                        className={`${
+                      className={`${
                         priceType === type ? "text-dark" : "text-gray-500"
-                        }`}
+                      }`}
                     >
-                        {type}
+                      {type}
                     </Text>
-                    </TouchableOpacity>
+                  </TouchableOpacity>
                 ))}
-                </View>
+              </View>
             </ScrollView>
 
             {/* Preço */}
             {priceType !== "A combinar" && (
-                <TextInput
+              <TextInput
                 className="border border-gray-300 rounded-lg p-3 mb-4"
                 placeholder="Digite o preço"
                 keyboardType="numeric"
                 value={price}
                 onChangeText={setPrice}
-                />
+              />
             )}
 
             {/* Incluído */}
             <TextInput
-                className="border border-gray-300 rounded-lg p-3 mb-4"
-                placeholder="O que está incluído"
-                value={included}
-                onChangeText={setIncluded}
+              className="border border-gray-300 rounded-lg p-3 mb-4"
+              placeholder="O que está incluído"
+              value={included}
+              onChangeText={setIncluded}
             />
 
             {/* Não incluído */}
             <TextInput
-                className="border border-gray-300 rounded-lg p-3 mb-4"
-                placeholder="O que não está incluído"
-                value={excluded}
-                onChangeText={setExcluded}
+              className="border border-gray-300 rounded-lg p-3 mb-4"
+              placeholder="O que não está incluído"
+              value={excluded}
+              onChangeText={setExcluded}
             />
 
             {/* Mais informações */}
             <TextInput
-                multiline
-                numberOfLines={4}
-                className="border border-gray-300 rounded-lg p-3 mb-4"
-                placeholder="Mais informações sobre o serviço"
-                value={moreInfo}
-                onChangeText={setMoreInfo}
+              multiline
+              numberOfLines={4}
+              className="border border-gray-300 rounded-lg p-3 mb-4"
+              placeholder="Mais informações sobre o serviço"
+              value={moreInfo}
+              onChangeText={setMoreInfo}
             />
 
             {/* Contato */}
             <TextInput
-                className="border border-gray-300 rounded-lg p-3 mb-4"
-                placeholder="Telefone / WhatsApp"
-                keyboardType="phone-pad"
-                value={contact}
-                onChangeText={setContact}
+              className="border border-gray-300 rounded-lg p-3 mb-4"
+              placeholder="Telefone / WhatsApp"
+              keyboardType="phone-pad"
+              value={contact}
+              onChangeText={setContact}
             />
 
             {/* Tipo de anúncio */}
             <TouchableOpacity
-                className="flex-row justify-between w-full p-2 rounded-lg bg-white"
-                style={Styles.card}
-                onPress={() => {
+              className="flex-row justify-between w-full p-2 rounded-lg bg-white"
+              style={Styles.card}
+              onPress={() => {
                 // Aqui você pode alternar a visibilidade de um seletor, modal, etc.
                 setSelectAdTypeView(true);
-                }}
+              }}
             >
-                <Text>Tipo de Anúncio</Text>
-                <View className="flex-row items-center">
+              <Text>Tipo de Anúncio</Text>
+              <View className="flex-row items-center">
                 <Text className="text-gray-500 mr-1 capitalize">{adType}</Text>
                 <MaterialIcons
-                    name="keyboard-arrow-right"
-                    size={21}
-                    color="black"
+                  name="keyboard-arrow-right"
+                  size={21}
+                  color="black"
                 />
-                </View>
+              </View>
             </TouchableOpacity>
 
             {/* Upload de imagens */}
-            <Text className="mt-3" style={[FONTS.fontLight, { marginBottom: 8 }]}>
-                Imagens do Serviço (máx. 3)
+            <Text
+              className="mt-3"
+              style={[FONTS.fontLight, { marginBottom: 8 }]}
+            >
+              Imagens do Serviço (máx. 3)
             </Text>
-            <View className="flex flex-row gap-3 mb-4">
-                {images.map((uri, i) => (
-                <Image
-                    key={i}
-                    source={{ uri }}
-                    style={{ width: 80, height: 80, borderRadius: 8 }}
-                />
-                ))}
-                {images.length < 3 && (
+            <View className="flex flex-row flex-wrap gap-2 mb-4">
+              {[...Array(3)].map((_, i) => (
                 <TouchableOpacity
-                    onPress={handleImageUpload}
-                    style={Styles.card}
-                    className="w-20 h-20 bg-white rounded-lg items-center justify-center"
+                  key={i}
+                  onPress={() => {
+                    if (images[i]) return;
+                    handleImageUpload();
+                  }}
+                  className="rounded-lg items-center justify-center overflow-hidden bg-gray-100"
+                  style={[Styles.card, { width: boxSize, height: boxSize }]}
                 >
-                    <Text style={{ fontSize: 30 }}>+</Text>
+                  {images[i] ? (
+                    <Image
+                      source={{ uri: images[i] }}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  ) : (
+                    <Text style={{ fontSize: rf(26), color: "#aaa" }}>+</Text>
+                  )}
                 </TouchableOpacity>
-                )}
+              ))}
             </View>
 
             {/* Botão de enviar (simples por enquanto) */}
             <TouchableOpacity
-                className="bg-primary rounded-lg py-4 items-center"
-                onPress={() => {
+              className="bg-primary rounded-lg py-4 items-center"
+              onPress={() => {
                 // Aqui você pode processar o envio
-                }}
+              }}
             >
-                <Text className="text-dark font-bold">Publicar Anúncio</Text>
+              <Text className="text-dark font-bold">Publicar Anúncio</Text>
             </TouchableOpacity>
-            </>
+          </>
         ) : (
-            <SelectAdType
-                setSelectAdTypeView={setSelectAdTypeView}
-                adType={adType}
-                setAdType={setAdType}
-            />
+          <SelectAdType
+            setSelectAdTypeView={setSelectAdTypeView}
+            adType={adType}
+            setAdType={setAdType}
+          />
         )}
       </ScrollView>
     </View>

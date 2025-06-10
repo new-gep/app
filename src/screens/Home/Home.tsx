@@ -37,6 +37,7 @@ import BannerImage from "./Helper/BannerImage";
 import BannerCircle from "./Helper/BannerCircle";
 import HeaderHome from "~/src/layout/Headerome";
 import { rf } from "~/src/hooks/utils/responsiveFont";
+
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -236,7 +237,6 @@ const Home = () => {
    <SafeAreaView className="flex-1 bg-white">
     <ScrollView
       contentContainerStyle={{
-
         flexGrow: 1,
       }}
       keyboardShouldPersistTaps="handled"
@@ -312,12 +312,12 @@ const Home = () => {
             <Image
               source={
                 cards === false
-                  ? require("../../assets/images/brand/search.png")
+                  ? require("../../assets/picture/unique/unique27.png")
                   : require("../../assets/images/brand/Waiting.png")
               }
               style={{
                 width: Dimensions.get("window").width * 0.8,
-                height: Dimensions.get("window").height * 0.5,
+                height: Dimensions.get("window").height * 0.4,
               }}
               resizeMode="contain"
             />

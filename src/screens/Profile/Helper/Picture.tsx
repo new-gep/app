@@ -79,7 +79,7 @@ export default function Picture({ collaborator }: { collaborator?: any }) {
         </View>
       </TouchableOpacity>
       <View className="border-t border-[#e5e7eb]">
-        <List isUnique={true} items={[{icon: "eye_outline", title: "Perfil",go: "Review"}]} />
+        <List isUnique={true} newIcon={true} items={[{icon: "eye_outline", title: "Perfil",go: "Review"}]} />
       </View>
     </View>
   );

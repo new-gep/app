@@ -7,10 +7,47 @@ import {
   Linking,
   TouchableOpacity,
   Dimensions,
-  StyleSheet,
 } from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import {
+  CircleCheckBig,
+  Check,
+  Shield,
+  User,
+  MapPin,
+  Info,
+  Target,
+  Briefcase,
+  Camera,
+  Pencil,
+  Globe,
+  Phone,
+  Mail,
+  Home,
+  Ring,
+  Child,
+  MessageSquare,
+  GraduationCap,
+  SmokingNo,
+  Beer,
+  Heart,
+  PawPrint,
+  Utensils,
+  ChevronRight,
+  Ruler,
+  FileText,
+  Building,
+  Clock,
+  Car,
+  DollarSign,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Twitter,
+  Tiktok,
+  Youtube,
+  Link,
+  PlayCircle,
+} from "lucide-react-native";
 import Header from "~/src/layout/Header";
 
 const screenWidth = Dimensions.get("window").width;
@@ -27,74 +64,81 @@ const ageFromBirthDate = (birthDate) => {
 // Profile verification algorithm
 const calculateProfileCompleteness = (data) => {
   const requiredFields = [
-    'fullName', 'birthDate', 'sex', 'phone', 'email', 'address',
-    'about', 'education', 'photoUri'
+    "fullName",
+    "birthDate",
+    "sex",
+    "phone",
+    "email",
+    "address",
+    "about",
+    "education",
+    "photoUri",
   ];
-  
+
   const optionalImportantFields = [
-    'marriage', 'children', 'communicationType', 'interests',
-    'loveLanguage', 'pets', 'diet', 'signature'
+    "marriage",
+    "children",
+    "communicationType",
+    "interests",
+    "loveLanguage",
+    "pets",
+    "diet",
+    "signature",
   ];
-  
-  const workPreferenceFields = [
-    'location', 'contractType', 'modality', 'paymentType'
-  ];
-  
+
+  const workPreferenceFields = ["location", "contractType", "modality", "paymentType"];
+
   const socialFields = Object.keys(data.socialLinks || {});
-  const galleryFields = [
-    ...(data.gallery?.photos || []),
-    ...(data.gallery?.videos || [])
-  ];
-  
+  const galleryFields = [...(data.gallery?.photos || []), ...(data.gallery?.videos || [])];
+
   let completedRequired = 0;
   let completedOptional = 0;
   let completedWork = 0;
   let completedSocial = 0;
   let hasGallery = galleryFields.length > 0;
-  
-  // Check required fields
-  requiredFields.forEach(field => {
-    if (data[field] && data[field] !== '' && data[field] !== null) {
+
+  requiredFields.forEach((field) => {
+    if (data[field] && data[field] !== "" && data[field] !== null) {
       completedRequired++;
     }
   });
-  
-  // Check optional fields
-  optionalImportantFields.forEach(field => {
-    if (data[field] && data[field] !== '' && data[field] !== null) {
+
+  optionalImportantFields.forEach((field) => {
+    if (data[field] && data[field] !== "" && data[field] !== null) {
       completedOptional++;
     }
   });
-  
-  // Check work preferences
-  workPreferenceFields.forEach(field => {
-    if (data.workPreferences?.[field] && data.workPreferences[field] !== '') {
+
+  workPreferenceFields.forEach((field) => {
+    if (data.workPreferences?.[field] && data.workPreferences[field] !== "") {
       completedWork++;
     }
   });
-  
-  // Check social links
-  socialFields.forEach(platform => {
-    if (data.socialLinks[platform] && data.socialLinks[platform] !== '' && data.socialLinks[platform] !== 'twitter') {
+
+  socialFields.forEach((platform) => {
+    if (
+      data.socialLinks[platform] &&
+      data.socialLinks[platform] !== "" &&
+      data.socialLinks[platform] !== "twitter"
+    ) {
       completedSocial++;
     }
   });
-  
+
   const requiredPercentage = (completedRequired / requiredFields.length) * 100;
   const optionalPercentage = (completedOptional / optionalImportantFields.length) * 100;
   const workPercentage = (completedWork / workPreferenceFields.length) * 100;
   const socialPercentage = socialFields.length > 0 ? (completedSocial / socialFields.length) * 100 : 0;
-  
-  const overallPercentage = (
-    (requiredPercentage * 0.4) + // 40% weight for required
-    (optionalPercentage * 0.25) + // 25% weight for optional
-    (workPercentage * 0.2) + // 20% weight for work
-    (socialPercentage * 0.1) + // 10% weight for social
-    (hasGallery ? 5 : 0) // 5% bonus for gallery
-  );
-  
+
+  const overallPercentage =
+    requiredPercentage * 0.4 + // 40% weight for required
+    optionalPercentage * 0.25 + // 25% weight for optional
+    workPercentage * 0.2 + // 20% weight for work
+    socialPercentage * 0.1 + // 10% weight for social
+    (hasGallery ? 5 : 0); // 5% bonus for gallery
+
   const isVerified = overallPercentage >= 85 && requiredPercentage === 100;
-  
+
   return {
     isVerified,
     percentage: Math.min(Math.round(overallPercentage), 100),
@@ -103,8 +147,8 @@ const calculateProfileCompleteness = (data) => {
       optional: Math.round(optionalPercentage),
       work: Math.round(workPercentage),
       social: Math.round(socialPercentage),
-      gallery: hasGallery
-    }
+      gallery: hasGallery,
+    },
   };
 };
 
@@ -112,45 +156,43 @@ const calculateProfileCompleteness = (data) => {
 const VerificationBadge = ({ isVerified, percentage }) => {
   if (isVerified) {
     return (
-      <View style={styles.verifiedBadge}>
-        <MaterialCommunityIcons name="check-decagram" size={20} color="#1DA1F2" />
-        <Text style={styles.verifiedText}>Verified Profile</Text>
+      <View className="flex-row items-center bg-custom-blue-200 px-3 py-1.5 rounded-2xl">
+        <Check size={20} color="#16a34a" />
+        <Text className="ml-1.5 text-sm font-semibold text-green-600">Perfil Verificado</Text>
       </View>
     );
   }
-  
+
   return (
-    <View style={styles.unverifiedBadge}>
-      <MaterialCommunityIcons name="shield-outline" size={18} color="#666" />
-      <Text style={styles.unverifiedText}>{percentage}% Complete</Text>
+    <View className="flex-row items-center bg-custom-gray-100 px-3 py-1.5 rounded-2xl">
+      <Shield size={18} color="#666" />
+      <Text className="ml-1.5 text-sm font-medium text-custom-gray-500">{percentage}% Complete</Text>
     </View>
   );
 };
 
 // Info Row Component
 const InfoRow = ({ icon, label, value, onPress }) => (
-  <TouchableOpacity 
-    style={styles.infoRow} 
+  <TouchableOpacity
+    className="flex-row items-center py-2 border-b border-custom-gray-100"
     onPress={onPress}
     disabled={!onPress}
   >
-    <View style={styles.infoRowLeft}>
-      <Text style={styles.infoIcon}>{icon}</Text>
-      <Text style={styles.infoLabel}>{label}</Text>
+    <View className="flex-row items-center flex-1">
+      {icon && React.createElement(icon, { size: 16, color: "#64748b" })}
+      <Text className="text-sm font-medium text-custom-gray-500 mr-2">{label}</Text>
     </View>
-    <Text style={styles.infoValue}>{value}</Text>
-    {onPress && (
-      <MaterialCommunityIcons name="chevron-right" size={20} color="#ccc" />
-    )}
+    <Text className="text-sm text-custom-gray-900 font-normal">{value}</Text>
+    {onPress && <ChevronRight size={20} color="#ccc" />}
   </TouchableOpacity>
 );
 
 // Section Card Component
 const SectionCard = ({ title, children, icon }) => (
-  <View style={styles.sectionCard}>
-    <View style={styles.sectionHeader}>
-      {icon && <Text style={styles.sectionIcon}>{icon}</Text>}
-      <Text style={styles.sectionTitle}>{title}</Text>
+  <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+    <View className="flex-row items-center mb-4">
+      {icon && React.createElement(icon, { size: 20, color: "#1a202c" })}
+      <Text className="text-lg font-bold text-custom-gray-900">{title}</Text>
     </View>
     {children}
   </View>
@@ -158,10 +200,10 @@ const SectionCard = ({ title, children, icon }) => (
 
 // Interest Tags Component
 const InterestTags = ({ interests }) => (
-  <View style={styles.tagsContainer}>
+  <View className="flex-row flex-wrap">
     {interests.map((interest, index) => (
-      <View key={index} style={styles.tag}>
-        <Text style={styles.tagText}>{interest}</Text>
+      <View key={index} className="bg-custom-blue-50 px-3 py-1.5 rounded-2xl mr-2 mb-2">
+        <Text className="text-sm text-custom-blue-600 font-medium">{interest}</Text>
       </View>
     ))}
   </View>
@@ -169,34 +211,30 @@ const InterestTags = ({ interests }) => (
 
 // Social Links Component
 const SocialLinks = ({ socialLinks, onPress }) => (
-  <View style={styles.socialContainer}>
+  <View className="flex-row flex-wrap">
     {Object.entries(socialLinks).map(([platform, url]) => {
-      if (!url || url === 'twitter') return null;
-      
-      const getIconName = (platform) => {
+      if (!url || url === "twitter") return null;
+
+      const getIcon = (platform) => {
         const iconMap = {
-          facebook: 'facebook',
-          instagram: 'instagram',
-          linkedin: 'linkedin',
-          twitter: 'twitter',
-          tiktok: 'tiktok',
-          youtube: 'youtube'
+          facebook: Facebook,
+          instagram: Instagram,
+          linkedin: Linkedin,
+          twitter: Twitter,
+          tiktok: Tiktok,
+          youtube: Youtube,
         };
-        return iconMap[platform] || 'link';
+        return iconMap[platform] || Link;
       };
-      
+
       return (
         <TouchableOpacity
           key={platform}
-          style={styles.socialButton}
+          className="flex-row items-center bg-custom-white-50 px-4 py-2.5 rounded-xl mr-3 mb-2 border border-custom-gray-200"
           onPress={() => onPress(url)}
         >
-          <FontAwesome5 
-            name={getIconName(platform)} 
-            size={24} 
-            color="#4A90E2" 
-          />
-          <Text style={styles.socialLabel}>
+          {React.createElement(getIcon(platform), { size: 24, color: "#4A90E2" })}
+          <Text className="ml-2 text-sm font-medium text-custom-gray-700">
             {platform.charAt(0).toUpperCase() + platform.slice(1)}
           </Text>
         </TouchableOpacity>
@@ -208,18 +246,22 @@ const SocialLinks = ({ socialLinks, onPress }) => (
 // Gallery Component
 const Gallery = ({ gallery }) => {
   const allMedia = [
-    ...gallery.photos.map(uri => ({ uri, type: 'photo' })),
-    ...gallery.videos.map(uri => ({ uri, type: 'video' })),
+    ...gallery.photos.map((uri) => ({ uri, type: "photo" })),
+    ...gallery.videos.map((uri) => ({ uri, type: "video" })),
   ];
-  
+
   return (
-    <View style={styles.galleryGrid}>
+    <View className="flex-row flex-wrap justify-between">
       {allMedia.map((media, index) => (
-        <View key={index} style={styles.galleryItem}>
-          <Image source={{ uri: media.uri }} style={styles.galleryImage} />
-          {media.type === 'video' && (
-            <View style={styles.videoOverlay}>
-              <MaterialCommunityIcons name="play-circle" size={32} color="#fff" />
+        <View
+          key={index}
+          className="rounded-xl mb-2 overflow-hidden"
+          style={{ width: (screenWidth - 80) / 3, height: (screenWidth - 80) / 3 }}
+        >
+          <Image source={{ uri: media.uri }} className="w-full h-full" />
+          {media.type === "video" && (
+            <View className="absolute inset-0 bg-black/30 justify-center items-center">
+              <PlayCircle size={32} color="#fff" />
             </View>
           )}
         </View>
@@ -231,23 +273,24 @@ const Gallery = ({ gallery }) => {
 export default function EnhancedProfile() {
   const data = {
     fullName: "João da Silva",
-    marriage: "Yes",
+    marriage: "Sim",
     children: "3",
     photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
     phone: "+55 11 91234-5678",
     email: "joao.silva@email.com",
     birthDate: "1990-05-20",
-    sex: "Male",
+    sex: "Masculino",
     address: "Rua das Flores, 123, São Paulo - SP",
-    communicationType: "Assertive",
-    education: "Higher Education Complete",
+    communicationType: "Assertiva",
+    education: "Ensino Superior Completo",
     smokes: false,
     drinks: true,
-    interests: ["Music", "Technology", "Sports"],
-    loveLanguage: "Physical Touch",
-    pets: "Dog",
-    diet: "Omnivore",
-    about: "I'm a dedicated, focused person passionate about what I do. I always seek to learn and grow professionally.",
+    interests: ["Música", "Tecnologia", "Esportes"],
+    loveLanguage: "Toque Físico",
+    pets: "Cachorro",
+    diet: "Onívoro",
+    about:
+      "Sou uma pessoa dedicada, focada e apaixonada pelo que faço. Sempre busco aprender e crescer profissionalmente.",
     signature: "https://i.imgur.com/TBJ72m5.jpeg",
     socialLinks: {
       facebook: "https://facebook.com/joaosilva",
@@ -261,11 +304,11 @@ export default function EnhancedProfile() {
       location: "São Paulo - SP",
       maxDistanceKm: 50,
       allowFurtherDistance: true,
-      contractType: "Contractor",
-      modality: "Hybrid",
-      schedule: ["Day", "Night"],
-      mobility: ["Car", "Motorcycle"],
-      paymentType: "Per day",
+      contractType: "Autônomo",
+      modality: "Híbrido",
+      schedule: ["Dia", "Noite"],
+      mobility: ["Carro", "Moto"],
+      paymentType: "Por dia",
     },
     gallery: {
       photos: [
@@ -282,378 +325,105 @@ export default function EnhancedProfile() {
   const age = ageFromBirthDate(data.birthDate);
   const verification = calculateProfileCompleteness(data);
 
-  const openLink = (url:any) => {
+  const openLink = (url) => {
     Linking.openURL(url).catch(() => {});
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-white">
       <Header title="Profile" leftIcon="back" />
-      
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
+
+      <ScrollView
+        className="px-4 pb-7"
+        contentContainerStyle={{ paddingBottom: 30 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Header */}
-        <View style={styles.profileHeader}>
-          <View style={styles.profileImageContainer}>
+        <View className="items-center py-6 bg-zinc-200 rounded-2xl mb-4 shadow-md">
+          <View className="relative mb-4">
             <Image
               source={{ uri: data.photoUri }}
-              style={styles.profileImage}
-              resizeMode="cover"
+              className="w-30 h-30 rounded-full border-2 border-custom-gray-400"
+              style={{ width: 120, height: 120 }}
             />
             {verification.isVerified && (
-              <View style={styles.verifiedIconContainer}>
-                <MaterialCommunityIcons 
-                  name="check-decagram" 
-                  size={24} 
-                  color="#1DA1F2" 
-                />
+              <View className="absolute bottom-0 right-0 bg-white rounded-full p-0.5">
+                <CircleCheckBig size={24} color="#16a34a" />
               </View>
             )}
           </View>
-          
-          <Text style={styles.profileName}>
+
+          <Text className="text-2xl font-bold text-custom-gray-900 text-center">
             {data.fullName}, {age}
           </Text>
-          <Text style={styles.profileSubtitle}>{data.sex}</Text>
-          
-          <VerificationBadge 
-            isVerified={verification.isVerified} 
-            percentage={verification.percentage} 
-          />
+          <Text className="text-base text-custom-gray-500 mb-3">{data.sex}</Text>
+
+          <VerificationBadge isVerified={verification.isVerified} percentage={verification.percentage} />
         </View>
 
         {/* About Section */}
-        <SectionCard title="About" icon="👤">
-          <Text style={styles.aboutText}>{data.about}</Text>
+        <SectionCard title="About" icon={User}>
+          <Text className="text-base leading-6 text-custom-gray-700">{data.about}</Text>
         </SectionCard>
 
         {/* Contact Information */}
-        <SectionCard title="Contact & Location" icon="📍">
-          <InfoRow 
-            icon="📱" 
-            label="Phone" 
-            value={data.phone}
-            onPress={() => Linking.openURL(`tel:${data.phone}`)}
-          />
-          <InfoRow 
-            icon="✉️" 
-            label="Email" 
-            value={data.email}
-            onPress={() => Linking.openURL(`mailto:${data.email}`)}
-          />
-          <InfoRow 
-            icon="🏠" 
-            label="Address" 
-            value={data.address}
-          />
+        <SectionCard title="Contact & Location" icon={MapPin}>
+          <InfoRow icon={Phone} label="Phone" value={data.phone} onPress={() => Linking.openURL(`tel:${data.phone}`)} />
+          <InfoRow icon={Mail} label="Email" value={data.email} onPress={() => Linking.openURL(`mailto:${data.email}`)} />
+          <InfoRow icon={Home} label="Address" value={data.address} />
         </SectionCard>
 
         {/* Personal Information */}
-        <SectionCard title="Personal Information" icon="ℹ️">
-          <InfoRow icon="💍" label="Married" value={data.marriage} onPress={undefined} />
-          <InfoRow icon="👶" label="Children" value={data.children} onPress={undefined} />
-          <InfoRow icon="💬" label="Communication" value={data.communicationType} onPress={undefined} />
-          <InfoRow icon="🎓" label="Education" value={data.education} onPress={undefined} />
-          <InfoRow icon="🚭" label="Smoking" value={data.smokes ? "Yes" : "No"} onPress={undefined} />
-          <InfoRow icon="🍺" label="Drinking" value={data.drinks ? "Yes" : "No"} onPress={undefined} />
-          <InfoRow icon="❤️" label="Love Language" value={data.loveLanguage} onPress={undefined} />
-          <InfoRow icon="🐕" label="Pets" value={data.pets} onPress={undefined} />
-          <InfoRow icon="🍽️" label="Diet" value={data.diet} onPress={undefined} />
+        <SectionCard title="Personal Information" icon={Info}>
+          <InfoRow icon={Ring} label="Married" value={data.marriage} />
+          <InfoRow icon={Child} label="Children" value={data.children} />
+          <InfoRow icon={MessageSquare} label="Communication" value={data.communicationType} />
+          <InfoRow icon={GraduationCap} label="Education" value={data.education} />
+          <InfoRow icon={SmokingNo} label="Smoking" value={data.smokes ? "Sim" : "Não"} />
+          <InfoRow icon={Beer} label="Drinking" value={data.drinks ? "Sim" : "Não"} />
+          <InfoRow icon={Heart} label="Love Language" value={data.loveLanguage} />
+          <InfoRow icon={PawPrint} label="Pets" value={data.pets} />
+          <InfoRow icon={Utensils} label="Diet" value={data.diet} />
         </SectionCard>
 
         {/* Interests */}
-        <SectionCard title="Interests" icon="🎯">
+        <SectionCard title="Interests" icon={Target}>
           <InterestTags interests={data.interests} />
         </SectionCard>
 
         {/* Work Preferences */}
-        <SectionCard title="Work Preferences" icon="💼">
-          <InfoRow icon="📍" label="Location" value={data.workPreferences.location} />
-          <InfoRow 
-            icon="📏" 
-            label="Max Distance" 
-            value={`${data.workPreferences.maxDistanceKm} km`} 
-          />
-          <InfoRow 
-            icon="📋" 
-            label="Contract Type" 
-            value={data.workPreferences.contractType} 
-          />
-          <InfoRow 
-            icon="🏢" 
-            label="Work Mode" 
-            value={data.workPreferences.modality} 
-          />
-          <InfoRow 
-            icon="⏰" 
-            label="Schedule" 
-            value={data.workPreferences.schedule.join(", ")} 
-          />
-          <InfoRow 
-            icon="🚗" 
-            label="Mobility" 
-            value={data.workPreferences.mobility.join(", ")} 
-          />
-          <InfoRow 
-            icon="💰" 
-            label="Payment" 
-            value={data.workPreferences.paymentType} 
-          />
+        <SectionCard title="Work Preferences" icon={Briefcase}>
+          <InfoRow icon={MapPin} label="Location" value={data.workPreferences.location} />
+          <InfoRow icon={Ruler} label="Max Distance" value={`${data.workPreferences.maxDistanceKm} km`} />
+          <InfoRow icon={FileText} label="Contract Type" value={data.workPreferences.contractType} />
+          <InfoRow icon={Building} label="Work Mode" value={data.workPreferences.modality} />
+          <InfoRow icon={Clock} label="Schedule" value={data.workPreferences.schedule.join(", ")} />
+          <InfoRow icon={Car} label="Mobility" value={data.workPreferences.mobility.join(", ")} />
+          <InfoRow icon={DollarSign} label="Payment" value={data.workPreferences.paymentType} />
         </SectionCard>
 
         {/* Gallery */}
-        <SectionCard title="Gallery" icon="📸">
+        <SectionCard title="Gallery" icon={Camera}>
           <Gallery gallery={data.gallery} />
         </SectionCard>
 
         {/* Signature */}
         {data.signature && (
-          <SectionCard title="Signature" icon="✍️">
+          <SectionCard title="Signature" icon={Pencil}>
             <Image
               source={{ uri: data.signature }}
-              style={styles.signatureImage}
+              className="w-full rounded-lg"
+              style={{ height: 120 }}
               resizeMode="contain"
             />
           </SectionCard>
         )}
 
         {/* Social Media */}
-        <SectionCard title="Social Media" icon="🌐">
+        <SectionCard title="Social Media" icon={Globe}>
           <SocialLinks socialLinks={data.socialLinks} onPress={openLink} />
         </SectionCard>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 30,
-  },
-  
-  // Profile Header Styles
-  profileHeader: {
-    alignItems: 'center',
-    paddingVertical: 24,
-    backgroundColor: 'white',
-    borderRadius: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  profileImageContainer: {
-    position: 'relative',
-    marginBottom: 16,
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 4,
-    borderColor: '#e2e8f0',
-  },
-  verifiedIconContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 2,
-  },
-  profileName: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1a202c',
-    textAlign: 'center',
-  },
-  profileSubtitle: {
-    fontSize: 16,
-    color: '#64748b',
-    marginBottom: 12,
-  },
-  
-  // Verification Badge Styles
-  verifiedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#dbeafe',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  verifiedText: {
-    marginLeft: 6,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1DA1F2',
-  },
-  unverifiedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f1f5f9',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  unverifiedText: {
-    marginLeft: 6,
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#64748b',
-  },
-  
-  // Section Card Styles
-  sectionCard: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  sectionIcon: {
-    fontSize: 20,
-    marginRight: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1a202c',
-  },
-  
-  // Info Row Styles
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
-  },
-  infoRowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  infoIcon: {
-    fontSize: 16,
-    marginRight: 12,
-    width: 20,
-  },
-  infoLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#64748b',
-    marginRight: 8,
-  },
-  infoValue: {
-    fontSize: 14,
-    color: '#1a202c',
-    fontWeight: '400',
-    flex: 2,
-    textAlign: 'right',
-  },
-  
-  // About Section
-  aboutText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#374151',
-  },
-  
-  // Tags Styles
-  tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  tag: {
-    backgroundColor: '#eff6ff',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  tagText: {
-    fontSize: 14,
-    color: '#2563eb',
-    fontWeight: '500',
-  },
-  
-  // Social Links Styles
-  socialContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  socialButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8fafc',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginRight: 12,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-  },
-  socialLabel: {
-    marginLeft: 8,
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#374151',
-  },
-  
-  // Gallery Styles
-  galleryGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  galleryItem: {
-    width: (screenWidth - 80) / 3,
-    height: (screenWidth - 80) / 3,
-    borderRadius: 12,
-    marginBottom: 8,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  galleryImage: {
-    width: '100%',
-    height: '100%',
-  },
-  videoOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  
-  // Signature Styles
-  signatureImage: {
-    width: '100%',
-    height: 120,
-    borderRadius: 8,
-  },
-});

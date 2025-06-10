@@ -78,7 +78,7 @@ import ChangePassword from "../screens/Profile/ChangePassword/Index";
 import Gallery from "../screens/Profile/Gallery/Index";
 import Signature from "../screens/Profile/Signature/Index";
 import Help from "../screens/Profile/Help/Index";
-import Review from "../screens/Profile/Review/Index";
+import Review from "../screens/Profile/Review/NewIndex";
 import Documents from "../screens/Documents/Documents";
 import Social from "../screens/Profile/Social/Index";
 import Announcement from "../screens/Profile/Announcement/Index";

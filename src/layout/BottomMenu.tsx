@@ -17,7 +17,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
+import { House, Heart, Bell, Menu, Handshake } from "lucide-react-native";
+import { rf } from "../hooks/utils/responsiveFont";
 type Props = {
   state: any;
   navigation: any;
@@ -145,60 +146,93 @@ const BottomMenu = ({ state, navigation, descriptors }: Props) => {
             };
 
             return (
-              <View
-  key={index}
-  style={styles.tabItem}
->
-  <TouchableOpacity onPress={onPress} style={styles.tabLink}>
-    {/* Border top pequena */}
-    {isFocused && (
-      <View
-        style={{
-          position: "absolute",
-          top: -8,
-          width: "70%",  // largura menor, metade do item
-          borderTopWidth: 1,
-          borderTopColor: COLORS.dark,
-          borderRadius: 2,
-        }}
-      />
-    )}
+              <View key={index} style={styles.tabItem}>
+                <TouchableOpacity onPress={onPress} style={styles.tabLink}>
+                  {/* Border top pequena */}
+                  {isFocused && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: -8,
+                        width: "70%", // largura menor, metade do item
+                        borderTopWidth: 1,
+                        borderTopColor: COLORS.dark,
+                        borderRadius: 2,
+                      }}
+                    />
+                  )}
 
-    <Image
-      style={{
-        height: 25,
-        width: 25,
-        resizeMode: "contain",
-        tintColor: isFocused
-          ? theme.dark
-            ? COLORS.card
-            : COLORS.dark
-          : COLORS.dark,
-      }}
-      source={
-        label === "Início"
-          ? isFocused
-            ? IMAGES.home_filled
-            : IMAGES.home_outline
-          : label === "Favoritos"
-          ? isFocused
-            ? IMAGES.heart_filled
-            : IMAGES.heart_outline
-          : label === "Trabalho"
-          ? isFocused
-            ? IMAGES.work_filled
-            : IMAGES.work_outline
-          : label === "Menu"
-          ? isFocused
-            ? IMAGES.menu_filled
-            : IMAGES.menu_outline
-          : IMAGES.Home
-      }
-    />
-    <Text style={[styles.navText]}>{label}</Text>
-  </TouchableOpacity>
-</View>
+                  {/* <Image
+                    style={{
+                      height: 25,
+                      width: 25,
+                      resizeMode: "contain",
+                      tintColor: isFocused
+                        ? theme.dark
+                          ? COLORS.card
+                          : COLORS.dark
+                        : COLORS.dark,
+                    }}
+                    source={
+                      label === "Início"
+                        ? isFocused
+                          ? IMAGES.home_filled
+                          : IMAGES.home_outline
+                        : label === "Favoritos"
+                        ? isFocused
+                          ? IMAGES.heart_filled
+                          : IMAGES.heart_outline
+                        : label === "Trabalho"
+                        ? isFocused
+                          ? IMAGES.work_filled
+                          : IMAGES.work_outline
+                        : label === "Menu"
+                        ? isFocused
+                          ? IMAGES.menu_filled
+                          : IMAGES.menu_outline
+                        : IMAGES.Home
+                    }
+                  /> */}
+                  <View className="items-center justify-center">
+                    {
+                      label === "Início" ?
+                      <>
+                        <House size={rf(24)}   className={`${isFocused ? "text-dark" : "text-gray-500"}`} />
+                        <Text className={`${isFocused ? "text-dark" : "text-gray-500"}`} style={[styles.navText]}>{label}</Text>
+                      </>
+                      :
+                      label === "Favoritos"?
+                      <>
+                        <Heart size={rf(24)}  className={`${isFocused ? "text-dark" : "text-gray-500"}`} />
+                        <Text className={`${isFocused ? "text-dark" : "text-gray-500"}`} style={[styles.navText]}>{label}</Text>
+                      </>
+                      :
+                      label === "Serviço" ?
+                      <>
+                        <Handshake size={rf(24)}  className={`${isFocused ? "text-dark" : "text-gray-500"}`} />
+                        <Text className={`${isFocused ? "text-dark" : "text-gray-500"}`} style={[styles.navText]}>{label}</Text>
+                      </>
+                      :
+                      label === "Notificação" ?
+                      <>
+                        <Bell size={rf(24)}  className={`${isFocused ? "text-dark" : "text-gray-500"}`} />
+                        <Text className={`${isFocused ? "text-dark" : "text-gray-500"}`} style={[styles.navText]}>{label}</Text>
+                      </>
+                      :
+                      label === "Menu"?
+                      <>
+                        <Menu size={rf(24)}  className={`${isFocused ? "text-dark" : "text-gray-500"}`} />
+                        <Text className={`${isFocused ? "text-dark" : "text-gray-500"}`} style={[styles.navText]}>{label}</Text>
+                      </>
+                      
+                      :
+                      ''
 
+                    }
+                  </View>
+                  {/* <Text style={[styles.navText]}>{label}</Text> */}
+                </TouchableOpacity>
+              </View>
             );
           })}
         </View>
@@ -225,7 +259,7 @@ const styles = StyleSheet.create({
   },
   navText: {
     ...FONTS.fontRegular,
-    fontSize: 10,
+    fontSize: rf(9),
   },
 });
 

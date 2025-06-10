@@ -10,6 +10,7 @@ import ProfileScreen from '../screens/Profile/Profile';
 import ProfilScreen from '../screens/Profile/Profil';
 import DocumentsScreen from '../screens/Documents/Documents';
 import BottomMenu from '../layout/BottomMenu';
+import Notification from '../screens/Home/Helper/Notification';
 import { useTheme } from '@react-navigation/native';
 import Default from '../screens/Cycle/Index'
 
@@ -38,8 +39,12 @@ const BottomNavigation = () => {
                 component={VacancyScreen}
             />
             <Tab.Screen 
-                name='Trabalho'
+                name='Serviço'
                 component={Default}
+            />
+            <Tab.Screen 
+                name='Notificação'
+                component={Notification}
             />
             <Tab.Screen 
                 name='Menu'

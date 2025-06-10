@@ -69,7 +69,7 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
           <Text style={[FONTS.fontBold]}>Requisitos</Text>
         </View>
         <View className="space-y-2  p-2 rounded-lg">
-          <Text style={[FONTS.font, { color: colors.text }]}>
+          <Text style={[FONTS.font, { color: colors.text }]} className="leading-relaxed">
             {props.information.requirements || "Não informado"}
           </Text>
         </View>

@@ -12,5 +12,7 @@ export type BottomTabParamList = {
     Início: undefined;
     Vagas: undefined;
     Trabalho: undefined;
+    Serviço: undefined
     Configurações: undefined;
+    Notificação: undefined;
 };
