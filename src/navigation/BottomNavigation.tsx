@@ -11,6 +11,7 @@ import ProfilScreen from '../screens/Profile/Profil';
 import DocumentsScreen from '../screens/Documents/Documents';
 import BottomMenu from '../layout/BottomMenu';
 import Notification from '../screens/Home/Helper/Notification';
+import Service from '../screens/Service/Index';
 import { useTheme } from '@react-navigation/native';
 import Default from '../screens/Cycle/Index'
 
