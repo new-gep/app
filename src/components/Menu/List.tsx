@@ -21,7 +21,7 @@ import {
   KeyRound,
   CircleHelp,
   LogOut,
-
+  CreditCard,
   Wrench,
   GraduationCap,
   CarFront,
@@ -72,7 +72,8 @@ export default function List({
         return <Star size={rf(20)} className="text-dark"/>;
       case "volunter_outline":
         return <HandHelping size={rf(20)} className="text-dark"/>;
-      
+      case "CreditCard":
+        return <CreditCard size={rf(20)} className="text-dark"/>;
       case "social_outline":
         return <AtSign size={rf(20)} className="text-dark"/>;
       case "signature_outline":

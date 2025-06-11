@@ -78,10 +78,15 @@ export default function Profile() {
       title: "Como trabalhar",
       go: "Filter",
     },
+    // {
+    //   icon: "campaign_outline",
+    //   title: "Anúncio",
+    //   go: "Announcement",
+    // },
     {
-      icon: "campaign_outline",
-      title: "Anúncio",
-      go: "Announcement",
+      icon: "CreditCard",
+      title: "Planos",
+      go: "ChangePassword",
     },
     {
       icon: "wallet_outline",
@@ -90,6 +95,7 @@ export default function Profile() {
     },
   ];
   const conf = [
+
     {
       icon: "key_outline",
       title: "Mudar a Senha",

@@ -1,18 +1,34 @@
-import { ChevronRight, Building2, EllipsisVertical, History, Repeat,Mail } from "lucide-react-native";
+import {
+  ChevronRight,
+  Building2,
+  EllipsisVertical,
+  History,
+  Repeat,
+  Mail,
+  MessageCircle,
+  UserRound
+} from "lucide-react-native";
 import React from "react";
-import { Text, TouchableOpacity, View, Image, Alert, Animated } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  Alert,
+  Animated,
+} from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 
 type StatusKey = "atual" | "demissao" | "ultimo";
 
-export default function Card() {
+export default function CardFlex() {
   const empresaAtualFake = {
-    empresa: "Mix Serviços Logisticos LTDA",
-    cargo: "Motoboy",
+    empresa: "Pintar minha Casa",
+    cargo: "Joao da Silva",
     logoUrl: "",
-    status: "atual" as StatusKey, // <- use isso pra mudar a bolinha e mensagem
+    status: "ultimo" as StatusKey, // <- use isso pra mudar a bolinha e mensagem
   };
 
   const statusMap: Record<StatusKey, { color: string; label: string }> = {
@@ -32,7 +48,7 @@ export default function Card() {
     return (
       <View className="flex-row">
         <TouchableOpacity
-        //   onPress={() => handleDelete(id)}
+          //   onPress={() => handleDelete(id)}
           className="w-20 justify-center items-center"
         >
           <EllipsisVertical className="text-dark" size={rf(24)} />
@@ -46,9 +62,7 @@ export default function Card() {
     <View style={Style.container} className="mt-5 bg-white p-3 rounded-2xl">
       <View className="px-2">
         <Swipeable
-             renderLeftActions={(progress) =>
-              renderLeftActions(progress)
-            }
+          renderLeftActions={(progress) => renderLeftActions(progress)}
         >
           <TouchableOpacity
             activeOpacity={0.7}
@@ -64,7 +78,7 @@ export default function Card() {
               />
             ) : (
               <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
-                <Building2 size={rf(25)} />
+                <UserRound size={rf(25)} />
               </View>
             )}
             <TouchableOpacity onPress={handleStatusPress}>
@@ -110,16 +124,17 @@ export default function Card() {
               style={[Style.container, { height: rf(100) }]}
               className="bg-blue-200 rounded-2xl p-2 h-20"
             >
-              <Text>processos</Text>
-              <Repeat size={rf(20)}/>
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Processos</Text>
+              <Repeat size={rf(20)} />
             </TouchableOpacity>
           </View>
           <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
-              className="bg-pink-200 rounded-2xl p-2 h-20"
+              className="bg-purple-200 rounded-2xl p-2 h-20"
             >
-              <Text>aq</Text>
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Mensagens</Text>
+              <MessageCircle size={rf(20)} />
             </TouchableOpacity>
           </View>
         </View>
@@ -128,9 +143,9 @@ export default function Card() {
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
               className="bg-yellow-200 rounded-2xl p-2 h-20"
-            > 
-              <Text>Propostas</Text>
-              <Mail size={rf(20)}/>
+            >
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Propostas</Text>
+              <Mail size={rf(20)} />
             </TouchableOpacity>
           </View>
           <View className="w-3/6 px-2">
@@ -138,8 +153,8 @@ export default function Card() {
               style={[Style.container, { height: rf(100) }]}
               className="bg-zinc-200 rounded-2xl p-2 h-20"
             >
-              <Text>Historico</Text>
-              <History size={rf(20)}/>
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Historico</Text>
+              <History size={rf(20)} />
             </TouchableOpacity>
           </View>
         </View>

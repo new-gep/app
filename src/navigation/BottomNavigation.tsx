@@ -41,7 +41,7 @@ const BottomNavigation = () => {
             />
             <Tab.Screen 
                 name='Serviço'
-                component={Default}
+                component={Service}
             />
             <Tab.Screen 
                 name='Notificação'
