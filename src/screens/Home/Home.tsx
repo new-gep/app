@@ -14,6 +14,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  LayoutAnimation,
 } from "react-native";
 import Card from "./Card";
 import GetAllJob from "../../hooks/get/job/all";
@@ -66,66 +67,6 @@ const Home = () => {
       showPopupMessage("Erro ao aplicar para a vaga!");
     }
     return;
-    if (missingData) return;
-
-    try {
-      const jobResponse = await FindOneJob(id);
-      if (jobResponse.status !== 200) {
-        throw new Error("Erro ao buscar detalhes da vaga");
-      }
-
-      // Define Candidate type if not already imported
-      type Candidate = {
-        picture?: string;
-        name?: string;
-        cpf?: string;
-        CPF?: string;
-        step?: number;
-        status?: any;
-        verify?: any;
-        observation?: any;
-        [key: string]: any;
-      };
-
-      const currentCandidates =
-        jobResponse.job.candidates?.map(
-          ({ picture, name, ...rest }: Candidate) => rest
-        ) || [];
-
-      const alreadyApplied = currentCandidates.some(
-        (c: any) => c.cpf === collaborator?.CPF
-      );
-      if (alreadyApplied) {
-        updateCardState();
-        showPopupMessage("Você já aplicou para esta vaga!");
-        return;
-      }
-
-      const newCandidate = {
-        cpf: collaborator?.CPF,
-        step: 0,
-        status: null,
-        verify: null,
-        observation: null,
-      };
-
-      let updatedCandidates = [...currentCandidates, newCandidate];
-
-      const updateResponse = await UpdateJobDefault(id, {
-        candidates: JSON.stringify(updatedCandidates),
-      });
-
-      if (updateResponse.status !== 200) {
-        throw new Error("Erro ao atualizar vaga");
-      }
-
-      updateCardState();
-    } catch (error: any) {
-      updateCardState();
-      console.error("Erro no aqui:", error);
-      showPopupMessage(error.message || "Erro ao aplicar");
-      handleUndo();
-    }
   };
 
   const updateCardState = () => {
@@ -151,6 +92,7 @@ const Home = () => {
   };
 
   const handleUndo = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     if (previousCards.length > 0) {
       const lastCard = previousCards[previousCards.length - 1];
 
@@ -234,101 +176,86 @@ const Home = () => {
   }, []);
 
   return (
-   <SafeAreaView className="flex-1 bg-white">
-    <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-      }}
-      keyboardShouldPersistTaps="handled"
-    >
-      {/* Topo da tela */}
-      <View className="w-full z-50 mt-1">
-        <CardSearch setCards={setCards} />
-      </View>
-
-      <BannerImage />
-      <BannerCircle />
-
-      {/* Container relativo para os cards */}
-      <View
-        style={{
-          height: windowHeight * 0.60, // altura fixa para comportar os cards (ajuste como preferir)
-          position: "relative",
-          marginTop: 20,
-          paddingHorizontal: 10,
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
         }}
+        keyboardShouldPersistTaps="handled"
       >
-        {isLoading ? (
-          <View className="justify-center items-center py-10">
-            <ActivityIndicator size="large" color={COLORS.primary} />
-          </View>
-        ) : Array.isArray(cards) && cards.length > 0 ? (
-          cards.map((card: any, index: number) => (
-            <View
-              key={card.id}
-              style={{
-                right:10,
-                position: "absolute",
-                width: "100%",
-                top: index * 5, // espaçamento entre cards (pode ajustar)
-                zIndex: cards.length - index,
-                // você pode adicionar sombra, bordas, etc aqui se quiser
-              }}
-            >
-              <Card
-                data={card}
-                onSwipeLeft={handleSwipeLeft}
-                onSwipeRight={handleSwipeRight}
-                onSuperLike={handleSwipeRight}
-                isTopCard={index === 0}
-                zIndex={cards.length - index}
-                index={index}
-                handleUndo={handleUndo}
+        {/* Topo da tela */}
+        <View className="w-full z-50 mt-1">
+          <CardSearch setCards={setCards} />
+        </View>
+
+        <BannerImage />
+        <BannerCircle />
+
+        {/* Container relativo para os cards */}
+        <View
+          style={{
+            height: windowHeight * 0.6, // altura fixa para comportar os cards (ajuste como preferir)
+            position: "relative",
+            marginTop: 20,
+            paddingHorizontal: 10,
+          }}
+        >
+          {isLoading ? (
+            <View className="justify-center items-center py-10">
+              <ActivityIndicator size="large" color={COLORS.primary} />
+            </View>
+          ) : Array.isArray(cards) && cards.length > 0 ? (
+            // cards.map((card: any, index: number) => (
+            //     <Card
+            //       data={card}
+            //       index={index}
+            //       handleUndo={handleUndo}
+            //     />
+            // ))
+            <Card data={cards} setCards={setCards} />
+          ) : !isKeyboardVisible ? (
+            <View className="flex justify-center items-center px-5">
+              <Text
+                style={{
+                  ...FONTS.fontSemiBold,
+                  fontSize: rf(16),
+                  color: COLORS.title,
+                  marginBottom: 5,
+                }}
+              >
+                {cards === false
+                  ? "Busque sua vaga"
+                  : "Não encontramos sua vaga"}
+              </Text>
+              <Text
+                style={{
+                  ...FONTS.fontLight,
+                  fontSize: rf(13),
+                }}
+                className="text-center text-gray-400 font-normal"
+              >
+                {cards === false
+                  ? "Pesquise sua vaga pelo nome ou palavra-chave"
+                  : "Não há mais vagas no momento, busque outra!"}
+              </Text>
+              <Image
+                source={
+                  cards === false
+                    ? require("../../assets/picture/unique/unique27.png")
+                    : require("../../assets/images/brand/Waiting.png")
+                }
+                style={{
+                  width: Dimensions.get("window").width * 0.8,
+                  height: Dimensions.get("window").height * 0.4,
+                }}
+                resizeMode="contain"
               />
             </View>
-          ))
-        ) : !isKeyboardVisible ? (
-          <View className="flex justify-center items-center px-5">
-            <Text
-              style={{
-                ...FONTS.fontSemiBold,
-                fontSize: rf(16),
-                color: COLORS.title,
-                marginBottom: 5,
-              }}
-            >
-              {cards === false
-                ? "Busque sua vaga"
-                : "Não encontramos sua vaga"}
-            </Text>
-            <Text style={{
-                ...FONTS.fontLight,
-                fontSize: rf(13),
-            }} className="text-center text-gray-400 font-normal">
-              {cards === false
-                ? "Pesquise sua vaga pelo nome ou palavra-chave"
-                : "Não há mais vagas no momento, busque outra!"}
-            </Text>
-            <Image
-              source={
-                cards === false
-                  ? require("../../assets/picture/unique/unique27.png")
-                  : require("../../assets/images/brand/Waiting.png")
-              }
-              style={{
-                width: Dimensions.get("window").width * 0.8,
-                height: Dimensions.get("window").height * 0.4,
-              }}
-              resizeMode="contain"
-            />
-          </View>
-        ) : null}
-      </View>
-    </ScrollView>
-  </SafeAreaView>
-);
-
-
+          ) : null}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 
 export default Home;

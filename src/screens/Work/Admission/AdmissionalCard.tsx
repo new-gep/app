@@ -9,7 +9,7 @@ import { IMAGES } from "../../../constants/Images";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import Icon from "~/src/components/Icon/Icon";
 type CardProps = {
-  lockKey: string;
+  lockKey?: string;
   title: any;
   status: any;
   path: any;

@@ -108,8 +108,8 @@ const Signature = ({
         .filter((value) => typeof value === "boolean")
         .every((value) => value === true);
 
-      console.log("LockSignature convertido:", lockSignatureObj);
-      console.log("Todos os documentos foram visualizados?", allTrue);
+      // console.log("LockSignature convertido:", lockSignatureObj);
+      // console.log("Todos os documentos foram visualizados?", allTrue);
       setKeySignature(allTrue);
     }
   }, [lockSignature]);

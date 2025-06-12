@@ -21,7 +21,7 @@ export default function Service() {
   const fixAnim = useRef(new Animated.Value(0)).current; // 0 = ativo
   const flexAnim = useRef(new Animated.Value(1)).current; // 1 = fora da tela
 
-  const animateTabs = (tab:any) => {
+  const animateTabs = (tab: any) => {
     setActiveTab(tab);
 
     Animated.parallel([
@@ -48,7 +48,7 @@ export default function Service() {
         )}
         className={"px-4"}
         style={{ width: "100%", paddingTop: 70 }}
-        contentContainerStyle={{ paddingBottom: 90 }}
+        contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Tabs */}
@@ -95,6 +95,7 @@ export default function Service() {
         <View style={{ height: 400, position: "relative" }}>
           {/* Fix */}
           <Animated.View
+            pointerEvents={activeTab === "Fix" ? "auto" : "none"}
             style={{
               position: "absolute",
               width: "100%",
@@ -102,7 +103,7 @@ export default function Service() {
                 {
                   translateY: fixAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, 50], // Sai para baixo
+                    outputRange: [0, 50],
                   }),
                 },
               ],
@@ -135,8 +136,8 @@ export default function Service() {
               }),
             }}
           >
-            <CardFlex/>
-            <CardFlex2/>
+            <CardFlex />
+            <CardFlex2 />
           </Animated.View>
         </View>
       </Animated.ScrollView>

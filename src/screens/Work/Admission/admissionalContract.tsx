@@ -19,7 +19,7 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 type Props = {
   jobConected: any;
   CPF: any;
-  setLockSignature: (any) => void;
+  setLockSignature: (any:any) => void;
   lockSignature: any;
 };
 
@@ -83,7 +83,7 @@ const AdmissionalContract = ({
 
         const dynamicDocuments = await Promise.all(
           Object.entries(dynamics).map(async ([key, value]) => {
-    
+            
             const response = await FindFile(
               jobConected[0].id,
               "dynamic",
@@ -91,9 +91,12 @@ const AdmissionalContract = ({
               value
             );
 
+
+
             if (!response) {
               return;
             }
+
             return {
               lockKey: value, // Chave original para controle de estado
               title: value?.toString().replace(/([A-Z])/g, ' $1').trim(), // Título formatado para exibição
@@ -174,18 +177,24 @@ const AdmissionalContract = ({
           })} */}
 
           {/* Documentos Dinâmicos */}
-          {dynamicDocs.map((doc:any, index:any) => (
-            <AdmissionalCard
-              key={`dynamic-${index}`}
-              lockKey={doc.lockKey}
-              title={doc.title}
-              status={doc.status}
-              path={doc.path}
-              typeDocument={doc.typeDocument}
-              setLockSignature={setLockSignature}
-              lockSignature={lockSignature}
-            />
-          ))}
+          {dynamicDocs.map((doc:any, index:any) => {
+            // console.log(doc.lockKey)
+            if (!doc) {
+              return; // Retorne null para não renderizar nada
+            }
+            return (
+              <AdmissionalCard
+                key={`dynamic-${index}`}
+                lockKey={doc.lockKey}
+                title={doc.title}
+                status={doc.status}
+                path={doc.path}
+                typeDocument={doc.typeDocument}
+                setLockSignature={setLockSignature}
+                lockSignature={lockSignature}
+              />
+            );
+          })}
         </ScrollView>
       :
       <View className="h-full w-full justify-center items-center flex">

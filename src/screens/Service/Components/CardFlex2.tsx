@@ -6,7 +6,7 @@ import { FONTS } from "~/src/constants/theme";
 export default function CardFlex2() {
   return (
     <View className="flex-1 mt-5 flex-row">
-      <View className="w-2/6 p-2" style={{ height: rf(180) }}>
+      <View className="w-3/6 p-2" style={{ height: rf(180) }}>
         <TouchableOpacity
           style={Style.container}
           className="h-full w-full bg-white rounded-xl p-1 items-center justify-center flex-col-reverse"
@@ -17,7 +17,7 @@ export default function CardFlex2() {
           <Zap size={rf(22)} />
         </TouchableOpacity>
       </View>
-      <View className="w-2/6 p-2" style={{ height: rf(180) }}>
+      <View className="w-3/6 p-2" style={{ height: rf(180) }}>
         <TouchableOpacity
           style={Style.container}
           className="h-full w-full bg-white rounded-xl p-1 items-center justify-center flex-col-reverse"
@@ -28,7 +28,7 @@ export default function CardFlex2() {
           <CirclePlus size={rf(22)} />
         </TouchableOpacity>
       </View>
-      <View className="w-2/6 p-2" style={{ height: rf(180) }}>
+      {/* <View className="w-3/6 p-2" style={{ height: rf(180) }}>
         <TouchableOpacity
           style={Style.container}
           className="h-full w-full bg-zinc-700 rounded-xl p-1 items-center justify-center flex-col-reverse"
@@ -41,7 +41,7 @@ export default function CardFlex2() {
           </Text>
           <CreditCard className="text-white" size={rf(22)} />
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 }
