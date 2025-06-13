@@ -51,63 +51,9 @@ const Home = () => {
   const navigation = useNavigation<NavigationProp<any>>();
   const { height: windowHeight } = Dimensions.get("window");
 
-  const handleSwipeRight = async (id: any) => {
-    if (!collaborator) {
-      showPopupMessage("Você precisa estar logado para aplicar!");
-      return;
-    }
-    const response = await ApplyJob(id, collaborator?.CPF);
-    if (response.status === 200) {
-      showPopupMessage("Você aplicou para a vaga com sucesso!");
-      handleSwipeLeft();
-    } else if (response.status === 400) {
-      showPopupMessage("Você já aplicou para essa vaga!");
-      handleSwipeLeft();
-    } else {
-      showPopupMessage("Erro ao aplicar para a vaga!");
-    }
-    return;
-  };
 
-  const updateCardState = () => {
-    setCards((prevCards: any) => {
-      if (prevCards.length === 0) return prevCards;
-
-      const [firstCard, ...rest] = prevCards;
-      setPreviousCards((prev: any) => [...prev, firstCard]);
-
-      return rest.length > 0 ? rest : prevCards;
-    });
-  };
-
-  const handleSwipeLeft = () => {
-    setCards((prevCards: any) => {
-      if (prevCards.length === 0) return prevCards;
-
-      const [firstCard, ...rest] = prevCards;
-      setPreviousCards((prev: any) => [...prev, firstCard]);
-
-      return rest;
-    });
-  };
-
-  const handleUndo = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    if (previousCards.length > 0) {
-      const lastCard = previousCards[previousCards.length - 1];
-
-      if (!cards.some((card: { id: any }) => card.id === lastCard.id)) {
-        setPreviousCards((prev: any) => prev.slice(0, -1));
-        setCards((prevCards: any) => [lastCard, ...prevCards]);
-      } else {
-        alert("Esse card já está na lista.");
-      }
-    } else {
-      alert("Não há mais cards para voltar.");
-    }
-  };
-
-  const showPopupMessage = (message: any) => {
+  const showPopupMessage = (message: string) => {
+    console.log(message);
     setPopupMessage(message);
     setShowPopup(true);
     setTimeout(() => setShowPopup(false), 2000);
@@ -177,25 +123,40 @@ const Home = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-        }}
-        keyboardShouldPersistTaps="handled"
-      >
+      {showPopup && (
+        <View
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            backgroundColor: "#333",
+            padding: 16,
+            borderRadius: 10,
+            alignItems: "center",
+            zIndex: 1000,
+            // desloca para o centro exato:
+            transform: [
+              { translateX: -0.5 * 250 }, // metade da largura do popup (ajuste conforme seu tamanho)
+              { translateY: -0.5 * 60 }, // metade da altura do popup (ajuste conforme seu tamanho)
+            ],
+            width: 250, // largura fixa ou pode ser dinâmica
+          }}
+        >
+          <Text className="text-center" style={{ color: "#fff", fontSize: rf(14), ...FONTS.fontSemiBold }}>{popupMessage}</Text>
+        </View>
+      )}
+
+      <ScrollView keyboardShouldPersistTaps="handled">
         {/* Topo da tela */}
         <View className="w-full z-50 mt-1">
           <CardSearch setCards={setCards} />
         </View>
-
         <BannerImage />
         <BannerCircle />
 
         {/* Container relativo para os cards */}
         <View
           style={{
-            height: windowHeight * 0.6, // altura fixa para comportar os cards (ajuste como preferir)
-            position: "relative",
             marginTop: 20,
             paddingHorizontal: 10,
           }}
@@ -205,15 +166,13 @@ const Home = () => {
               <ActivityIndicator size="large" color={COLORS.primary} />
             </View>
           ) : Array.isArray(cards) && cards.length > 0 ? (
-            // cards.map((card: any, index: number) => (
-            //     <Card
-            //       data={card}
-            //       index={index}
-            //       handleUndo={handleUndo}
-            //     />
-            // ))
-            <Card data={cards} setCards={setCards} />
-          ) : !isKeyboardVisible ? (
+            <Card
+              data={cards}
+              setCards={setCards}
+              collaborator={collaborator}
+              showPopupMessage={showPopupMessage}
+            />
+          ) : (
             <View className="flex justify-center items-center px-5">
               <Text
                 style={{
@@ -251,7 +210,7 @@ const Home = () => {
                 resizeMode="contain"
               />
             </View>
-          ) : null}
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

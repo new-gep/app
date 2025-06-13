@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import FindBucketCollaborator from "~/src/hooks/bucket/collaborator";
 import SaveCacheFile from "~/src/hooks/utils/SaveCacheFile";
 import { IMAGES } from "~/src/constants/Images";
+import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import useCollaborator from "~/src/function/fetchCollaborator";
 interface CardSearchProps {
@@ -101,7 +102,7 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
       Alert.alert("Erro", "Falha ao buscar a vaga.");
       return;
     }
-
+     setCards();
     const uniqueJobs = response.job.filter(
       (job: any, index: any, self: any) =>
         self.findIndex((j: any) => j.id === job.id) === index
@@ -135,7 +136,7 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
             }`}
           >
             <Text
-              style={{fontSize:rf(13)}}
+              style={{...FONTS.fontSemiBold,fontSize:rf(13)}}
               className={`font-semibold ${
                 activeTab === "pessoa" ? "text-dark" : "text-gray-500"
               }`}
@@ -152,7 +153,7 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
             }`}
           >
             <Text
-            style={{fontSize:rf(13)}}
+            style={{...FONTS.fontSemiBold, fontSize:rf(13)}}
               className={`font-semibold ${
                 activeTab === "empresa" ? "text-dark" : "text-gray-500"
               }`}
@@ -191,6 +192,7 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
           style={{ marginLeft: 12, marginRight: 8 }}
         />
         <TextInput
+          style={{...FONTS.fontBlack}}
           placeholder="Pesquisar"
           placeholderTextColor="#9CA3AF"
           className="flex-1 h-10 py-1 text-base text-dark"
