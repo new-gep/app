@@ -23,15 +23,16 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import useCollaborator from "~/src/function/fetchCollaborator";
 interface CardSearchProps {
   setCards: any;
+  setActiveTab: any;
+  activeTab:any
 }
 
-const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
+const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCards }) => {
   const navigation = useNavigation<NavigationProp<any>>();
   const { collaborator, fetchCollaborator } = useCollaborator();
   const [searchText, setSearchText] = useState("");
   const [path, setPath] = useState<any>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState("pessoa");
   const { wp, hp } = useScreen(); // 📱 dimensões da tela
 
   const getPicture = async () => {
@@ -129,16 +130,16 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
           className="flex-row bg-white rounded-full mb-2 p-1"
         >
           <TouchableOpacity
-            style={activeTab === "pessoa" ? Style.container : undefined}
-            onPress={() => setActiveTab("pessoa")}
+            style={activeTab === "People" ? Style.container : undefined}
+            onPress={() => setActiveTab("People")}
             className={`px-5 py-2 items-center justify-center rounded-full ${
-              activeTab === "pessoa" ? "bg-primary" : ""
+              activeTab === "People" ? "bg-primary" : ""
             }`}
           >
             <Text
               style={{...FONTS.fontSemiBold,fontSize:rf(13)}}
               className={`font-semibold ${
-                activeTab === "pessoa" ? "text-dark" : "text-gray-500"
+                activeTab === "People" ? "text-dark" : "text-gray-500"
               }`}
             >
               Pessoas
@@ -146,16 +147,16 @@ const CardSearch: React.FC<CardSearchProps> = ({ setCards }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => setActiveTab("empresa")}
-            style={activeTab === "empresa" && Style.container}
+            onPress={() => setActiveTab("Service")}
+            style={activeTab === "Service" && Style.container}
             className={`px-5 py-2 rounded-full ${
-              activeTab === "empresa" ? "bg-primary" : ""
+              activeTab === "Service" ? "bg-primary" : ""
             }`}
           >
             <Text
             style={{...FONTS.fontSemiBold, fontSize:rf(13)}}
               className={`font-semibold ${
-                activeTab === "empresa" ? "text-dark" : "text-gray-500"
+                activeTab === "Service" ? "text-dark" : "text-gray-500"
               }`}
             >
               Serviços

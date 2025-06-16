@@ -3,57 +3,37 @@ import {
   View,
   Text,
   ActivityIndicator,
-  TouchableOpacity,
   SafeAreaView,
-  Modal,
   BackHandler,
   Image,
   Dimensions,
-  TextInput,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
-  LayoutAnimation,
 } from "react-native";
 import Card from "./Card";
+import CardPeople from "./Helper/CardPeople";
 import GetAllJob from "../../hooks/get/job/all";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FindOneJob from "../../hooks/get/job/findOne";
-import UpdateJobDefault from "../../hooks/update/job/default";
 import useCollaborator from "../../function/fetchCollaborator";
 import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import type { NavigationProp } from "@react-navigation/native";
-import Header from "../../layout/Header";
 import { COLORS, FONTS } from "../../constants/theme";
-import Mask from "../../function/mask";
-// import HeaderHome from "../../layout/HeaderHome";
-import Apply from "~/src/hooks/rabbit/job/Apply";
-import ApplyJob from "~/src/hooks/update/job/applyJob";
 import CardSearch from "./CardSearch";
 import BannerImage from "./Helper/BannerImage";
 import BannerCircle from "./Helper/BannerCircle";
-import HeaderHome from "~/src/layout/Headerome";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
+  const [cardSearch, setCardSearch] = useState<any>("Service");
   const [isLoading, setIsLoading] = useState(false);
   const [previousCards, setPreviousCards] = useState<any>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { collaborator, fetchCollaborator } = useCollaborator();
-  const { validateCollaborator, missingData } = useCollaboratorContext();
-  const navigation = useNavigation<NavigationProp<any>>();
-  const { height: windowHeight } = Dimensions.get("window");
-
+  const { validateCollaborator } = useCollaboratorContext();
 
   const showPopupMessage = (message: string) => {
-    console.log(message);
     setPopupMessage(message);
     setShowPopup(true);
     setTimeout(() => setShowPopup(false), 2000);
@@ -142,14 +122,23 @@ const Home = () => {
             width: 250, // largura fixa ou pode ser dinâmica
           }}
         >
-          <Text className="text-center" style={{ color: "#fff", fontSize: rf(14), ...FONTS.fontSemiBold }}>{popupMessage}</Text>
+          <Text
+            className="text-center"
+            style={{ color: "#fff", fontSize: rf(14), ...FONTS.fontSemiBold }}
+          >
+            {popupMessage}
+          </Text>
         </View>
       )}
 
       <ScrollView keyboardShouldPersistTaps="handled">
         {/* Topo da tela */}
         <View className="w-full z-50 mt-1">
-          <CardSearch setCards={setCards} />
+          <CardSearch
+            setActiveTab={setCardSearch}
+            activeTab={cardSearch}
+            setCards={setCards}
+          />
         </View>
         <BannerImage />
         <BannerCircle />
@@ -166,12 +155,21 @@ const Home = () => {
               <ActivityIndicator size="large" color={COLORS.primary} />
             </View>
           ) : Array.isArray(cards) && cards.length > 0 ? (
-            <Card
-              data={cards}
-              setCards={setCards}
-              collaborator={collaborator}
-              showPopupMessage={showPopupMessage}
-            />
+            cardSearch == "Service" ? (
+              <Card
+                data={cards}
+                setCards={setCards}
+                collaborator={collaborator}
+                showPopupMessage={showPopupMessage}
+              />
+            ) : (
+              <CardPeople
+                data={cards}
+                setCards={setCards}
+                collaborator={collaborator}
+                showPopupMessage={showPopupMessage}
+              />
+            )
           ) : (
             <View className="flex justify-center items-center px-5">
               <Text

@@ -15,6 +15,9 @@ import UnapplyJob from "~/src/hooks/update/job/unapplyJob";
 import ApplyJob from "~/src/hooks/update/job/applyJob";
 import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import Mask from "~/src/function/mask";
+import { rf } from "~/src/hooks/utils/responsiveFont";
+import { Accessibility, BriefcaseBusiness, MapPin, FileText, Banknote, Shapes, Building2 } from "lucide-react-native";
+
 
 type CompanyType = {
   company_name: string;
@@ -137,6 +140,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
   const handleRemoveApplication = async () => {
     try {
       setIsLoading(true);
+      //@ts-ignore
       const response = await UnapplyJob(cardData.id, collaborator?.CPF);
       if (response.status === 200) {
         alert("Candidatura removida com sucesso!");
@@ -157,6 +161,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
   const handleApplyToJob = async () => {
     try {
       setIsLoading(true);
+      //@ts-ignore
       const response = await ApplyJob(cardData.id, collaborator?.CPF);
       if (response.status === 200) {
         onSwipeLeft()
@@ -190,13 +195,20 @@ const CardInformation = ({ route }: CardInformationProps) => {
         <View className="mb-5">
           <Text
             className="text-dark capitalize"
-            style={{ ...FONTS.fontBold, fontSize: 25 }}
+            style={{ ...FONTS.fontSemiBold, fontSize: rf(23) }}
+            
           >
             {cardData.function}
           </Text>
-          <Text className="text-sm text-gray-600 uppercase mb-6">
-            {cardData.company?.company_name || "Empresa confidencial"}
-          </Text>
+
+          <View className="flex-row flex-1 mb-4 items-center">
+            <View className="rounded-full bg-zinc-100 items-center justify-center p-2 mr-3">
+              <Building2 size={rf(17)} />
+            </View>
+            <Text style={{fontSize: rf(12)}} className=" text-gray-600 uppercase">
+              {cardData.company?.company_name || "Empresa confidencial"}
+            </Text>
+          </View>
 
           <View>
             <View className="flex-row items-center space-x-2 mb-1">
@@ -205,12 +217,13 @@ const CardInformation = ({ route }: CardInformationProps) => {
                 Informações
               </Text>
             </View>
-            <View className=" p-2 rounded-lg px-3">
+            <View className="rounded-lg px-3 gap-1">
               {cardData.DEI === "1" && (
                 <View className="flex-row items-center gap-2">
                   {/* <View className="bg-dark p-2 rounded-full">
                     <MaterialIcons name="interests" size={20} color="#fde047" />
                   </View> */}
+                  <Shapes size={rf(20)}/>
                   <Text style={[FONTS.font, { color: COLORS.text }]}>
                     Vaga Afirmativa
                   </Text>
@@ -226,6 +239,8 @@ const CardInformation = ({ route }: CardInformationProps) => {
                       color="#fde047"
                     />
                   </View> */}
+
+                  <Accessibility size={rf(20)}/>
                   <Text style={[FONTS.font, { color: COLORS.text }]}>
                     Vaga PCD
                   </Text>
@@ -240,6 +255,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
                     color="#fde047"
                   />
                 </View> */}
+                <MapPin size={rf(20)}/>
                 <Text style={[FONTS.font, { color: COLORS.text }]}>
                   {cardData.locality && `${cardData.locality}`}
                 </Text>
@@ -249,6 +265,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
                 {/* <View className="bg-dark p-2 rounded-full">
                   <FontAwesome6 name="money-bills" size={20} color="#fde047" />
                 </View> */}
+                <Banknote size={rf(20)}/>
                 <Text style={[FONTS.font, { color: COLORS.text }]}>
                   {cardData.salary && Mask("amount", cardData.salary)}
                 </Text>
@@ -258,6 +275,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
                 {/* <View className="bg-dark p-2 rounded-full">
                   <FontAwesome6 name="laptop" size={20} color="#fde047" />
                 </View> */}
+                <BriefcaseBusiness size={rf(20)}/>
                 <Text style={[FONTS.font, { color: COLORS.text }]}>
                   {cardData.model && `${cardData.model}`}
                 </Text>
@@ -267,6 +285,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
                 {/* <View className="bg-dark p-2 px-3 rounded-full">
                   <FontAwesome5 name="clipboard" size={24} color="#fde047" />
                 </View> */}
+                <FileText size={rf(20)}/>
                 <Text style={[FONTS.font, { color: COLORS.text }]}>
                   {cardData.contract && `${cardData.contract}`}
                 </Text>
@@ -281,12 +300,6 @@ const CardInformation = ({ route }: CardInformationProps) => {
             { borderBottomColor: COLORS.inputborder },
           ]}
         >
-          {/* <Image
-            // source={AbstractPicture[cardData.image]}
-            source={Logo}
-            resizeMode="contain"
-            className="w-full h-[200px] mb-6"
-          /> */}
         </View>
 
         <View
@@ -299,44 +312,8 @@ const CardInformation = ({ route }: CardInformationProps) => {
             details={cardData.details}
           />
         </View>
-
-        {/* Movendo o botão para dentro do ScrollView com margem adequada */}
-        {/* <View
-          style={{
-            position: "absolute", // <- ESSENCIAL
-            bottom: 20,
-            right: 20,
-            zIndex: 10,
-          }}
-        >
-          <TouchableOpacity
-            onPress={
-              isCandidateApplied ? handleRemoveApplication : handleApplyToJob
-            }
-            style={{
-              backgroundColor: isCandidateApplied
-                ? COLORS.dark
-                : COLORS.primary,
-              width: 60,
-              height: 60,
-              borderRadius: 30,
-              justifyContent: "center",
-              alignItems: "center",
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-            }}
-          >
-            {isCandidateApplied ? (
-              <FontAwesome name="minus" size={24} color={COLORS.primary} />
-            ) : (
-              <FontAwesome name="plus" size={24} color={COLORS.dark} />
-            )}
-          </TouchableOpacity>
-        </View> */}
       </ScrollView>
+
       <View className="absolute z-10 right-5 bottom-5">
         <TouchableOpacity
           onPress={
@@ -346,6 +323,8 @@ const CardInformation = ({ route }: CardInformationProps) => {
             isCandidateApplied ? "bg-red-600" : "bg-success"
           } opacity-80`}
           style={{
+            height:rf(60),
+            width:rf(60),
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.25,
@@ -354,9 +333,9 @@ const CardInformation = ({ route }: CardInformationProps) => {
           }}
         >
           {isCandidateApplied ? (
-            <FontAwesome name="minus" size={30} color={COLORS.white} />
+            <FontAwesome name="minus" size={rf(25)} color={COLORS.white} />
           ) : (
-            <FontAwesome name="plus" size={30} color={COLORS.white} />
+            <FontAwesome name="plus" size={rf(25)} color={COLORS.white} />
           )}
         </TouchableOpacity>
       </View>

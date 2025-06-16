@@ -53,10 +53,10 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
       <View>
         <View className="flex-row items-center space-x-2 mb-1 px-1">
           {/* <FontAwesome name="exclamation" size={24} color="black" /> */}
-          <Text style={[FONTS.fontBold]}>Responsabilidade</Text>
+          <Text  style={[FONTS.fontBold]}>Responsabilidade</Text>
         </View>
         <View className="space-y-2 p-2 rounded-lg">
-          <Text style={[FONTS.font, { color: colors.text }]}>
+          <Text className="text-justify" style={[FONTS.font, { color: colors.text }]}>
             {props.information.responsibility || "Não informado"}
           </Text>
         </View>
@@ -69,7 +69,7 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
           <Text style={[FONTS.fontBold]}>Requisitos</Text>
         </View>
         <View className="space-y-2  p-2 rounded-lg">
-          <Text style={[FONTS.font, { color: colors.text }]} className="leading-relaxed">
+          <Text style={[FONTS.font, { color: colors.text }]} className="leading-relaxed text-justify">
             {props.information.requirements || "Não informado"}
           </Text>
         </View>
@@ -85,7 +85,7 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
           <View className="flex-row flex-wrap gap-1">
             {props.information.skills ?
               JSON.parse(props.information.skills).map((skill: any) => (
-                <View key={skill} className="px-2 py-1 rounded-lg border">
+                <View key={skill} className="px-2 py-1 rounded-lg bg-primary ">
                   <Text
                     className="text-center"
                     style={{ ...FONTS.font, color: "black" }}
@@ -111,7 +111,7 @@ const AccordionCardIformation = (props: AccordionCardIformationProps) => {
           <View className="flex-row flex-wrap  gap-1">
             {props.information.benefits ?
               JSON.parse(props.information.benefits).map((skill: any) => (
-                <View key={skill} className="px-2 py-1 rounded-lg border">
+                <View key={skill} className="px-2 py-1 rounded-lg bg-primary ">
                   <Text
                     className="text-center"
                     style={{ ...FONTS.font, color: "black" }}

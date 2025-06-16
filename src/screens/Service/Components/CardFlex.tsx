@@ -6,6 +6,7 @@ import {
   Repeat,
   Mail,
   MessageCircle,
+  Star,
   UserRound
 } from "lucide-react-native";
 import React from "react";
@@ -133,8 +134,8 @@ export default function CardFlex() {
               style={[Style.container, { height: rf(100) }]}
               className="bg-purple-200 rounded-2xl p-2 h-20"
             >
-              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Mensagens</Text>
-              <MessageCircle size={rf(20)} />
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Avaliações</Text>
+              <Star size={rf(20)} />
             </TouchableOpacity>
           </View>
         </View>

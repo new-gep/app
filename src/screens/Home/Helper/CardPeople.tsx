@@ -1,4 +1,4 @@
-import { Building2, ChevronRight, EllipsisVertical } from "lucide-react-native";
+import { Building2, ChevronRight, EllipsisVertical, UserRound } from "lucide-react-native";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   Animated,
@@ -18,7 +18,7 @@ import ApplyJob from "~/src/hooks/update/job/applyJob";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import Mask from "~/src/function/mask";
 import { useNavigation } from "@react-navigation/native";
-import WorkInformation from "./Helper/Modal/WorkInformation";
+import PeopleInformation from "./Modal/PeopleInformation";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = 120;
@@ -35,13 +35,13 @@ if (
 const SwipeableCard = React.memo(function SwipeableCard({
   item,
   onSwipeRight,
+  onSwipeLeft,
   isMenuVisible,
   setMenuVisible,
   navigateToCardInformation,
-  handleSwipeRight
 }: any) {
   const translateX = useRef(new Animated.Value(0)).current;
-  const [menu, setMenu] = useState<boolean>(false);
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gesture) => Math.abs(gesture.dx) > 10,
@@ -74,13 +74,8 @@ const SwipeableCard = React.memo(function SwipeableCard({
     })
   ).current;
 
-  const  onSwipeLeft = () => {
-    setMenu(true);
-  };
-
   return (
     <View style={styles.cardWrapper}>
-      <WorkInformation jobData={item} visible={menu} setVisible={setMenu} handleSwipeRight={handleSwipeRight} />
       {isMenuVisible && (
         <View className="flex-row absolute right-0 h-full px-4 py-2">
           <TouchableOpacity
@@ -89,7 +84,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
               Animated.spring(translateX, {
                 toValue: 0,
                 useNativeDriver: true,
-              }).start(() => onSwipeLeft());
+              }).start(() => onSwipeLeft(item.id));
             }}
           >
             <EllipsisVertical size={rf(25)} />
@@ -110,7 +105,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
         >
           <View className="flex-row items-center flex-1">
             <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
-              <Building2 size={rf(25)} />
+              <UserRound size={rf(25)} />
             </View>
             <View className="pr-2">
               <Text
@@ -168,6 +163,10 @@ export default function CathoStyleCards({
     setCards((prev: any) => prev.filter((item: any) => item.id !== id));
   };
 
+  const handleSwipeLeft = () => {
+    showPopupMessage("Opção Menu selecionada!");
+  };
+
   const handleSwipeRight = async (id: any) => {
     if (!collaborator) {
       showPopupMessage("Você precisa estar logado para aplicar!");
@@ -190,10 +189,10 @@ export default function CathoStyleCards({
     }
   };
 
-  const navigateToCardInformation = ({ data }: any) => {
+  const navigateToCardInformation = ({data}:any) => {
     navigation.navigate("CardInformation", {
       cardData: data,
-      onSwipeLeft: () => handleSwipeRight(data.id),
+      onSwipeLeft: ()=>handleSwipeRight(data.id),
     });
   };
 
@@ -201,13 +200,11 @@ export default function CathoStyleCards({
     ({ item }: any) => {
       return (
         <SwipeableCard
-          navigateToCardInformation={() =>
-            navigateToCardInformation({ data: item })
-          }
+          navigateToCardInformation={() => navigateToCardInformation({ data: item })}
           item={item}
-          handleSwipeRight={()=>handleSwipeRight(item.id)}
           isMenuVisible={visibleMenuIds.includes(item.id)}
           setMenuVisible={setMenuVisible}
+          onSwipeLeft={handleSwipeLeft}
           onSwipeRight={handleSwipeRight}
         />
       );
@@ -215,10 +212,109 @@ export default function CathoStyleCards({
     [visibleMenuIds]
   );
 
+  const fakeData = [
+  {
+    id: 1,
+    name: "Maria Oliveira",
+    valueType: "a combinar",
+    locality: "São Paulo - SP",
+    service: "Pintar minha casa",
+    contactName: "João Silva",
+    isVerified: true,
+    function: "Pintar minha casa",
+    salary: "150000",
+    model: "a combinar",
+  },
+  {
+    id: 2,
+    name: "Carlos Pereira",
+    valueType: "por mês",
+    locality: "Rio de Janeiro - RJ",
+    service: "Subir parede",
+    contactName: "Ana Costa",
+    isVerified: false,
+    function: "Subir parede",
+    salary: "250050",
+    model: "por mês",
+  },
+  {
+    id: 3,
+    name: "Ana Souza",
+    valueType: "por projeto",
+    locality: "Belo Horizonte - MG",
+    service: "Fazer um sistema",
+    contactName: "Pedro Almeida",
+    isVerified: true,
+    function: "Fazer um sistema",
+    salary: "300075",
+    model: "por projeto",
+  },
+  {
+    id: 4,
+    name: "José Lima",
+    valueType: "a combinar",
+    locality: "Curitiba - PR",
+    service: "Limpar minha casa",
+    contactName: "Mariana Santos",
+    isVerified: false,
+    function: "Limpar minha casa",
+    salary: "80025",
+    model: "a combinar",
+  },
+  {
+    id: 5,
+    name: "Fernanda Ribeiro",
+    valueType: "por mês",
+    locality: "Porto Alegre - RS",
+    service: "Pintar minha casa",
+    contactName: "Lucas Ferreira",
+    isVerified: true,
+    function: "Pintar minha casa",
+    salary: "200000",
+    model: "por mês",
+  },
+  {
+    id: 6,
+    name: "Rafael Mendes",
+    valueType: "por projeto",
+    locality: "Salvador - BA",
+    service: "Subir parede",
+    contactName: "Camila Oliveira",
+    isVerified: false,
+    function: "Subir parede",
+    salary: "350090",
+    model: "por projeto",
+  },
+  {
+    id: 7,
+    name: "Patrícia Gomes",
+    valueType: "a combinar",
+    locality: "Fortaleza - CE",
+    service: "Fazer um sistema",
+    contactName: "Thiago Pereira",
+    isVerified: true,
+    function: "Fazer um sistema",
+    salary: "a combinar",
+    model: "a combinar",
+  },
+  {
+    id: 8,
+    name: "Luiz Carvalho",
+    valueType: "por mês",
+    locality: "Manaus - AM",
+    service: "Limpar minha casa",
+    contactName: "Juliana Lima",
+    isVerified: false,
+    function: "Limpar minha casa",
+    salary: "120060",
+    model: "por mês",
+  },
+];
+
   return (
     <View style={styles.container} className="px-4 py-2">
       <FlatList
-        data={data}
+        data={fakeData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ paddingBottom: 30 }}

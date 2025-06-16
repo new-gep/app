@@ -38,15 +38,44 @@ export default function Mask(type: MaskType, value: string | number): string {
       return maskedValue;
     }
     case "amount": {
-      if (value == "") {
-        return "";
+      const stringValue = value?.toString().trim();
+
+      // Se for null, undefined ou string vazia, retorna vazio
+      if (!stringValue || stringValue === "") return "";
+
+      // Verifica se é uma frase específica como "a combinar"
+      const isPhrase = ["a combinar", "por mês", "por projeto"].includes(
+        stringValue.toLowerCase()
+      );
+      console.log(isPhrase)
+      if (isPhrase) return stringValue;
+
+      // Verifica se é um número válido (aceita ponto ou vírgula como separador decimal)
+      const isNumeric = /^-?\d+(?:[.,]\d+)?$/.test(stringValue);
+
+      if (isNumeric) {
+        // Normaliza o valor: substitui vírgula por ponto e remove caracteres inválidos
+        const normalizedValue = stringValue
+          .replace(/[^0-9.,-]/g, "") // Remove tudo que não for dígito, ponto, vírgula ou sinal
+          .replace(/,/, ".") // Substitui a primeira vírgula por ponto
+          .replace(/\.+/g, "."); // Garante que só haja um ponto
+
+        const numericValue = Number(normalizedValue);
+
+        if (!isNaN(numericValue)) {
+          // Divide por 100 assumindo que o valor está em centavos
+          return (numericValue / 100).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+        } else {
+          console.log("Failed to convert:", stringValue, "to", normalizedValue); // Debug
+        }
       }
 
-      const formattedAmount = (Number(value) / 100).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
-      return formattedAmount;
+      // Se não for número válido, retorna o valor original
+      console.log("Returning original value:", stringValue); // Debug
+      return stringValue;
     }
     case "cpf": {
       return value
@@ -172,17 +201,17 @@ export default function Mask(type: MaskType, value: string | number): string {
         .replace(/^(\d{5})(\d)/, "$1-$2") // Insere o hífen depois dos 5 primeiros números
         .slice(0, 9);
     }
-    case "formatMonthYear":{
-       const cleaned = value.toString().replace(/\D/g, '');
+    case "formatMonthYear": {
+      const cleaned = value.toString().replace(/\D/g, "");
 
-        // Aplica a máscara MM/YYYY
-        if (cleaned.length <= 2) {
-          return cleaned;
-        } else if (cleaned.length <= 6) {
-          return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
-        } else {
-          return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 6)}`;
-        }
+      // Aplica a máscara MM/YYYY
+      if (cleaned.length <= 2) {
+        return cleaned;
+      } else if (cleaned.length <= 6) {
+        return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+      } else {
+        return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 6)}`;
+      }
     }
     default: {
       return value.toString();
