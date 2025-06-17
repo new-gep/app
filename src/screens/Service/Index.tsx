@@ -93,53 +93,57 @@ export default function Service() {
 
         {/* Stack de conteúdo */}
         <View style={{ height: 400, position: "relative" }}>
-          {/* Fix */}
-          <Animated.View
-            pointerEvents={activeTab === "Fix" ? "auto" : "none"}
-            style={{
-              position: "absolute",
-              width: "100%",
-              transform: [
-                {
-                  translateY: fixAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 50],
-                  }),
-                },
-              ],
-              opacity: fixAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0],
-              }),
-            }}
-          >
-            <CardFix />
-            <CardFix2 />
-          </Animated.View>
+  {/* Fix */}
+  <Animated.View
+    style={{
+      position: "absolute",
+      width: "100%",
+      zIndex: activeTab === "Fix" ? 2 : 1,
+      pointerEvents: activeTab === "Fix" ? "auto" : "none",
+      transform: [
+        {
+          translateY: fixAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 50],
+          }),
+        },
+      ],
+      opacity: fixAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0],
+      }),
+    }}
+  >
+    <CardFix />
+    <CardFix2 />
+  </Animated.View>
 
-          {/* Flex */}
-          <Animated.View
-            style={{
-              position: "absolute",
-              width: "100%",
-              transform: [
-                {
-                  translateY: flexAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 50],
-                  }),
-                },
-              ],
-              opacity: flexAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0],
-              }),
-            }}
-          >
-            <CardFlex />
-            <CardFlex2 />
-          </Animated.View>
-        </View>
+  {/* Flex */}
+  <Animated.View
+    style={{
+      position: "absolute",
+      width: "100%",
+      zIndex: activeTab === "empresa" ? 2 : 1,
+      pointerEvents: activeTab === "empresa" ? "auto" : "none",
+      transform: [
+        {
+          translateY: flexAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 50],
+          }),
+        },
+      ],
+      opacity: flexAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0],
+      }),
+    }}
+  >
+    <CardFlex />
+    <CardFlex2 />
+  </Animated.View>
+</View>
+
       </Animated.ScrollView>
     </View>
   );

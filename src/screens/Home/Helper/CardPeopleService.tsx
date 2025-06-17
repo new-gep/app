@@ -1,4 +1,9 @@
-import { Building2, ChevronRight, EllipsisVertical, UserRound } from "lucide-react-native";
+import {
+  Building2,
+  ChevronRight,
+  EllipsisVertical,
+  UserRound,
+} from "lucide-react-native";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   Animated,
@@ -41,7 +46,6 @@ const SwipeableCard = React.memo(function SwipeableCard({
   navigateToCardInformation,
 }: any) {
   const translateX = useRef(new Animated.Value(0)).current;
-
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gesture) => Math.abs(gesture.dx) > 10,
@@ -73,9 +77,16 @@ const SwipeableCard = React.memo(function SwipeableCard({
       },
     })
   ).current;
-
+  const [visible, setVisible] = useState<boolean>(false);
   return (
     <View style={styles.cardWrapper}>
+      <PeopleInformation
+        handleSwipeRight={onSwipeRight}
+        visible={visible}
+        setVisible={setVisible}
+        jobData={item}
+        peopleData={item}
+      />
       {isMenuVisible && (
         <View className="flex-row absolute right-0 h-full px-4 py-2">
           <TouchableOpacity
@@ -84,7 +95,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
               Animated.spring(translateX, {
                 toValue: 0,
                 useNativeDriver: true,
-              }).start(() => onSwipeLeft(item.id));
+              }).start(() => setVisible(true));
             }}
           >
             <EllipsisVertical size={rf(25)} />
@@ -168,6 +179,8 @@ export default function CathoStyleCards({
   };
 
   const handleSwipeRight = async (id: any) => {
+    showPopupMessage("Você aplicou para a vaga com sucesso!");
+    return;
     if (!collaborator) {
       showPopupMessage("Você precisa estar logado para aplicar!");
       return;
@@ -189,10 +202,10 @@ export default function CathoStyleCards({
     }
   };
 
-  const navigateToCardInformation = ({data}:any) => {
-    navigation.navigate("CardInformation", {
+  const navigateToCardInformation = ({ data }: any) => {
+    navigation.navigate("CardInformationPeople", {
       cardData: data,
-      onSwipeLeft: ()=>handleSwipeRight(data.id),
+      onSwipeLeft: () => handleSwipeRight(data.id),
     });
   };
 
@@ -200,7 +213,9 @@ export default function CathoStyleCards({
     ({ item }: any) => {
       return (
         <SwipeableCard
-          navigateToCardInformation={() => navigateToCardInformation({ data: item })}
+          navigateToCardInformation={() =>
+            navigateToCardInformation({ data: item })
+          }
           item={item}
           isMenuVisible={visibleMenuIds.includes(item.id)}
           setMenuVisible={setMenuVisible}
@@ -213,103 +228,135 @@ export default function CathoStyleCards({
   );
 
   const fakeData = [
-  {
-    id: 1,
-    name: "Maria Oliveira",
-    valueType: "a combinar",
-    locality: "São Paulo - SP",
-    service: "Pintar minha casa",
-    contactName: "João Silva",
-    isVerified: true,
-    function: "Pintar minha casa",
-    salary: "150000",
-    model: "a combinar",
-  },
-  {
-    id: 2,
-    name: "Carlos Pereira",
-    valueType: "por mês",
-    locality: "Rio de Janeiro - RJ",
-    service: "Subir parede",
-    contactName: "Ana Costa",
-    isVerified: false,
-    function: "Subir parede",
-    salary: "250050",
-    model: "por mês",
-  },
-  {
-    id: 3,
-    name: "Ana Souza",
-    valueType: "por projeto",
-    locality: "Belo Horizonte - MG",
-    service: "Fazer um sistema",
-    contactName: "Pedro Almeida",
-    isVerified: true,
-    function: "Fazer um sistema",
-    salary: "300075",
-    model: "por projeto",
-  },
-  {
-    id: 4,
-    name: "José Lima",
-    valueType: "a combinar",
-    locality: "Curitiba - PR",
-    service: "Limpar minha casa",
-    contactName: "Mariana Santos",
-    isVerified: false,
-    function: "Limpar minha casa",
-    salary: "80025",
-    model: "a combinar",
-  },
-  {
-    id: 5,
-    name: "Fernanda Ribeiro",
-    valueType: "por mês",
-    locality: "Porto Alegre - RS",
-    service: "Pintar minha casa",
-    contactName: "Lucas Ferreira",
-    isVerified: true,
-    function: "Pintar minha casa",
-    salary: "200000",
-    model: "por mês",
-  },
-  {
-    id: 6,
-    name: "Rafael Mendes",
-    valueType: "por projeto",
-    locality: "Salvador - BA",
-    service: "Subir parede",
-    contactName: "Camila Oliveira",
-    isVerified: false,
-    function: "Subir parede",
-    salary: "350090",
-    model: "por projeto",
-  },
-  {
-    id: 7,
-    name: "Patrícia Gomes",
-    valueType: "a combinar",
-    locality: "Fortaleza - CE",
-    service: "Fazer um sistema",
-    contactName: "Thiago Pereira",
-    isVerified: true,
-    function: "Fazer um sistema",
-    salary: "a combinar",
-    model: "a combinar",
-  },
-  {
-    id: 8,
-    name: "Luiz Carvalho",
-    valueType: "por mês",
-    locality: "Manaus - AM",
-    service: "Limpar minha casa",
-    contactName: "Juliana Lima",
-    isVerified: false,
-    function: "Limpar minha casa",
-    salary: "120060",
-    model: "por mês",
-  },
-];
+    {
+      id: 1,
+      name: "Maria Oliveira",
+      valueType: "a combinar",
+      locality: "São Paulo - SP",
+      service: "Pintar minha casa",
+      contactName: "João Silva",
+      isVerified: true,
+      function: "Pintar minha casa",
+      salary: "150000",
+      model: "a combinar",
+      phone: "1193291233",
+      info: "Serviço de pintura residencial completo, com material incluso.",
+      included: "Tinta, mão de obra, limpeza após serviço.",
+      notIncluded: "Movimentação de móveis, reparos em paredes.",
+    },
+    {
+      id: 2,
+      name: "Carlos Pereira",
+      valueType: "por mês",
+      locality: "Rio de Janeiro - RJ",
+      service: "Subir parede",
+      contactName: "Ana Costa",
+      isVerified: false,
+      function: "Subir parede",
+      salary: "250050",
+      model: "por mês",
+      phone: "1193291233",
+      info: "Serviço para construção de paredes internas e externas.",
+      included: "Mão de obra, nivelamento e acabamento básico.",
+      notIncluded: "Materiais como tijolos e cimento, pintura.",
+    },
+    {
+      id: 3,
+      name: "Ana Souza",
+      valueType: "por projeto",
+      locality: "Belo Horizonte - MG",
+      service: "Fazer um sistema",
+      contactName: "Pedro Almeida",
+      isVerified: true,
+      function: "Fazer um sistema",
+      salary: "300075",
+      model: "por projeto",
+      phone: "1193291233",
+      info: "Desenvolvimento de sistema web completo.",
+      included: "Levantamento de requisitos, codificação, testes.",
+      notIncluded: "Hospedagem, manutenção pós-entrega.",
+    },
+    {
+      id: 4,
+      name: "José Lima",
+      valueType: "a combinar",
+      locality: "Curitiba - PR",
+      service: "Limpar minha casa",
+      contactName: "Mariana Santos",
+      isVerified: false,
+      function: "Limpar minha casa",
+      salary: "80025",
+      model: "a combinar",
+      phone: "1193291233",
+      info: "Limpeza residencial com produtos básicos.",
+      included: "Limpeza de chão, banheiros e superfícies.",
+      notIncluded: "Limpeza de vidros externos, organização de armários.",
+    },
+    {
+      id: 5,
+      name: "Fernanda Ribeiro",
+      valueType: "por mês",
+      locality: "Porto Alegre - RS",
+      service: "Pintar minha casa",
+      contactName: "Lucas Ferreira",
+      isVerified: true,
+      function: "Pintar minha casa",
+      salary: "200000",
+      model: "por mês",
+      phone: "1193291233",
+      info: "Pintura com acabamento premium para áreas internas.",
+      included: "Tinta premium, mão de obra qualificada.",
+      notIncluded: "Texturização de paredes, pintura externa.",
+    },
+    {
+      id: 6,
+      name: "Rafael Mendes",
+      valueType: "por projeto",
+      locality: "Salvador - BA",
+      service: "Subir parede",
+      contactName: "Camila Oliveira",
+      isVerified: false,
+      function: "Subir parede",
+      salary: "350090",
+      model: "por projeto",
+      phone: "1193291233",
+      info: "Construção de parede de alvenaria com acabamento.",
+      included: "Mão de obra, alinhamento e reboco.",
+      notIncluded: "Materiais, remoção de entulho.",
+    },
+    {
+      id: 7,
+      name: "Patrícia Gomes",
+      valueType: "a combinar",
+      locality: "Fortaleza - CE",
+      service: "Fazer um sistema",
+      contactName: "Thiago Pereira",
+      isVerified: true,
+      function: "Fazer um sistema",
+      salary: "a combinar",
+      model: "a combinar",
+      phone: "1193291233",
+      info: "Desenvolvimento de sistema personalizado conforme demanda.",
+      included: "Documentação técnica, deploy inicial.",
+      notIncluded: "Suporte contínuo, treinamento da equipe.",
+    },
+    {
+      id: 8,
+      name: "Luiz Carvalho",
+      valueType: "por mês",
+      locality: "Manaus - AM",
+      service: "Limpar minha casa",
+      contactName: "Juliana Lima",
+      isVerified: false,
+      function: "Limpar minha casa",
+      salary: "120060",
+      model: "por mês",
+      phone: "1193291233",
+      info: "Serviço mensal de limpeza de casa com agendamento fixo.",
+      included: "Limpeza geral e troca de lixo.",
+      notIncluded: "Lavagem de roupas, passadoria.",
+    },
+  ];
 
   return (
     <View style={styles.container} className="px-4 py-2">

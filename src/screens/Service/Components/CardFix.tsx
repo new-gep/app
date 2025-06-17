@@ -64,7 +64,7 @@ export default function Card() {
           renderLeftActions={(progress) => renderLeftActions(progress)}
         >
           <TouchableOpacity
-            activeOpacity={0.7}
+
             className="w-full bg-white border-b border-zinc-300 rounded-lg p-3 flex-row items-center"
             style={{ height: rf(80) }}
           >

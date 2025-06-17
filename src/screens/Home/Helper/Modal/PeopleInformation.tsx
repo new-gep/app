@@ -10,7 +10,11 @@ import {
   Banknote,
   MapPin,
   Accessibility,
-  Shapes
+  Shapes,
+  UserRound,
+  HandCoins,
+  CircleCheckBig,
+  Phone,
 } from "lucide-react-native";
 import Modal from "react-native-modal";
 import { rf } from "~/src/hooks/utils/responsiveFont";
@@ -18,24 +22,27 @@ import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import { useNavigation } from "@react-navigation/native";
 
-const PeopleInformation = ({ handleSwipeRight ,visible, setVisible, jobData }: any) => {
-  const handleShare = () => {
-    
-  };
+const PeopleInformation = ({
+  handleSwipeRight,
+  visible,
+  setVisible,
+  peopleData,
+}: any) => {
+  const handleShare = () => {};
 
   const handleView = () => {
-    navigation.navigate("CardInformation", {
-      cardData: jobData,
-      onSwipeLeft: () => handleSwipeRight(jobData.id),
+    navigation.navigate("CardInformationPeople", {
+      cardData: peopleData,
+      onSwipeLeft: () => handleSwipeRight(peopleData.id),
     });
   };
 
   const handleApply = () => {
-    handleSwipeRight()
+    handleSwipeRight();
   };
 
-  // Fallback data if jobData is not provided
-  const defaultJobData = {
+  // Fallback data if peopleData is not provided
+  const defaultpeopleData = {
     doctorName: "Gerente RH Sênior",
     specialty: "Empresa Confidencial",
     date: "Wed, Jul 19",
@@ -44,7 +51,7 @@ const PeopleInformation = ({ handleSwipeRight ,visible, setVisible, jobData }: a
     description: "I feel really sick in my tummy, I think...",
     rating: 4.3,
   };
-  const data = jobData || defaultJobData;
+  const data = peopleData || defaultpeopleData;
   const navigation = useNavigation();
 
   return (
@@ -69,59 +76,72 @@ const PeopleInformation = ({ handleSwipeRight ,visible, setVisible, jobData }: a
         <View className="px-5 pb-4">
           <View className="flex-row items-center mb-6">
             <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
-              <Building2 size={rf(25)} />
+              <UserRound size={rf(25)} />
             </View>
             <View>
-              <Text style={{...FONTS.fontSemiBold, fontSize:rf(16)}}>
-                {data.function}
+              <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
+                {peopleData.function}
               </Text>
-              <Text style={{...FONTS.fontBlack, fontSize:rf(12), color:'#6b7280'}} className="text-sm text-gray-500">
-                {data.company?.company_name || "Empresa confidencial"}
-            </Text>
+              <Text
+                style={{
+                  ...FONTS.fontBlack,
+                  fontSize: rf(12),
+                  color: "#6b7280",
+                }}
+                className="text-sm text-gray-500"
+              >
+                {peopleData.name || "Empresa confidencial"}
+              </Text>
             </View>
-            {/* <View className="ml-auto flex-row items-center bg-green-100 px-2 py-1 rounded-full">
-              <BadgeCheck size={rf(20)} color="#10b981" />
-              <Text className="text-xs text-green-600 font-semibold ml-1">
-                {data.rating}/5
-              </Text>
-            </View> */}
+            {peopleData.isVerified && (
+              <View className="ml-auto flex-row items-center justify-center bg-green-100 px-2 py-1 rounded-full">
+                <Text
+                  style={{
+                    ...FONTS.fontSemiBold,
+                    fontSize: rf(8),
+                    color: "#10b981",
+                  }}
+                  className="mr-1"
+                >
+                  Verificado
+                </Text>
+                <CircleCheckBig size={rf(20)} color="#10b981" />
+              </View>
+            )}
           </View>
 
           {/* Job Details */}
-          <View className="p-2 mb-4 bg-gray-50 rounded-xl flex-row justify-between">
+          <View className="p-2 mb-4 bg-gray-50 rounded-xl flex-row justify-evenly">
             <View className="gap-4">
-                <View className="flex-row items-center">
-                    <Banknote size={rf(16)}/>
-                    <Text style={{...FONTS.fontBlack,fontSize:rf(11)}}>{Mask("amount", jobData.salary)}</Text>
-                </View>
-                <View className="flex-row items-center">
-                    <MapPin size={rf(16)}/>
-                    <Text style={{...FONTS.fontBlack, fontSize:rf(11)}}>{jobData.locality}</Text>
-                </View>
+              <View className="flex-row items-center">
+                <Banknote size={rf(16)} />
+                <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
+                  {Mask("amount", peopleData.salary)}
+                </Text>
+              </View>
+              <View className="flex-row items-center">
+                <HandCoins size={rf(16)} />
+                <Text
+                  className="capitalize"
+                  style={{ ...FONTS.fontBlack, fontSize: rf(11) }}
+                >
+                  {peopleData.valueType}
+                </Text>
+              </View>
             </View>
             <View className="gap-4">
-                <View className="flex-row items-center">
-                    <FileText size={rf(16)}/>
-                    <Text style={{...FONTS.fontBlack, fontSize:rf(11)}}>{jobData.contract}</Text>
-                </View>
-                <View className="flex-row items-center">
-                    <BriefcaseBusiness size={rf(16)}/>
-                    <Text style={{...FONTS.fontBlack, fontSize:rf(11)}}>{jobData.model}</Text>
-                </View>
-            </View>
-            <View className="gap-4">
-                { jobData.DEI &&
-                    <View className="flex-row  items-center">
-                        <Shapes size={rf(16)}/>
-                        <Text style={{...FONTS.fontBlack, fontSize:rf(11)}}>Vaga Afirmativa</Text>
-                    </View>
-                }
-                { jobData.PCD &&
-                    <View className="flex-row items-center">
-                        <Accessibility size={rf(16)}/>
-                        <Text style={{...FONTS.fontBlack, fontSize:rf(11)}}>Vaga PCD</Text>
-                    </View>
-                }
+              <View className="flex-row items-center">
+                <Phone size={rf(16)} />
+                <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
+                  {Mask('hiddenPhone',peopleData.phone)}
+                </Text>
+              </View>
+              <View className="flex-row items-center">
+                <MapPin size={rf(16)} />
+                <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
+                  {peopleData.locality}
+                </Text>
+              </View>
             </View>
           </View>
 

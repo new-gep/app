@@ -86,6 +86,7 @@ import Create from "../screens/Profile/Announcement/Create/Index";
 import Active from "../screens/Profile/Announcement/Active/Index";
 import History from "../screens/Profile/Announcement/History/Index";
 import Notification from "../screens/Home/Helper/Notification";
+import CardInformationPeople from "../screens/Home/Helper/CardInformationService";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -178,6 +179,7 @@ const StackNavigator = () => {
         <Stack.Screen name="AnnouncementActive" component={Active} />
         <Stack.Screen name="AnnouncementHistory" component={History} />
         <Stack.Screen name="Social" component={Social} />
+        <Stack.Screen name="CardInformationPeople" component={CardInformationPeople}/>
         <Stack.Screen name="CardInformation" component={CardInformation} />
       </Stack.Navigator>
     </View>

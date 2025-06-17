@@ -47,7 +47,7 @@ export default function Mask(type: MaskType, value: string | number): string {
       const isPhrase = ["a combinar", "por mês", "por projeto"].includes(
         stringValue.toLowerCase()
       );
-      console.log(isPhrase)
+      console.log(isPhrase);
       if (isPhrase) return stringValue;
 
       // Verifica se é um número válido (aceita ponto ou vírgula como separador decimal)
@@ -177,7 +177,14 @@ export default function Mask(type: MaskType, value: string | number): string {
     }
     case "hiddenPhone": {
       const telefoneLimpo = value.toString().replace(/\D/g, "");
-      return `(${telefoneLimpo.slice(0, 2)}) ${telefoneLimpo.slice(2, 7)}-****`;
+
+      const ddd = telefoneLimpo.slice(0, 2); // (11)
+      const firstDigit = telefoneLimpo[2]; // 9
+      const hidden = "***"; // ***
+      const midVisible = telefoneLimpo.slice(6, 8); // 23
+      const endHidden = "**"; // **
+
+      return `(${ddd}) ${firstDigit}${hidden}${midVisible}${endHidden}`;
     }
     case "hiddenEmail": {
       const [usuario, dominio] = value.toString().split("@");

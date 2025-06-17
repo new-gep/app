@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from "react-native";
 import Card from "./Card";
-import CardPeople from "./Helper/CardPeople";
+import CardPeople from "./Helper/CardPeopleService";
 import GetAllJob from "../../hooks/get/job/all";
 import useCollaborator from "../../function/fetchCollaborator";
 import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
