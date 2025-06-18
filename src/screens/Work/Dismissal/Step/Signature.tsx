@@ -195,8 +195,6 @@ const DismissalSignature = ({ jobConected, CPF }: Props) => {
         .filter((value) => typeof value === "boolean")
         .every((value) => value === true);
 
-      console.log("LockSignature convertido:", lockSignatureObj);
-      console.log("Todos os documentos foram visualizados?", allTrue);
       setKeySignature(allTrue);
     }
   }, [lockSignature]);

@@ -111,7 +111,6 @@ const CardInformation = ({ route }: CardInformationProps) => {
             : cardData.candidates;
 
         if (!Array.isArray(parsedCandidates)) {
-          console.log("Candidates is not an array after parsing");
           return;
         }
 

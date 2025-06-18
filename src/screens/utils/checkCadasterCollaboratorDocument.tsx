@@ -55,7 +55,6 @@ export default function CheckCadasterCollaboratorDocument() {
                 // Garantir que missingDocuments e missingFields são arrays
                 const missingDocuments = Array.isArray(parsedMissingDates.missingDocuments) ? parsedMissingDates.missingDocuments : [];
                 // const missingFields    = Array.isArray(parsedMissingDates.missingFields) ? parsedMissingDates.missingFields : [];
-                console.log(missingDocuments)
                 const newMissingDate = {
                     RG: missingDocuments.includes("RG"),
                     Work_Card: missingDocuments.includes("Work_Card"),
@@ -69,7 +68,6 @@ export default function CheckCadasterCollaboratorDocument() {
                     // Marriage: missingFields.includes("marriage"),
                     // Children: missingFields.includes("children"),
                 };
-                console.log(newMissingDate)
                 setMissingDate(newMissingDate);
             }else{
                 const newMissingDate = {

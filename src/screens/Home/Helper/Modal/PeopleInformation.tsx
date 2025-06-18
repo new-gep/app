@@ -15,12 +15,16 @@ import {
   HandCoins,
   CircleCheckBig,
   Phone,
+  Check,
+  CircleCheck,
 } from "lucide-react-native";
 import Modal from "react-native-modal";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import { useNavigation } from "@react-navigation/native";
+import { SwipeModal } from "@takuma-ru/vue-swipe-modal";
+
 
 const PeopleInformation = ({
   handleSwipeRight,
@@ -57,13 +61,18 @@ const PeopleInformation = ({
   return (
     <Modal
       isVisible={visible}
+      swipeDirection="down" // 📌 habilita o gesto para baixo
+      onSwipeComplete={() => setVisible(false)} // 📌 fecha ao completar o swipe
+      onBackdropPress={() => setVisible(false)}
+      onBackButtonPress={() => setVisible(false)}
       animationIn="slideInUp"
       animationOut="slideOutDown"
       animationInTiming={300}
       animationOutTiming={300}
-      onBackdropPress={() => setVisible(false)}
       backdropOpacity={0.8}
       useNativeDriver={true}
+      propagateSwipe={true}
+      hideModalContentWhileAnimating={true} // opcional, evita flashes
       style={{ margin: 0, justifyContent: "flex-end" }}
     >
       <View className="w-full bg-white rounded-t-3xl overflow-hidden shadow-lg">
@@ -75,8 +84,34 @@ const PeopleInformation = ({
         {/* Job Header */}
         <View className="px-5 pb-4">
           <View className="flex-row items-center mb-6">
-            <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
-              <UserRound size={rf(25)} />
+            <View className="mr-3" style={{ position: "relative" }}>
+              {peopleData.photoUri ? (
+                <Image
+                  source={{ uri: peopleData.photoUri }}
+                  style={{ width: rf(43), height: rf(43) }}
+                  className="w-12 h-12 rounded-full"
+                  resizeMode="cover"
+                />
+              ) : (
+                <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
+                  <UserRound size={rf(25)} />
+                </View>
+              )}
+
+              {peopleData.isVerified && (
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    height: rf(13),
+                    width: rf(13),
+                  }}
+                  className="rounded-full bg-primary items-center justify-center "
+                >
+                  <Check className="text-dark" size={rf(10)} />
+                </View>
+              )}
             </View>
             <View>
               <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
@@ -94,18 +129,17 @@ const PeopleInformation = ({
               </Text>
             </View>
             {peopleData.isVerified && (
-              <View className="ml-auto flex-row items-center justify-center bg-green-100 px-2 py-1 rounded-full">
+              <View className="ml-auto flex-row items-center justify-center bg-primary px-2 py-1 rounded-full">
                 <Text
                   style={{
                     ...FONTS.fontSemiBold,
                     fontSize: rf(8),
-                    color: "#10b981",
                   }}
-                  className="mr-1"
+                  className="mr-1 text-dark"
                 >
                   Verificado
                 </Text>
-                <CircleCheckBig size={rf(20)} color="#10b981" />
+                <CircleCheck size={rf(20)} className="text-dark" />
               </View>
             )}
           </View>
@@ -133,7 +167,7 @@ const PeopleInformation = ({
               <View className="flex-row items-center">
                 <Phone size={rf(16)} />
                 <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                  {Mask('hiddenPhone',peopleData.phone)}
+                  {Mask("hiddenPhone", peopleData.phone)}
                 </Text>
               </View>
               <View className="flex-row items-center">

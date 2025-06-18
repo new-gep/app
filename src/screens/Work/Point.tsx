@@ -79,9 +79,6 @@ const Point = () => {
           year,
           monthInEnglish
         );
-
-        console.log("Retorno do ponto:", response.length);
-
         const validDocuments = Array.isArray(response)
           ? response.filter((doc) => doc !== null)
           : [];

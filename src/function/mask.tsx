@@ -47,7 +47,6 @@ export default function Mask(type: MaskType, value: string | number): string {
       const isPhrase = ["a combinar", "por mês", "por projeto"].includes(
         stringValue.toLowerCase()
       );
-      console.log(isPhrase);
       if (isPhrase) return stringValue;
 
       // Verifica se é um número válido (aceita ponto ou vírgula como separador decimal)
@@ -74,7 +73,6 @@ export default function Mask(type: MaskType, value: string | number): string {
       }
 
       // Se não for número válido, retorna o valor original
-      console.log("Returning original value:", stringValue); // Debug
       return stringValue;
     }
     case "cpf": {

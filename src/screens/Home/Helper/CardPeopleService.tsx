@@ -3,6 +3,24 @@ import {
   ChevronRight,
   EllipsisVertical,
   UserRound,
+  Building,
+  Wrench,
+  BookOpen,
+  House,
+  Monitor,
+  Scissors,
+  Hammer,
+  HeartPulse,
+  Shirt,
+  GraduationCap,
+  CarFront,
+  Handshake,
+  MonitorSmartphone,
+  PartyPopper,
+  BadgeCheck,
+  Trash,
+  CheckCheck,
+  Check,
 } from "lucide-react-native";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
@@ -16,6 +34,7 @@ import {
   Dimensions,
   LayoutAnimation,
   Platform,
+  Image,
   UIManager,
 } from "react-native";
 import { FONTS } from "~/src/constants/theme";
@@ -24,6 +43,7 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import Mask from "~/src/function/mask";
 import { useNavigation } from "@react-navigation/native";
 import PeopleInformation from "./Modal/PeopleInformation";
+import { Swipeable } from "react-native-gesture-handler";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = 120;
@@ -45,98 +65,174 @@ const SwipeableCard = React.memo(function SwipeableCard({
   setMenuVisible,
   navigateToCardInformation,
 }: any) {
-  const translateX = useRef(new Animated.Value(0)).current;
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gesture) => Math.abs(gesture.dx) > 10,
-      onPanResponderMove: (_, gesture) => {
-        if (gesture.dx < 0) {
-          translateX.setValue(Math.max(gesture.dx, -OPTIONS_WIDTH));
-        } else {
-          translateX.setValue(gesture.dx);
-        }
-      },
-      onPanResponderRelease: (_, gesture) => {
-        if (gesture.dx > SWIPE_THRESHOLD) {
-          Animated.timing(translateX, {
-            toValue: SCREEN_WIDTH,
-            duration: 300,
-            useNativeDriver: true,
-          }).start(() => onSwipeRight(item.id));
-        } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          Animated.spring(translateX, {
-            toValue: -OPTIONS_WIDTH,
-            useNativeDriver: true,
-          }).start(() => setMenuVisible(item.id, true));
-        } else {
-          Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start(() => setMenuVisible(item.id, false));
-        }
-      },
-    })
-  ).current;
   const [visible, setVisible] = useState<boolean>(false);
-  return (
-    <View style={styles.cardWrapper}>
-      <PeopleInformation
-        handleSwipeRight={onSwipeRight}
-        visible={visible}
-        setVisible={setVisible}
-        jobData={item}
-        peopleData={item}
-      />
-      {isMenuVisible && (
-        <View className="flex-row absolute right-0 h-full px-4 py-2">
-          <TouchableOpacity
-            className="w-10 items-center justify-center"
-            onPress={() => {
-              Animated.spring(translateX, {
-                toValue: 0,
-                useNativeDriver: true,
-              }).start(() => setVisible(true));
-            }}
-          >
-            <EllipsisVertical size={rf(25)} />
-          </TouchableOpacity>
-        </View>
-      )}
-      <Animated.View
-        {...panResponder.panHandlers}
-        style={[
-          styles.cardContainer,
-          { transform: [{ translateX }], marginVertical: 5 },
-        ]}
-      >
+
+  const renderIcon = (categories: string[]) => {
+    return categories.map((category, index) => {
+      switch (category) {
+        case "Assistência Técnica":
+          return (
+            <Wrench className="text-zinc-500 mr-1" size={rf(14)} key={index} />
+          );
+        case "Aulas":
+          return (
+            <GraduationCap
+              className="text-zinc-500 mr-1"
+              size={rf(14)}
+              key={index}
+            />
+          );
+        case "Mecânica e Transportes":
+          return (
+            <CarFront
+              className="text-zinc-500 mr-1"
+              size={rf(14)}
+              key={index}
+            />
+          );
+        case "Consultoria":
+          return (
+            <Handshake
+              className="text-zinc-500 mr-1"
+              size={rf(14)}
+              key={index}
+            />
+          );
+        case "Design e Tecnologia":
+          return (
+            <MonitorSmartphone
+              className="text-zinc-500 mr-1"
+              size={rf(14)}
+              key={index}
+            />
+          );
+        case "Eventos":
+          return (
+            <PartyPopper
+              className="text-zinc-500 mr-1"
+              size={rf(14)}
+              key={index}
+            />
+          );
+        case "Moda e Beleza":
+          return (
+            <Shirt className="text-zinc-500 mr-1" size={rf(14)} key={index} />
+          );
+        case "Reformas e Reparos":
+          return (
+            <Hammer className="text-zinc-500 mr-1" size={rf(14)} key={index} />
+          );
+        case "Saúde":
+          return (
+            <HeartPulse
+              className="text-zinc-500 mr-1"
+              size={rf(14)}
+              key={index}
+            />
+          );
+        case "Serviços Domésticos":
+          return (
+            <House className="text-zinc-500 mr-1" size={rf(14)} key={index} />
+          );
+        default:
+          return <Building size={rf(14)} key={index} />;
+      }
+    });
+  };
+
+  const renderRightActions = (
+    id: number,
+    progress: Animated.AnimatedInterpolation<number>
+  ) => {
+    return (
+      <View className="flex-row">
         <TouchableOpacity
-          className="px-4 py-2 bg-white border-b border-zinc-300 rounded-lg flex-row items-center justify-between"
+          // onPress={() => handleDelete(id)}
+          className="w-20  justify-center items-center"
+        >
+          <EllipsisVertical className="text-dark" size={24} />
+          {/* <Text className="text-white mt-1 text-sm">Apagar</Text> */}
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderLeftActions = (
+    id: number,
+    progress: Animated.AnimatedInterpolation<number>
+  ) => {
+    return (
+      <View className="flex-row">
+        <TouchableOpacity
+          // onPress={() => handleDelete(id)}
+          className="w-20 bg-red-500 justify-center items-center"
+        >
+          <Trash color="#fff" size={24} />
+          {/* <Text className="text-white mt-1 text-sm">Apagar</Text> */}
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  return (
+    <Swipeable
+      key={item.id}
+      renderRightActions={(progress) => renderRightActions(item.id, progress)}
+      leftThreshold={0}
+    >
+      <View>
+        <TouchableOpacity
+          className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
           style={styles.card}
           onPress={navigateToCardInformation}
         >
           <View className="flex-row items-center flex-1">
-            <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
-              <UserRound size={rf(25)} />
+            <View className="mr-3" style={{ position: "relative" }}>
+              {item.photoUri ? (
+                <Image
+                  source={{ uri: item.photoUri }}
+                  style={{ width: rf(43), height: rf(43) }}
+                  className="w-12 h-12 rounded-full"
+                  resizeMode="cover"
+                />
+              ) : (
+                <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
+                  <UserRound size={rf(25)} />
+                </View>
+              )}
+
+              {item.isVerified && (
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    height: rf(13),
+                    width: rf(13),
+                  }}
+                  className="rounded-full bg-primary items-center justify-center"
+                >
+                  <Check className="text-dark" size={rf(10)} />
+                </View>
+              )}
             </View>
+
             <View className="pr-2">
-              <Text
-                style={{ ...FONTS.font, fontSize: rf(12) }}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {item.function}
-              </Text>
-              <Text
-                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                className="text-green-600"
-              >
-                {Mask("amount", item.salary)}
-              </Text>
+              <View className="flex-row items-center ">
+                <Text
+                  style={{ ...FONTS.font, fontSize: rf(12) }}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {item.name}
+                </Text>
+              </View>
+              <View className="flex-row">{renderIcon(item.category)}</View>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.model}
+                {item.workPreferences.contractType?.join(", ")}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
@@ -146,16 +242,18 @@ const SwipeableCard = React.memo(function SwipeableCard({
               </Text>
             </View>
           </View>
-          <View className="ml-2">
+
+          {/* Se quiser o ícone de seta de volta: */}
+          <View>
             <ChevronRight size={rf(20)} />
           </View>
         </TouchableOpacity>
-      </Animated.View>
-    </View>
+      </View>
+    </Swipeable>
   );
 });
 
-export default function CathoStyleCards({
+export default function CardPeople({
   data,
   setCards,
   collaborator,
@@ -231,130 +329,430 @@ export default function CathoStyleCards({
     {
       id: 1,
       name: "Maria Oliveira",
-      valueType: "a combinar",
-      locality: "São Paulo - SP",
-      service: "Pintar minha casa",
-      contactName: "João Silva",
+      service: ["Geladeira", "Lava Louça", "Televisão", "Dança", "Concursos"],
+      category: ["Assistência Técnica", "Aulas"],
       isVerified: true,
-      function: "Pintar minha casa",
-      salary: "150000",
-      model: "a combinar",
-      phone: "1193291233",
-      info: "Serviço de pintura residencial completo, com material incluso.",
-      included: "Tinta, mão de obra, limpeza após serviço.",
-      notIncluded: "Movimentação de móveis, reparos em paredes.",
+      photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
+      birth: "01/10/2001",
+      locality: "São Paulo - SP",
+      about:
+        "Sou uma pessoa dedicada, focada e apaixonada pelo que faço. Sempre busco aprender e crescer profissionalmente.",
+      contact: {
+        phone: "+55 11 91234-5678",
+        email: "joao.silva@email.com",
+        address: "Rua das Flores, 123, São Paulo - SP",
+      },
+      workPreferences: {
+        location: "São Paulo - SP",
+        maxDistanceKm: 50,
+        allowFurtherDistance: true,
+        contractType: ["Autônomo", "CLT"],
+        modality: ["Híbrido", "Presencial"],
+        schedule: ["Dia", "Noite"],
+        mobility: ["Carro", "Moto"],
+        paymentType: ["Por dia", "Por hora", "A combinar"],
+      },
+      social: {
+        instagram: "@meuinsta",
+        facebook: "https://facebook.com/meuperfil",
+        linkedin: "https://linkedin.com/in/meulinkedin",
+        twitter: "@meutwitter",
+        tiktok: "https://www.tiktok.com/@meutiktok",
+        youtube: "https://www.youtube.com/channel/abc123",
+        website: "https://www.meusite.com.br",
+      },
+      personal: {
+        pets: ["Cachorro", "Gato"],
+        diet: ["Onívoro"],
+        loveLanguage: ["Toque Físico", "Tempo de Qualidade"],
+        drinks: ["Sim"],
+        smokes: ["Não"],
+        education: ["Ensino Superior Completo"],
+        communicationType: ["Assertiva", "Passiva"],
+        children: ["3"],
+        marriage: ["Sim"],
+        values: ["Familía", "Trabalho"],
+      },
     },
     {
       id: 2,
-      name: "Carlos Pereira",
-      valueType: "por mês",
+      name: "Carlos Mendes",
+      service: ["Pedreiro", "Pintor", "Encanador"],
+      category: ["Reformas e Reparos"],
+      isVerified: true,
+      photoUri: "https://randomuser.me/api/portraits/men/32.jpg",
+      birth: "12/08/1985",
       locality: "Rio de Janeiro - RJ",
-      service: "Subir parede",
-      contactName: "Ana Costa",
-      isVerified: false,
-      function: "Subir parede",
-      salary: "250050",
-      model: "por mês",
-      phone: "1193291233",
-      info: "Serviço para construção de paredes internas e externas.",
-      included: "Mão de obra, nivelamento e acabamento básico.",
-      notIncluded: "Materiais como tijolos e cimento, pintura.",
+      about:
+        "Tenho mais de 10 anos de experiência com reformas e reparos residenciais.",
+      contact: {
+        phone: "+55 21 98888-0000",
+        email: "carlos.reformas@email.com",
+        address: "Av. das Nações, 45, Rio de Janeiro - RJ",
+      },
+      workPreferences: {
+        location: "Rio de Janeiro - RJ",
+        maxDistanceKm: 30,
+        allowFurtherDistance: false,
+        contractType: ["Autônomo"],
+        modality: ["Presencial"],
+        schedule: ["Dia"],
+        mobility: ["Moto"],
+        paymentType: ["A combinar", "Por dia"],
+      },
+      social: {
+        instagram: "@reformas.carlos",
+      },
+      personal: {
+        pets: ["Não"],
+        diet: ["Onívoro"],
+        loveLanguage: ["Atos de Serviço"],
+        drinks: ["Não"],
+        smokes: ["Sim"],
+        education: ["Ensino Médio Completo"],
+        communicationType: ["Assertiva"],
+        children: ["2"],
+        marriage: ["Sim"],
+        values: ["Honestidade", "Comprometimento"],
+      },
     },
     {
       id: 3,
-      name: "Ana Souza",
-      valueType: "por projeto",
-      locality: "Belo Horizonte - MG",
-      service: "Fazer um sistema",
-      contactName: "Pedro Almeida",
+      name: "Juliana Costa",
+      service: ["Babá", "Personal Organizer", "Cozinheira"],
+      category: ["Serviços Domésticos"],
       isVerified: true,
-      function: "Fazer um sistema",
-      salary: "300075",
-      model: "por projeto",
-      phone: "1193291233",
-      info: "Desenvolvimento de sistema web completo.",
-      included: "Levantamento de requisitos, codificação, testes.",
-      notIncluded: "Hospedagem, manutenção pós-entrega.",
+      photoUri: "https://randomuser.me/api/portraits/women/12.jpg",
+      birth: "27/04/1992",
+      locality: "Belo Horizonte - MG",
+      about:
+        "Amo cuidar de crianças e organizar ambientes com carinho e responsabilidade.",
+      contact: {
+        phone: "+55 31 99876-4321",
+        email: "juliana.costa@email.com",
+        address: "Rua Verde, 88, Belo Horizonte - MG",
+      },
+      workPreferences: {
+        location: "Belo Horizonte - MG",
+        maxDistanceKm: 20,
+        allowFurtherDistance: true,
+        contractType: ["CLT", "Autônomo"],
+        modality: ["Presencial"],
+        schedule: ["Dia"],
+        mobility: ["Transporte Público"],
+        paymentType: ["Por hora"],
+      },
+      social: {
+        facebook: "https://facebook.com/julianacosta",
+      },
+      personal: {
+        pets: ["Cachorro"],
+        diet: ["Vegetariano"],
+        loveLanguage: ["Palavras de Afirmação"],
+        drinks: ["Não"],
+        smokes: ["Não"],
+        education: ["Ensino Médio Completo"],
+        communicationType: ["Empática"],
+        children: ["1"],
+        marriage: ["Não"],
+        values: ["Cuidado", "Paciência"],
+      },
     },
     {
       id: 4,
-      name: "José Lima",
-      valueType: "a combinar",
-      locality: "Curitiba - PR",
-      service: "Limpar minha casa",
-      contactName: "Mariana Santos",
+      name: "Ricardo Almeida",
+      service: ["Desenvolvimento Web", "Marketing Digital", "Web Design"],
+      category: ["Design e Tecnologia"],
       isVerified: false,
-      function: "Limpar minha casa",
-      salary: "80025",
-      model: "a combinar",
-      phone: "1193291233",
-      info: "Limpeza residencial com produtos básicos.",
-      included: "Limpeza de chão, banheiros e superfícies.",
-      notIncluded: "Limpeza de vidros externos, organização de armários.",
+      photoUri: "https://randomuser.me/api/portraits/men/91.jpg",
+      birth: "15/11/1990",
+      locality: "Curitiba - PR",
+      about:
+        "Sou desenvolvedor com foco em performance e experiência do usuário. Atuo há 7 anos na área.",
+      contact: {
+        phone: "+55 41 91234-5678",
+        email: "ricardo.webdev@email.com",
+        address: "Rua Web, 404, Curitiba - PR",
+      },
+      workPreferences: {
+        location: "Remoto",
+        maxDistanceKm: 0,
+        allowFurtherDistance: true,
+        contractType: ["PJ", "Freelancer"],
+        modality: ["Remoto"],
+        schedule: ["Dia", "Noite"],
+        mobility: [],
+        paymentType: ["A combinar"],
+      },
+      social: {
+        linkedin: "https://linkedin.com/in/ricardoalmeida",
+        website: "https://ricardodev.com.br",
+      },
+      personal: {
+        pets: [],
+        diet: ["Onívoro"],
+        loveLanguage: ["Tempo de Qualidade"],
+        drinks: ["Sim"],
+        smokes: ["Não"],
+        education: ["Ensino Superior Completo"],
+        communicationType: ["Assertiva"],
+        children: ["0"],
+        marriage: ["Sim"],
+        values: ["Inovação", "Autonomia"],
+      },
     },
     {
       id: 5,
-      name: "Fernanda Ribeiro",
-      valueType: "por mês",
-      locality: "Porto Alegre - RS",
-      service: "Pintar minha casa",
-      contactName: "Lucas Ferreira",
+      name: "Fernanda Lima",
+      service: ["Manicure e pedicure", "Maquiadores", "Design de sobrancelha"],
+      category: ["Moda e Beleza"],
       isVerified: true,
-      function: "Pintar minha casa",
-      salary: "200000",
-      model: "por mês",
-      phone: "1193291233",
-      info: "Pintura com acabamento premium para áreas internas.",
-      included: "Tinta premium, mão de obra qualificada.",
-      notIncluded: "Texturização de paredes, pintura externa.",
+      photoUri: "https://randomuser.me/api/portraits/women/45.jpg",
+      birth: "08/03/1987",
+      locality: "Salvador - BA",
+      about:
+        "Sou especialista em beleza feminina, com atendimento em domicílio ou salão parceiro.",
+      contact: {
+        phone: "+55 71 98765-1234",
+        email: "fernanda.beauty@email.com",
+        address: "Rua das Flores, 98, Salvador - BA",
+      },
+      workPreferences: {
+        location: "Salvador - BA",
+        maxDistanceKm: 15,
+        allowFurtherDistance: true,
+        contractType: ["Autônomo"],
+        modality: ["Presencial"],
+        schedule: ["Dia", "Fim de Semana"],
+        mobility: ["Moto"],
+        paymentType: ["Por hora"],
+      },
+      social: {
+        instagram: "@fernandabeauty",
+        tiktok: "https://www.tiktok.com/@fernandabeauty",
+      },
+      personal: {
+        pets: ["Gato"],
+        diet: ["Onívoro"],
+        loveLanguage: ["Toque Físico"],
+        drinks: ["Sim"],
+        smokes: ["Não"],
+        education: ["Curso Técnico"],
+        communicationType: ["Expressiva"],
+        children: ["2"],
+        marriage: ["Não"],
+        values: ["Beleza", "Autoestima"],
+      },
     },
     {
       id: 6,
-      name: "Rafael Mendes",
-      valueType: "por projeto",
-      locality: "Salvador - BA",
-      service: "Subir parede",
-      contactName: "Camila Oliveira",
+      name: "Lucas Barbosa",
+      service: ["Eletricista", "Instalação de Câmeras"],
+      category: ["Reformas e Reparos"],
       isVerified: false,
-      function: "Subir parede",
-      salary: "350090",
-      model: "por projeto",
-      phone: "1193291233",
-      info: "Construção de parede de alvenaria com acabamento.",
-      included: "Mão de obra, alinhamento e reboco.",
-      notIncluded: "Materiais, remoção de entulho.",
+      // Sem photoUri
+      birth: "20/07/1983",
+      locality: "Porto Alegre - RS",
+      about:
+        "Profissional certificado em instalações elétricas com foco em segurança e eficiência.",
+      contact: {
+        phone: "+55 51 99887-6543",
+        email: "lucas.eletricista@email.com",
+        address: "Rua dos Cabos, 321, Porto Alegre - RS",
+      },
+      workPreferences: {
+        location: "Porto Alegre - RS",
+        maxDistanceKm: 25,
+        allowFurtherDistance: true,
+        contractType: ["Autônomo"],
+        modality: ["Presencial"],
+        schedule: ["Dia", "Noite"],
+        mobility: ["Carro"],
+        paymentType: ["Por serviço"],
+      },
+      social: {
+        facebook: "https://facebook.com/lucaseletricista",
+      },
+      personal: {
+        pets: ["Não"],
+        diet: ["Onívoro"],
+        loveLanguage: ["Atos de Serviço"],
+        drinks: ["Não"],
+        smokes: ["Não"],
+        education: ["Curso Técnico"],
+        communicationType: ["Objetiva"],
+        children: ["1"],
+        marriage: ["Sim"],
+        values: ["Segurança", "Responsabilidade"],
+      },
     },
     {
       id: 7,
-      name: "Patrícia Gomes",
-      valueType: "a combinar",
-      locality: "Fortaleza - CE",
-      service: "Fazer um sistema",
-      contactName: "Thiago Pereira",
+      name: "Beatriz Souza",
+      service: ["Fotografia", "Edição de Vídeo"],
+      category: ["Aulas"],
       isVerified: true,
-      function: "Fazer um sistema",
-      salary: "a combinar",
-      model: "a combinar",
-      phone: "1193291233",
-      info: "Desenvolvimento de sistema personalizado conforme demanda.",
-      included: "Documentação técnica, deploy inicial.",
-      notIncluded: "Suporte contínuo, treinamento da equipe.",
+      photoUri: "https://randomuser.me/api/portraits/women/56.jpg",
+      birth: "05/05/1995",
+      locality: "Florianópolis - SC",
+      about:
+        "Fotógrafa profissional especializada em ensaios femininos e eventos sociais.",
+      contact: {
+        phone: "+55 48 99123-4567",
+        email: "beatriz.foto@email.com",
+        address: "Av. da Imagem, 55, Florianópolis - SC",
+      },
+      workPreferences: {
+        location: "Florianópolis - SC",
+        maxDistanceKm: 10,
+        allowFurtherDistance: false,
+        contractType: ["Freelancer"],
+        modality: ["Presencial"],
+        schedule: ["Dia"],
+        mobility: ["Carro"],
+        paymentType: ["Por serviço"],
+      },
+      social: {
+        instagram: "@beatrizfoto",
+        website: "https://beatrizsouzafotografia.com.br",
+      },
+      personal: {
+        pets: ["Gato"],
+        diet: ["Vegetariano"],
+        loveLanguage: ["Tempo de Qualidade"],
+        drinks: ["Não"],
+        smokes: ["Não"],
+        education: ["Ensino Superior Incompleto"],
+        communicationType: ["Empática"],
+        children: ["0"],
+        marriage: ["Não"],
+        values: ["Criatividade", "Liberdade"],
+      },
     },
     {
       id: 8,
-      name: "Luiz Carvalho",
-      valueType: "por mês",
-      locality: "Manaus - AM",
-      service: "Limpar minha casa",
-      contactName: "Juliana Lima",
+      name: "Renato Farias",
+      service: ["Motoboy", "Entregas Expressas"],
+      category: ["Mecânica e Transportes"],
       isVerified: false,
-      function: "Limpar minha casa",
-      salary: "120060",
-      model: "por mês",
-      phone: "1193291233",
-      info: "Serviço mensal de limpeza de casa com agendamento fixo.",
-      included: "Limpeza geral e troca de lixo.",
-      notIncluded: "Lavagem de roupas, passadoria.",
+      // Sem photoUri
+      birth: "22/02/1990",
+      locality: "Campinas - SP",
+      about:
+        "Atendo entregas urgentes com rapidez e responsabilidade. Conheço bem a região.",
+      contact: {
+        phone: "+55 19 98765-4321",
+        email: "renato.moto@email.com",
+        address: "Rua das Entregas, 88, Campinas - SP",
+      },
+      workPreferences: {
+        location: "Campinas - SP",
+        maxDistanceKm: 50,
+        allowFurtherDistance: false,
+        contractType: ["Autônomo"],
+        modality: ["Presencial"],
+        schedule: ["Dia", "Noite"],
+        mobility: ["Moto"],
+        paymentType: ["Por entrega", "A combinar"],
+      },
+      social: {},
+      personal: {
+        pets: [],
+        diet: ["Onívoro"],
+        loveLanguage: ["Atos de Serviço"],
+        drinks: ["Sim"],
+        smokes: ["Sim"],
+        education: ["Ensino Médio Completo"],
+        communicationType: ["Direta"],
+        children: ["2"],
+        marriage: ["Sim"],
+        values: ["Rapidez", "Eficiência"],
+      },
+    },
+    {
+      id: 9,
+      name: "Larissa Matos",
+      service: ["Tradução", "Revisão de Texto"],
+      category: ["Aulas"],
+      isVerified: true,
+      photoUri: "https://randomuser.me/api/portraits/women/34.jpg",
+      birth: "30/09/1994",
+      locality: "Recife - PE",
+      about:
+        "Tradutora bilíngue com foco em textos acadêmicos e técnicos. Domínio de inglês e espanhol.",
+      contact: {
+        phone: "+55 81 99888-1122",
+        email: "larissa.tradutora@email.com",
+        address: "Rua das Letras, 101, Recife - PE",
+      },
+      workPreferences: {
+        location: "Remoto",
+        maxDistanceKm: 0,
+        allowFurtherDistance: true,
+        contractType: ["Freelancer", "PJ"],
+        modality: ["Remoto"],
+        schedule: ["Dia"],
+        mobility: [],
+        paymentType: ["Por palavra", "A combinar"],
+      },
+      social: {
+        linkedin: "https://linkedin.com/in/larissamatos",
+      },
+      personal: {
+        pets: ["Cachorro"],
+        diet: ["Vegano"],
+        loveLanguage: ["Palavras de Afirmação"],
+        drinks: ["Não"],
+        smokes: ["Não"],
+        education: ["Ensino Superior Completo"],
+        communicationType: ["Analítica"],
+        children: ["0"],
+        marriage: ["Não"],
+        values: ["Conhecimento", "Detalhismo"],
+      },
+    },
+    {
+      id: 10,
+      name: "Thiago Rocha",
+      service: ["DJ", "Sonorização de Eventos"],
+      category: ["Eventos"],
+      isVerified: false,
+      // Sem photoUri
+      birth: "18/06/1989",
+      locality: "Fortaleza - CE",
+      about:
+        "Com mais de 12 anos de experiência, levo música e energia para casamentos, formaturas e festas em geral.",
+      contact: {
+        phone: "+55 85 98765-9988",
+        email: "thiago.dj@email.com",
+        address: "Rua do Som, 77, Fortaleza - CE",
+      },
+      workPreferences: {
+        location: "Fortaleza - CE",
+        maxDistanceKm: 60,
+        allowFurtherDistance: true,
+        contractType: ["Autônomo"],
+        modality: ["Presencial"],
+        schedule: ["Noite", "Fim de Semana"],
+        mobility: ["Carro"],
+        paymentType: ["Por evento"],
+      },
+      social: {
+        instagram: "@thiagodj",
+        youtube: "https://www.youtube.com/@thiagodjoficial",
+      },
+      personal: {
+        pets: [],
+        diet: ["Onívoro"],
+        loveLanguage: ["Qualidade de Tempo"],
+        drinks: ["Sim"],
+        smokes: ["Sim"],
+        education: ["Curso Técnico"],
+        communicationType: ["Extrovertida"],
+        children: ["1"],
+        marriage: ["Sim"],
+        values: ["Alegria", "Profissionalismo"],
+      },
     },
   ];
 

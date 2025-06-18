@@ -14,7 +14,6 @@ export default function List({ items }: any) {
           key={index}
           className="flex-row items-center justify-between mb-2"
           onPress={() => {
-            console.log("Navegando para:", item.go);
             navigation.navigate(item.go);
           }}
         >

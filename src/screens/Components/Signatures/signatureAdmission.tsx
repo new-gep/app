@@ -105,7 +105,6 @@ const SignatureAdmission = ({
           };
 
           const pictureResponse = await CreateAvalidPicture(pictureProps);
-          console.log("pictureResponse", pictureResponse);
           if (pictureResponse.status === 409) {
             const responseUpdate = await UpdatePicture(cpf, pictureProps);
             if (responseUpdate.status === 200) {

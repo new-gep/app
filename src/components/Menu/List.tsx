@@ -63,7 +63,6 @@ export default function List({
         return <CircleHelp size={rf(20)} className="text-dark"/>;
       case "logout_outline":
         return <LogOut size={rf(20)} className="text-red-500"/>;
-        
       case "wallet_outline":
         return <WalletCards size={rf(20)} className="text-dark"/>;
       case "campaign_outline":
@@ -86,7 +85,6 @@ export default function List({
         return <FileText size={rf(20)} className="text-dark"/>;
       case "user_outline":
         return <UserRound size={rf(20)} className="text-dark"/>;
-
       case "eye_outline":
         return <Eye size={22} className="text-dark"/>;
       default:

@@ -155,7 +155,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             signature:false
                         }
                         const response = await JobPicture(propsDocument);
-                        console.log(response)
+                        // console.log(response)
                         if (response.status !== 200) {
                             setNoRepeat(true);
                             setActiveSheet('danger');
@@ -176,7 +176,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                             signature:false
                         }
                         const responseHand = await JobPicture(propsDocumentHand);
-                        console.log(responseHand)
+                        // console.log(responseHand)
                         if (responseHand.status !== 200) {
                             setNoRepeat(true);
                             setActiveSheet('danger');
@@ -270,7 +270,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     id_work: jobId || null,
                 };
                 const update = await UpdatePicture(collaborator.CPF, pictureUpdateParams);
-                console.log(update)
+                // console.log(update)
                 switch (update.status) {
                     case 200:
                         if(finishSendDocument){
@@ -329,7 +329,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                         demission: JSON.stringify({step:1, status:null, user:null, solicitation:'collaborator', observation:''})
                     };
                     const response = await UpdateJob(jobId, demissionData);
-                    console.log(response)
+                    // console.log(response)
                     if(response.status !== 200){
                         setActiveSheet('danger');
                         setMessageSheet(`Erro ao atualizar o trabalho`);
@@ -487,7 +487,7 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
     
                         
                         if(statusDocument == 'reproved'){
-                            console.log('aqui')
+                            // console.log('aqui')
                             const pictureUpdateParams: PropsUpdateAvalidPicture = {
                                 picture: documentName,
                                 status: 'pending',

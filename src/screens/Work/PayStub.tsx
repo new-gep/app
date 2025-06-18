@@ -74,7 +74,6 @@ const PayStub = () => {
           year,
           monthInEnglish
         );
-        console.log("Retorno do holerite:", response.length);
 
         const validDocuments = Array.isArray(response)
           ? response.filter((doc) => doc !== null)

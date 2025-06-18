@@ -99,7 +99,6 @@ export default function HomeNoWork() {
       try {
         const response = await FindAplicateInJob(collaborator.CPF);
         if (response.status !== 200) {
-          console.log("Erro ao buscar os cards:", response.message);
           setJobConected([]);
           return;
         }

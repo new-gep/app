@@ -17,7 +17,7 @@ const PdfViewer = () => {
                 const { exists } = await FileSystem.getInfoAsync(fileUri);
 
                 if (!exists) {
-                    console.log('Baixando PDF...');
+
                     const download = await FileSystem.downloadAsync(uri, fileUri);
                     setPdfUri(download.uri);
                 } else {

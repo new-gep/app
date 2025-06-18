@@ -28,7 +28,6 @@ const Default = () => {
   const fetchJobs = async () => {
     try{
       if (!collaborator || !collaborator.CPF) {
-        console.log('collaborator', collaborator)
         return; // Evita requisições desnecessárias se já tiver trabalho ou não tiver colaborador
       };
       const responseCollaborator = await FindCollaborator(collaborator.CPF);

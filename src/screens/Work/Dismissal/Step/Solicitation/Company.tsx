@@ -113,7 +113,6 @@ const Company = ({ jobConected, CPF }: Props) => {
                 Object.entries(dynamics).map(async ([key, value]) => {
                   let trueTitle = value;
                   value = value.toString().replace(/\//g, "").trim();
-                  console.log("value", value);
                   const dynamicDismissal = await FindFile(
                     jobConected.id,
                     "dismissal_communication_dynamic",

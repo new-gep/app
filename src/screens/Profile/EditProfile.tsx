@@ -110,7 +110,6 @@ const EditProfile = () => {
 
   const convertToBase64 = async (fileUri: any) => {
     try {
-      console.log(fileUri);
       // Lê o arquivo e converte para Base64
       const base64 = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -207,7 +206,6 @@ const EditProfile = () => {
   };
 
   const handleSendPicture = async () => {
-    console.log('1auqi')
     let response = await GetPathPicture("camera");
     if (response == "cancel") {
       alert(
@@ -242,7 +240,6 @@ const EditProfile = () => {
       
       switch (fileUpload.status) {
         case 200:
-          console.log('fileUpload', fileUpload);
           convertToBase64(response);
           setMessageSheet("Foto Atualizada");
           setActiveSheet("success");

@@ -59,10 +59,8 @@ const WaitingIndicator: React.FC<WaitingIndicatorProps> = ({
 
   const fetchData = async () => {
     try {
-      console.log("CPF", CPF);
       if (!CPF) return;
       const response = await FindAplicateInJob(CPF);
-      console.log(JSON.parse(response.jobs[0].candidates)[0].step);
       setCurrentStep(JSON.parse(response.jobs[0].candidates)[0].step);
     } catch (error) {
       console.log(error);

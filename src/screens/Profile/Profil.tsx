@@ -95,7 +95,6 @@ export default function Profile() {
     },
   ];
   const conf = [
-
     {
       icon: "key_outline",
       title: "Mudar a Senha",

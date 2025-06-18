@@ -1,6 +1,13 @@
-import { Building2, ChevronRight, EllipsisVertical } from "lucide-react-native";
+import {
+  Building2,
+  Check,
+  ChevronRight,
+  EllipsisVertical,
+  UserRound,
+} from "lucide-react-native";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
+  Image,
   Animated,
   FlatList,
   PanResponder,
@@ -19,6 +26,8 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import Mask from "~/src/function/mask";
 import { useNavigation } from "@react-navigation/native";
 import WorkInformation from "./Helper/Modal/WorkInformation";
+import PeopleInformation from "./Helper/Modal/PeopleInformation";
+import { Swipeable } from "react-native-gesture-handler";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = 120;
@@ -30,94 +39,83 @@ if (
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-// Card memoizado
-const SwipeableCard = React.memo(function SwipeableCard({
+// Card Company
+const SwipeableCardCompany = React.memo(function SwipeableCard({
   item,
   onSwipeRight,
-  isMenuVisible,
-  setMenuVisible,
   navigateToCardInformation,
-  handleSwipeRight
+  handleSwipeRight,
 }: any) {
-  const translateX = useRef(new Animated.Value(0)).current;
-  const [menu, setMenu] = useState<boolean>(false);
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gesture) => Math.abs(gesture.dx) > 10,
-      onPanResponderMove: (_, gesture) => {
-        if (gesture.dx < 0) {
-          translateX.setValue(Math.max(gesture.dx, -OPTIONS_WIDTH));
-        } else {
-          translateX.setValue(gesture.dx);
-        }
-      },
-      onPanResponderRelease: (_, gesture) => {
-        if (gesture.dx > SWIPE_THRESHOLD) {
-          Animated.timing(translateX, {
-            toValue: SCREEN_WIDTH,
-            duration: 300,
-            useNativeDriver: true,
-          }).start(() => onSwipeRight(item.id));
-        } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          Animated.spring(translateX, {
-            toValue: -OPTIONS_WIDTH,
-            useNativeDriver: true,
-          }).start(() => setMenuVisible(item.id, true));
-        } else {
-          Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start(() => setMenuVisible(item.id, false));
-        }
-      },
-    })
-  ).current;
+  const [visible, setVisible] = useState<boolean>();
 
-  const  onSwipeLeft = () => {
-    setMenu(true);
-  };
+  const renderLeftActions = () => (
+    <View className=" justify-center pl-6 flex-1 rounded-lg"></View>
+  );
+
+  const renderRightActions = () => (
+    <View className="justify-center items-center w-20">
+      <TouchableOpacity onPress={() => setVisible(true)}>
+        <EllipsisVertical size={rf(25)} />
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={styles.cardWrapper}>
-      <WorkInformation jobData={item} visible={menu} setVisible={setMenu} handleSwipeRight={handleSwipeRight} />
-      {isMenuVisible && (
-        <View className="flex-row absolute right-0 h-full px-4 py-2">
-          <TouchableOpacity
-            className="w-10 items-center justify-center"
-            onPress={() => {
-              Animated.spring(translateX, {
-                toValue: 0,
-                useNativeDriver: true,
-              }).start(() => onSwipeLeft());
-            }}
-          >
-            <EllipsisVertical size={rf(25)} />
-          </TouchableOpacity>
-        </View>
-      )}
-      <Animated.View
-        {...panResponder.panHandlers}
-        style={[
-          styles.cardContainer,
-          { transform: [{ translateX }], marginVertical: 5 },
-        ]}
+      <WorkInformation
+        jobData={item}
+        visible={visible}
+        setVisible={setVisible}
+        handleSwipeRight={handleSwipeRight}
+      />
+      <Swipeable
+        key={item.id}
+        onSwipeableOpen={(direction) => {
+          if (direction === "left") {
+            handleSwipeRight(item.id);
+          }
+        }}
+        renderRightActions={renderRightActions}
+        renderLeftActions={renderLeftActions} // <- necessário para permitir o swipe à direita
       >
         <TouchableOpacity
-          className="px-4 py-2 bg-white border-b border-zinc-300 rounded-lg flex-row items-center justify-between"
+          className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
           style={styles.card}
           onPress={navigateToCardInformation}
         >
-          <View className="flex-row items-center flex-1">
-            <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
-              <Building2 size={rf(25)} />
+          <View className="flex-row items-center">
+            <View className="mr-3" style={{ position: "relative" }}>
+              {item.photoUri ? (
+                <Image
+                  source={{ uri: item.photoUri }}
+                  style={{ width: rf(43), height: rf(43) }}
+                  className="w-12 h-12 rounded-full"
+                  resizeMode="cover"
+                />
+              ) : (
+                <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
+                  <Building2 size={rf(25)} />
+                </View>
+              )}
+
+              {item.isVerified && (
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    height: rf(13),
+                    width: rf(13),
+                  }}
+                  className="rounded-full bg-primary items-center justify-center"
+                >
+                  <Check className="text-dark" size={rf(10)} />
+                </View>
+              )}
             </View>
+
             <View className="pr-2">
-              <Text
-                style={{ ...FONTS.font, fontSize: rf(12) }}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
+              <Text style={{ ...FONTS.font, fontSize: rf(12) }}>
                 {item.function}
               </Text>
               <Text
@@ -140,28 +138,317 @@ const SwipeableCard = React.memo(function SwipeableCard({
               </Text>
             </View>
           </View>
-          <View className="ml-2">
+          <View className="mr-3">
             <ChevronRight size={rf(20)} />
           </View>
         </TouchableOpacity>
-      </Animated.View>
+      </Swipeable>
+    </View>
+  );
+});
+
+// Card People
+const SwipeableCardPeople = React.memo(function SwipeableCard({
+  item,
+  onSwipeRight,
+  onSwipeLeft,
+  navigateToCardInformation,
+}: any) {
+  const [visible, setVisible] = useState<boolean>(false);
+
+  const renderLeftActions = () => (
+    <View className=" justify-center pl-6 flex-1 rounded-lg"></View>
+  );
+
+  const renderRightActions = () => (
+    <View className="justify-center items-center  w-20">
+      <TouchableOpacity onPress={() => setVisible(true)}>
+        <EllipsisVertical size={rf(25)} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <View style={styles.cardWrapper}>
+      <PeopleInformation
+        handleSwipeRight={onSwipeRight}
+        visible={visible}
+        setVisible={setVisible}
+        jobData={item}
+        peopleData={item}
+      />
+      <Swipeable
+        key={item.id}
+        onSwipeableOpen={(direction) => {
+          if (direction === "left") {
+            onSwipeRight(item.id);
+          }
+        }}
+        renderRightActions={renderRightActions}
+        renderLeftActions={renderLeftActions} // <- necessário para permitir o swipe à direita
+      >
+        <TouchableOpacity
+          className="px-4 py-2 bg-white border-b border-zinc-300 rounded-lg flex-row items-center justify-between"
+          style={styles.card}
+          onPress={navigateToCardInformation}
+        >
+          <View className="flex-row items-center flex-1">
+            <View className="mr-3" style={{ position: "relative" }}>
+              {item.photoUri ? (
+                <Image
+                  source={{ uri: item.photoUri }}
+                  style={{ width: rf(43), height: rf(43) }}
+                  className="w-12 h-12 rounded-full"
+                  resizeMode="cover"
+                />
+              ) : (
+                <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
+                  <UserRound size={rf(25)} />
+                </View>
+              )}
+
+              {item.isVerified && (
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    height: rf(13),
+                    width: rf(13),
+                  }}
+                  className="rounded-full bg-primary items-center justify-center "
+                >
+                  <Check className="text-dark" size={rf(10)} />
+                </View>
+              )}
+            </View>
+            <View className="pr-2">
+              <Text
+                style={{ ...FONTS.font, fontSize: rf(12) }}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.function}
+              </Text>
+              <Text
+                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                className="text-green-600"
+              >
+                {`${Mask("amount", item.salary)} ${item.valueType}`}
+              </Text>
+              <Text
+                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                className="text-zinc-500"
+              >
+                {item.model}
+              </Text>
+              <Text
+                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                className="text-zinc-500"
+              >
+                {item.locality}
+              </Text>
+            </View>
+          </View>
+          <View className="mr-3">
+            <ChevronRight size={rf(20)} />
+          </View>
+        </TouchableOpacity>
+      </Swipeable>
     </View>
   );
 });
 
 export default function CathoStyleCards({
   data,
-  setCards,
+  // setCards,
   collaborator,
   showPopupMessage,
 }: any) {
-  const [visibleMenuIds, setVisibleMenuIds] = useState<number[]>([]);
+  const fakeData = [
+    {
+      id: 1,
+      typeService: "flex",
+      name: "Maria Oliveira",
+      valueType: "a combinar",
+      locality: "São Paulo - SP",
+      service: "Pintar minha casa",
+      contactName: "João Silva",
+      isVerified: true,
+      function: "Pintar minha casa",
+      salary: "150000",
+      model: "Presencial",
+      phone: "1193291233",
+      info: "Serviço de pintura residencial completo, com material incluso.",
+      included: "Tinta, mão de obra, limpeza após serviço.",
+      notIncluded: "Movimentação de móveis, reparos em paredes.",
+      photoUri: "https://randomuser.me/api/portraits/women/75.jpg",
+    },
+    {
+      id: 2,
+      typeService: "flex",
+      name: "Carlos Pereira",
+      valueType: "por mês",
+      locality: "Rio de Janeiro - RJ",
+      service: "Subir parede",
+      contactName: "Ana Costa",
+      isVerified: false,
+      function: "Subir parede",
+      salary: "250050",
+      model: "Presencial",
+      phone: "1193291233",
+      info: "Serviço para construção de paredes internas e externas.",
+      included: "Mão de obra, nivelamento e acabamento básico.",
+      notIncluded: "Materiais como tijolos e cimento, pintura.",
+      photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
+    },
+    {
+      id: 3,
+      typeService: "flex",
+      name: "Ana Souza",
+      valueType: "por projeto",
+      locality: "Belo Horizonte - MG",
+      service: "Fazer um sistema",
+      contactName: "Pedro Almeida",
+      isVerified: true,
+      function: "Fazer um sistema",
+      salary: "300075",
+      model: "Remoto",
+      phone: "1193291233",
+      info: "Desenvolvimento de sistema web completo.",
+      included: "Levantamento de requisitos, codificação, testes.",
+      notIncluded: "Hospedagem, manutenção pós-entrega.",
+      photoUri: "https://randomuser.me/api/portraits/women/22.jpg",
+    },
+    {
+      id: 4,
+      typeService: "flex",
+      name: "José Lima",
+      valueType: "a combinar",
+      locality: "Curitiba - PR",
+      service: "Limpar minha casa",
+      contactName: "Mariana Santos",
+      isVerified: false,
+      function: "Limpar minha casa",
+      salary: "80025",
+      model: "Presencial",
+      phone: "1193291233",
+      info: "Limpeza residencial com produtos básicos.",
+      included: "Limpeza de chão, banheiros e superfícies.",
+      notIncluded: "Limpeza de vidros externos, organização de armários.",
+      photoUri: "https://randomuser.me/api/portraits/men/89.jpg",
+    },
+    {
+      id: 5,
+      typeService: "flex",
+      name: "Fernanda Ribeiro",
+      valueType: "por mês",
+      locality: "Porto Alegre - RS",
+      service: "Pintar minha casa",
+      contactName: "Lucas Ferreira",
+      isVerified: true,
+      function: "Pintar minha casa",
+      salary: "200000",
+      model: "Presencial",
+      phone: "1193291233",
+      info: "Pintura com acabamento premium para áreas internas.",
+      included: "Tinta premium, mão de obra qualificada.",
+      notIncluded: "Texturização de paredes, pintura externa.",
+      photoUri: "https://randomuser.me/api/portraits/women/7.jpg",
+    },
+    {
+      id: 6,
+      typeService: "flex",
+      name: "Rafael Mendes",
+      valueType: "por projeto",
+      locality: "Salvador - BA",
+      service: "Subir parede",
+      contactName: "Camila Oliveira",
+      isVerified: false,
+      function: "Subir parede",
+      salary: "350090",
+      model: "Presencial",
+      phone: "1193291233",
+      info: "Construção de parede de alvenaria com acabamento.",
+      included: "Mão de obra, alinhamento e reboco.",
+      notIncluded: "Materiais, remoção de entulho.",
+    },
+    {
+      id: 7,
+      typeService: "flex",
+      name: "Patrícia Gomes",
+      valueType: "",
+      locality: "Fortaleza - CE",
+      service: "Fazer um sistema",
+      contactName: "Thiago Pereira",
+      isVerified: true,
+      function: "Fazer um sistema",
+      salary: "a combinar",
+      model: "Híbrido",
+      phone: "1193291233",
+      info: "Desenvolvimento de sistema personalizado conforme demanda.",
+      included: "Documentação técnica, deploy inicial.",
+      notIncluded: "Suporte contínuo, treinamento da equipe.",
+      photoUri: "https://randomuser.me/api/portraits/women/28.jpg",
+    },
+    {
+      id: 8,
+      typeService: "flex",
+      name: "Luiz Carvalho",
+      valueType: "por mês",
+      locality: "Manaus - AM",
+      service: "Limpar minha casa",
+      contactName: "Juliana Lima",
+      isVerified: false,
+      function: "Limpar minha casa",
+      salary: "120060",
+      model: "Presencial",
+      phone: "1193291233",
+      info: "Serviço mensal de limpeza de casa com agendamento fixo.",
+      included: "Limpeza geral e troca de lixo.",
+      notIncluded: "Lavagem de roupas, passadoria.",
+    },
+    {
+      id: 9,
+      typeService: "fix",
+      name: "CNPJA TECNOLOGIA LTDA",
+      valueType: "mensal",
+      locality: "São Paulo, São Paulo",
+      service: "Gerente RH Sênior",
+      contactName: "guilherme",
+      isVerified: true,
+      function: "Gerente RH Sênior",
+      salary: "1000000",
+      model: "Híbrido",
+      phone: "11932291233",
+      info: "Gerenciar a equipe de recursos humanos e assegurar o cumprimento das políticas de gestão de pessoas. Coordenar processos de recrutamento e seleção, treinamento e desenvolvimento. Monitorar a aplicação das políticas de remuneração e benefícios. Promover um ambiente de trabalho saudável e engajado.",
+      included: "Processos de RH, gestão de equipe, políticas internas.",
+      notIncluded:
+        "Ações externas à gestão de pessoas ou fora do escopo de RH.",
+      photoUri: "https://robohash.org/TECNOLOGIA?set=set3",
+    },
+    {
+      id: 10,
+      typeService: "fix",
+      name: "CNPJA TECNOLOGIA LTDA",
+      valueType: "mensal",
+      locality: "São Paulo, São Paulo",
+      service: "Gerente RH",
+      contactName: "guilherme",
+      isVerified: false,
+      function: "Gerente RH",
+      salary: "450789",
+      model: "Remoto",
+      phone: "11932291233",
+      info: "Gerenciar o departamento de Recursos Humanos. Supervisionar o processo de recrutamento e seleção. Desenvolver e implementar políticas de RH. Treinar líderes e garantir conformidade com legislações trabalhistas.",
+      included:
+        "Gestão de RH, suporte a líderes, desenvolvimento de políticas.",
+      notIncluded:
+        "Consultoria jurídica externa, atividades de outras áreas como TI ou Financeiro.",
+    },
+  ];
+  const [cards, setCards] = useState(fakeData);
   const navigation = useNavigation();
-  const setMenuVisible = useCallback((id: number, visible: boolean) => {
-    setVisibleMenuIds((prev) =>
-      visible ? [...new Set([...prev, id])] : prev.filter((i) => i !== id)
-    );
-  }, []);
 
   const removeCard = (id: any) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -190,6 +477,10 @@ export default function CathoStyleCards({
     }
   };
 
+  const handleSwipeRightPeople = async (id: any) => {
+    removeCard(id);
+  };
+
   const navigateToCardInformation = ({ data }: any) => {
     navigation.navigate("CardInformation", {
       cardData: data,
@@ -197,28 +488,39 @@ export default function CathoStyleCards({
     });
   };
 
-  const renderItem = useCallback(
-    ({ item }: any) => {
-      return (
-        <SwipeableCard
-          navigateToCardInformation={() =>
-            navigateToCardInformation({ data: item })
-          }
-          item={item}
-          handleSwipeRight={()=>handleSwipeRight(item.id)}
-          isMenuVisible={visibleMenuIds.includes(item.id)}
-          setMenuVisible={setMenuVisible}
-          onSwipeRight={handleSwipeRight}
-        />
-      );
-    },
-    [visibleMenuIds]
-  );
+  const navigateToCardInformationPeople = ({ data }: any) => {
+    navigation.navigate("CardInformationPeople", {
+      cardData: data,
+      onSwipeLeft: () => handleSwipeRight(data.id),
+    });
+  };
+
+  const renderItem = useCallback(({ item }: any) => {
+    return item.typeService === "fix" ? (
+      <SwipeableCardCompany
+        navigateToCardInformation={() =>
+          navigateToCardInformation({ data: item })
+        }
+        item={item}
+        handleSwipeRight={() => handleSwipeRight(item.id)}
+        onSwipeRight={handleSwipeRight}
+      />
+    ) : (
+      <SwipeableCardPeople
+        navigateToCardInformation={() =>
+          navigateToCardInformationPeople({ data: item })
+        }
+        item={item}
+        handleSwipeRight={() => handleSwipeRightPeople(item.id)}
+        onSwipeRight={handleSwipeRightPeople}
+      />
+    );
+  }, []);
 
   return (
     <View style={styles.container} className="px-4 py-2">
       <FlatList
-        data={data}
+        data={cards}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ paddingBottom: 30 }}

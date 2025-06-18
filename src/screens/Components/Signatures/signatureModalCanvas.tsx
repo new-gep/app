@@ -204,7 +204,6 @@ const SignatureModalCanvas = ({
       response = await CreateAvalidService(serviceProps);
     } else {
       response = await CreateAvalidPicture(pictureProps);
-      console.log("response", response);
     }
 
     // Se já existir, atualiza com status pending

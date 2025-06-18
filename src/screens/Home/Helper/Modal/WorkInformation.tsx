@@ -10,7 +10,8 @@ import {
   Banknote,
   MapPin,
   Accessibility,
-  Shapes
+  Shapes,
+  Check
 } from "lucide-react-native";
 import Modal from "react-native-modal";
 import { rf } from "~/src/hooks/utils/responsiveFont";
@@ -68,8 +69,34 @@ const WorkInformation = ({ handleSwipeRight ,visible, setVisible, jobData }: any
         {/* Job Header */}
         <View className="px-5 pb-4">
           <View className="flex-row items-center mb-6">
-            <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
-              <Building2 size={rf(25)} />
+            <View className="mr-3" style={{ position: "relative" }}>
+              {jobData.photoUri ? (
+                <Image
+                  source={{ uri: jobData.photoUri }}
+                  style={{ width: rf(43), height: rf(43) }}
+                  className="w-12 h-12 rounded-full"
+                  resizeMode="cover"
+                />
+              ) : (
+                <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
+                  <Building2 size={rf(25)} />
+                </View>
+              )}
+
+              {jobData.isVerified && (
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    height: rf(13),
+                    width: rf(13),
+                  }}
+                  className="rounded-full bg-primary items-center justify-center"
+                >
+                  <Check className="text-dark" size={rf(10)} />
+                </View>
+              )}
             </View>
             <View>
               <Text style={{...FONTS.fontSemiBold, fontSize:rf(16)}}>

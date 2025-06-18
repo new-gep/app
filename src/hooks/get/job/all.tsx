@@ -2,7 +2,6 @@ import config from '../../../../config.json';
 import axios from "axios";
 
 const GetAllJob = async () => {
-    console.log(`${config.API_URL}job`)
     try {
         const response = await axios.get(`${config.API_URL}job`);
         return response.data;

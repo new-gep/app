@@ -59,7 +59,6 @@ export const CollaboratorProvider = ({ children }: CollaboratorProviderProps) =>
                             missingDocuments: response.files?.missingDocuments || [],
                             missingDocumentsChildren: response.files?.missingDocumentsChildren || []
                         };
-                        console.log('documento do storage',dataToStore.missingDocuments)
                         await AsyncStorage.setItem('missingDates', JSON.stringify(dataToStore));
                         setMissingData(dataToStore); // Agora o tipo está correto
                         return;
