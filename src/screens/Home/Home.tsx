@@ -142,9 +142,25 @@ const Home = () => {
         </View>
         <BannerImage />
         <BannerCircle />
-
+        {
+          cardSearch == "Service" ? (
+            <Card
+              data={cards}
+              setCards={setCards}
+              collaborator={collaborator}
+              showPopupMessage={showPopupMessage}
+            />
+          ) : (
+            <CardPeople
+              data={cards}
+              setCards={setCards}
+              collaborator={collaborator}
+              showPopupMessage={showPopupMessage}
+            />
+          )
+        }
         {/* Container relativo para os cards */}
-        <View
+        {/* <View
           style={{
             marginTop: 20,
             paddingHorizontal: 10,
@@ -209,7 +225,7 @@ const Home = () => {
               />
             </View>
           )}
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );

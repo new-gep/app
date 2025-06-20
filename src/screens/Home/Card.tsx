@@ -283,6 +283,11 @@ export default function CathoStyleCards({
       included: "Tinta, mão de obra, limpeza após serviço.",
       notIncluded: "Movimentação de móveis, reparos em paredes.",
       photoUri: "https://randomuser.me/api/portraits/women/75.jpg",
+      gallery: [
+        'https://www.bgcexperts.com/wp-content/uploads/2024/05/interior-painting-services.jpg',
+        'https://www.imageworkspainting.com/hubfs/stock-01.jpg',
+        'https://www.solispainting.com/img/hero/painting-projects.jpg'
+      ]
     },
     {
       id: 2,
@@ -301,6 +306,10 @@ export default function CathoStyleCards({
       included: "Mão de obra, nivelamento e acabamento básico.",
       notIncluded: "Materiais como tijolos e cimento, pintura.",
       photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
+      gallery: [
+        'https://th.bing.com/th/id/R.f9222c5218c4a4aa5699946277d4086f?rik=H2svnZ4cKSAzOw&pid=ImgRaw&r=0',
+        'https://institutouniversal.vteximg.com.br/arquivos/ids/157077-1000-1000/image_pedreiro.jpg?v=635369638342530000',
+      ]
     },
     {
       id: 3,

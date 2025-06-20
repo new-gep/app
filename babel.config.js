@@ -3,7 +3,7 @@ module.exports = function (api) {
   return {
     presets: ["module:metro-react-native-babel-preset"],
     plugins: [
-      "react-native-reanimated/plugin", // Adicione esta linha
+      "react-native-reanimated/plugin",
     ],
     presets: ["babel-preset-expo"],
     plugins: [
