@@ -120,7 +120,7 @@ const Header = ({
             <Text
               style={{
                 ...FONTS.fontSemiBold,
-                fontSize: rf(22),
+                fontSize: rf(16),
                 color: colors.title,
                 textAlign: titleLeft ? "left" : "center",
                 paddingLeft: titleLeft2 ? 10 : 10,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: 16,
+    fontSize: rf(16),
     ...FONTS.fontMedium,
   },
   actionBtn: {

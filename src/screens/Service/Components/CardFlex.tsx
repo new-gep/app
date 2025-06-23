@@ -7,7 +7,9 @@ import {
   Mail,
   MessageCircle,
   Star,
-  UserRound
+  UserRound,
+  PlusCircle,
+  Zap,
 } from "lucide-react-native";
 import React from "react";
 import {
@@ -17,28 +19,31 @@ import {
   Image,
   Alert,
   Animated,
+  FlatList,
+  Dimensions,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
-
+const { width } = Dimensions.get("window");
+import { useNavigation } from '@react-navigation/native';
 type StatusKey = "atual" | "demissao" | "ultimo";
 
 export default function CardFlex() {
   const empresaAtualFake = {
     empresa: "Pintar minha Casa",
-    cargo: "Joao da Silva",
-    logoUrl: "",
+    cargo: "Roberta da Silva",
+    logoUrl: "https://randomuser.me/api/portraits/women/12.jpg",
     status: "ultimo" as StatusKey, // <- use isso pra mudar a bolinha e mensagem
   };
-
+  const navigation = useNavigation<any>();
   const statusMap: Record<StatusKey, { color: string; label: string }> = {
     atual: { color: "#22c55e", label: "Atual" }, // verde
     demissao: { color: "#facc15", label: "Em processo de demissão" }, // amarelo
     ultimo: { color: "#ef4444", label: "Último serviço" }, // vermelho
   };
   const { color, label } = statusMap[empresaAtualFake.status];
-
+ 
   const handleStatusPress = () => {
     Alert.alert("Status", label);
   };
@@ -117,13 +122,13 @@ export default function CardFlex() {
           </TouchableOpacity>
         </Swipeable>
       </View>
-
+                
       <>
         <View className="flex-row justify-between mt-5">
           <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
-              className="bg-blue-200 rounded-2xl p-2 h-20"
+              className="bg-yellow-200 rounded-2xl p-2 h-20"
             >
               <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Processos</Text>
               <Repeat size={rf(20)} />
@@ -132,7 +137,7 @@ export default function CardFlex() {
           <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
-              className="bg-purple-200 rounded-2xl p-2 h-20"
+              className="bg-yellow-200 rounded-2xl p-2 h-20"
             >
               <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Avaliações</Text>
               <Star size={rf(20)} />
@@ -152,14 +157,78 @@ export default function CardFlex() {
           <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
-              className="bg-zinc-200 rounded-2xl p-2 h-20"
+              className="bg-yellow-200 rounded-2xl p-2 h-20"
+               onPress={() => {
+                navigation.navigate("AnnouncementHistory");
+              }}
             >
-              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Historico</Text>
+              <Text className="text-dark" style={{...FONTS.fontLight, fontSize:rf(13)}}>Historico</Text>
               <History size={rf(20)} />
             </TouchableOpacity>
           </View>
         </View>
+        <View className="flex-row justify-between mt-5">
+          <View className="w-3/6 px-2">
+            <TouchableOpacity
+              style={[Style.container, { height: rf(100) }]}
+              className="bg-yellow-200 rounded-2xl p-2 h-20"
+              onPress={() => {
+                navigation.navigate("AnnouncementActive");
+              }}
+            >
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Ativos</Text>
+              <Zap size={rf(20)} />
+            </TouchableOpacity>
+          </View>
+          <View className="w-3/6 px-2">
+            <TouchableOpacity
+              style={[Style.container, { height: rf(100) }]}
+              className="bg-yellow-200 rounded-2xl p-2 h-20"
+              onPress={() => {
+                navigation.navigate("AnnouncementCreate");
+              }}
+            >
+              <Text className="text-dark" style={{...FONTS.fontLight, fontSize:rf(13)}}>Gerar</Text>
+              <PlusCircle size={rf(20)} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </>
+        {/* <View className="mt-5">
+      <FlatList
+        data={CARDS}
+        horizontal
+        keyExtractor={(item) => item.id}
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={width * 0.8 + 20} // 80% width + margin
+        decelerationRate="fast"
+        contentContainerStyle={{ paddingHorizontal: 10 }}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={{
+              width: width * 0.8,
+              marginHorizontal: 10,
+              backgroundColor: "#fef08a", // bg-yellow-200
+              borderRadius: 20,
+              padding: 20,
+              justifyContent: "space-between",
+              height: 120,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: FONTS.fontLight.fontFamily,
+                color: "#000",
+              }}
+            >
+              {item.title}
+            </Text>
+            {item.icon}
+          </TouchableOpacity>
+        )}
+      />
+    </View> */}
     </View>
   );
 }

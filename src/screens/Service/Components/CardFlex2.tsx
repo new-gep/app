@@ -2,8 +2,15 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import { Eye, Send, CreditCard, CirclePlus, Zap } from "lucide-react-native";
 import { FONTS } from "~/src/constants/theme";
+import { useNavigation } from '@react-navigation/native';
+
 
 export default function CardFlex2() {
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    navigation.navigate('AnnouncementCreate');
+  };
   return (
     <View className="flex-1 mt-5 flex-row">
       <View className="w-3/6 p-2" style={{ height: rf(180) }}>
@@ -21,6 +28,7 @@ export default function CardFlex2() {
         <TouchableOpacity
           style={Style.container}
           className="h-full w-full bg-white rounded-xl p-1 items-center justify-center flex-col-reverse"
+          onPress={handlePress}
         >
           <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(11) }}>
             Gerar

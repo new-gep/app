@@ -147,11 +147,12 @@ const SwipeableCard = React.memo(function SwipeableCard({
     return (
       <View className="flex-row">
         <TouchableOpacity
-          // onPress={() => handleDelete(id)}
           className="w-20  justify-center items-center"
+          onPress={() => {
+            setVisible(true);
+          }}
         >
           <EllipsisVertical className="text-dark" size={24} />
-          {/* <Text className="text-white mt-1 text-sm">Apagar</Text> */}
         </TouchableOpacity>
       </View>
     );
@@ -175,81 +176,89 @@ const SwipeableCard = React.memo(function SwipeableCard({
   };
 
   return (
-    <Swipeable
-      key={item.id}
-      renderRightActions={(progress) => renderRightActions(item.id, progress)}
-      leftThreshold={0}
-    >
-      <View>
-        <TouchableOpacity
-          className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
-          style={styles.card}
-          onPress={navigateToCardInformation}
-        >
-          <View className="flex-row items-center flex-1">
-            <View className="mr-3" style={{ position: "relative" }}>
-              {item.photoUri ? (
-                <Image
-                  source={{ uri: item.photoUri }}
-                  style={{ width: rf(43), height: rf(43) }}
-                  className="w-12 h-12 rounded-full"
-                  resizeMode="cover"
-                />
-              ) : (
-                <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
-                  <UserRound size={rf(25)} />
-                </View>
-              )}
+    <>
+      <PeopleInformation
+        handleSwipeRight={onSwipeRight}
+        visible={visible}
+        setVisible={setVisible}
+        peopleData={item}
+      />
+      <Swipeable
+        key={item.id}
+        renderRightActions={(progress) => renderRightActions(item.id, progress)}
+        leftThreshold={0}
+      >
+        <View>
+          <TouchableOpacity
+            className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
+            style={styles.card}
+            onPress={navigateToCardInformation}
+          >
+            <View className="flex-row items-center flex-1">
+              <View className="mr-3" style={{ position: "relative" }}>
+                {item.photoUri ? (
+                  <Image
+                    source={{ uri: item.photoUri }}
+                    style={{ width: rf(43), height: rf(43) }}
+                    className="w-12 h-12 rounded-full"
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
+                    <UserRound size={rf(25)} />
+                  </View>
+                )}
 
-              {item.isVerified && (
-                <View
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    right: 0,
-                    height: rf(13),
-                    width: rf(13),
-                  }}
-                  className="rounded-full bg-primary items-center justify-center"
-                >
-                  <Check className="text-dark" size={rf(10)} />
-                </View>
-              )}
-            </View>
+                {item.isVerified && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      bottom: 0,
+                      right: 0,
+                      height: rf(13),
+                      width: rf(13),
+                    }}
+                    className="rounded-full bg-primary items-center justify-center"
+                  >
+                    <Check className="text-dark" size={rf(10)} />
+                  </View>
+                )}
+              </View>
 
-            <View className="pr-2">
-              <View className="flex-row items-center ">
+              <View className="pr-2">
+                <View className="flex-row items-center ">
+                  <Text
+                    style={{ ...FONTS.font, fontSize: rf(12) }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {item.name}
+                  </Text>
+                </View>
+                <View className="flex-row">{renderIcon(item.category)}</View>
                 <Text
-                  style={{ ...FONTS.font, fontSize: rf(12) }}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className="text-zinc-500"
                 >
-                  {item.name}
+                  {item.workPreferences.contractType?.join(", ")}
+                </Text>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className="text-zinc-500"
+                >
+                  {item.locality}
                 </Text>
               </View>
-              <View className="flex-row">{renderIcon(item.category)}</View>
-              <Text
-                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                className="text-zinc-500"
-              >
-                {item.workPreferences.contractType?.join(", ")}
-              </Text>
-              <Text
-                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                className="text-zinc-500"
-              >
-                {item.locality}
-              </Text>
             </View>
-          </View>
 
-          {/* Se quiser o ícone de seta de volta: */}
-          <View>
-            <ChevronRight size={rf(20)} />
-          </View>
-        </TouchableOpacity>
-      </View>
-    </Swipeable>
+            {/* Se quiser o ícone de seta de volta: */}
+            <View>
+              <ChevronRight size={rf(20)} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Swipeable>
+    </>
   );
 });
 
@@ -328,13 +337,22 @@ export default function CardPeople({
   const fakeData = [
     {
       id: 1,
-      name: "Maria Oliveira",
+      name: "Mario Oliveira",
       service: ["Geladeira", "Lava Louça", "Televisão", "Dança", "Concursos"],
       category: ["Assistência Técnica", "Aulas"],
+      age: 22,
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      uf: "SP",
       isVerified: true,
       photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
       birth: "01/10/2001",
       locality: "São Paulo - SP",
+      interests: ["Música", "Tecnologia", "Esportes"],
       about:
         "Sou uma pessoa dedicada, focada e apaixonada pelo que faço. Sempre busco aprender e crescer profissionalmente.",
       contact: {
@@ -379,6 +397,15 @@ export default function CardPeople({
       name: "Carlos Mendes",
       service: ["Pedreiro", "Pintor", "Encanador"],
       category: ["Reformas e Reparos"],
+      age: 40,
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      interests: ["Música", "Tecnologia", "Esportes"],
+      uf: "SP",
       isVerified: true,
       photoUri: "https://randomuser.me/api/portraits/men/32.jpg",
       birth: "12/08/1985",
@@ -418,7 +445,15 @@ export default function CardPeople({
     },
     {
       id: 3,
+      age: 22,
       name: "Juliana Costa",
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      interests: ["Música", "Tecnologia", "Esportes"],
       service: ["Babá", "Personal Organizer", "Cozinheira"],
       category: ["Serviços Domésticos"],
       isVerified: true,
@@ -460,13 +495,22 @@ export default function CardPeople({
     },
     {
       id: 4,
+      age: 44,
       name: "Ricardo Almeida",
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      interests: ["Música", "Tecnologia", "Esportes"],
       service: ["Desenvolvimento Web", "Marketing Digital", "Web Design"],
       category: ["Design e Tecnologia"],
       isVerified: false,
       photoUri: "https://randomuser.me/api/portraits/men/91.jpg",
       birth: "15/11/1990",
       locality: "Curitiba - PR",
+      uf: "SP",
       about:
         "Sou desenvolvedor com foco em performance e experiência do usuário. Atuo há 7 anos na área.",
       contact: {
@@ -503,13 +547,22 @@ export default function CardPeople({
     },
     {
       id: 5,
+      age: 26,
       name: "Fernanda Lima",
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      interests: ["Música", "Tecnologia", "Esportes"],
       service: ["Manicure e pedicure", "Maquiadores", "Design de sobrancelha"],
       category: ["Moda e Beleza"],
       isVerified: true,
       photoUri: "https://randomuser.me/api/portraits/women/45.jpg",
       birth: "08/03/1987",
       locality: "Salvador - BA",
+      uf: "SP",
       about:
         "Sou especialista em beleza feminina, com atendimento em domicílio ou salão parceiro.",
       contact: {
@@ -546,10 +599,19 @@ export default function CardPeople({
     },
     {
       id: 6,
+      age: 66,
       name: "Lucas Barbosa",
       service: ["Eletricista", "Instalação de Câmeras"],
       category: ["Reformas e Reparos"],
       isVerified: false,
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      interests: ["Música", "Tecnologia", "Esportes"],
+      uf: "SP",
       // Sem photoUri
       birth: "20/07/1983",
       locality: "Porto Alegre - RS",
@@ -588,9 +650,18 @@ export default function CardPeople({
     },
     {
       id: 7,
+      age: 26,
       name: "Beatriz Souza",
       service: ["Fotografia", "Edição de Vídeo"],
       category: ["Aulas"],
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      uf: "SP",
+      interests: ["Música", "Tecnologia", "Esportes"],
       isVerified: true,
       photoUri: "https://randomuser.me/api/portraits/women/56.jpg",
       birth: "05/05/1995",
@@ -631,10 +702,19 @@ export default function CardPeople({
     },
     {
       id: 8,
+      age: 35,
       name: "Renato Farias",
       service: ["Motoboy", "Entregas Expressas"],
       category: ["Mecânica e Transportes"],
       isVerified: false,
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      uf: "SP",
+      interests: ["Música", "Tecnologia", "Esportes"],
       // Sem photoUri
       birth: "22/02/1990",
       locality: "Campinas - SP",
@@ -671,6 +751,7 @@ export default function CardPeople({
     },
     {
       id: 9,
+      age: 29,
       name: "Larissa Matos",
       service: ["Tradução", "Revisão de Texto"],
       category: ["Aulas"],
@@ -678,6 +759,14 @@ export default function CardPeople({
       photoUri: "https://randomuser.me/api/portraits/women/34.jpg",
       birth: "30/09/1994",
       locality: "Recife - PE",
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      uf: "SP",
+      interests: ["Música", "Tecnologia", "Esportes"],
       about:
         "Tradutora bilíngue com foco em textos acadêmicos e técnicos. Domínio de inglês e espanhol.",
       contact: {
@@ -713,10 +802,19 @@ export default function CardPeople({
     },
     {
       id: 10,
+      age: 34,
       name: "Thiago Rocha",
       service: ["DJ", "Sonorização de Eventos"],
       category: ["Eventos"],
       isVerified: false,
+      phone: "1912345678",
+      email: "mario.oliveira@email.com",
+      zip_code: "01234-567",
+      street: "Rua das Flores",
+      district: "Jardim das Rosas",
+      city: "São Paulo",
+      uf: "SP",
+      interests: ["Música", "Tecnologia", "Esportes"],
       // Sem photoUri
       birth: "18/06/1989",
       locality: "Fortaleza - CE",
@@ -788,5 +886,14 @@ const styles = StyleSheet.create({
     width: "100%",
     minHeight: rf(80),
     overflow: "visible",
+  },
+  tag: {
+    backgroundColor: "#fde047",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 16,
+    marginRight: 6,
+    marginBottom: 4,
+    color: "black",
   },
 });

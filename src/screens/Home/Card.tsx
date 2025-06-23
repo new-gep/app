@@ -26,7 +26,7 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import Mask from "~/src/function/mask";
 import { useNavigation } from "@react-navigation/native";
 import WorkInformation from "./Helper/Modal/WorkInformation";
-import PeopleInformation from "./Helper/Modal/PeopleInformation";
+import PeopleInformation from "./Helper/Modal/ServiceInformation";
 import { Swipeable } from "react-native-gesture-handler";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -284,10 +284,10 @@ export default function CathoStyleCards({
       notIncluded: "Movimentação de móveis, reparos em paredes.",
       photoUri: "https://randomuser.me/api/portraits/women/75.jpg",
       gallery: [
-        'https://www.bgcexperts.com/wp-content/uploads/2024/05/interior-painting-services.jpg',
-        'https://www.imageworkspainting.com/hubfs/stock-01.jpg',
-        'https://www.solispainting.com/img/hero/painting-projects.jpg'
-      ]
+        "https://www.bgcexperts.com/wp-content/uploads/2024/05/interior-painting-services.jpg",
+        "https://www.imageworkspainting.com/hubfs/stock-01.jpg",
+        "https://www.solispainting.com/img/hero/painting-projects.jpg",
+      ],
     },
     {
       id: 2,
@@ -307,9 +307,9 @@ export default function CathoStyleCards({
       notIncluded: "Materiais como tijolos e cimento, pintura.",
       photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
       gallery: [
-        'https://th.bing.com/th/id/R.f9222c5218c4a4aa5699946277d4086f?rik=H2svnZ4cKSAzOw&pid=ImgRaw&r=0',
-        'https://institutouniversal.vteximg.com.br/arquivos/ids/157077-1000-1000/image_pedreiro.jpg?v=635369638342530000',
-      ]
+        "https://th.bing.com/th/id/R.f9222c5218c4a4aa5699946277d4086f?rik=H2svnZ4cKSAzOw&pid=ImgRaw&r=0",
+        "https://institutouniversal.vteximg.com.br/arquivos/ids/157077-1000-1000/image_pedreiro.jpg?v=635369638342530000",
+      ],
     },
     {
       id: 3,
@@ -421,39 +421,101 @@ export default function CathoStyleCards({
       id: 9,
       typeService: "fix",
       name: "CNPJA TECNOLOGIA LTDA",
-      valueType: "mensal",
+      contract: "PJ",
       locality: "São Paulo, São Paulo",
-      service: "Gerente RH Sênior",
-      contactName: "guilherme",
       isVerified: true,
+      PCD: true,
+      DEI: false,
       function: "Gerente RH Sênior",
       salary: "1000000",
       model: "Híbrido",
-      phone: "11932291233",
-      info: "Gerenciar a equipe de recursos humanos e assegurar o cumprimento das políticas de gestão de pessoas. Coordenar processos de recrutamento e seleção, treinamento e desenvolvimento. Monitorar a aplicação das políticas de remuneração e benefícios. Promover um ambiente de trabalho saudável e engajado.",
-      included: "Processos de RH, gestão de equipe, políticas internas.",
-      notIncluded:
-        "Ações externas à gestão de pessoas ou fora do escopo de RH.",
       photoUri: "https://robohash.org/TECNOLOGIA?set=set3",
+      responsibility:
+        "Auxiliar na manutenção e desenvolvimento de aplicações e sistemas. Participar de reuniões de equipe para discutir requisitos e soluções. Contribuir na escrita de códigos limpos e documentados. Realizar testes e garantir a qualidade do software. Apoiar na solução de bugs e problemas técnicos.",
+      requirements:
+        "Ensino médio completo. Experiência prévia em cozinha será um diferencial. Conhecimento em higiene e segurança alimentar. Habilidade para trabalhar em equipe e sob pressão.",
+      skills: ["Adaptabilidade", "Banco de dados", "Flexibilidade"],
+      benefits: ["VT", "VA", "Gympass", "Auxilio Creche", "Day Off"],
     },
     {
       id: 10,
       typeService: "fix",
       name: "CNPJA TECNOLOGIA LTDA",
-      valueType: "mensal",
+      contract: "CLT",
+      PCD: true,
+      DEI: true,
       locality: "São Paulo, São Paulo",
-      service: "Gerente RH",
-      contactName: "guilherme",
       isVerified: false,
       function: "Gerente RH",
       salary: "450789",
       model: "Remoto",
       phone: "11932291233",
-      info: "Gerenciar o departamento de Recursos Humanos. Supervisionar o processo de recrutamento e seleção. Desenvolver e implementar políticas de RH. Treinar líderes e garantir conformidade com legislações trabalhistas.",
-      included:
+      responsibility:
+        "Gerenciar o departamento de Recursos Humanos. Supervisionar o processo de recrutamento e seleção. Desenvolver e implementar políticas de RH. Treinar líderes e garantir conformidade com legislações trabalhistas.",
+      requirements:
         "Gestão de RH, suporte a líderes, desenvolvimento de políticas.",
       notIncluded:
         "Consultoria jurídica externa, atividades de outras áreas como TI ou Financeiro.",
+    },
+    {
+      id: 11,
+      typeService: "fix",
+      name: "Ortiz‑O'Brien Group",
+      contract: "PJ",
+      locality: "Rio de Janeiro, Rio de Janeiro",
+      isVerified: true,
+      PCD: false,
+      DEI: true,
+      function: "Analista de Dados",
+      salary: "850000",
+      model: "Híbrido",
+      photoUri: "https://robohash.org/OrtizOBrien?set=set3",
+      responsibility:
+        "Extrair, processar e analisar dados para gerar insights de negócio. Criar dashboards e relatórios. Trabalhar com SQL, Python e ferramentas BI.",
+      requirements:
+        "Graduação em Estatística, Ciência da Computação ou áreas afins. Experiência com SQL, Python e Power BI.",
+      skills: ["SQL", "Python", "Visualização de dados"],
+      benefits: ["VT", "VA", "Home Office", "Seguro Saúde"],
+    },
+    {
+      id: 12,
+      typeService: "fix",
+      name: "McLaughlin LLC",
+      contract: "CLT",
+      locality: "Curitiba, Paraná",
+      isVerified: false,
+      PCD: true,
+      DEI: false,
+      function: "Desenvolvedor Front-End",
+      salary: "720000",
+      model: "Remoto",
+      phone: "4132123344",
+      responsibility:
+        "Desenvolver interfaces web responsivas usando React e TypeScript. Colaborar com UX/UI em prototipação e testes de usabilidade.",
+      requirements:
+        "Experiência mínima de 2 anos com React, TypeScript e CSS moderno.",
+      skills: ["React", "TypeScript", "CSS"],
+      benefits: ["VT", "VA", "Cursos online", "Plano Odontológico"],
+    },
+    {
+      id: 13,
+      typeService: "fix",
+      name: "Weber, Hayes and VonRueden",
+      contract: "PJ",
+      locality: "Belo Horizonte, Minas Gerais",
+      isVerified: true,
+      PCD: false,
+      DEI: false,
+      function: "Engenheiro de DevOps",
+      salary: "980000",
+      model: "Híbrido",
+      photoUri: "https://robohash.org/WeberHayesVonRueden?set=set3",
+      responsibility:
+        "Planejar, implementar e manter pipelines CI/CD. Garantir alta disponibilidade usando Docker, Kubernetes e AWS.",
+      requirements:
+        "Experiência com infraestrutura em nuvem (AWS ou GCP). Automação, containers e orquestração.",
+      skills: ["Docker", "Kubernetes", "AWS"],
+      benefits: ["VT", "VA", "Vale Cultura", "Seguro de Vida"],
     },
   ];
   const [cards, setCards] = useState(fakeData);

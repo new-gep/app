@@ -5,6 +5,7 @@ import {
   Animated,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import HeaderStyle4 from "~/src/components/Headers/HeaderStyle4";
 import { rf } from "~/src/hooks/utils/responsiveFont";
@@ -17,7 +18,7 @@ const screenWidth = Dimensions.get("window").width;
 export default function Service() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [activeTab, setActiveTab] = useState("Fix");
-
+  
   const fixAnim = useRef(new Animated.Value(0)).current; // 0 = ativo
   const flexAnim = useRef(new Animated.Value(1)).current; // 1 = fora da tela
 
@@ -69,7 +70,7 @@ export default function Service() {
                   activeTab === "Fix" ? "text-dark" : "text-gray-500"
                 }`}
               >
-                Gep Fix
+                Gep CLT
               </Text>
             </TouchableOpacity>
 
@@ -90,60 +91,58 @@ export default function Service() {
             </TouchableOpacity>
           </View>
         </View>
-
         {/* Stack de conteúdo */}
-        <View style={{ height: 400, position: "relative" }}>
-  {/* Fix */}
-  <Animated.View
-    style={{
-      position: "absolute",
-      width: "100%",
-      zIndex: activeTab === "Fix" ? 2 : 1,
-      pointerEvents: activeTab === "Fix" ? "auto" : "none",
-      transform: [
-        {
-          translateY: fixAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, 50],
-          }),
-        },
-      ],
-      opacity: fixAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [1, 0],
-      }),
-    }}
-  >
-    <CardFix />
-    <CardFix2 />
-  </Animated.View>
+        <View style={{ position: "relative" }}>
+          {/* Fix */}
+          <Animated.View
+            style={{
+              position: "absolute",
+              width: "100%",
+              zIndex: activeTab === "Fix" ? 2 : 1,
+              pointerEvents: activeTab === "Fix" ? "auto" : "none",
+              transform: [
+                {
+                  translateY: fixAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 50],
+                  }),
+                },
+              ],
+              opacity: fixAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0],
+              }),
+            }}
+          >
+            <CardFix />
+            <CardFix2 />
+          </Animated.View>
 
-  {/* Flex */}
-  <Animated.View
-    style={{
-      position: "absolute",
-      width: "100%",
-      zIndex: activeTab === "empresa" ? 2 : 1,
-      pointerEvents: activeTab === "empresa" ? "auto" : "none",
-      transform: [
-        {
-          translateY: flexAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, 50],
-          }),
-        },
-      ],
-      opacity: flexAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [1, 0],
-      }),
-    }}
-  >
-    <CardFlex />
-    <CardFlex2 />
-  </Animated.View>
-</View>
-
+          {/* Flex */}
+          <Animated.View
+            style={{
+              position: "relative",
+              width: "100%",
+              zIndex: activeTab === "empresa" ? 2 : 1,
+              pointerEvents: activeTab === "empresa" ? "auto" : "none",
+              transform: [
+                {
+                  translateY: flexAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 50],
+                  }),
+                },
+              ],
+              opacity: flexAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0],
+              }),
+            }}
+          >
+            <CardFlex />
+            {/* <CardFlex2 /> */}
+          </Animated.View>
+        </View>
       </Animated.ScrollView>
     </View>
   );

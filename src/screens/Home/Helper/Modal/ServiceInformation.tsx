@@ -25,12 +25,6 @@ import {
   ChevronDown,
   Plus,
   ChevronLeft,
-  Building2,
-  FileText,
-  BriefcaseBusiness,
-  Accessibility,
-  Shapes,
-  CirclePlus,
 } from "lucide-react-native";
 import {
   PanGestureHandler,
@@ -41,24 +35,26 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
+
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MIN_MODAL_HEIGHT = SCREEN_HEIGHT * 0.4; // Minimum height (40% of screen)
-const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.9; // Maximum height (90% of screen
+const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.9; // Maximum height (90% of screen)
 
-const WorkInformation = ({
+const ServiceInformation = ({
   handleSwipeRight,
   visible,
   setVisible,
-  jobData,
+  peopleData,
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
   const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [showVerifiedText, setShowVerifiedText] = useState(false);
   const modalHeight = useRef(new Animated.Value(MIN_MODAL_HEIGHT)).current;
   const lastModalHeight = useRef(MIN_MODAL_HEIGHT);
   const expandedThreshold = (MIN_MODAL_HEIGHT + MAX_MODAL_HEIGHT) / 2;
-  const [showVerifiedText, setShowVerifiedText] = useState(false);
+
   const contentOpacity = modalHeight.interpolate({
     inputRange: [MIN_MODAL_HEIGHT, expandedThreshold, MAX_MODAL_HEIGHT],
     outputRange: [0, 0, 1],
@@ -166,6 +162,8 @@ const WorkInformation = ({
     setActiveImage(null);
   };
 
+
+
   return (
     <Modal
       isVisible={visible}
@@ -174,6 +172,51 @@ const WorkInformation = ({
       useNativeDriver={true}
       propagateSwipe={true}
     >
+      <>
+        <Modal
+          visible={zoomVisible}
+          transparent={true}
+          onRequestClose={closeImage}
+        >
+          <GestureHandlerRootView
+            style={{ height: "80%", backgroundColor: "white" }}
+          >
+            {/* Ícone de voltar */}
+            <TouchableOpacity
+              className={"rounded-full items-center justify-center"}
+              onPress={closeImage}
+              style={{
+                height: rf(30),
+                width: rf(30),
+              }}
+            >
+              <ChevronLeft size={rf(25)} color="#000" />
+            </TouchableOpacity>
+
+            {/* Imagem com zoom */}
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={closeImage}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {activeImage && (
+                <ImageZoom
+                  style={{
+                    width: "100%",
+                    height: Dimensions.get("window").height * 0.7,
+                    resizeMode: "contain",
+                  }}
+                  source={{ uri: activeImage }}
+                />
+              )}
+            </TouchableOpacity>
+          </GestureHandlerRootView>
+        </Modal>
+      </>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Animated.View
           style={[
@@ -183,6 +226,7 @@ const WorkInformation = ({
             },
           ]}
         >
+          {/* Draggable Header */}
           <PanGestureHandler
             onGestureEvent={onGestureEvent}
             onHandlerStateChange={onHandlerStateChange}
@@ -194,9 +238,9 @@ const WorkInformation = ({
               {/* Header Content */}
               <View style={styles.headerContent}>
                 <View style={{ marginRight: rf(12), position: "relative" }}>
-                  {jobData.photoUri ? (
+                  {peopleData.photoUri ? (
                     <Image
-                      source={{ uri: jobData.photoUri }}
+                      source={{ uri: peopleData.photoUri }}
                       style={{
                         width: rf(43),
                         height: rf(43),
@@ -216,10 +260,10 @@ const WorkInformation = ({
                         height: rf(43),
                       }}
                     >
-                      <Building2 size={rf(25)} />
+                      <UserRound size={rf(25)} />
                     </View>
                   )}
-                  {jobData.isVerified && (
+                  {peopleData.isVerified && (
                     <View
                       style={{
                         position: "absolute",
@@ -239,7 +283,7 @@ const WorkInformation = ({
                 </View>
                 <View>
                   <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                    {jobData.function}
+                    {peopleData.function}
                   </Text>
                   <Text
                     style={{
@@ -248,90 +292,106 @@ const WorkInformation = ({
                       color: "#6b7280",
                     }}
                   >
-                    {jobData.name}
+                    {peopleData.name}
                   </Text>
                 </View>
-                {jobData.isVerified && (
+                {peopleData.isVerified && (
                   <TouchableOpacity
-                    onPress={() => setShowVerifiedText((prev) => !prev)}
-                    activeOpacity={0.7}
-                    style={{
-                      marginLeft: "auto",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      paddingHorizontal: showVerifiedText ? 8 : 4,
-                      paddingVertical: 4,
-                      borderRadius: 999,
-                    }}
-                    className="bg-primary"
-                  >
-                    {showVerifiedText && (
-                      <Text
-                        style={{
-                          ...FONTS.fontSemiBold,
-                          fontSize: rf(6),
-                          marginRight: rf(4),
-                          color: "#0f172a", // text-dark
-                        }}
-                      >
-                        Verificado
-                      </Text>
-                    )}
-                    <CircleCheck size={rf(10)} className="text-dark" />
+                                      onPress={() => setShowVerifiedText((prev) => !prev)}
+                                      activeOpacity={0.7}
+                                      style={{
+                                        marginLeft: "auto",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        paddingHorizontal: showVerifiedText ? 8 : 4,
+                                        paddingVertical: 4,
+                                        borderRadius: 999,
+                                      }}
+                                      className="bg-primary"
+                                    >
+                                      {showVerifiedText && (
+                                        <Text
+                                          style={{
+                                            ...FONTS.fontSemiBold,
+                                            fontSize: rf(6),
+                                            marginRight: rf(4),
+                                            color: "#0f172a", // text-dark
+                                          }}
+                                        >
+                                          Verificado
+                                        </Text>
+                                      )}
+                                      <CircleCheck size={rf(10)} className="text-dark" />
                   </TouchableOpacity>
                 )}
               </View>
             </View>
           </PanGestureHandler>
-          <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}>
-            <View className="p-2 px-5 mb-5 bg-gray-50 rounded-xl flex-row justify-between">
-              <View className="gap-4">
-                <View className="flex-row items-center">
-                  <Banknote size={rf(16)} className="mr-1" />
-                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                    {Mask("amount", jobData.salary)}
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <MapPin size={rf(16)} className="mr-1" />
-                  <Text
-                    className=""
-                    style={{ ...FONTS.fontBlack, fontSize: rf(11) }}
-                  >
-                    {jobData.locality}
-                  </Text>
-                </View>
-                {jobData.DEI && (
-                  <View className="flex-row  items-center">
-                    <Shapes size={rf(16)} className="mr-1" />
-                    <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                      Vaga Afirmativa
-                    </Text>
-                  </View>
-                )}
-              </View>
-              <View className="gap-4">
-                <View className="flex-row items-center">
-                  <FileText size={rf(16)} className="mr-1" />
-                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                    {jobData.contract}
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <BriefcaseBusiness size={rf(16)} className="mr-1" />
-                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                    {jobData.model}
-                  </Text>
-                </View>
 
-                {jobData.PCD && (
-                  <View className="flex-row items-center">
-                    <Accessibility size={rf(16)} className="mr-1" />
-                    <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                      Vaga PCD
-                    </Text>
-                  </View>
-                )}
+          {/* Scrollable Content */}
+          <ScrollView style={styles.contentContainer}>
+            <View
+              style={{
+                backgroundColor: "#f9fafb",
+                borderRadius: rf(16),
+                padding: rf(12),
+                marginBottom: rf(16),
+                flexDirection: "row",
+              }}
+              className="justify-between items-center px-5"
+            >
+              <View style={{ gap: rf(12) }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Banknote size={rf(16)} />
+                  <Text
+                    style={{
+                      ...FONTS.fontBlack,
+                      fontSize: rf(11),
+                      marginLeft: rf(4),
+                    }}
+                  >
+                    {Mask("amount", peopleData.salary)}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <HandCoins size={rf(16)} />
+                  <Text
+                    style={{
+                      ...FONTS.fontBlack,
+                      fontSize: rf(11),
+                      marginLeft: rf(4),
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {peopleData.valueType}
+                  </Text>
+                </View>
+              </View>
+              <View style={{ gap: rf(12) }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Phone size={rf(16)} />
+                  <Text
+                    style={{
+                      ...FONTS.fontBlack,
+                      fontSize: rf(11),
+                      marginLeft: rf(4),
+                    }}
+                  >
+                    {Mask("hiddenPhone", peopleData.phone)}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <MapPin size={rf(16)} />
+                  <Text
+                    style={{
+                      ...FONTS.fontBlack,
+                      fontSize: rf(11),
+                      marginLeft: rf(4),
+                    }}
+                  >
+                    {peopleData.locality}
+                  </Text>
+                </View>
               </View>
             </View>
             <Animated.View
@@ -343,20 +403,55 @@ const WorkInformation = ({
                 !showContent && { height: 0 },
               ]}
             >
+              {/* Conteúdo extra */}
+              <View className={"gap-2"}>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className={""}
+                >
+                  Galeria
+                </Text>
+                <View
+                  className="flex-1 flex-row justify-between"
+                  style={{ height: rf(150) }}
+                >
+                  {[0, 1, 2].map((index) => (
+                    <View key={index} className="w-1/3 p-2">
+                      {peopleData.gallery && peopleData.gallery[index] ? (
+                        //  peopleData.gallery[index]
+                        <TouchableOpacity
+                          className="w-full h-full"
+                          onPress={() => openImage(peopleData.gallery[index])}
+                        >
+                          <Image
+                            source={{ uri: peopleData.gallery[index] }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: rf(12),
+                            }}
+                            resizeMode="cover"
+                          />
+                        </TouchableOpacity>
+                      ) : (
+                        <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
+                          <CameraOff size={rf(20)} />
+                        </View>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              </View>
+
               <View className={"gap-2 mt-3"}>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className={""}
                 >
-                  Responsabilidades
+                  O que está incluído
                 </Text>
-                <Text
-                  className="text-justify"
-                  style={[FONTS.fontLight, { fontSize: rf(10) }]}
-                >
-                  {jobData.responsibility
-                    ? jobData.responsibility
-                    : "Nenhuma informação disponível"}
+                <Text className="text-justify" style={[FONTS.fontLight, {fontSize: rf(10)}]}>
+                  {peopleData.included}
                 </Text>
               </View>
 
@@ -365,15 +460,10 @@ const WorkInformation = ({
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className={""}
                 >
-                  Requisitos
+                  O que não está incluído
                 </Text>
-                <Text
-                  className="text-justify"
-                  style={[FONTS.fontLight, { fontSize: rf(10) }]}
-                >
-                  {jobData.requirements
-                    ? jobData.requirements
-                    : "Nenhuma informação disponível"}
+                <Text className="text-justify" style={[FONTS.fontLight, {fontSize: rf(10)}]}>
+                  {peopleData.notIncluded}
                 </Text>
               </View>
 
@@ -382,34 +472,17 @@ const WorkInformation = ({
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className={""}
                 >
-                  Competências
+                  Informações
                 </Text>
-                <Text
-                  className="text-justify"
-                  style={[FONTS.fontLight, { fontSize: rf(10) }]}
-                >
-                  {Array.isArray(jobData.skills) && jobData.skills.length > 0
-                    ? jobData.skills.join(", ")
-                    : "Nenhuma informação disponível"}
-                </Text>
-              </View>
-
-              <View className={"gap-2 mt-3"}>
-                <Text
-                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                  className={""}
-                >
-                  Benefícios
-                </Text>
-                <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
-                  {Array.isArray(jobData.benefits) &&
-                  jobData.benefits.length > 0
-                    ? jobData.benefits.join(", ")
-                    : "Nenhuma informação disponível"}
+                <Text className="text-justify" style={[FONTS.fontLight, {fontSize: rf(10)}]}>
+                  {peopleData.info}
                 </Text>
               </View>
             </Animated.View>
+            {/* Add more content here if needed */}
           </ScrollView>
+
+          {/* Fixed Footer */}
           <View style={styles.footerContainer}>
             <TouchableOpacity
               style={{ flex: 1, padding: 12, alignItems: "center" }}
@@ -517,4 +590,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WorkInformation;
+export default ServiceInformation;

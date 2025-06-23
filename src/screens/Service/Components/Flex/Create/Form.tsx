@@ -25,7 +25,7 @@ export default function Form({ title, setSelectedCategory }: any) {
   const [adType, setAdType] = useState("selecione");
   const [images, setImages] = useState<string[]>([]);
   const screenWidth = Dimensions.get("window").width;
-  const boxSize = (screenWidth - 50) / 3;
+  const boxSize = (screenWidth - 50 - 2 * 8) / 3; 
 
   const handleImageUpload = () => {
     if (images.length >= 3) return;
@@ -49,7 +49,7 @@ export default function Form({ title, setSelectedCategory }: any) {
         }}
         title={title}
       />
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 55 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 120, paddingHorizontal:20 }}>
         {!selectAdTypeView ? (
           <>
             <Text
@@ -135,15 +135,6 @@ export default function Form({ title, setSelectedCategory }: any) {
               placeholder="Mais informações sobre o serviço"
               value={moreInfo}
               onChangeText={setMoreInfo}
-            />
-
-            {/* Contato */}
-            <TextInput
-              className="border border-gray-300 rounded-lg p-3 mb-4"
-              placeholder="Telefone / WhatsApp"
-              keyboardType="phone-pad"
-              value={contact}
-              onChangeText={setContact}
             />
 
             {/* Tipo de anúncio */}

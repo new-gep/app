@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect} from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,16 +8,14 @@ import {
   Animated,
   StyleSheet,
   ScrollView,
-
+  Linking,
 } from "react-native";
 import Modal from "react-native-modal";
 import {
   Share2,
   CameraOff,
-  Eye,
   Banknote,
   MapPin,
-  HandCoins,
   Phone,
   Check,
   UserRound,
@@ -25,31 +23,66 @@ import {
   ChevronUp,
   ChevronDown,
   Plus,
-  ChevronLeft
+  ChevronLeft,
+  Mail,
+  MapPinCheckInside,
+  MapPinXInside,
+  Handshake,
+  House,
+  Clock,
+  BusFront,
+  Cigarette,
+  Salad,
+  Heart,
+  Bone,
+  MessageCircle,
+  GraduationCap,
+  Wine,
+  Baby,
+  BookHeart,
+  Scale,
+  School,
+  Instagram,
+  Facebook,
+  Linkedin,
+  Twitter,
+  Youtube,
+  Globe,
+  Music,
 } from "lucide-react-native";
-import { PanGestureHandler, GestureHandlerRootView, State } from "react-native-gesture-handler";
+import {
+  PanGestureHandler,
+  GestureHandlerRootView,
+  State,
+} from "react-native-gesture-handler";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
-
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MIN_MODAL_HEIGHT = SCREEN_HEIGHT * 0.4; // Minimum height (40% of screen)
-const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.9; // Maximum height (90% of screen)
+const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.95; // Maximum height (95% of screen)
 
-const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }: any) => {
+const PeopleInformation = ({
+  handleSwipeRight,
+  visible,
+  setVisible,
+  peopleData,
+}: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
   const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [showVerifiedText, setShowVerifiedText] = useState(false);
   const modalHeight = useRef(new Animated.Value(MIN_MODAL_HEIGHT)).current;
   const lastModalHeight = useRef(MIN_MODAL_HEIGHT);
   const expandedThreshold = (MIN_MODAL_HEIGHT + MAX_MODAL_HEIGHT) / 2;
+  const isUrl = (value: string) => value.startsWith("http");
 
   const contentOpacity = modalHeight.interpolate({
     inputRange: [MIN_MODAL_HEIGHT, expandedThreshold, MAX_MODAL_HEIGHT],
     outputRange: [0, 0, 1],
-    extrapolate: 'clamp',
+    extrapolate: "clamp",
   });
 
   // Gesture handling for header drag
@@ -57,17 +90,18 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
     const { translationY } = event.nativeEvent;
 
     // Aplique um fator de amortecimento (ex: 0.3)
-    let newHeight =
-      lastModalHeight.current - translationY * 0.8; // Reduz a velocidade visual
+    let newHeight = lastModalHeight.current - translationY * 0.8; // Reduz a velocidade visual
 
-    newHeight = Math.max(MIN_MODAL_HEIGHT, Math.min(newHeight, MAX_MODAL_HEIGHT));
+    newHeight = Math.max(
+      MIN_MODAL_HEIGHT,
+      Math.min(newHeight, MAX_MODAL_HEIGHT)
+    );
     modalHeight.setValue(newHeight);
     setShowContent(newHeight > expandedThreshold);
     const expanded = newHeight >= (MIN_MODAL_HEIGHT + MAX_MODAL_HEIGHT) / 2;
     if (expanded !== isExpanded) {
       setIsExpanded(expanded);
     }
-
   };
 
   const onHandlerStateChange = (event: any) => {
@@ -123,11 +157,8 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
     lastModalHeight.current = height;
   };
 
-
   // Action handlers
-  const handleShare = () => {
-
-  };
+  const handleShare = () => {};
 
   const handleView = () => {
     const targetHeight = isExpanded ? MIN_MODAL_HEIGHT : MAX_MODAL_HEIGHT;
@@ -155,8 +186,32 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
     setActiveImage(null);
   };
 
+  const icons = {
+    instagram: Instagram,
+    facebook: Facebook,
+    linkedin: Linkedin,
+    twitter: Twitter,
+    tiktok: Music, // ícone alternativo para TikTok
+    youtube: Youtube,
+    website: Globe,
+  };
 
-
+  const renderTagList = (items: string[]) => (
+    <View>
+      <View>
+        <View className="flex-row flex-wrap">
+          {items.map((item, index) => (
+            <Text
+              key={index}
+              style={[styles.tag, FONTS.fontLight, { fontSize: rf(10) }]}
+            >
+              {item}
+            </Text>
+          ))}
+        </View>
+      </View>
+    </View>
+  );
 
   return (
     <Modal
@@ -167,16 +222,22 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
       propagateSwipe={true}
     >
       <>
-        <Modal visible={zoomVisible} transparent={true} onRequestClose={closeImage}>
-          <GestureHandlerRootView style={{ height: '80%', backgroundColor: 'white' }}>
+        <Modal
+          visible={zoomVisible}
+          transparent={true}
+          onRequestClose={closeImage}
+        >
+          <GestureHandlerRootView
+            style={{ height: "80%", backgroundColor: "white" }}
+          >
             {/* Ícone de voltar */}
             <TouchableOpacity
-              className={'rounded-full items-center justify-center'}
+              className={"rounded-full items-center justify-center"}
               onPress={closeImage}
-             style={{
-              height:rf(30),
-              width:rf(30),
-             }}
+              style={{
+                height: rf(30),
+                width: rf(30),
+              }}
             >
               <ChevronLeft size={rf(25)} color="#000" />
             </TouchableOpacity>
@@ -185,7 +246,11 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
             <TouchableOpacity
               activeOpacity={1}
               onPress={closeImage}
-              style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               {activeImage && (
                 <ImageZoom
@@ -225,7 +290,11 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
                   {peopleData.photoUri ? (
                     <Image
                       source={{ uri: peopleData.photoUri }}
-                      style={{ width: rf(43), height: rf(43), borderRadius: 999 }}
+                      style={{
+                        width: rf(43),
+                        height: rf(43),
+                        borderRadius: 999,
+                      }}
                       resizeMode="cover"
                     />
                   ) : (
@@ -255,7 +324,7 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
                         alignItems: "center",
                         justifyContent: "center",
                       }}
-                      className={'bg-primary'}
+                      className={"bg-primary"}
                     >
                       <Check size={rf(10)} className="text-dark" />
                     </View>
@@ -263,7 +332,7 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
                 </View>
                 <View>
                   <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                    {peopleData.function}
+                    {`${peopleData.name}, ${peopleData.age}`}
                   </Text>
                   <Text
                     style={{
@@ -272,33 +341,37 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
                       color: "#6b7280",
                     }}
                   >
-                    {peopleData.name}
+                    {/* {peopleData.name} */}
                   </Text>
                 </View>
                 {peopleData.isVerified && (
-                  <View
+                  <TouchableOpacity
+                    onPress={() => setShowVerifiedText((prev) => !prev)}
+                    activeOpacity={0.7}
                     style={{
                       marginLeft: "auto",
                       flexDirection: "row",
                       alignItems: "center",
-                      paddingHorizontal: 8,
+                      paddingHorizontal: showVerifiedText ? 8 : 4,
                       paddingVertical: 4,
                       borderRadius: 999,
                     }}
-                    className={'bg-primary'}
+                    className="bg-primary"
                   >
-                    <Text
-                      style={{
-                        ...FONTS.fontSemiBold,
-                        fontSize: rf(8),
-                        marginRight: rf(4)
-                      }}
-                      className={'text-dark'}
-                    >
-                      Verificado
-                    </Text>
-                    <CircleCheck size={rf(20)} className="text-dark" />
-                  </View>
+                    {showVerifiedText && (
+                      <Text
+                        style={{
+                          ...FONTS.fontSemiBold,
+                          fontSize: rf(6),
+                          marginRight: rf(4),
+                          color: "#0f172a", // text-dark
+                        }}
+                      >
+                        Verificado
+                      </Text>
+                    )}
+                    <CircleCheck size={rf(10)} className="text-dark" />
+                  </TouchableOpacity>
                 )}
               </View>
             </View>
@@ -313,18 +386,38 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
                 padding: rf(12),
                 marginBottom: rf(16),
                 flexDirection: "row",
-                justifyContent: "space-evenly",
               }}
+              className="justify-between items-center px-5"
             >
               <View style={{ gap: rf(12) }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Banknote size={rf(16)} />
-                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(11), marginLeft: rf(4) }}>
-                    {Mask("amount", peopleData.salary)}
+                  <Phone size={rf(16)} />
+                  <Text
+                    style={{
+                      ...FONTS.fontBlack,
+                      fontSize: rf(11),
+                      marginLeft: rf(4),
+                    }}
+                  >
+                    {Mask("hiddenPhone", peopleData.phone)}
                   </Text>
                 </View>
+
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <HandCoins size={rf(16)} />
+                  <Mail size={rf(16)} />
+                  <Text
+                    style={{
+                      ...FONTS.fontBlack,
+                      fontSize: rf(11),
+                      marginLeft: rf(4),
+                    }}
+                  >
+                    {Mask("hiddenEmail", peopleData.email)}
+                  </Text>
+                </View>
+
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <MapPin size={rf(16)} />
                   <Text
                     style={{
                       ...FONTS.fontBlack,
@@ -333,60 +426,376 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
                       textTransform: "capitalize",
                     }}
                   >
-                    {peopleData.valueType}
-                  </Text>
-                </View>
-              </View>
-              <View style={{ gap: rf(12) }}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Phone size={rf(16)} />
-                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(11), marginLeft: rf(4) }}>
-                    {Mask("hiddenPhone", peopleData.phone)}
-                  </Text>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <MapPin size={rf(16)} />
-                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(11), marginLeft: rf(4) }}>
-                    {peopleData.locality}
+                    {`${peopleData.street}, ${peopleData.district} - ${peopleData.city}, ${peopleData.uf}`}
                   </Text>
                 </View>
               </View>
             </View>
-            <Animated.View  style={[
-    {
-      opacity: contentOpacity,
-      overflow: 'hidden',
-    },
-    !showContent && { height: 0 },
-  ]}>
+            <Animated.View
+              style={[
+                {
+                  opacity: contentOpacity,
+                  overflow: "hidden",
+                },
+                !showContent && { height: 0 },
+              ]}
+            >
               {/* Conteúdo extra */}
-              <View>
-                <View className={'gap-2'}>
-                  <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }} className={''}>Galeria</Text>
-                  <View className="flex-1 flex-row justify-between" style={{ height: rf(150) }}>
-                    {[0, 1, 2].map((index) => (
-                      <View key={index} className="w-1/3 p-2">
-                        {peopleData.gallery && peopleData.gallery[index] ? (
-                          //  peopleData.gallery[index]
-                          <TouchableOpacity
-                            className="w-full h-full"
-                            onPress={() => openImage(peopleData.gallery[index])}
-                          >
-                            <Image
-                              source={{ uri: peopleData.gallery[index] }}
-                              style={{ width: "100%", height: "100%", borderRadius: rf(12) }}
-                              resizeMode="cover"
-                            />
-                          </TouchableOpacity>
-                        ) : (
-                          <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
-                            <CameraOff size={rf(20)} />
-                          </View>
-                        )}
+              <View className={"gap-2"}>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className={""}
+                >
+                  Galeria
+                </Text>
+                <View
+                  className="flex-1 flex-row justify-between"
+                  style={{ height: rf(150) }}
+                >
+                  {[0, 1, 2].map((index) => (
+                    <View key={index} className="w-1/3 p-2">
+                      {peopleData.gallery && peopleData.gallery[index] ? (
+                        //  peopleData.gallery[index]
+                        <TouchableOpacity
+                          className="w-full h-full"
+                          onPress={() => openImage(peopleData.gallery[index])}
+                        >
+                          <Image
+                            source={{ uri: peopleData.gallery[index] }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: rf(12),
+                            }}
+                            resizeMode="cover"
+                          />
+                        </TouchableOpacity>
+                      ) : (
+                        <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
+                          <CameraOff size={rf(20)} />
+                        </View>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              <View className={"gap-2 mt-3"}>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className={""}
+                >
+                  Sobre mim
+                </Text>
+                <Text
+                  className="text-justify"
+                  style={[FONTS.fontLight, { fontSize: rf(10) }]}
+                >
+                  {peopleData.about}
+                </Text>
+              </View>
+
+              <View className={"gap-2 mt-3"}>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className={""}
+                >
+                  Serviços
+                </Text>
+                {renderTagList(peopleData.service)}
+              </View>
+
+              <View className={"gap-2 mt-3"}>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className={""}
+                >
+                  Como Trabalha
+                </Text>
+                <View className="">
+                  <View className="flex-row">
+                    <MapPin size={rf(12)} className="mr-1" />
+                    <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
+                      {`Distancia maxima até ${peopleData.workPreferences.maxDistanceKm} km`}
+                    </Text>
+                  </View>
+                  <View className="gap-2">
+                    {peopleData.workPreferences.allowFurtherDistance ? (
+                      <View className="flex-row">
+                        <MapPinCheckInside size={rf(12)} className="mr-1" />
+                        <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
+                          Aceita maiores distâncias
+                        </Text>
                       </View>
-                    ))}
+                    ) : (
+                      <View className="flex-row">
+                        <MapPinXInside size={rf(12)} />
+                        <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
+                          Não aceita maiores distâncias
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Handshake size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Contratos
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.workPreferences.contractType)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <House size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Modalidade
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.workPreferences.modality)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Clock size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Período
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.workPreferences.schedule)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <BusFront size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Mobilidade
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.workPreferences.mobility)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Banknote size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Pagamentos
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.workPreferences.paymentType)}
+                  </View>
+                </View>
+              </View>
+
+              <View className={"gap-2 mt-3"}>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className={""}
+                >
+                  Interesses
+                </Text>
+                <View>{renderTagList(peopleData.interests)}</View>
+              </View>
+
+              <View className={"gap-2 mt-3"}>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className={""}
+                >
+                  Informações Pessoais
+                </Text>
+                <View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Scale size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Valores
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.values)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <GraduationCap size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Formação
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.education)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <MessageCircle size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Comunicação
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.communicationType)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Heart size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Casado (a) ?
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.marriage)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Wine size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Bebe ?
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.drinks)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Baby size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Filhos
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.children)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Cigarette size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Fuma?
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.smokes)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <BookHeart size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Linguagem do Amor
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.loveLanguage)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row">
+                      <Salad size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Alimentação
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.diet)}
+                  </View>
+                  <View className="gap-2">
+                    <View className="flex-row ">
+                      <Bone size={rf(12)} className="mr-1" />
+                      <Text
+                        style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                        className={""}
+                      >
+                        Pets
+                      </Text>
+                    </View>
+                    {renderTagList(peopleData.personal.pets)}
+                  </View>
+                </View>
+              </View>
+
+              <View className={"mt-5 mb-5"}>
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className={""}
+                >
+                  Redes Sociais
+                </Text>
+                <View className="gap-3">
+                  {/* Textos (não links) em coluna */}
+                  <View className="gap-2">
+                    {Object.entries(peopleData.social).map(
+                      ([key, value]: any) => {
+                        const Icon = icons[key as keyof typeof icons];
+                        const isLink = isUrl(value);
+
+                        if (!isLink) {
+                          return (
+                            <View key={key} className="flex-row items-center">
+                              <Icon
+                                size={rf(12)}
+                                color="#6B7280"
+                                className="mr-1"
+                              />
+                              <Text style={{ ...FONTS.font, fontSize: rf(12) }}>
+                                {value}
+                              </Text>
+                            </View>
+                          );
+                        }
+                        return null; // Pula se for link
+                      }
+                    )}
                   </View>
 
+                  {/* Botões (links) lado a lado */}
+                  <View className="flex-row flex-wrap gap-x-3 gap-y-2">
+                    {Object.entries(peopleData.social).map(
+                      ([key, value]: any) => {
+                        const Icon = icons[key as keyof typeof icons];
+                        const isLink = isUrl(value);
+
+                        if (isLink) {
+                          return (
+                            <TouchableOpacity
+                              key={key}
+                              onPress={() => Linking.openURL(value)}
+                              className="bg-primary rounded-full p-2 h-8 w-8 items-center justify-center"
+                            >
+                              <Icon size={rf(14)} className="text-dark" />
+                            </TouchableOpacity>
+                          );
+                        }
+                        return null; // Pula se não for link
+                      }
+                    )}
+                  </View>
                 </View>
               </View>
             </Animated.View>
@@ -400,7 +809,9 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
               onPress={handleShare}
             >
               <Share2 size={rf(24)} color="#71717a" />
-              <Text style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}>
+              <Text
+                style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+              >
                 Compartilhar
               </Text>
             </TouchableOpacity>
@@ -411,14 +822,18 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
               {isExpanded ? (
                 <>
                   <ChevronDown size={rf(24)} color="#71717a" />
-                  <Text style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}>
+                  <Text
+                    style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                  >
                     Recolher
                   </Text>
                 </>
               ) : (
                 <>
                   <ChevronUp size={rf(24)} color="#71717a" />
-                  <Text style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}>
+                  <Text
+                    style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                  >
                     Visualizar
                   </Text>
                 </>
@@ -429,8 +844,10 @@ const PeopleInformation = ({ handleSwipeRight, visible, setVisible, peopleData }
               onPress={handleApply}
             >
               <Plus size={rf(24)} color="#71717a" />
-              <Text style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}>
-                Candidatar
+              <Text
+                style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+              >
+                Contratar
               </Text>
             </TouchableOpacity>
           </View>
@@ -490,6 +907,15 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#e5e7eb",
     backgroundColor: "white",
+  },
+  tag: {
+    backgroundColor: "#fde047",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 16,
+    marginRight: 6,
+    marginBottom: 4,
+    color: "black",
   },
 });
 
