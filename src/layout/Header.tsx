@@ -61,7 +61,7 @@ const Header = ({
           height: SCREEN_HEIGHT * 0.10,
           alignItems: "center",
           justifyContent: "center",
-          zIndex: 99,
+        
         },
         transparent && {
           position: "absolute",
