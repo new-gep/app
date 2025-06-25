@@ -14,6 +14,7 @@ import {
   Hammer,
   HeartPulse,
   House,
+  Banknote
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -102,13 +103,13 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
     <View style={styles.cardWrapper}>
         <ModalMenu visible={visible} setVisible={setVisible} item={item} />
         <Swipeable
-            key={item.id}
-            renderRightActions={renderRightActions}
-            renderLeftActions={renderLeftActions}
+          key={item.id}
+          renderRightActions={renderRightActions}
+          renderLeftActions={renderLeftActions}
         >
             <TouchableOpacity
-                className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
-                style={styles.card}
+              className="px-5 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
+              style={styles.card}
             >
             <View className="flex-row items-center flex-1">
                 <View className="mr-3" style={{ position: "relative" }}>
@@ -151,7 +152,7 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
                 </View>
             </View>
             <View className="mr-3">
-                <ChevronRight size={rf(20)} />
+              <ChevronRight size={rf(20)} />
             </View>
             </TouchableOpacity>
         </Swipeable>
@@ -163,7 +164,6 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   cardWrapper: {
     position: "relative",
-    width: SCREEN_WIDTH - rf(30),
     minHeight: rf(20),
   },
   cardContainer: {

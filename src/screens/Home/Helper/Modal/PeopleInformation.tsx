@@ -287,7 +287,7 @@ const PeopleInformation = ({
               {/* Header Content */}
               <View style={styles.headerContent}>
                 <View style={{ marginRight: rf(12), position: "relative" }}>
-                  {peopleData.photoUri ? (
+                  {peopleData && peopleData.photoUri ? (
                     <Image
                       source={{ uri: peopleData.photoUri }}
                       style={{
@@ -312,7 +312,7 @@ const PeopleInformation = ({
                       <UserRound size={rf(25)} />
                     </View>
                   )}
-                  {peopleData.isVerified && (
+                  {peopleData && peopleData.isVerified && (
                     <View
                       style={{
                         position: "absolute",
@@ -344,7 +344,7 @@ const PeopleInformation = ({
                     {/* {peopleData.name} */}
                   </Text>
                 </View>
-                {peopleData.isVerified && (
+                {peopleData && peopleData.isVerified && (
                   <TouchableOpacity
                     onPress={() => setShowVerifiedText((prev) => !prev)}
                     activeOpacity={0.7}
@@ -399,7 +399,7 @@ const PeopleInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {Mask("hiddenPhone", peopleData.phone)}
+                    {peopleData && peopleData.phone ? Mask("hiddenPhone", peopleData.phone) : `Telefone não informado`}
                   </Text>
                 </View>
 
@@ -412,7 +412,7 @@ const PeopleInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {Mask("hiddenEmail", peopleData.email)}
+                    {peopleData && peopleData.email ? Mask("hiddenEmail", peopleData.email) : `E-mail não informado`}
                   </Text>
                 </View>
 

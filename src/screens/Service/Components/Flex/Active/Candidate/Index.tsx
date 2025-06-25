@@ -4,29 +4,15 @@ import { ChevronLeft } from "lucide-react-native";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import CardPeople from "~/src/screens/Home/Helper/CardPeopleService";
 import { ScrollView } from "react-native-gesture-handler";
-export default function Candidate({ setModalStep, x }: any) {
-  const data = useMemo(
-    () =>
-      Array(50)
-        .fill(0)
-        .map((_, index) => `index-${index}`),
-    []
-  );
-  const renderItem = useCallback(
-    (item: any) => (
-      <View key={item} style={styles.itemContainer}>
-        <Text>{item}</Text>
-      </View>
-    ),
-    []
-  );
+export default function Candidate({ setModalStep, item }: any) {
+
   return (
-    <View className="py-3 bg-white mt-5" style={styles.container}>
-      <TouchableOpacity className="" onPress={() => setModalStep("menu")}>
+    <View className=" bg-white h-full w-full" >
+      <TouchableOpacity className="px-5 mb-5" onPress={() => setModalStep("menu")}>
         <ChevronLeft size={rf(25)} />
       </TouchableOpacity>
         <ScrollView>
-            {data.map(renderItem)}
+          <CardPeople data={item} />
         </ScrollView>
     </View>
   );

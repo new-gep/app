@@ -37,10 +37,13 @@ import {
   Eye,
 } from "lucide-react-native";
 import Candidate from "./Candidate/Index";
+import Promotion from "./Promotion/Index";
+import ServiceInformation from "~/src/screens/Home/Helper/Modal/ServiceInformation";
 export default function ModalMenu({ visible, setVisible, item }: any) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [modalStep, setModalStep] = useState<"menu" | "candidates">("menu");
+  const [modalStep, setModalStep] = useState<"menu" | "candidates" | "promotion">("menu");
   const [currentSnapIndex, setCurrentSnapIndex] = useState(0);
+  const [visibleWork, setVisibleWork] = useState<boolean>(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(20)).current;
   const serviceIcons = {
@@ -118,7 +121,7 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
     []
   );
 
-  const goToStep = (step: "menu" | "candidates") => {
+  const goToStep = (step: "menu" | "candidates" | "promotion") => {
     fadeAnim.setValue(0);
     translateYAnim.setValue(20);
     setModalStep(step);
@@ -148,35 +151,25 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
     [setVisible]
   );
 
-  const data = useMemo(
-      () =>
-        Array(50)
-          .fill(0)
-          .map((_, index) => `index-${index}`),
-      []
-    );
-    const renderItem = useCallback(
-      (item: any) => (
-        <View key={item} style={styles.itemContainer}>
-          <Text>{item}</Text>
-        </View>
-      ),
-      []
-    );
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <ServiceInformation
+        autoView={true}
+        peopleData={item}
+        visible={visibleWork}
+        setVisible={setVisibleWork}
+        handleSwipeRight={()=>{}}
+      />
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onChange={handleSheetChanges}
-        snapPoints={["25%", "50%"]}
+        snapPoints={["25%", "80%"]}
         backdropComponent={renderBackdrop}
-        enableContentPanningGesture={false}
-        
+        enablePanDownToClose={true}
       >
         <BottomSheetView style={{ flex: 1 }}>
             {modalStep === "menu" && (
-              <View className="flex-row items-center mb-8">
+              <View className="flex-row items-center mb-8 px-5">
                 <View
                   style={{ height: rf(45), width: rf(45) }}
                   className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-2"
@@ -200,6 +193,12 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                     className="text-gray-500"
                     style={{ ...FONTS.fontLight, fontSize: rf(12) }}
                   >
+                    Anúncio: {item.visibility}
+                  </Text>
+                  <Text
+                    className="text-gray-500"
+                    style={{ ...FONTS.fontLight, fontSize: rf(12) }}
+                  >
                     Publicado: {item.create}
                   </Text>
                 </View>
@@ -208,7 +207,6 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
             {currentSnapIndex > 0 && (
               <BottomSheetScrollView
                 contentContainerStyle={{
-                  paddingBottom: 80 , // Espaço extra para evitar corte
                   flexGrow: 1, // Permite que o conteúdo cresça
                   flex: 1,
                 }}
@@ -219,10 +217,10 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                     opacity: fadeAnim,
                     transform: [{ translateY: translateYAnim }],
                   }}
-                  className="px-5 gap-5"
+                  className="px-5 "
                 >
                   {modalStep === "menu" ? (
-                    <>
+                    <View className="gap-5">
                       <TouchableOpacity
                         className="flex-row border-b border-zinc-200 pb-3 justify-between"
                         onPress={() => goToStep("candidates")}
@@ -240,7 +238,9 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           className="ml-1 text-zinc-500"
                         />
                       </TouchableOpacity>
-                      <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between">
+                      <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
+                        onPress={()=> goToStep("promotion")}
+                      >
                         <View className="flex-row ">
                           <Flame size={rf(20)} className="mr-1" />
                           <Text
@@ -254,7 +254,9 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           className="ml-1 text-zinc-500"
                         />
                       </TouchableOpacity>
-                      <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between">
+                      <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
+                        onPress={() => setVisibleWork(true)}
+                      >
                         <View className="flex-row ">
                           <Eye size={rf(20)} className="mr-1" />
                           <Text
@@ -282,7 +284,9 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           className="ml-1 text-zinc-500"
                         />
                       </TouchableOpacity>
-                    </>
+                    </View>
+                  ) : modalStep === "promotion" ? (
+                    <Promotion item={item} setModalStep={goToStep} />
                   ) : (
                     <Candidate item={item} setModalStep={goToStep} />
                   )}

@@ -45,6 +45,7 @@ const ServiceInformation = ({
   visible,
   setVisible,
   peopleData,
+  autoView
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
@@ -519,7 +520,8 @@ const ServiceInformation = ({
                 </>
               )}
             </TouchableOpacity>
-            <TouchableOpacity
+            { !autoView &&
+              <TouchableOpacity
               style={{ flex: 1, padding: 12, alignItems: "center" }}
               onPress={handleApply}
             >
@@ -529,7 +531,8 @@ const ServiceInformation = ({
               >
                 Candidatar
               </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            }
           </View>
         </Animated.View>
       </GestureHandlerRootView>
