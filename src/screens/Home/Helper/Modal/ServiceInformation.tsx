@@ -163,8 +163,6 @@ const ServiceInformation = ({
     setActiveImage(null);
   };
 
-
-
   return (
     <Modal
       isVisible={visible}

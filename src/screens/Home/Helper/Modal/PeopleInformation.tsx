@@ -839,17 +839,21 @@ const PeopleInformation = ({
                 </>
               )}
             </TouchableOpacity>
-            <TouchableOpacity
-              style={{ flex: 1, padding: 12, alignItems: "center" }}
-              onPress={handleApply}
-            >
-              <Plus size={rf(24)} color="#71717a" />
-              <Text
-                style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+            
+           { handleSwipeRight &&
+              <TouchableOpacity
+                style={{ flex: 1, padding: 12, alignItems: "center" }}
+                onPress={handleApply}
               >
-                Contratar
-              </Text>
-            </TouchableOpacity>
+                <Plus size={rf(24)} color="#71717a" />
+                <Text
+                  style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                >
+                  Contratar
+                </Text>
+              </TouchableOpacity>
+            }
+
           </View>
         </Animated.View>
       </GestureHandlerRootView>

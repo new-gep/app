@@ -124,7 +124,7 @@ export default function CardFlex() {
       </View>
                 
       <>
-        <View className="flex-row justify-between mt-5">
+        {/* <View className="flex-row justify-between mt-5">
           <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
@@ -143,12 +143,15 @@ export default function CardFlex() {
               <Star size={rf(20)} />
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
         <View className="flex-row justify-between mt-5">
           <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
               className="bg-yellow-200 rounded-2xl p-2 h-20"
+               onPress={() => {
+                navigation.navigate("AnnouncementProposal");
+              }}
             >
               <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Propostas</Text>
               <Mail size={rf(20)} />

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import Header from "~/src/layout/Header";
-import MyServiceCard from "./Card/MyService";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { ScrollView, FlatList, Pressable } from 'react-native-gesture-handler';
-import Service from "./Card/Service";
+import React from "react";
+import { View, Text } from "react-native";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
+import Header from "~/src/layout/Header";
+import ProposalCard from "./Card";
 
-export default function History() {
+export default function Proposal() {
+  
   const fakeData = [
     {
       id: 1,
@@ -178,68 +178,62 @@ export default function History() {
           },
         },
       ],
-      CPF_Collaborator:{
-          id: 1,
-          name: "Mario Oliveira",
-          service: [
-            "Geladeira",
-            "Lava Louça",
-            "Televisão",
-            "Dança",
-            "Concursos",
-          ],
-          category: ["Assistência Técnica", "Aulas"],
-          age: 22,
-          phone: "1912345678",
-          email: "mario.oliveira@email.com",
-          zip_code: "01234-567",
-          street: "Rua das Flores",
-          district: "Jardim das Rosas",
-          city: "São Paulo",
-          uf: "SP",
-          isVerified: true,
-          photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
-          birth: "01/10/2001",
-          locality: "São Paulo - SP",
-          interests: ["Música", "Tecnologia", "Esportes"],
-          about:
-            "Sou uma pessoa dedicada, focada e apaixonada pelo que faço. Sempre busco aprender e crescer profissionalmente.",
-          contact: {
-            phone: "+55 11 91234-5678",
-            email: "joao.silva@email.com",
-            address: "Rua das Flores, 123, São Paulo - SP",
-          },
-          workPreferences: {
-            location: "São Paulo - SP",
-            maxDistanceKm: 50,
-            allowFurtherDistance: true,
-            contractType: ["Autônomo", "CLT"],
-            modality: ["Híbrido", "Presencial"],
-            schedule: ["Dia", "Noite"],
-            mobility: ["Carro", "Moto"],
-            paymentType: ["Por dia", "Por hora", "A combinar"],
-          },
-          social: {
-            instagram: "@meuinsta",
-            facebook: "https://facebook.com/meuperfil",
-            linkedin: "https://linkedin.com/in/meulinkedin",
-            twitter: "@meutwitter",
-            tiktok: "https://www.tiktok.com/@meutiktok",
-            youtube: "https://www.youtube.com/channel/abc123",
-            website: "https://www.meusite.com.br",
-          },
-          personal: {
-            pets: ["Cachorro", "Gato"],
-            diet: ["Onívoro"],
-            loveLanguage: ["Toque Físico", "Tempo de Qualidade"],
-            drinks: ["Sim"],
-            smokes: ["Não"],
-            education: ["Ensino Superior Completo"],
-            communicationType: ["Assertiva", "Passiva"],
-            children: ["3"],
-            marriage: ["Sim"],
-            values: ["Familía", "Trabalho"],
-          },
+      CPF_Collaborator: {
+        id: 1,
+        name: "Mario Oliveira",
+        service: ["Geladeira", "Lava Louça", "Televisão", "Dança", "Concursos"],
+        category: ["Assistência Técnica", "Aulas"],
+        age: 22,
+        phone: "1912345678",
+        email: "mario.oliveira@email.com",
+        zip_code: "01234-567",
+        street: "Rua das Flores",
+        district: "Jardim das Rosas",
+        city: "São Paulo",
+        uf: "SP",
+        isVerified: true,
+        photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
+        birth: "01/10/2001",
+        locality: "São Paulo - SP",
+        interests: ["Música", "Tecnologia", "Esportes"],
+        about:
+          "Sou uma pessoa dedicada, focada e apaixonada pelo que faço. Sempre busco aprender e crescer profissionalmente.",
+        contact: {
+          phone: "+55 11 91234-5678",
+          email: "joao.silva@email.com",
+          address: "Rua das Flores, 123, São Paulo - SP",
+        },
+        workPreferences: {
+          location: "São Paulo - SP",
+          maxDistanceKm: 50,
+          allowFurtherDistance: true,
+          contractType: ["Autônomo", "CLT"],
+          modality: ["Híbrido", "Presencial"],
+          schedule: ["Dia", "Noite"],
+          mobility: ["Carro", "Moto"],
+          paymentType: ["Por dia", "Por hora", "A combinar"],
+        },
+        social: {
+          instagram: "@meuinsta",
+          facebook: "https://facebook.com/meuperfil",
+          linkedin: "https://linkedin.com/in/meulinkedin",
+          twitter: "@meutwitter",
+          tiktok: "https://www.tiktok.com/@meutiktok",
+          youtube: "https://www.youtube.com/channel/abc123",
+          website: "https://www.meusite.com.br",
+        },
+        personal: {
+          pets: ["Cachorro", "Gato"],
+          diet: ["Onívoro"],
+          loveLanguage: ["Toque Físico", "Tempo de Qualidade"],
+          drinks: ["Sim"],
+          smokes: ["Não"],
+          education: ["Ensino Superior Completo"],
+          communicationType: ["Assertiva", "Passiva"],
+          children: ["3"],
+          marriage: ["Sim"],
+          values: ["Familía", "Trabalho"],
+        },
       },
       visibility: "Gratuito",
       typeService: "my",
@@ -285,25 +279,16 @@ export default function History() {
       notIncluded: "Texturização de paredes, pintura externa.",
       photoUri: "https://randomuser.me/api/portraits/women/7.jpg",
     },
-  ]
+  ];
 
   const render = ({ item }: { item: any }) => {
-    if(item.typeService == 'flex'){
-      return (
-        <Service item={item} />
-      )
-    }
-    if(item.typeService == 'my'){
-      return <MyServiceCard item={item}/>
-    }
-
-    return null;
+      return <ProposalCard item={item}/>
   }
 
   return (
     <BottomSheetModalProvider>
       <View className="bg-white h-full">
-        <Header leftIcon="back" title="Histórico" />
+        <Header leftIcon="back" title="Propostas" />
         <ScrollView className="px-4 pt-4">
           <FlatList 
             data={fakeData}

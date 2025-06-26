@@ -98,10 +98,14 @@ export type RootStackParamList = {
   Filter: undefined;
   Documents: undefined;
   Social: undefined;
+  FixProcess: undefined;
+  FixHistory: undefined;
+  FixProposal: undefined;
   Announcement: undefined;
   AnnouncementCreate: { adType?: any };
   AnnouncementActive: undefined;
   AnnouncementHistory: undefined;
+  AnnouncementProposal: undefined;
   CardInformationPeople:
     | {
         cardData: any;

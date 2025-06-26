@@ -1,4 +1,5 @@
 
+import { useNavigation } from "@react-navigation/native";
 import {
   ChevronRight,
   Building2,
@@ -30,14 +31,13 @@ export default function Card() {
     logoUrl: "",
     status: "atual" as StatusKey, // <- use isso pra mudar a bolinha e mensagem
   };
-
-
   const statusMap: Record<StatusKey, { color: string; label: string }> = {
     atual: { color: "#22c55e", label: "Atual" }, // verde
     demissao: { color: "#facc15", label: "Em processo de demissão" }, // amarelo
     ultimo: { color: "#ef4444", label: "Último serviço" }, // vermelho
   };
   const { color, label } = statusMap[empresaAtualFake.status];
+  const navigation = useNavigation<any>();
 
   const handleStatusPress = () => {
     Alert.alert("Status", label);
@@ -124,12 +124,15 @@ export default function Card() {
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
               className="bg-yellow-200 rounded-2xl p-2 h-20"
+              onPress={() => {
+                navigation.navigate("FixProcess");
+              }}
             >
               <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Processos</Text>
               <Repeat size={rf(20)} />
             </TouchableOpacity>
           </View>
-          <View className="w-3/6 px-2">
+          {/* <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
               className="bg-yellow-200 rounded-2xl p-2 h-20"
@@ -137,10 +140,22 @@ export default function Card() {
               <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Mensagens</Text>
               <MessageCircle size={rf(20)} />
             </TouchableOpacity>
+          </View> */}
+          <View className="w-3/6 px-2">
+            <TouchableOpacity
+              style={[Style.container, { height: rf(100) }]}
+              className="bg-yellow-200 rounded-2xl p-2 h-20"
+              onPress={() => {
+                navigation.navigate("FixPropostal");
+              }}
+            >
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Propostas</Text>
+              <Mail size={rf(20)} />
+            </TouchableOpacity>
           </View>
         </View>
         <View className="flex-row justify-between mt-5">
-          <View className="w-3/6 px-2">
+          {/* <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
               className="bg-yellow-200 rounded-2xl p-2 h-20"
@@ -148,11 +163,14 @@ export default function Card() {
               <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Propostas</Text>
               <Mail size={rf(20)} />
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View className="w-3/6 px-2">
             <TouchableOpacity
               style={[Style.container, { height: rf(100) }]}
               className="bg-yellow-200 rounded-2xl p-2 h-20"
+              onPress={() => {
+                navigation.navigate("FixHistory");
+              }}
             >
               <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Historico</Text>
               <History size={rf(20)} />

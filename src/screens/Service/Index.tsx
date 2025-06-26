@@ -115,7 +115,7 @@ export default function Service() {
             }}
           >
             <CardFix />
-            <CardFix2 />
+            {/* <CardFix2 /> */}
           </Animated.View>
 
           {/* Flex */}
