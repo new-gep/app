@@ -146,7 +146,7 @@ export default function Card() {
               style={[Style.container, { height: rf(100) }]}
               className="bg-yellow-200 rounded-2xl p-2 h-20"
               onPress={() => {
-                navigation.navigate("FixPropostal");
+                navigation.navigate("FixProposal");
               }}
             >
               <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Propostas</Text>

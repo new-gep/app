@@ -200,14 +200,14 @@ const PeopleInformation = ({
     <View>
       <View>
         <View className="flex-row flex-wrap">
-          {items.map((item, index) => (
+          {/* {items && items.map((item, index) => (
             <Text
               key={index}
               style={[styles.tag, FONTS.fontLight, { fontSize: rf(10) }]}
             >
               {item}
             </Text>
-          ))}
+          ))} */}
         </View>
       </View>
     </View>
@@ -287,7 +287,7 @@ const PeopleInformation = ({
               {/* Header Content */}
               <View style={styles.headerContent}>
                 <View style={{ marginRight: rf(12), position: "relative" }}>
-                  {peopleData && peopleData.photoUri ? (
+                  {peopleData && peopleData.photoUri && peopleData.photoUri ? (
                     <Image
                       source={{ uri: peopleData.photoUri }}
                       style={{
@@ -502,7 +502,7 @@ const PeopleInformation = ({
                 >
                   Serviços
                 </Text>
-                {renderTagList(peopleData.service)}
+                {peopleData.service && renderTagList(peopleData.service)}
               </View>
 
               <View className={"gap-2 mt-3"}>
@@ -776,7 +776,7 @@ const PeopleInformation = ({
 
                   {/* Botões (links) lado a lado */}
                   <View className="flex-row flex-wrap gap-x-3 gap-y-2">
-                    {Object.entries(peopleData.social).map(
+                    {peopleData.social && Object.entries(peopleData.social).map(
                       ([key, value]: any) => {
                         const Icon = icons[key as keyof typeof icons];
                         const isLink = isUrl(value);

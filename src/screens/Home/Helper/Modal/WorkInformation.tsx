@@ -12,14 +12,9 @@ import {
 import Modal from "react-native-modal";
 import {
   Share2,
-  CameraOff,
-  Eye,
   Banknote,
   MapPin,
-  HandCoins,
-  Phone,
   Check,
-  UserRound,
   CircleCheck,
   ChevronUp,
   ChevronDown,
@@ -30,7 +25,6 @@ import {
   BriefcaseBusiness,
   Accessibility,
   Shapes,
-  CirclePlus,
 } from "lucide-react-native";
 import {
   PanGestureHandler,
@@ -251,7 +245,7 @@ const WorkInformation = ({
                     {jobData.name}
                   </Text>
                 </View>
-                {jobData.isVerified && (
+                {jobData && jobData.isVerified && (
                   <TouchableOpacity
                     onPress={() => setShowVerifiedText((prev) => !prev)}
                     activeOpacity={0.7}

@@ -1,28 +1,58 @@
-import { Check, ChevronRight, UserRound } from "lucide-react-native";
-import { useState } from "react";
-import { TouchableOpacity, View, Image, Text, StyleSheet } from "react-native";
+import { Check, ChevronRight, EllipsisVertical, Building2 } from "lucide-react-native";
+import React, { useState } from "react";
+import { TouchableOpacity, View, Image, Text, StyleSheet, Dimensions } from "react-native";
+import { rf } from "~/src/hooks/utils/responsiveFont";
+import PeopleInformation from "../../Home/Helper/Modal/PeopleInformation";
 import { Swipeable } from "react-native-gesture-handler";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
-import { rf } from "~/src/hooks/utils/responsiveFont";
-import ModalService from "../Modal/Service";
-export default function Service({item}:any) {
-  const [visibleService, setVisibleService]= useState<boolean>(false);
+import WorkInformation from "../../Home/Helper/Modal/WorkInformation";
+const SCREEN_WIDTH = Dimensions.get("window").width;
+
+const Work = React.memo(function SwipeableCard({
+  item,
+  onSwipeRight,
+  navigateToCardInformation,
+  handleSwipeRight,
+}: any) {
+  const [visible, setVisible] = useState<boolean>();
+
+  const renderLeftActions = () => (
+    <View className=" justify-center pl-6 flex-1 rounded-lg"></View>
+  );
+
+  const renderRightActions = () => (
+    <View className="justify-center items-center w-20">
+      <TouchableOpacity onPress={() => setVisible(true)}>
+        <EllipsisVertical size={rf(25)} />
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <View>
-      <ModalService visible={visibleService} setVisible={setVisibleService} item={item}/>
+    <View style={styles.cardWrapper}>
+      <WorkInformation
+        jobData={item}
+        visible={visible}
+        setVisible={setVisible}
+        handleSwipeRight={handleSwipeRight}
+      />
       <Swipeable
         key={item.id}
+        onSwipeableOpen={(direction) => {
+          if (direction === "left") {
+            handleSwipeRight(item.id);
+          }
+        }}
+        renderRightActions={renderRightActions}
+        renderLeftActions={renderLeftActions} // <- necessário para permitir o swipe à direita
       >
         <TouchableOpacity
-          className="px-4 py-2 bg-white border-b border-zinc-300 rounded-lg flex-row items-center justify-between"
+          className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
           style={styles.card}
-          onPress={
-            ()=> setVisibleService(true)
-          }
+          onPress={navigateToCardInformation}
         >
-          <View className="flex-row items-center flex-1">
+          <View className="flex-row items-center">
             <View className="mr-3" style={{ position: "relative" }}>
               {item.photoUri ? (
                 <Image
@@ -33,7 +63,7 @@ export default function Service({item}:any) {
                 />
               ) : (
                 <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
-                  <UserRound size={rf(25)} />
+                  <Building2 size={rf(25)} />
                 </View>
               )}
 
@@ -46,26 +76,22 @@ export default function Service({item}:any) {
                     height: rf(13),
                     width: rf(13),
                   }}
-                  className="rounded-full bg-primary items-center justify-center "
+                  className="rounded-full bg-primary items-center justify-center"
                 >
                   <Check className="text-dark" size={rf(10)} />
                 </View>
               )}
             </View>
-            
+
             <View className="pr-2">
-              <Text
-                style={{ ...FONTS.font, fontSize: rf(12) }}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
+              <Text style={{ ...FONTS.font, fontSize: rf(12) }}>
                 {item.function}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {`${Mask("amount", item.salary)} ${item.valueType}`}
+                {Mask("amount", item.salary)}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
@@ -88,15 +114,17 @@ export default function Service({item}:any) {
       </Swipeable>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   cardWrapper: {
     position: "relative",
+    width: SCREEN_WIDTH - rf(30),
     minHeight: rf(20),
   },
   cardContainer: {
+    width: SCREEN_WIDTH - rf(32),
     minHeight: rf(20),
     overflow: "visible",
   },
@@ -106,3 +134,6 @@ const styles = StyleSheet.create({
     overflow: "visible",
   },
 });
+
+
+export default Work

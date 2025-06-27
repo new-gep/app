@@ -8,9 +8,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import {
   Banknote,
-  History,
-  CircleCheck,
-  Megaphone,
+  FileText,
   Info,
   ChevronRight,
   Home,
@@ -21,9 +19,7 @@ import {
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
-import CardPeople from "~/src/screens/Home/Helper/CardPeopleService";
-import PeopleInformation from "~/src/screens/Home/Helper/Modal/PeopleInformation";
-import ServiceInformation from "~/src/screens/Home/Helper/Modal/ServiceInformation";
+import WorkInformation from "~/src/screens/Home/Helper/Modal/WorkInformation";
 export default function ModalProposal({ item, visible, setVisible }: any) {
   const [currentSnapIndex, setCurrentSnapIndex] = useState(0);
   const [visiblePeople, setVisiblePeople] = useState<boolean>(false);
@@ -59,10 +55,10 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
 
   return (
     <GestureHandlerRootView>
-      <ServiceInformation
+      <WorkInformation
         visible={visiblePeople}
         setVisible={setVisiblePeople}
-        peopleData={item}
+        jobData={item}
       />
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -80,10 +76,10 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
             </View>
             <View>
               <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                {item && item.title && item.title}
+                {item && item.function && item.function}
               </Text>
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Criado em: {item && item.create && item.create}
+                Empresa {item && item.name && item.name}
               </Text>
             </View>
           </View>
@@ -98,6 +94,12 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
               <Home size={rf(16)} className="mr-1" />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
                 Modelo {item && item.model && item.model}
+              </Text>
+            </View>
+            <View className="flex-row">
+              <FileText size={rf(16)} className="mr-1" />
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
+                Contratação {item && item.contract && item.contract}
               </Text>
             </View>
             <View className="flex-row">

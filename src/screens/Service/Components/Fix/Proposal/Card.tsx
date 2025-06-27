@@ -56,7 +56,7 @@ export default function ProposalCard({ item }: any) {
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
                 >
-                {`${Mask("amount", item.salary)} ${item.valueType}`}
+                {`${Mask("amount", item.salary)}`}
                 </Text>
                 <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
