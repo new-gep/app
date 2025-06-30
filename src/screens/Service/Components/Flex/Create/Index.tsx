@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import Header from "~/src/layout/Header";
 import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import Icon from "~/src/components/Icon/Icon";
 import Form from "./Form";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 const services = [
   { icon: "build_outline", title: "Assistência Técnica" },
   { icon: "school_outline", title: "Aulas" },
@@ -21,54 +23,55 @@ const services = [
 
 export default function Create() {
   const [selectedCategory, setSelectedCategory] = useState(null);
-  // Lista de imagens (simulado por string aqui)
 
   return (
-    <View className="bg-white h-full">
-      {!selectedCategory ? (
-        <>
-          <Header
-            leftIcon="back"
-            title={"Criar Anúncio"}
-          />
-          <ScrollView contentContainerStyle={{ padding: 16 }}>
-            <Text style={[FONTS.fontBlack, { fontSize: rf(26) }]}>
-              Escolha uma Categoria
-            </Text>
-            <Text
-              className="text-gray-500 mb-4"
-              style={[FONTS.fontLight, { fontSize: rf(13) }]}
-            >
-              Escolha qual serviço você deseja anunciar
-            </Text>
+    <BottomSheetModalProvider>
+      <View className="bg-white h-full">
+        {!selectedCategory ? (
+          <>
+            <Header
+              leftIcon="back"
+              title={"Criar Anúncio"}
+            />
+            <ScrollView contentContainerStyle={{ padding: 16 }}>
+              <Text style={[FONTS.fontBlack, { fontSize: rf(26) }]}>
+                Escolha uma Categoria
+              </Text>
+              <Text
+                className="text-gray-500 mb-4"
+                style={[FONTS.fontLight, { fontSize: rf(13) }]}
+              >
+                Escolha qual serviço você deseja anunciar
+              </Text>
 
-            <View className="flex flex-row flex-wrap justify-between">
-              {services.map((service, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={Style.container}
-                  className="bg-white rounded-2xl p-5 w-[48%] mb-4 items-center shadow-sm justify-center"
-                  activeOpacity={0.7}
-                  onPress={() => setSelectedCategory(service)}
-                >
-                  <View className="h-7 w-7">
-                    <Icon name={service.icon} color="#4B5563" />
-                  </View>
-                  <Text
-                    style={[FONTS.fontLight, { fontSize: rf(12) }]}
-                    className="text-center text-gray-700"
+              <View className="flex flex-row flex-wrap justify-between">
+                {services.map((service, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={Style.container}
+                    className="bg-white rounded-2xl p-5 w-[48%] mb-4 items-center shadow-sm justify-center"
+                    activeOpacity={0.7}
+                    onPress={() => setSelectedCategory(service)}
                   >
-                    {service.title}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
-        </>
-      ) : (
-        <Form setSelectedCategory={setSelectedCategory} title={selectedCategory.title}/>
-      )}
-    </View>
+                    <View className="h-7 w-7">
+                      <Icon name={service.icon} color="#4B5563" />
+                    </View>
+                    <Text
+                      style={[FONTS.fontLight, { fontSize: rf(12) }]}
+                      className="text-center text-gray-700"
+                    >
+                      {service.title}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </>
+        ) : (
+          <Form setSelectedCategory={setSelectedCategory} title={selectedCategory.title}/>
+        )}
+      </View>
+    </BottomSheetModalProvider>
   );
 }
 

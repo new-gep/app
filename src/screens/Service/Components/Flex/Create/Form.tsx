@@ -14,30 +14,77 @@ import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import SelectAdType from "./SelectAdType";
 import Header from "~/src/layout/Header";
+import GetPathPicture from "~/src/function/getPathPicture";
+import ModalErrors from "./Modal";
+import ModalUpload from "./ModalUpload";
+import Mask from "~/src/function/mask";
+import CreateAnnouncement from "~/src/hooks/create/announcement";
+import useCollaborator from "~/src/function/fetchCollaborator";
 export default function Form({ title, setSelectedCategory }: any) {
+  const [visible, setVisible] = useState<boolean>(false);
+  const [gallery, setGallery] = useState<Array<any>>([]);
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
+    []
+  );
+  const [visibleUpload, setVisibleUpload] = useState<boolean>(false);
+  const [errors, setErrors] = useState({});
   const [selectAdTypeView, setSelectAdTypeView] = useState<boolean>(false);
-  const [priceType, setPriceType] = useState("fixo");
+  const [priceType, setPriceType] = useState("");
+  const [titleValue, setTitleValue] = useState("");
   const [price, setPrice] = useState("");
   const [included, setIncluded] = useState("");
   const [excluded, setExcluded] = useState("");
   const [moreInfo, setMoreInfo] = useState("");
-  const [contact, setContact] = useState("");
   const [adType, setAdType] = useState("selecione");
-  const [images, setImages] = useState<string[]>([]);
   const screenWidth = Dimensions.get("window").width;
-  const boxSize = (screenWidth - 50 - 2 * 8) / 3; 
+  const boxSize = (screenWidth - 50 - 2 * 8) / 3;
+  const { collaborator } = useCollaborator();
 
-  const handleImageUpload = () => {
-    if (images.length >= 3) return;
-    // Simulação de imagem
-    setImages((prev) => [
-      ...prev,
-      `https://via.placeholder.com/100?text=${prev.length + 1}`,
-    ]);
+  const validateForm = () => {
+    const newErrors: any = {};
+    if (!titleValue.trim()) newErrors.title = "Título é Obrigatório";
+    if (!included.trim()) newErrors.included = "Campo Obrigatório";
+    if (!priceType) newErrors.priceType = "Selecione uma forma de pagamento";
+    if (priceType !== "A combinar" && !price.trim())
+      newErrors.price = "Preço Obrigatório";
+    if (!adType || adType === "selecione")
+      newErrors.adType = "Selecione o tipo de anúncio";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCreate = async () => {
+    const validate = await validateForm();
+    if (validate && collaborator) {
+      const data = {
+        category: title,
+        CPF_Creator: collaborator.CPF,
+        title: titleValue,
+        typePayment: priceType,
+        typeAnnouncement: adType,
+        salary: price,
+        included: included,
+        notIncluded: excluded,
+        information: moreInfo,
+        gallery: gallery,
+      };
+      const response = await CreateAnnouncement(data);
+    } else {
+      setVisible(true);
+    }
   };
 
   return (
     <View>
+      <ModalErrors item={errors} visible={visible} setVisible={setVisible} />
+      <ModalUpload
+        selectedGalleryIndex={selectedGalleryIndex}
+        setSelectedGalleryIndex={setSelectedGalleryIndex}
+        setGallerty={setGallery}
+        visible={visibleUpload}
+        setVisible={setVisibleUpload}
+      />
       <Header
         leftIcon="back"
         leftAction={() => {
@@ -49,7 +96,13 @@ export default function Form({ title, setSelectedCategory }: any) {
         }}
         title={title}
       />
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 120, paddingHorizontal:20 }}>
+      <ScrollView
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: 120,
+          paddingHorizontal: 20,
+        }}
+      >
         {!selectAdTypeView ? (
           <>
             <Text
@@ -59,9 +112,9 @@ export default function Form({ title, setSelectedCategory }: any) {
             </Text>
             <TextInput
               className="border border-gray-300 rounded-lg p-3 mb-4"
-              placeholder="Titulo"
-              value={included}
-              onChangeText={setIncluded}
+              placeholder="Título"
+              value={titleValue}
+              onChangeText={setTitleValue}
             />
             {/* Tipo de preço */}
             <Text style={FONTS.fontLight}>Forma de Pagamento:</Text>
@@ -106,8 +159,11 @@ export default function Form({ title, setSelectedCategory }: any) {
                 className="border border-gray-300 rounded-lg p-3 mb-4"
                 placeholder="Digite o preço"
                 keyboardType="numeric"
-                value={price}
-                onChangeText={setPrice}
+                value={Mask("amount", price)}
+                onChangeText={(text) => {
+                  const numeric = text.replace(/\D/g, ""); // remove tudo que não é número
+                  setPrice(numeric);
+                }}
               />
             )}
 
@@ -169,15 +225,17 @@ export default function Form({ title, setSelectedCategory }: any) {
                 <TouchableOpacity
                   key={i}
                   onPress={() => {
-                    if (images[i]) return;
-                    handleImageUpload();
+                    // if (gallery[i]) return;
+                    // salvar índice clicado
+                    setSelectedGalleryIndex(i);
+                    setVisibleUpload(true); // abrir modal
                   }}
                   className="rounded-lg items-center justify-center overflow-hidden bg-gray-100"
                   style={[Styles.card, { width: boxSize, height: boxSize }]}
                 >
-                  {images[i] ? (
+                  {gallery[i] ? (
                     <Image
-                      source={{ uri: images[i] }}
+                      source={{ uri: gallery[i].uri || gallery[i] }} // <- garante que funcione se for string ou objeto
                       style={{ width: "100%", height: "100%" }}
                     />
                   ) : (
@@ -190,9 +248,7 @@ export default function Form({ title, setSelectedCategory }: any) {
             {/* Botão de enviar (simples por enquanto) */}
             <TouchableOpacity
               className="bg-primary rounded-lg py-4 items-center"
-              onPress={() => {
-                // Aqui você pode processar o envio
-              }}
+              onPress={handleCreate}
             >
               <Text className="text-dark font-bold">Publicar Anúncio</Text>
             </TouchableOpacity>

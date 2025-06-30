@@ -244,7 +244,6 @@ const DocumentSend = ({jobId, statusDocument ,setSendPicture , documentName, two
                     Sheet();
                     setFront(null);
                     setBack(null);
-
                     setLoad(false)
                     throw new Error('Documento inválido');
                 }
