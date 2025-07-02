@@ -9,6 +9,8 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
@@ -20,7 +22,7 @@ import ModalUpload from "./ModalUpload";
 import Mask from "~/src/function/mask";
 import CreateAnnouncement from "~/src/hooks/create/announcement";
 import useCollaborator from "~/src/function/fetchCollaborator";
-export default function Form({ title, setSelectedCategory }: any) {
+export default function Form({ title, setSelectedCategory, item }: any) {
   const [visible, setVisible] = useState<boolean>(false);
   const [gallery, setGallery] = useState<Array<any>>([]);
   const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
@@ -36,9 +38,11 @@ export default function Form({ title, setSelectedCategory }: any) {
   const [excluded, setExcluded] = useState("");
   const [moreInfo, setMoreInfo] = useState("");
   const [adType, setAdType] = useState("selecione");
+  const [awaitCreat, setAwaitCreat] = useState<boolean>(false);
   const screenWidth = Dimensions.get("window").width;
   const boxSize = (screenWidth - 50 - 2 * 8) / 3;
   const { collaborator } = useCollaborator();
+  const navigation = useNavigation<any>();
 
   const validateForm = () => {
     const newErrors: any = {};
@@ -57,9 +61,10 @@ export default function Form({ title, setSelectedCategory }: any) {
   const handleCreate = async () => {
     const validate = await validateForm();
     if (validate && collaborator) {
+      setAwaitCreat(true);
       const data = {
         category: title,
-        CPF_Creator: collaborator.CPF,
+        CPF_creator: collaborator.CPF,
         title: titleValue,
         typePayment: priceType,
         typeAnnouncement: adType,
@@ -70,6 +75,18 @@ export default function Form({ title, setSelectedCategory }: any) {
         gallery: gallery,
       };
       const response = await CreateAnnouncement(data);
+      if (response.status == 201) {
+        Alert.alert(
+          "Sucesso!",
+          "A vaga foi criada com sucesso.",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
+        setAwaitCreat(false);
+        navigation.goBack()
+        return;
+      }
+      setAwaitCreat(false);
     } else {
       setVisible(true);
     }
@@ -250,7 +267,11 @@ export default function Form({ title, setSelectedCategory }: any) {
               className="bg-primary rounded-lg py-4 items-center"
               onPress={handleCreate}
             >
-              <Text className="text-dark font-bold">Publicar Anúncio</Text>
+              {!awaitCreat ? (
+                <Text className="text-dark font-bold">Publicar Anúncio</Text>
+              ) : (
+                <ActivityIndicator color={"black"} size={19} />
+              )}
             </TouchableOpacity>
           </>
         ) : (

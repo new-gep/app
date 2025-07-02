@@ -9,11 +9,12 @@ export default async function uploadFileAnnouncement(path: string, id: any) {
         if (!extend) {
             throw new Error('Não foi possível obter a extensão do arquivo.');
         }
-
+        const fileName = `upload_${Date.now()}.${extend}`;
         // Preparando o FormData com o arquivo e os dados adicionais
         const formData = new FormData();
         formData.append('file', {
             uri: path,                     // Caminho do arquivo
+            name: fileName,
             type: `image/${extend}`,        // Tipo MIME baseado na extensão
         } as any);
         formData.append('id', id);

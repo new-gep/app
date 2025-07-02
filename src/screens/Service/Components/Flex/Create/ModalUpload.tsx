@@ -8,7 +8,13 @@ import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import GetPathPicture from "~/src/function/getPathPicture";
 
-export default function ModalUpload({ setGallerty, setSelectedGalleryIndex, selectedGalleryIndex, visible, setVisible }: any) {
+export default function ModalUpload({
+  setGallerty,
+  setSelectedGalleryIndex,
+  selectedGalleryIndex,
+  visible,
+  setVisible,
+}: any) {
   const [currentSnapIndex, setCurrentSnapIndex] = useState(0);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const handleSheetChanges = useCallback(
@@ -32,28 +38,34 @@ export default function ModalUpload({ setGallerty, setSelectedGalleryIndex, sele
     []
   );
   const handlePicture = async (option: "gallery" | "camera") => {
-  let path: any;
+    let path: any;
 
-  switch (option) {
-    case "gallery":
-      path = await GetPathPicture("gallery");
-      break;
-    case "camera":
-      path = await GetPathPicture("camera");
-      break;
-  }
+    switch (option) {
+      case "gallery":
+        path = await GetPathPicture("gallery");
+        break;
+      case "camera":
+        path = await GetPathPicture("camera");
+        break;
+    }
 
-  if (path === "cancel" || selectedGalleryIndex === null) return;
+    if (path === "cancel" || selectedGalleryIndex === null) return;
 
-  setGallerty((prev: any) => {
-    const updated = [...prev];
-    updated[selectedGalleryIndex] = path; // Atualiza exatamente o índice clicado
-    return updated;
-  });
+    setGallerty((prev: any[]) => {
+      const updated = [...prev];
 
-  setSelectedGalleryIndex(null);  // Limpa o índice depois do uso
-  setVisible(false);      // Fecha o modal
-};
+      // Preenche com null até alcançar o índice selecionado
+      while (updated.length <= selectedGalleryIndex) {
+        updated.push(null);
+      }
+
+      updated[selectedGalleryIndex] = path;
+      return updated;
+    });
+
+    setSelectedGalleryIndex(null); // Limpa o índice depois do uso
+    setVisible(false); // Fecha o modal
+  };
 
   useEffect(() => {
     if (visible) {

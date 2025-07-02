@@ -88,7 +88,7 @@ import History from "../screens/Service/Components/Flex/History/Index";
 import Notification from "../screens/Home/Helper/Notification";
 import CardInformationPeople from "../screens/Home/Helper/CardInformationService";
 import Proposal from "../screens/Service/Components/Flex/Proposal/Index";
-
+import ServiceDefault from "../screens/Service/Index";
 import FixHistory from "../screens/Service/Components/Fix/History/Index";
 import FixProposal from "../screens/Service/Components/Fix/Proposal/Index";
 import FixProcess from "../screens/Service/Components/Fix/Process/Index";
@@ -184,7 +184,7 @@ const StackNavigator = () => {
         <Stack.Screen name="AnnouncementProposal" component={Proposal} />
         <Stack.Screen name="AnnouncementActive" component={Active} />
         <Stack.Screen name="AnnouncementHistory" component={History} />
-
+        <Stack.Screen name="ServiceDefault" component={ServiceDefault} />
         <Stack.Screen name="FixHistory" component={FixHistory} />
         <Stack.Screen name="FixProposal" component={FixProposal} />
         <Stack.Screen name="FixProcess" component={FixProcess} />

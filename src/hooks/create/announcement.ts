@@ -7,6 +7,7 @@ type Props = {
   category?: string;
   title?: string;
   typePayment?: string;
+  CPF_creator: string;
   typeAnnouncement?: string;
   salary?: string;
   included?: string;
@@ -22,23 +23,25 @@ export default async function CreateAnnouncement(props: Props) {
       category: props.category,
       title: props.title,
       typePayment: props.typePayment,
+      CPF_Creator: { CPF: props.CPF_creator },
       typeAnnouncement: props.typeAnnouncement,
-      salary: props.salary && Mask('remove', props.salary),
+      salary: props.salary && Mask("remove", props.salary),
       included: props.included,
       notIncluded: props.notIncluded,
       information: props.information,
     });
 
-    const id = response.data?.id;
+    if(response.data.status !== 201) return response.data
 
-    // 2. Se tiver imagens, envia uma a uma
-    if (props.gallery && props.gallery.length > 0 && id) {
+    if (props.gallery && props.gallery.length > 0 && response.data.announcement.id) {
       for (const file of props.gallery) {
         const uri = file?.uri || file;
         if (uri) {
-          await uploadFileAnnouncement(uri, id);
+          await uploadFileAnnouncement(uri, response.data.announcement.id);
         }
       }
+    } else {
+      // console.log("sem gallery");
     }
 
     return response.data;

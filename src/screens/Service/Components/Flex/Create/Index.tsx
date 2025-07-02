@@ -7,6 +7,7 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import Icon from "~/src/components/Icon/Icon";
 import Form from "./Form";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { useRoute } from "@react-navigation/native";
 const services = [
   { icon: "build_outline", title: "Assistência Técnica" },
   { icon: "school_outline", title: "Aulas" },
@@ -21,18 +22,22 @@ const services = [
   { icon: "addCircle_outline", title: "Outros" },
 ];
 
+
 export default function Create() {
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const route = useRoute();
+  const item = (route as any).params;
+  const isEditMode = !!item;
+
+  const [selectedCategory, setSelectedCategory] = useState(
+    isEditMode ? { title: item.category } : null
+  );
 
   return (
     <BottomSheetModalProvider>
       <View className="bg-white h-full">
         {!selectedCategory ? (
           <>
-            <Header
-              leftIcon="back"
-              title={"Criar Anúncio"}
-            />
+            <Header leftIcon="back" title={"Criar Anúncio"} />
             <ScrollView contentContainerStyle={{ padding: 16 }}>
               <Text style={[FONTS.fontBlack, { fontSize: rf(26) }]}>
                 Escolha uma Categoria
@@ -68,7 +73,11 @@ export default function Create() {
             </ScrollView>
           </>
         ) : (
-          <Form setSelectedCategory={setSelectedCategory} title={selectedCategory.title}/>
+          <Form
+            item={item}
+            setSelectedCategory={setSelectedCategory}
+            title={selectedCategory.title}
+          />
         )}
       </View>
     </BottomSheetModalProvider>

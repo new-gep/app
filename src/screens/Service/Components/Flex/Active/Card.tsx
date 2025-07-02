@@ -14,7 +14,7 @@ import {
   Hammer,
   HeartPulse,
   House,
-  Banknote
+  Banknote,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -36,15 +36,19 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 import ModalMenu from "./Modal";
 const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
   item,
-  onSwipeRight,
-  onSwipeLeft,
-  navigateToCardInformation,
+  editAnnouncement,
+  deleteAnnouncement,
 }: any) {
   const [visible, setVisible] = useState<boolean>(false);
   const renderRightActions = () => (
     <>
-      <TouchableOpacity onPress={() => { setVisible(true); }} className="justify-center items-center  w-20">
-        <View >
+      <TouchableOpacity
+        onPress={() => {
+          setVisible(true);
+        }}
+        className="justify-center items-center  w-20"
+      >
+        <View>
           <EllipsisVertical size={rf(25)} />
         </View>
       </TouchableOpacity>
@@ -52,7 +56,10 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
   );
   const renderLeftActions = () => (
     <>
-      <TouchableOpacity className="justify-center items-center bg-red-400 w-20 ">
+      <TouchableOpacity
+        className="justify-center items-center bg-red-400 w-20"
+        onPress={deleteAnnouncement}
+      >
         <View className="items-center justify-center">
           <Trash2 className="text-white" size={rf(20)} />
           <Text
@@ -63,7 +70,10 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity className="justify-center items-center bg-gray-400 w-20 ">
+      <TouchableOpacity
+        className="justify-center items-center bg-gray-400 w-20 "
+        onPress={editAnnouncement}
+      >
         <View className="items-center justify-center">
           <Pencil className="text-white" size={rf(20)} />
           <Text
@@ -94,68 +104,78 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
   // 2. Função para retornar o ícone de forma segura
   const renderIcon = (serviceName: string) => {
     return (
-        //@ts-ignore
-      serviceIcons[serviceName] || <UserRound size={rf(25)} className="text-dark" />
+      //@ts-ignore
+      serviceIcons[serviceName] || (
+        <UserRound size={rf(25)} className="text-dark" />
+      )
     );
   };
 
   return (
     <View style={styles.cardWrapper}>
-        <ModalMenu visible={visible} setVisible={setVisible} item={item} />
-        <Swipeable
-          key={item.id}
-          renderRightActions={renderRightActions}
-          renderLeftActions={renderLeftActions}
+      <ModalMenu visible={visible} setVisible={setVisible} item={item} />
+      <Swipeable
+        key={item.id}
+        // renderRightActions={renderRightActions}
+        renderRightActions={() => null}
+        renderLeftActions={renderLeftActions}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            setVisible(true);
+          }}
+          className="px-5 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
+          style={styles.card}
         >
-            <TouchableOpacity
-              className="px-5 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
-              style={styles.card}
-            >
-            <View className="flex-row items-center flex-1">
-                <View className="mr-3" style={{ position: "relative" }}>
-                <View style={{height:rf(45), width:rf(45)}} className="rounded-full bg-zinc-100 items-center justify-center p-3">
-                    {renderIcon(item.service)}
-                </View>
-                </View>
-                <View className="pr-2">
-                    <Text
-                        style={{ ...FONTS.font, fontSize: rf(12) }}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                    >
-                        {item.function}
-                    </Text>
-                <Text
-                    style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                    className="text-green-600"
-                >
-                    {`${Mask("amount", item.salary)} ${item.valueType}`}
-                </Text>
-                <Text
-                    style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                    className="text-zinc-500"
-                >
-                    Anúncio {item.visibility}
-                </Text>
-                <Text
-                    style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                    className="text-zinc-500"
-                >
-                    {item.candidate.length > 0 ? item.candidate.length : 0} Candidatos
-                </Text>
-                <Text
-                    style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                    className="text-zinc-500"
-                >
-                    Anunciado em {item.create}
-                </Text>
-                </View>
+          <View className="flex-row items-center flex-1">
+            <View className="mr-3" style={{ position: "relative" }}>
+              <View
+                style={{ height: rf(45), width: rf(45) }}
+                className="rounded-full bg-zinc-100 items-center justify-center p-3"
+              >
+                {renderIcon(item.service)}
+              </View>
             </View>
-            <View className="mr-3">
-              <ChevronRight size={rf(20)} />
+            <View className="pr-2">
+              <Text
+                style={{ ...FONTS.font, fontSize: rf(12) }}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.function}
+              </Text>
+              <Text
+                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                className="text-green-600"
+              >
+                {`${Mask("amount", item.salary)} ${item.valueType}`}
+              </Text>
+              <Text
+                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                className="text-zinc-500"
+              >
+                Anúncio {item.visibility}
+              </Text>
+              <Text
+                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                className="text-zinc-500"
+              >
+                {item.candidate.length > 0 ? item.candidate.length : 0}{" "}
+                Candidatos
+              </Text>
+              <Text
+                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                className="text-zinc-500"
+              >
+                Anunciado em {item.create}
+              </Text>
             </View>
-            </TouchableOpacity>
-        </Swipeable>
+          </View>
+          <View className="mr-3">
+            <ChevronRight size={rf(20)} />
+          </View>
+        </TouchableOpacity>
+      </Swipeable>
     </View>
   );
 });

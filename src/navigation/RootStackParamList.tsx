@@ -101,8 +101,9 @@ export type RootStackParamList = {
   FixProcess: undefined;
   FixHistory: undefined;
   FixProposal: undefined;
+  ServiceDefault: undefined;
   Announcement: undefined;
-  AnnouncementCreate: { adType?: any };
+  AnnouncementCreate: { item?: any };
   AnnouncementActive: undefined;
   AnnouncementHistory: undefined;
   AnnouncementProposal: undefined;
