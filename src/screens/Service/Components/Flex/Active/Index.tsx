@@ -461,7 +461,6 @@ export default function Active() {
   const find = async (cpf:string) => {
     const response = await FindAnnouncement(cpf)
     if(response.status == 200){
-      console.log(response)
       setData(response.announcements)
     }
   }

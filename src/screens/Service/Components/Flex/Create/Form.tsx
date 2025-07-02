@@ -24,20 +24,18 @@ import CreateAnnouncement from "~/src/hooks/create/announcement";
 import useCollaborator from "~/src/function/fetchCollaborator";
 export default function Form({ title, setSelectedCategory, item }: any) {
   const [visible, setVisible] = useState<boolean>(false);
-  const [gallery, setGallery] = useState<Array<any>>([]);
-  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
-    []
-  );
+  const [gallery, setGallery] = useState<Array<any>>(item ? item.gallery : []);
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>([]);
   const [visibleUpload, setVisibleUpload] = useState<boolean>(false);
   const [errors, setErrors] = useState({});
   const [selectAdTypeView, setSelectAdTypeView] = useState<boolean>(false);
-  const [priceType, setPriceType] = useState("");
-  const [titleValue, setTitleValue] = useState("");
-  const [price, setPrice] = useState("");
-  const [included, setIncluded] = useState("");
-  const [excluded, setExcluded] = useState("");
-  const [moreInfo, setMoreInfo] = useState("");
-  const [adType, setAdType] = useState("selecione");
+  const [priceType, setPriceType] = useState(item ? item.typePayment : "");
+  const [titleValue, setTitleValue] = useState(item ? item.title : "");
+  const [price, setPrice] = useState(item ? item.salary : "");
+  const [included, setIncluded] = useState(item ? item.included : "");
+  const [excluded, setExcluded] = useState(item ? item.notIncluded : "");
+  const [moreInfo, setMoreInfo] = useState(item ? item.information : "");
+  const [adType, setAdType] = useState(item ? item.typeAnnouncement : "");
   const [awaitCreat, setAwaitCreat] = useState<boolean>(false);
   const screenWidth = Dimensions.get("window").width;
   const boxSize = (screenWidth - 50 - 2 * 8) / 3;
@@ -60,37 +58,42 @@ export default function Form({ title, setSelectedCategory, item }: any) {
 
   const handleCreate = async () => {
     const validate = await validateForm();
-    if (validate && collaborator) {
-      setAwaitCreat(true);
-      const data = {
-        category: title,
-        CPF_creator: collaborator.CPF,
-        title: titleValue,
-        typePayment: priceType,
-        typeAnnouncement: adType,
-        salary: price,
-        included: included,
-        notIncluded: excluded,
-        information: moreInfo,
-        gallery: gallery,
-      };
-      const response = await CreateAnnouncement(data);
-      if (response.status == 201) {
-        Alert.alert(
-          "Sucesso!",
-          "A vaga foi criada com sucesso.",
-          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-          { cancelable: false }
-        );
+    if(!item){
+      if (validate && collaborator) {
+        setAwaitCreat(true);
+        const data = {
+          category: title,
+          CPF_creator: collaborator.CPF,
+          title: titleValue,
+          typePayment: priceType,
+          typeAnnouncement: adType,
+          salary: price,
+          included: included,
+          notIncluded: excluded,
+          information: moreInfo,
+          gallery: gallery,
+        };
+        const response = await CreateAnnouncement(data);
+        if (response.status == 201) {
+          Alert.alert(
+            "Sucesso!",
+            "A vaga foi criada com sucesso.",
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+            { cancelable: false }
+          );
+          setAwaitCreat(false);
+          navigation.goBack()
+          return;
+        }
         setAwaitCreat(false);
-        navigation.goBack()
-        return;
+      } else {
+        setVisible(true);
       }
-      setAwaitCreat(false);
-    } else {
-      setVisible(true);
     }
+    console.log('atualizar')
   };
+
+
 
   return (
     <View>
@@ -250,9 +253,9 @@ export default function Form({ title, setSelectedCategory, item }: any) {
                   className="rounded-lg items-center justify-center overflow-hidden bg-gray-100"
                   style={[Styles.card, { width: boxSize, height: boxSize }]}
                 >
-                  {gallery[i] ? (
+                  {gallery[i]?.base64 || gallery[i]?.uri || gallery[i]  ? (
                     <Image
-                      source={{ uri: gallery[i].uri || gallery[i] }} // <- garante que funcione se for string ou objeto
+                      source={{ uri: gallery[i]?.base64 || gallery[i]?.uri || gallery[i] }} // <- garante que funcione se for string ou objeto
                       style={{ width: "100%", height: "100%" }}
                     />
                   ) : (
@@ -268,7 +271,7 @@ export default function Form({ title, setSelectedCategory, item }: any) {
               onPress={handleCreate}
             >
               {!awaitCreat ? (
-                <Text className="text-dark font-bold">Publicar Anúncio</Text>
+                <Text className="text-dark font-bold">{item ? 'Atualizar Anúncio' : 'Publicar Anúncio'}</Text>
               ) : (
                 <ActivityIndicator color={"black"} size={19} />
               )}

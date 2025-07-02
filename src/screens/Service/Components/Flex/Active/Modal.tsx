@@ -39,6 +39,7 @@ import {
 import Candidate from "./Candidate/Index";
 import Promotion from "./Promotion/Index";
 import ServiceInformation from "~/src/screens/Home/Helper/Modal/ServiceInformation";
+import Mask from "~/src/function/mask";
 export default function ModalMenu({ visible, setVisible, item }: any) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [modalStep, setModalStep] = useState<"menu" | "candidates" | "promotion">("menu");
@@ -174,7 +175,7 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                   style={{ height: rf(45), width: rf(45) }}
                   className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-2"
                 >
-                  {renderIcon(item.service)}
+                  {renderIcon(item.category)}
                 </View>
                 <View>
                   <Text
@@ -187,19 +188,19 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                     className="text-gray-500"
                     style={{ ...FONTS.fontLight, fontSize: rf(12) }}
                   >
-                    Categoria: {item.service}
+                    Categoria: {item.category}
                   </Text>
                   <Text
                     className="text-gray-500"
                     style={{ ...FONTS.fontLight, fontSize: rf(12) }}
                   >
-                    Anúncio: {item.visibility}
+                    Anúncio: {item.typeAnnouncement}
                   </Text>
                   <Text
                     className="text-gray-500"
                     style={{ ...FONTS.fontLight, fontSize: rf(12) }}
                   >
-                    Publicado: {item.create}
+                    Publicado: {Mask('dateFormat',item.create_at)}
                   </Text>
                 </View>
               </View>

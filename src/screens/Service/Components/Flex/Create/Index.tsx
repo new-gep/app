@@ -22,7 +22,6 @@ const services = [
   { icon: "addCircle_outline", title: "Outros" },
 ];
 
-
 export default function Create() {
   const route = useRoute();
   const item = (route as any).params;
@@ -37,7 +36,7 @@ export default function Create() {
       <View className="bg-white h-full">
         {!selectedCategory ? (
           <>
-            <Header leftIcon="back" title={"Criar Anúncio"} />
+            <Header leftIcon="back" title={item ?"Editar Anúncio" :"Criar Anúncio"} />
             <ScrollView contentContainerStyle={{ padding: 16 }}>
               <Text style={[FONTS.fontBlack, { fontSize: rf(26) }]}>
                 Escolha uma Categoria

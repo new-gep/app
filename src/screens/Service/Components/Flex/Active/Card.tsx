@@ -133,7 +133,7 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
                 style={{ height: rf(45), width: rf(45) }}
                 className="rounded-full bg-zinc-100 items-center justify-center p-3"
               >
-                {renderIcon(item.service)}
+                {renderIcon(item.category)}
               </View>
             </View>
             <View className="pr-2">
@@ -142,32 +142,32 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {item.function}
+                {item.title}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {`${Mask("amount", item.salary)} ${item.valueType}`}
+                {`${Mask("amount", item.salary)} ${item.typePayment && item.typePayment}`}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                Anúncio {item.visibility}
+                Anúncio {item.typeAnnouncement}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.candidate.length > 0 ? item.candidate.length : 0}{" "}
+                {item.candidates && item.candidates.length > 0 ? item.candidates.length : 0}{" "}
                 Candidatos
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                Anunciado em {item.create}
+                Anunciado em {Mask('dateFormat',item.create_at)}
               </Text>
             </View>
           </View>
