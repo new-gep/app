@@ -4,6 +4,9 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
+  Text,
+  ActivityIndicator,
+  Image
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { rf } from "~/src/hooks/utils/responsiveFont";
@@ -16,411 +19,13 @@ import deleteAnnouncement from "~/src/hooks/delete/announcement";
 import FindAnnouncement from "~/src/hooks/findOne/announcement";
 import { useNavigation } from "@react-navigation/native";
 import useCollaborator from "~/src/function/fetchCollaborator";
-const fakeData = [
-  {
-    id: 1,
-    create: "10/05/2023",
-    candidate: [
-      {
-        id: 1,
-        name: "Mario Oliveira",
-        service: ["Geladeira", "Lava Louça", "Televisão", "Dança", "Concursos"],
-        category: ["Assistência Técnica", "Aulas"],
-        age: 22,
-        phone: "1912345678",
-        email: "mario.oliveira@email.com",
-        zip_code: "01234-567",
-        street: "Rua das Flores",
-        district: "Jardim das Rosas",
-        city: "São Paulo",
-        uf: "SP",
-        isVerified: true,
-        photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
-        birth: "01/10/2001",
-        locality: "São Paulo - SP",
-        interests: ["Música", "Tecnologia", "Esportes"],
-        about:
-          "Sou uma pessoa dedicada, focada e apaixonada pelo que faço. Sempre busco aprender e crescer profissionalmente.",
-        contact: {
-          phone: "+55 11 91234-5678",
-          email: "joao.silva@email.com",
-          address: "Rua das Flores, 123, São Paulo - SP",
-        },
-        workPreferences: {
-          location: "São Paulo - SP",
-          maxDistanceKm: 50,
-          allowFurtherDistance: true,
-          contractType: ["Autônomo", "CLT"],
-          modality: ["Híbrido", "Presencial"],
-          schedule: ["Dia", "Noite"],
-          mobility: ["Carro", "Moto"],
-          paymentType: ["Por dia", "Por hora", "A combinar"],
-        },
-        social: {
-          instagram: "@meuinsta",
-          facebook: "https://facebook.com/meuperfil",
-          linkedin: "https://linkedin.com/in/meulinkedin",
-          twitter: "@meutwitter",
-          tiktok: "https://www.tiktok.com/@meutiktok",
-          youtube: "https://www.youtube.com/channel/abc123",
-          website: "https://www.meusite.com.br",
-        },
-        personal: {
-          pets: ["Cachorro", "Gato"],
-          diet: ["Onívoro"],
-          loveLanguage: ["Toque Físico", "Tempo de Qualidade"],
-          drinks: ["Sim"],
-          smokes: ["Não"],
-          education: ["Ensino Superior Completo"],
-          communicationType: ["Assertiva", "Passiva"],
-          children: ["3"],
-          marriage: ["Sim"],
-          values: ["Familía", "Trabalho"],
-        },
-      },
-      {
-        id: 2,
-        name: "Carlos Mendes",
-        service: ["Pedreiro", "Pintor", "Encanador"],
-        category: ["Reformas e Reparos"],
-        age: 40,
-        phone: "1912345678",
-        email: "mario.oliveira@email.com",
-        zip_code: "01234-567",
-        street: "Rua das Flores",
-        district: "Jardim das Rosas",
-        city: "São Paulo",
-        interests: ["Música", "Tecnologia", "Esportes"],
-        uf: "SP",
-        isVerified: true,
-        photoUri: "https://randomuser.me/api/portraits/men/32.jpg",
-        birth: "12/08/1985",
-        locality: "Rio de Janeiro - RJ",
-        about:
-          "Tenho mais de 10 anos de experiência com reformas e reparos residenciais.",
-        contact: {
-          phone: "+55 21 98888-0000",
-          email: "carlos.reformas@email.com",
-          address: "Av. das Nações, 45, Rio de Janeiro - RJ",
-        },
-        workPreferences: {
-          location: "Rio de Janeiro - RJ",
-          maxDistanceKm: 30,
-          allowFurtherDistance: false,
-          contractType: ["Autônomo"],
-          modality: ["Presencial"],
-          schedule: ["Dia"],
-          mobility: ["Moto"],
-          paymentType: ["A combinar", "Por dia"],
-        },
-        social: {
-          instagram: "@reformas.carlos",
-        },
-        personal: {
-          pets: ["Não"],
-          diet: ["Onívoro"],
-          loveLanguage: ["Atos de Serviço"],
-          drinks: ["Não"],
-          smokes: ["Sim"],
-          education: ["Ensino Médio Completo"],
-          communicationType: ["Assertiva"],
-          children: ["2"],
-          marriage: ["Sim"],
-          values: ["Honestidade", "Comprometimento"],
-        },
-      },
-      {
-        id: 3,
-        age: 22,
-        name: "Juliana Costa",
-        phone: "1912345678",
-        email: "mario.oliveira@email.com",
-        zip_code: "01234-567",
-        street: "Rua das Flores",
-        district: "Jardim das Rosas",
-        city: "São Paulo",
-        interests: ["Música", "Tecnologia", "Esportes"],
-        service: ["Babá", "Personal Organizer", "Cozinheira"],
-        category: ["Serviços Domésticos"],
-        isVerified: true,
-        photoUri: "https://randomuser.me/api/portraits/women/12.jpg",
-        birth: "27/04/1992",
-        locality: "Belo Horizonte - MG",
-        about:
-          "Amo cuidar de crianças e organizar ambientes com carinho e responsabilidade.",
-        contact: {
-          phone: "+55 31 99876-4321",
-          email: "juliana.costa@email.com",
-          address: "Rua Verde, 88, Belo Horizonte - MG",
-        },
-        workPreferences: {
-          location: "Belo Horizonte - MG",
-          maxDistanceKm: 20,
-          allowFurtherDistance: true,
-          contractType: ["CLT", "Autônomo"],
-          modality: ["Presencial"],
-          schedule: ["Dia"],
-          mobility: ["Transporte Público"],
-          paymentType: ["Por hora"],
-        },
-        social: {
-          facebook: "https://facebook.com/julianacosta",
-        },
-        personal: {
-          pets: ["Cachorro"],
-          diet: ["Vegetariano"],
-          loveLanguage: ["Palavras de Afirmação"],
-          drinks: ["Não"],
-          smokes: ["Não"],
-          education: ["Ensino Médio Completo"],
-          communicationType: ["Empática"],
-          children: ["1"],
-          marriage: ["Não"],
-          values: ["Cuidado", "Paciência"],
-        },
-      },
-    ],
-    visibility: "Gratuito",
-    typeService: "flex",
-    service: ["Reformas e Reparos"],
-    name: "Maria Oliveira",
-    valueType: "a combinar",
-    locality: "São Paulo - SP",
-    title: "Pintar minha casa",
-    contactName: "João Silva",
-    isVerified: true,
-    function: "Pintar minha casa",
-    salary: "150000",
-    model: "Presencial",
-    phone: "1193291233",
-    info: "Serviço de pintura residencial completo, com material incluso.",
-    included: "Tinta, mão de obra, limpeza após serviço.",
-    notIncluded: "Movimentação de móveis, reparos em paredes.",
-    photoUri: "https://randomuser.me/api/portraits/women/75.jpg",
-    gallery: [
-      "https://www.bgcexperts.com/wp-content/uploads/2024/05/interior-painting-services.jpg",
-      "https://www.imageworkspainting.com/hubfs/stock-01.jpg",
-      "https://www.solispainting.com/img/hero/painting-projects.jpg",
-    ],
-  },
-  {
-    id: 2,
-    create: "12/06/2023",
-    candidate: [],
-    visibility: "Premium",
-    typeService: "clt",
-    service: ["Moda e Beleza"],
-    name: "Bruno Lima",
-    valueType: "por hora",
-    locality: "Rio de Janeiro - RJ",
-    title: "Corte de cabelo masculino",
-    contactName: "Bruno Lima",
-    isVerified: true,
-    function: "Barbeiro Profissional",
-    salary: "5000",
-    model: "Presencial",
-    phone: "21988992311",
-    info: "Cortes modernos e atendimento personalizado.",
-    included: "Corte, lavagem, finalização.",
-    notIncluded: "Tintura, barba.",
-    photoUri: "https://randomuser.me/api/portraits/men/65.jpg",
-    gallery: [
-      "https://cdn.shopify.com/s/files/1/0052/6430/3926/articles/barber.jpg",
-    ],
-  },
-  {
-    id: 3,
-    create: "05/04/2023",
-    candidate: [],
-    visibility: "Gratuito",
-    typeService: "flex",
-    service: ["Eventos"],
-    name: "Camila Souza",
-    valueType: "por diária",
-    locality: "Belo Horizonte - MG",
-    title: "Organização de festa infantil",
-    contactName: "Camila Souza",
-    isVerified: true,
-    function: "Organizadora de Eventos",
-    salary: "80000",
-    model: "Presencial",
-    phone: "31992387433",
-    info: "Festas temáticas com decoração e recreação.",
-    included: "Decoração, recreadores, brindes.",
-    notIncluded: "Buffet, aluguel de espaço.",
-    photoUri: "https://randomuser.me/api/portraits/women/47.jpg",
-    gallery: [
-      "https://www.partyrentals.us/blog/wp-content/uploads/2022/10/kids-party-planner.jpg",
-    ],
-  },
-  {
-    id: 4,
-    create: "22/07/2023",
-    candidate: [],
-    visibility: "Gratuito",
-    typeService: "flex",
-    service: ["Saúde"],
-    name: "Daniela Rocha",
-    valueType: "mensal",
-    locality: "Curitiba - PR",
-    title: "Acompanhamento nutricional",
-    contactName: "Daniela Rocha",
-    isVerified: true,
-    function: "Nutricionista",
-    salary: "120000",
-    model: "Online",
-    phone: "41992123321",
-    info: "Plano alimentar personalizado.",
-    included: "Consulta, plano mensal, suporte via WhatsApp.",
-    notIncluded: "Exames laboratoriais.",
-    photoUri: "https://randomuser.me/api/portraits/women/24.jpg",
-    gallery: [],
-  },
-  {
-    id: 5,
-    create: "15/01/2024",
-    candidate: [],
-    visibility: "Premium",
-    typeService: "clt",
-    service: ["Design e Tecnologia"],
-    name: "Lucas Fernandes",
-    valueType: "mensal",
-    locality: "São Paulo - SP",
-    title: "Criação de site institucional",
-    contactName: "Lucas Fernandes",
-    isVerified: true,
-    function: "Web Designer",
-    salary: "300000",
-    model: "Remoto",
-    phone: "11988453213",
-    info: "Sites modernos, responsivos e otimizados para SEO.",
-    included: "Design, desenvolvimento, hospedagem por 1 ano.",
-    notIncluded: "Domínio.",
-    photoUri: "https://randomuser.me/api/portraits/men/42.jpg",
-    gallery: [
-      "https://cdn.pixabay.com/photo/2016/11/29/10/07/web-1869239_960_720.jpg",
-    ],
-  },
-  {
-    id: 6,
-    create: "09/03/2024",
-    candidate: [],
-    visibility: "Gratuito",
-    typeService: "flex",
-    service: ["Serviços Domésticos"],
-    name: "Joana Matos",
-    valueType: "por dia",
-    locality: "Fortaleza - CE",
-    title: "Faxina completa em apartamento",
-    contactName: "Joana Matos",
-    isVerified: true,
-    function: "Diarista",
-    salary: "20000",
-    model: "Presencial",
-    phone: "85992243112",
-    info: "Limpeza geral, com foco em cozinha e banheiro.",
-    included: "Produtos de limpeza.",
-    notIncluded: "Passar roupa.",
-    photoUri: "https://randomuser.me/api/portraits/women/90.jpg",
-    gallery: [],
-  },
-  {
-    id: 7,
-    create: "28/11/2023",
-    candidate: [],
-    visibility: "Gratuito",
-    typeService: "flex",
-    service: ["Consultoria"],
-    name: "Fábio Almeida",
-    valueType: "por hora",
-    locality: "Brasília - DF",
-    title: "Consultoria de negócios",
-    contactName: "Fábio Almeida",
-    isVerified: true,
-    function: "Consultor Empresarial",
-    salary: "100000",
-    model: "Online",
-    phone: "61999123993",
-    info: "Mentorias para alavancar pequenos negócios.",
-    included: "Sessões por Zoom, materiais PDF.",
-    notIncluded: "Implementação prática.",
-    photoUri: "https://randomuser.me/api/portraits/men/21.jpg",
-    gallery: [],
-  },
-  {
-    id: 8,
-    create: "18/02/2024",
-    candidate: [],
-    visibility: "Gratuito",
-    typeService: "clt",
-    service: ["Mecânica e Transportes"],
-    name: "Carlos Menezes",
-    valueType: "fixo",
-    locality: "Campinas - SP",
-    title: "Revisão completa de carro",
-    contactName: "Carlos Menezes",
-    isVerified: true,
-    function: "Mecânico",
-    salary: "35000",
-    model: "Presencial",
-    phone: "19992211922",
-    info: "Revisão de freios, suspensão e troca de óleo.",
-    included: "Mão de obra.",
-    notIncluded: "Peças.",
-    photoUri: "https://randomuser.me/api/portraits/men/55.jpg",
-    gallery: [],
-  },
-  {
-    id: 9,
-    create: "05/06/2024",
-    candidate: [],
-    visibility: "Premium",
-    typeService: "flex",
-    service: ["Aulas"],
-    name: "Fernanda Lima",
-    valueType: "mensal",
-    locality: "Recife - PE",
-    title: "Aulas de inglês particular",
-    contactName: "Fernanda Lima",
-    isVerified: true,
-    function: "Professora de Inglês",
-    salary: "90000",
-    model: "Online",
-    phone: "81992341234",
-    info: "Inglês para conversação, negócios ou viagens.",
-    included: "Apostila digital, atividades semanais.",
-    notIncluded: "Certificado.",
-    photoUri: "https://randomuser.me/api/portraits/women/35.jpg",
-    gallery: [],
-  },
-  {
-    id: 10,
-    create: "01/05/2024",
-    candidate: [],
-    visibility: "Gratuito",
-    typeService: "clt",
-    service: ["Assistência Técnica"],
-    name: "Rodrigo Tavares",
-    valueType: "por visita",
-    locality: "Porto Alegre - RS",
-    title: "Conserto de eletrodomésticos",
-    contactName: "Rodrigo Tavares",
-    isVerified: true,
-    function: "Técnico em Manutenção",
-    salary: "7500",
-    model: "Presencial",
-    phone: "51991122444",
-    info: "Diagnóstico e reparo de geladeiras, lavadoras, etc.",
-    included: "Deslocamento e diagnóstico.",
-    notIncluded: "Peças.",
-    photoUri: "https://randomuser.me/api/portraits/men/32.jpg",
-    gallery: [],
-  },
-];
+import { FONTS } from "~/src/constants/theme";
+import { IMAGES } from "~/src/constants/Images";
 export default function Active() {
-  const [data, setData] = useState(fakeData);
+  const [data, setData] = useState<any>(null);
   const navigation = useNavigation<any>();
-    const { collaborator } = useCollaborator();
+  const { collaborator } = useCollaborator();
+  const { width, height } = Dimensions.get("window");
 
   const delet = async (id: number) => {
     Alert.alert(
@@ -434,7 +39,9 @@ export default function Active() {
             try {
               const response = await deleteAnnouncement(id);
               if (response.status === 200) {
-                setData((prev) => prev.filter((item) => item.id !== id));
+                setData((prev: any) =>
+                  prev.filter((item: any) => item.id !== id)
+                );
                 Alert.alert("Sucesso", "O anúncio foi excluído com sucesso.", [
                   { text: "OK" },
                 ]);
@@ -455,37 +62,60 @@ export default function Active() {
   };
 
   const edit = async (item: any) => {
-    navigation.navigate('AnnouncementCreate', item);
+    navigation.navigate("AnnouncementCreate", item);
   };
 
-  const find = async (cpf:string) => {
-    const response = await FindAnnouncement(cpf)
-    if(response.status == 200){
-      setData(response.announcements)
+  const find = async (cpf: string) => {
+    const response = await FindAnnouncement(cpf);
+    if (response.status == 200) {
+      setData(response.announcements);
     }
-  }
+  };
 
-  useEffect(()=>{
-    if(collaborator){
-      find(collaborator.CPF)
+  useEffect(() => {
+    if (collaborator && (!data || data.length === 0)) {
+      find(collaborator.CPF);
     }
-  },[collaborator])
+  }, [collaborator, data]);
 
   return (
     <BottomSheetModalProvider>
       <View className="bg-white h-full">
         <Header leftIcon="back" title="Anúncio Ativo" />
-        <FlatList
-          data={data}
-          renderItem={({ item }) => (
-            <SwipeableCardPeopleActive
-              item={item}
-              editAnnouncement={() => edit(item)}
-              deleteAnnouncement={() => delet(item.id)}
+        {data === null ? (
+          <View className="h-full w-full items-center mt-10">
+            <View className="gap-1">
+              <ActivityIndicator color="#2f2f2f" />
+              <Text style={{ ...FONTS.fontSemiBold }}>Carregando</Text>
+            </View>
+          </View>
+        ) : !data ? (
+          <View className="items-center justify-center h-3/4 ">
+            <Image
+              source={IMAGES.unique28}
+              style={{
+                height: height * 0.4,
+                width: width * 0.8,
+                resizeMode: "contain",
+                opacity: 0.8,
+              }}
             />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-        />
+            <Text style={{...FONTS.fontSemiBold, fontSize:rf(13)}} className="">Nenhum anúncio encontrado!</Text>
+            <Text style={{...FONTS.fontLight, fontSize:rf(11)}} className="">Crie um agora para começar</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={data}
+            renderItem={({ item }) => (
+              <SwipeableCardPeopleActive
+                item={item}
+                editAnnouncement={() => edit(item)}
+                deleteAnnouncement={() => delet(item.id)}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        )}
       </View>
     </BottomSheetModalProvider>
   );

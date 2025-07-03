@@ -8,7 +8,7 @@ import uploadFile from "../../../hooks/upload/job";
 import ImgToBase64 from 'react-native-image-base64-png';
 import ViewShot from 'react-native-view-shot';
 
-const DrawingModal = ({ visible, onClose, onSaveSignature, id }) => {
+const DrawingModal = ({ visible, onClose, onSaveSignature, id }:any) => {
   const [paths, setPaths] = useState([]); // Armazena todos os caminhos desenhados
   const [currentPath, setCurrentPath] = useState(""); // Armazena o caminho atual
   const svgRef = useRef(null); // Referência para o componente Svg

@@ -330,6 +330,7 @@ export const IMAGES = {
   unique25: require("../assets/picture/unique/unique25.png"),
   unique26: require("../assets/picture/unique/unique26.png"),
   unique27: require("../assets/picture/unique/unique27.png"),
+  unique28: require("../assets/picture/unique/unique28.png"),
 
   gif0: require("../assets/picture/gif/unique0.gif"),
 };

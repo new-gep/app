@@ -21,11 +21,15 @@ import ModalErrors from "./Modal";
 import ModalUpload from "./ModalUpload";
 import Mask from "~/src/function/mask";
 import CreateAnnouncement from "~/src/hooks/create/announcement";
+import UpdateAnnouncement from "~/src/hooks/update/announcement";
 import useCollaborator from "~/src/function/fetchCollaborator";
 export default function Form({ title, setSelectedCategory, item }: any) {
   const [visible, setVisible] = useState<boolean>(false);
   const [gallery, setGallery] = useState<Array<any>>(item ? item.gallery : []);
-  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>([]);
+  const [oldGallery, setOldGallery] = useState<Array<any>>(item.gallery);
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
+    []
+  );
   const [visibleUpload, setVisibleUpload] = useState<boolean>(false);
   const [errors, setErrors] = useState({});
   const [selectAdTypeView, setSelectAdTypeView] = useState<boolean>(false);
@@ -58,7 +62,7 @@ export default function Form({ title, setSelectedCategory, item }: any) {
 
   const handleCreate = async () => {
     const validate = await validateForm();
-    if(!item){
+    if (!item) {
       if (validate && collaborator) {
         setAwaitCreat(true);
         const data = {
@@ -82,18 +86,46 @@ export default function Form({ title, setSelectedCategory, item }: any) {
             { cancelable: false }
           );
           setAwaitCreat(false);
-          navigation.goBack()
+          navigation.goBack();
           return;
         }
         setAwaitCreat(false);
       } else {
         setVisible(true);
       }
+      return;
     }
-    console.log('atualizar')
+    if (collaborator) {
+      const data = {
+        category: title,
+        title: titleValue,
+        typePayment: priceType,
+        typeAnnouncement: adType,
+        salary: price,
+        included: included,
+        notIncluded: excluded,
+        information: moreInfo,
+        gallery: gallery,
+        oldGallery: oldGallery,
+      };
+      setAwaitCreat(true);
+      const response = await UpdateAnnouncement(item.id, data);
+      console.log(response)
+      if (response.status == 200) {
+        Alert.alert(
+          "Sucesso!",
+          "A vaga foi editada com sucesso.",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
+        setAwaitCreat(false);
+        navigation.goBack();
+        navigation.goBack();
+        return;
+      }
+      setAwaitCreat(false);
+    }
   };
-
-
 
   return (
     <View>
@@ -246,16 +278,19 @@ export default function Form({ title, setSelectedCategory, item }: any) {
                   key={i}
                   onPress={() => {
                     // if (gallery[i]) return;
-                    // salvar índice clicado
+                    // @ts-ignore
                     setSelectedGalleryIndex(i);
                     setVisibleUpload(true); // abrir modal
                   }}
                   className="rounded-lg items-center justify-center overflow-hidden bg-gray-100"
                   style={[Styles.card, { width: boxSize, height: boxSize }]}
                 >
-                  {gallery[i]?.base64 || gallery[i]?.uri || gallery[i]  ? (
+                  {gallery[i]?.base64 || gallery[i]?.uri || gallery[i] ? (
                     <Image
-                      source={{ uri: gallery[i]?.base64 || gallery[i]?.uri || gallery[i] }} // <- garante que funcione se for string ou objeto
+                      source={{
+                        uri:
+                          gallery[i]?.base64 || gallery[i]?.uri || gallery[i],
+                      }} // <- garante que funcione se for string ou objeto
                       style={{ width: "100%", height: "100%" }}
                     />
                   ) : (
@@ -271,7 +306,9 @@ export default function Form({ title, setSelectedCategory, item }: any) {
               onPress={handleCreate}
             >
               {!awaitCreat ? (
-                <Text className="text-dark font-bold">{item ? 'Atualizar Anúncio' : 'Publicar Anúncio'}</Text>
+                <Text className="text-dark font-bold">
+                  {item ? "Atualizar Anúncio" : "Publicar Anúncio"}
+                </Text>
               ) : (
                 <ActivityIndicator color={"black"} size={19} />
               )}
