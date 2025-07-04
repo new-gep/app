@@ -22,7 +22,7 @@ export default function Service() {
     setMenu(option);
   };
 
-  const renderLists = (itemsArray: any[]) => {
+  const renderLists = (itemsArray: any[] ) => {
     return (
       <View style={Style.container} className="bg-white rounded-lg p-4 mb-4">
         {itemsArray.map((item: any, index: number) => {
@@ -34,6 +34,7 @@ export default function Service() {
                 title={item.title}
                 icon={item.icon}
                 options={item.option}
+                onSelect={item.setSelect}
               />
             </React.Fragment>
           );
