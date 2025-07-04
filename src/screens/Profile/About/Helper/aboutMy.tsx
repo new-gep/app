@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
-export default function AboutMy() {
-  const [text, setText] = useState("");
+export default function AboutMy({text, setText} :any) {
   const maxLength = 200;
 
   return (

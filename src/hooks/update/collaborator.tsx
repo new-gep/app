@@ -9,7 +9,7 @@ type Props = {
     password?: string;
     phone   ?: string;
     marriage?: string;
-    children: { [key: string]: { name: string; birth: string } } | 0;
+    children?: { [key: string]: { name: string; birth: string } } | 0;
     birth?: string;
     terms    ?: string;
     zip_code ?:string;
@@ -20,6 +20,11 @@ type Props = {
     complement?:string;
     number   ?:string;
     id_work  ?:string
+    social   ?:any
+    presentation?:string;
+    about?:any;
+    howWork?:any;
+    service?:any;
  }
 
 export default async function UpdateCollaborator(cpf:string, props: Props){

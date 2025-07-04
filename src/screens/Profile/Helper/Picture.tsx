@@ -10,6 +10,7 @@ import FindBucketCollaborator from "~/src/hooks/bucket/collaborator";
 import SaveCacheFile from "~/src/hooks/utils/SaveCacheFile";
 import Mask from "~/src/function/mask";
 import List from "~/src/components/Menu/List";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 
 export default function Picture({ collaborator }: { collaborator?: any }) {
   const [path, setPath] = useState<any | null>(null);
@@ -52,8 +53,8 @@ export default function Picture({ collaborator }: { collaborator?: any }) {
         onPress={() => navigation.navigate("EditProfile")}
         className="bg-white justify-between flex-row p-4 rounded-lg"
       >
-        <View className="flex-row items-center w-2/12 ">
-          <View className={`w-16 h-16 rounded-full border-gray-200 bg-gray-200 ${!path && "p-2"}`}>
+        <View className="flex-row items-center w-3/12 ">
+          <View style={{width:rf(55), height:rf(55)}} className={`rounded-full border-gray-200 bg-gray-200 ${!path && "p-2"}`}>
             <Image
               className={`w-full h-full ${path ? "rounded-full" : ""}`}
               source={path ? { uri: path } : IMAGES.user2}
@@ -64,12 +65,12 @@ export default function Picture({ collaborator }: { collaborator?: any }) {
             />
           </View>
         </View>
-        <View className="w-7/12 items-end justify-center">
-          <View>
-            <Text style={{ ...FONTS.font, fontSize: 17 }} className="text-dark text-right">
+        <View className="w-7/12 ">
+          <View className="ml-1">
+            <Text style={{ ...FONTS.font, fontSize: rf(16) }} className="text-dark">
               {collaborator && Mask("fullName", collaborator.name)}
             </Text>
-            <Text className="text-center" style={{ ...FONTS.font, fontSize: 14, color: "gray" }}>
+            <Text style={{ ...FONTS.font, fontSize: rf(14), color: "gray" }}>
               Recado
             </Text>
           </View>

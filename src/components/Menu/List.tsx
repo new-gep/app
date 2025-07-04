@@ -167,6 +167,7 @@ const Style = {
     shadowRadius: 4,
   },
   text: {
+    fontSize:rf(15),
     backgroundColor: "white",
     padding: 7,
     borderRadius: 8,

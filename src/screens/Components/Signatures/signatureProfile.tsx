@@ -2,10 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Modal, PanResponder, Dimensions, Alert } from "react-native";
 import Canvas from "react-native-canvas";
 import Button from "../../../components/Button/Button";
-import uploadFile from "../../../hooks/upload/job";
-import CreateAvalidPicture from "../../../hooks/create/pictures";
-import UpdatePicture from "../../../hooks/update/picture";
-import Orientation from "react-native-orientation-locker";
 import { COLORS } from "~/src/constants/theme";
 
 const SignatureProfile = ({

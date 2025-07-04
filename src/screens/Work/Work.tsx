@@ -24,7 +24,7 @@ import { addToCart } from "../../redux/reducer/cartReducer";
 import { removeFromwishList } from "../../redux/reducer/wishListReducer";
 import Cardstyle2 from "../../components/Card/Cardstyle2";
 import useCollaborator from "../../function/fetchCollaborator";
-import FindCollaborator from "../../hooks/findOne/collaborator";
+import FindCollaborator from "../../hooks/findOne/collaborator/collaborator";
 import HomeWork from "./Home";
 import HomeNoWork from "./HomeNoJob";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";

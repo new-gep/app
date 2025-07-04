@@ -1,26 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { FONTS } from "~/src/constants/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import LocationFilter from "./Helper/Location";
 import AgeRangeFilter from "./Helper/Range";
 import InterestsFilter from "./Helper/Interests";
-// import InterestsFilter from "../../Home/filter/Helper/Interests";
 import AboutMy from "./Helper/aboutMy";
 import Header from "~/src/layout/Header";
+import useCollaborator from "~/src/function/fetchCollaborator";
+import UpdateCollaborator from "~/src/hooks/update/collaborator";
+import { useNavigation } from "@react-navigation/native";
 
 export default function About() {
+  const [presentation, setPresentation] = useState<any>('');
+  const [drink, setDrink] = useState<any>(null);
+  const [interests, setInterests] = useState<any>(null);
+  const [languageLove, setLanguageLove] = useState<any>(null);
+  const [values, setValues] = useState<any>(null);
+  const [food, setFood] = useState<any>(null);
+  const [pet, setPet] = useState<any>(null);
+  const [smoke, setSmoke] = useState<any>(null);
+  const [communication, setCommunication] = useState<any>(null);
+  const [formation, setFormation] = useState<any>(null);
+  const { collaborator } = useCollaborator();
+  const navigation = useNavigation<any>();
+
+  const handleSave = async () => {
+    if (!collaborator) return;
+    const about = {
+      drink: drink,
+      interests: interests,
+      languageLove: languageLove,
+      values: values,
+      food: food,
+      pet: pet,
+      smoke: smoke,
+      formation: formation,
+      communication: communication,
+    };
+    const response = await UpdateCollaborator(collaborator.CPF, {
+      about: about,
+      presentation: presentation,
+    });
+    if (response.status == 200) {
+      Alert.alert("Sucesso", "Redes Sociais atualizado com sucesso!", [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+      return;
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Header title="Sobre mim" leftIcon={"back"} />
       <ScrollView className="px-6 py-3 ">
-        <AboutMy />
+        <AboutMy text={presentation} setText={setPresentation} />
         <View style={Style.container} className="bg-white rounded-lg p-4 mb-4">
           <InterestsFilter
             border={true}
@@ -32,6 +76,7 @@ export default function About() {
               "Adoro chamada de vídeo",
               "Melhor falar pessoalmente",
             ]}
+            onSelect={setCommunication}
           />
           <InterestsFilter
             border={true}
@@ -46,9 +91,11 @@ export default function About() {
               "Mestrado completo",
               "Curso técnico",
             ]}
+            onSelect={setFormation}
           />
           <InterestsFilter
             border={true}
+            onSelect={setSmoke}
             icon="smoke_outline"
             title="Você fuma"
             options={[
@@ -63,6 +110,7 @@ export default function About() {
             border={true}
             icon="wine_outline"
             title="Bebida"
+            onSelect={setDrink}
             options={[
               "Não curto",
               "Parei de beber",
@@ -73,25 +121,60 @@ export default function About() {
             ]}
           />
           <InterestsFilter
+            onSelect={setInterests}
             border={true}
             icon="book_outline"
             title="Interesses"
-            options={["Criatividade", "Esportes", "Cultura & Arte", "Autoconhecimento", "Filmes & Séries", "Meditação", "Academia", "Cinema", "Leitura", "Viagens", "Cozinhar", "Stand-up", "Filosofia", "Podcasts", "Jogos"]}
+            options={[
+              "Criatividade",
+              "Esportes",
+              "Cultura & Arte",
+              "Autoconhecimento",
+              "Filmes & Séries",
+              "Meditação",
+              "Academia",
+              "Cinema",
+              "Leitura",
+              "Viagens",
+              "Cozinhar",
+              "Stand-up",
+              "Filosofia",
+              "Podcasts",
+              "Jogos",
+            ]}
           />
           <InterestsFilter
+            onSelect={setLanguageLove}
             border={true}
             icon="heart_outline"
             title="Linguagem do amor"
-            options={["Gestos de serviço", "Presentes", "Toque físico", "Elogios", "Tempo de qualidade"]}
+            options={[
+              "Gestos de serviço",
+              "Presentes",
+              "Toque físico",
+              "Elogios",
+              "Tempo de qualidade",
+            ]}
           />
           <InterestsFilter
+            onSelect={setValues}
             border={true}
             icon="balance_outline"
             title="Valores"
-            options={["Espiritualidade", "Relações", "Autonomia", "Justiça", "Aprendizado", "Cooperação", "Sustentabilidade", "Propósito"]}
+            options={[
+              "Espiritualidade",
+              "Relações",
+              "Autonomia",
+              "Justiça",
+              "Aprendizado",
+              "Cooperação",
+              "Sustentabilidade",
+              "Propósito",
+            ]}
           />
           <InterestsFilter
             border={true}
+            onSelect={setPet}
             icon="pet_outline"
             title="Pets"
             options={[
@@ -113,6 +196,7 @@ export default function About() {
             ]}
           />
           <InterestsFilter
+            onSelect={setFood}
             icon="pizza_outline"
             title="Alimentação"
             options={[
@@ -125,15 +209,17 @@ export default function About() {
               "Onivoro(a)",
             ]}
           />
-          
         </View>
         <View className="mb-7"></View>
       </ScrollView>
       <TouchableOpacity
         className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
-        onPress={() => console.log('CONCLUÍDO pressed')}
+        onPress={handleSave}
       >
-        <Text className="text-dark text-center" style={{ ...FONTS.fontBold, fontSize: 16 }}>
+        <Text
+          className="text-dark text-center"
+          style={{ ...FONTS.fontBold, fontSize: 16 }}
+        >
           CONCLUÍDO
         </Text>
       </TouchableOpacity>

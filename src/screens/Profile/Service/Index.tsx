@@ -5,6 +5,7 @@ import List from "~/src/components/Menu/List";
 import InterestsFilter from "../About/Helper/Interests";
 import { useNavigation } from "@react-navigation/native";
 import { FONTS } from "~/src/constants/theme";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 
 export default function Service() {
   const [menu, setMenu] = React.useState<string>("default");
@@ -599,7 +600,7 @@ export default function Service() {
       >
         <Text
           className="text-dark text-center"
-          style={{ ...FONTS.fontBold, fontSize: 16 }}
+          style={{ ...FONTS.fontBold, fontSize: rf(16) }}
         >
           CONCLUÍDO
         </Text>

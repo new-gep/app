@@ -4,12 +4,14 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import { IMAGES } from "~/src/constants/Images";
 import { FONTS } from "~/src/constants/theme";
 import ModalDates from "./Modal";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 
 interface InterestsFilterProps {
   title: string;
   icon: any;
   border?: boolean;
   options: string[];
+  onSelect?: (selected: string[]) => void; 
 }
 
 const InterestsFilter = ({
@@ -17,21 +19,13 @@ const InterestsFilter = ({
   options,
   icon,
   border,
+  onSelect
 }: InterestsFilterProps) => {
-  const [selected, setSelected] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const toggleOption = (option: string) => {
-    if (selected.includes(option)) {
-      setSelected(selected.filter((item) => item !== option));
-    } else {
-      setSelected([...selected, option]);
-    }
-  };
 
   return (
     <View>
-      <ModalDates visible={modalVisible} setVisible={setModalVisible} dates={options} />
+      <ModalDates onSelect={onSelect} visible={modalVisible} setVisible={setModalVisible} dates={options} />
       <TouchableOpacity
         className="flex-row items-center justify-between"
         onPress={() => {
@@ -78,6 +72,7 @@ const styles = {
   },
 
   text: {
+    fontSize:rf(15),
     backgroundColor: "white",
     padding: 8,
     borderRadius: 8,

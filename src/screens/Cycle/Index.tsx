@@ -10,7 +10,7 @@ import HomeNoWork from "../Work/HomeNoJob";
 import { COLORS } from "~/src/constants/theme";
 import { NavigationProp, useFocusEffect, useNavigation } from "@react-navigation/native";
 import FindAplicateInJob from "~/src/hooks/get/job/findAplicateJob";
-import FindCollaborator from "~/src/hooks/findOne/collaborator";
+import FindCollaborator from "~/src/hooks/findOne/collaborator/collaborator";
 import Timeline from "../Work/TimeLineAdmiss";
 
 const Default = () => {

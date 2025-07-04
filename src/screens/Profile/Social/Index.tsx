@@ -7,11 +7,15 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Header from "~/src/layout/Header";
+import UpdateCollaborator from "~/src/hooks/update/collaborator";
+import useCollaborator from "~/src/function/fetchCollaborator";
 import { FONTS } from "~/src/constants/theme";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
+import { useNavigation } from "@react-navigation/native";
 const SOCIALS = [
   { key: "instagram", label: "Instagram", icon: "instagram" },
   { key: "facebook", label: "Facebook", icon: "facebook" },
@@ -24,9 +28,26 @@ const SOCIALS = [
 
 export default function SocialCardForm() {
   const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
-
+  const { collaborator } = useCollaborator();
+  const navigation = useNavigation<any>();
   const handleChange = (key: string, value: string) => {
     setSocialLinks((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const saveSocial = async () => {
+    if (!collaborator) return;
+    const response = await UpdateCollaborator(collaborator.CPF, {
+      social: socialLinks,
+    });
+    if (response.status == 200) {
+      Alert.alert("Sucesso", "Redes Sociais atualizado com sucesso!", [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+      return;
+    }
   };
 
   return (
@@ -70,7 +91,8 @@ export default function SocialCardForm() {
       >
         <Text
           className="text-dark text-center"
-          style={{ ...FONTS.fontBold, fontSize: 16 }}
+          style={{ ...FONTS.fontBold, fontSize: rf(16) }}
+          onPress={saveSocial}
         >
           CONCLUÍDO
         </Text>

@@ -19,7 +19,7 @@ import DocumentCard from "../../../../../components/Card/DocumentCard";
 import FindPicture from "../../../../../hooks/findOne/picture";
 import useCollaborator from "../../../../../function/fetchCollaborator";
 import FindBucketCollaborator from "../../../../../hooks/bucket/collaborator";
-import FindCollaborator from "../../../../../hooks/findOne/collaborator";
+import FindCollaborator from "../../../../../hooks/findOne/collaborator/collaborator";
 import FindFile from "../../../../../hooks/get/job/findFile";
 import FindOneJob from "../../../../../hooks/get/job/findOne";
 import GetColaboratorJob from "../../../../../hooks/get/job/findJobColaborator";
