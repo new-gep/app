@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -19,17 +19,17 @@ import UpdateCollaborator from "~/src/hooks/update/collaborator";
 import { useNavigation } from "@react-navigation/native";
 
 export default function About() {
-  const [presentation, setPresentation] = useState<any>('');
-  const [drink, setDrink] = useState<any>(null);
-  const [interests, setInterests] = useState<any>(null);
-  const [languageLove, setLanguageLove] = useState<any>(null);
-  const [values, setValues] = useState<any>(null);
-  const [food, setFood] = useState<any>(null);
-  const [pet, setPet] = useState<any>(null);
-  const [smoke, setSmoke] = useState<any>(null);
-  const [communication, setCommunication] = useState<any>(null);
-  const [formation, setFormation] = useState<any>(null);
-  const { collaborator } = useCollaborator();
+  const { collaborator, updateCollaborator } = useCollaborator();
+  const [presentation, setPresentation] = useState<string | any>('');
+  const [drink, setDrink] = useState<any>([]);
+  const [interests, setInterests] = useState<any>([]);
+  const [languageLove, setLanguageLove] = useState<any>([]);
+  const [values, setValues] = useState<any>([]);
+  const [food, setFood] = useState<any>([]);
+  const [pet, setPet] = useState<any>([]);
+  const [smoke, setSmoke] = useState<any>([]);
+  const [communication, setCommunication] = useState<any>([]);
+  const [formation, setFormation] = useState<any>([]);
   const navigation = useNavigation<any>();
 
   const handleSave = async () => {
@@ -50,7 +50,8 @@ export default function About() {
       presentation: presentation,
     });
     if (response.status == 200) {
-      Alert.alert("Sucesso", "Redes Sociais atualizado com sucesso!", [
+      updateCollaborator(collaborator.CPF)
+      Alert.alert("Sucesso", "Informações pessoais atualizados com sucesso!", [
         {
           text: "OK",
           onPress: () => navigation.goBack(),
@@ -59,6 +60,20 @@ export default function About() {
       return;
     }
   };
+
+  useEffect(()=>{
+    if(collaborator){
+      setPresentation(collaborator.presentation ? collaborator.presentation : '')
+      setDrink(collaborator.about.drink ? collaborator.about.drink : [])
+      setInterests(collaborator.about.interests ? collaborator.about.interests : [])
+      setLanguageLove(collaborator.about.languageLove ? collaborator.about.languageLove : [])
+      setFood(collaborator.about.food ? collaborator.about.food : [])
+      setPet(collaborator.about.pet ? collaborator.about.pet : [])
+      setSmoke(collaborator.about.smoke ? collaborator.about.smoke : [])
+      setCommunication(collaborator.about.communication ? collaborator.about.communication : [])
+      setFormation(collaborator.about.formation ? collaborator.about.formation : [])
+    }
+  },[collaborator])
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -77,6 +92,7 @@ export default function About() {
               "Melhor falar pessoalmente",
             ]}
             onSelect={setCommunication}
+            selected={communication}
           />
           <InterestsFilter
             border={true}
@@ -92,10 +108,12 @@ export default function About() {
               "Curso técnico",
             ]}
             onSelect={setFormation}
+            selected={formation}
           />
           <InterestsFilter
             border={true}
             onSelect={setSmoke}
+            selected={smoke}
             icon="smoke_outline"
             title="Você fuma"
             options={[
@@ -111,6 +129,7 @@ export default function About() {
             icon="wine_outline"
             title="Bebida"
             onSelect={setDrink}
+            selected={drink}
             options={[
               "Não curto",
               "Parei de beber",
@@ -122,6 +141,7 @@ export default function About() {
           />
           <InterestsFilter
             onSelect={setInterests}
+            selected={interests}
             border={true}
             icon="book_outline"
             title="Interesses"
@@ -145,6 +165,7 @@ export default function About() {
           />
           <InterestsFilter
             onSelect={setLanguageLove}
+            selected={languageLove}
             border={true}
             icon="heart_outline"
             title="Linguagem do amor"
@@ -158,6 +179,7 @@ export default function About() {
           />
           <InterestsFilter
             onSelect={setValues}
+            selected={values}
             border={true}
             icon="balance_outline"
             title="Valores"
@@ -174,6 +196,7 @@ export default function About() {
           />
           <InterestsFilter
             border={true}
+            selected={pet}
             onSelect={setPet}
             icon="pet_outline"
             title="Pets"
@@ -197,6 +220,7 @@ export default function About() {
           />
           <InterestsFilter
             onSelect={setFood}
+            selected={food}
             icon="pizza_outline"
             title="Alimentação"
             options={[

@@ -1,42 +1,98 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { FONTS } from "~/src/constants/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import LocationFilter from "./Helper/Location";
 import AgeRangeFilter from "./Helper/Range";
-// import InterestsFilter from './Helper/Interests';
+import useCollaborator from "~/src/function/fetchCollaborator";
+import UpdateCollaborator from "~/src/hooks/update/collaborator";
 import InterestsFilter from "../../Profile/About/Helper/Interests";
 import Header from "~/src/layout/Header";
 import { rf } from "~/src/hooks/utils/responsiveFont";
+import { useNavigation } from "@react-navigation/native";
+
 export default function Filter() {
+  const { collaborator } = useCollaborator();
+  const navigation = useNavigation<any>();
+  const [distance, setDistance] = useState(2);
+  const [locations, setLocations] = useState<string[]>([]);
+  const [showFarWork, setShowFarWork] = useState<boolean>(false);
+  const [payment, setPayment]   = useState<any>(null)
+  const [mobility, setMobility] = useState<any>(null)
+  const [horary, setHorary]     = useState<any>(null)
+  const [modality, setModality] = useState<any>(null) 
+  const [contract, setContract] = useState<any>(null)
+
+  const handleSave = async () => {
+    if (!collaborator) return;
+    const data = {
+      distance:distance,
+      showFarWork:showFarWork,
+      locations:locations,
+      payment:payment,
+      mobility:mobility,
+      horary:horary,
+      modality:modality,
+      contract:contract
+    };
+    const response = await UpdateCollaborator(collaborator.CPF, {
+      howWork: data,
+    });
+    if (response.status == 200) {
+      Alert.alert("Sucesso", "Como você trabalha foi atualizado com sucesso!", [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+      return;
+    }
+    Alert.alert("Falha", "Não foi possível atualizar como você trabalha!", [
+      {
+        text: "OK",
+      },
+    ]);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Header title="Meu Trabalho" leftIcon={"back"} />
       <ScrollView className="px-6">
-        <LocationFilter />
+        <LocationFilter showFarWork={showFarWork} setShowFarWork={setShowFarWork} distance={distance} setDistance={setDistance}  locations={locations} setLocations={setLocations}/>
         {/* <AgeRangeFilter /> */}
         <View style={Style.container} className="bg-white rounded-lg p-4 mb-4">
           <InterestsFilter
             border={true}
             title="Contrato"
+            onSelect={setContract}
             icon="handShake_outline"
-            options={["CLT", "Contrato", "PJ", "Autônomo", "Freelancer", "A combinar"]}
+            options={[
+              "CLT",
+              "Contrato",
+              "PJ",
+              "Autônomo",
+              "Freelancer",
+              "A combinar",
+            ]}
           />
           <InterestsFilter
             border={true}
             title="Modalidade"
+            onSelect={setModality}
             icon="homeWork_outline"
             options={["Presencial", "Híbrido", "Remoto"]}
           />
           <InterestsFilter
             border={true}
             title="Horários"
+            onSelect={setHorary}
             icon="clock_outline"
             options={[
               "Integral",
@@ -51,6 +107,7 @@ export default function Filter() {
           <InterestsFilter
             border={true}
             title="Mobilidade"
+            onSelect={setMobility}
             icon="bus_outline"
             options={[
               "Carro",
@@ -64,6 +121,7 @@ export default function Filter() {
           />
           <InterestsFilter
             title="Pagamento"
+            onSelect={setPayment}
             icon="savings_outline"
             options={[
               "Fixo",
@@ -79,7 +137,7 @@ export default function Filter() {
       </ScrollView>
       <TouchableOpacity
         className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
-        onPress={() => console.log("CONCLUÍDO pressed")}
+        onPress={handleSave}
       >
         <Text
           className="text-dark text-center"

@@ -23,13 +23,13 @@ export default function Home({ cv, setCv, collaborator }: any) {
       variable: upload,
       setVariable: setUpload
     },
-     {
-      icon:'robot_outline',
-      title:'IA',
-      // go:'Profile',
-      // variable: ia,
-      // setVariable: setIA
-    },
+    //  {
+    //   icon:'robot_outline',
+    //   title:'IA',
+    //   // go:'Profile',
+    //   // variable: ia,
+    //   // setVariable: setIA
+    // },
     {
       icon:'eye_outline',
       title:'Visualizar',

@@ -15,19 +15,19 @@ export default function ModalDates({
   setVisible,
   dates,
   onSelect,
+  selected
 }: any) {
-  const [selected, setSelected] = useState<string[]>([]);
 
   const toggleOption = (option: string) => {
     let updatedSelected: string[];
 
-    if (selected.includes(option)) {
-      updatedSelected = selected.filter((item) => item !== option);
+    if (selected && selected.includes(option)) {
+      updatedSelected = selected.filter((item:any) => item !== option);
     } else {
       updatedSelected = [...selected, option];
     }
 
-    setSelected(updatedSelected);
+    onSelect && onSelect(updatedSelected);
     
     if (onSelect) onSelect(updatedSelected); // chama callback
   };
@@ -61,13 +61,13 @@ export default function ModalDates({
                 key={date}
                 style={styles.select}
                 className={`m-1 px-4 py-2 rounded-full ${
-                  selected.includes(date) ? "bg-primary" : "bg-white"
+                  selected && selected.includes(date) ? "bg-primary" : "bg-white"
                 }`}
                 onPress={() => toggleOption(date)}
               >
                 <Text
                   className={
-                    selected.includes(date) ? "text-dark" : "text-gray-500"
+                    selected && selected.includes(date) ? "text-dark" : "text-gray-500"
                   }
                   style={{ ...FONTS.fontRegular, fontSize: 14 }}
                 >

@@ -86,7 +86,7 @@ export default function List({
       case "user_outline":
         return <UserRound size={rf(20)} className="text-dark"/>;
       case "eye_outline":
-        return <Eye size={22} className="text-dark"/>;
+        return <Eye size={rf(22)} className="text-dark"/>;
       default:
         return <CarFront size={22} className="text-dark"/>;
     }

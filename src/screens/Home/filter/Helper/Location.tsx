@@ -13,11 +13,9 @@ import Icon from "~/src/components/Icon/Icon";
 import Mask from "~/src/function/mask";
 import FindCep from "~/src/hooks/findOne/cep";
 
-const LocationFilter = () => {
-  const [distance, setDistance] = useState(2);
-  const [showFarPeople, setShowFarPeople] = useState(false);
+const LocationFilter = ({locations, setLocations , distance, setDistance, showFarWork, setShowFarWork}:any) => {
+
   const [newLocation, setNewLocation] = useState("");
-  const [locations, setLocations] = useState<string[]>([]);
   const [showInput, setShowInput] = useState(false);
   const [foundLocation, setFoundLocation] = useState<{
     label: string;
@@ -26,7 +24,7 @@ const LocationFilter = () => {
 
   const addLocation = () => {
     if (foundLocation) {
-      setLocations((prev) => [...prev, foundLocation.label]);
+      setLocations((prev:any) => [...prev, foundLocation.label]);
       setNewLocation("");
       setShowInput(false);
       setFoundLocation(null);
@@ -34,7 +32,7 @@ const LocationFilter = () => {
   };
 
   const removeLocation = (index: number) => {
-    setLocations((prev) => prev.filter((_, i) => i !== index));
+    setLocations((prev:any) => prev.filter((_, i) => i !== index));
   };
 
   const findCep = async () => {
@@ -196,8 +194,8 @@ const LocationFilter = () => {
             Mostrar vagas mais longe de mim se eu ficar sem vagas pra ver
           </Text>
           <Switch
-            value={showFarPeople}
-            onValueChange={setShowFarPeople}
+            value={showFarWork}
+            onValueChange={setShowFarWork}
             trackColor={{ true: "#fde047", false: "#666" }}
             thumbColor="#FFF"
           />

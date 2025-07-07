@@ -9,7 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Profile() {
   const scrollY = useRef(new Animated.Value(0)).current;
-  const { collaborator, fetchCollaborator } = useCollaborator();
+  const { collaborator } = useCollaborator();
   const logout = async () => {
     await AsyncStorage.clear();
   };
@@ -83,16 +83,16 @@ export default function Profile() {
     //   title: "Anúncio",
     //   go: "Announcement",
     // },
-    {
-      icon: "CreditCard",
-      title: "Planos",
-      go: "ChangePassword",
-    },
-    {
-      icon: "wallet_outline",
-      title: "Carteira",
-      go: "Wallet",
-    },
+    // {
+    //   icon: "CreditCard",
+    //   title: "Planos",
+    //   go: "ChangePassword",
+    // },
+    // {
+    //   icon: "wallet_outline",
+    //   title: "Carteira",
+    //   go: "Wallet",
+    // },
   ];
   const conf = [
     {

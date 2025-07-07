@@ -11,6 +11,7 @@ interface InterestsFilterProps {
   icon: any;
   border?: boolean;
   options: string[];
+  selected?: string[];
   onSelect?: (selected: string[]) => void; 
 }
 
@@ -19,13 +20,14 @@ const InterestsFilter = ({
   options,
   icon,
   border,
+  selected,
   onSelect
 }: InterestsFilterProps) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View>
-      <ModalDates onSelect={onSelect} visible={modalVisible} setVisible={setModalVisible} dates={options} />
+      <ModalDates selected={selected} onSelect={onSelect} visible={modalVisible} setVisible={setModalVisible} dates={options} />
       <TouchableOpacity
         className="flex-row items-center justify-between"
         onPress={() => {

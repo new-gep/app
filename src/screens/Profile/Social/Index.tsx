@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -28,8 +28,9 @@ const SOCIALS = [
 
 export default function SocialCardForm() {
   const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
-  const { collaborator } = useCollaborator();
+  const { collaborator, updateCollaborator } = useCollaborator();
   const navigation = useNavigation<any>();
+
   const handleChange = (key: string, value: string) => {
     setSocialLinks((prev) => ({ ...prev, [key]: value }));
   };
@@ -40,6 +41,7 @@ export default function SocialCardForm() {
       social: socialLinks,
     });
     if (response.status == 200) {
+      updateCollaborator(collaborator.CPF)
       Alert.alert("Sucesso", "Redes Sociais atualizado com sucesso!", [
         {
           text: "OK",
@@ -49,6 +51,12 @@ export default function SocialCardForm() {
       return;
     }
   };
+
+  useEffect(()=>{
+    if(collaborator){
+      setSocialLinks(collaborator.social);
+    }
+  },[collaborator])
 
   return (
     <View className="h-full bg-white">

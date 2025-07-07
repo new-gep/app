@@ -7,109 +7,127 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  Alert,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import Header from "~/src/layout/Header";
-
+import { rf } from "~/src/hooks/utils/responsiveFont";
+import { Video, Camera, CameraOff } from "lucide-react-native";
+import ModalUpload from "../../Service/Components/Flex/Create/ModalUpload";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import uploadFile from "~/src/hooks/upload/picture";
+import useCollaborator from "~/src/function/fetchCollaborator";
+import { FONTS } from "~/src/constants/theme";
 // Tamanho da tela
 const screenWidth = Dimensions.get("window").width;
 const HORIZONTAL_PADDING = 24; // p-6 = 24px
 const CARD_SPACING = 8; // margem entre os cards
 const NUM_COLUMNS = 3;
-
+const boxSize = (screenWidth - 50 - 2 * 8) / 3;
 // Calcula a largura do card
 const CARD_SIZE =
   (screenWidth - HORIZONTAL_PADDING * 2 - CARD_SPACING * (NUM_COLUMNS - 1)) /
   NUM_COLUMNS;
 
 export default function Gallery() {
+  const { collaborator } = useCollaborator();
   const [images, setImages] = useState<string[]>([]);
-  const [videos, setVideos] = useState<string[]>([]);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [zoomVisible, setZoomVisible] = useState<boolean>(false);
+  const [gallery, setGallery] = useState<Array<any>>([]);
+  const [oldGallery, setOldGallery] = useState<Array<any>>([]);
+  const [visibleUpload, setVisibleUpload] = useState<boolean>(false);
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
+    []
+  );
 
-  const pickImage = async (index: number) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
-    });
-    if (!result.canceled && result.assets.length > 0) {
-      const updated = [...images];
-      updated[index] = result.assets[0].uri;
-      setImages(updated);
-    }
+  const openImage = (uri: string) => {
+    setActiveImage(uri);
+    setZoomVisible(true);
   };
 
-  const pickVideo = async (index: number) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-    });
-    if (!result.canceled && result.assets.length > 0) {
-      const updated = [...videos];
-      updated[index] = result.assets[0].uri;
-      setVideos(updated);
+  const handleSave = async () => {
+    if (!collaborator) return;
+    if (gallery && gallery.length > 0) {
+      for (const file of gallery) {
+        const uri = file?.uri || file;
+        if (uri) {
+          const response = await uploadFile(
+            uri,
+            "gallery",
+            "complet",
+            collaborator.CPF
+          );
+          console.log("aqui: ", response);
+        }
+      }
+    } else {
+      Alert.alert("Falha", "Faça o upload de uma imagem primeiro!", [
+        {
+          text: "OK",
+        },
+      ]);
     }
   };
 
   return (
-    <View className="h-full bg-white">
-      <Header title="Galeria" leftIcon="back" />
-      <ScrollView style={styles.scrollView} contentContainerStyle={{paddingBottom:50}}>
-        {/* FOTOS */}
-        <Text style={styles.sectionTitle}>Fotos</Text>
-        <View style={styles.grid}>
-          {[...Array(6)].map((_, i) => (
-            <View
-              key={i}
-              style={[
-                styles.cardWrapper,
-                (i + 1) % NUM_COLUMNS !== 0 && { marginRight: CARD_SPACING },
-              ]}
-            >
+    <BottomSheetModalProvider>
+      <View className="h-full bg-white">
+        <Header title="Galeria" leftIcon="back" />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={{ paddingBottom: 50 }}
+        >
+          <ModalUpload
+            selectedGalleryIndex={selectedGalleryIndex}
+            setSelectedGalleryIndex={setSelectedGalleryIndex}
+            setGallerty={setGallery}
+            visible={visibleUpload}
+            setVisible={setVisibleUpload}
+          />
+          {/* FOTOS */}
+          <Text style={styles.sectionTitle}>Fotos</Text>
+          <View className="flex flex-row flex-wrap gap-2 mb-4">
+            {[...Array(3)].map((_, i) => (
               <TouchableOpacity
-                style={styles.card}
-                onPress={() => pickImage(i)}
+                key={i}
+                onPress={() => {
+                  // if (gallery[i]) return;
+                  // @ts-ignore
+                  setSelectedGalleryIndex(i);
+                  setVisibleUpload(true); // abrir modal
+                }}
+                className="rounded-lg items-center justify-center overflow-hidden bg-gray-100"
+                style={[styles.card, { width: boxSize, height: rf(150) }]}
               >
-                {images[i] ? (
-                  <Image source={{ uri: images[i] }} style={styles.media} />
+                {gallery[i]?.base64 || gallery[i]?.uri || gallery[i] ? (
+                  <Image
+                    source={{
+                      uri: gallery[i]?.base64 || gallery[i]?.uri || gallery[i],
+                    }} // <- garante que funcione se for string ou objeto
+                    style={{ width: "100%", height: "100%" }}
+                  />
                 ) : (
-                  <MaterialIcons name="add" size={32} color="#999" />
+                  <Text style={{ fontSize: rf(26), color: "#aaa" }}>+</Text>
                 )}
               </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-
-        {/* VÍDEOS */}
-        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Vídeos</Text>
-        <View style={styles.grid}>
-          {[...Array(3)].map((_, i) => (
-            <View
-              key={i}
-              style={[
-                styles.cardWrapper,
-                (i + 1) % NUM_COLUMNS !== 0 && { marginRight: CARD_SPACING },
-              ]}
-            >
-              <TouchableOpacity
-                style={styles.card}
-                onPress={() => pickVideo(i)}
-              >
-                {videos[i] ? (
-                  <View style={styles.videoPlaceholder}>
-                    <MaterialIcons name="videocam" size={28} color="#fff" />
-                    <Text style={{ color: "#fff", marginTop: 4, fontSize: 12 }}>
-                      Vídeo {i + 1}
-                    </Text>
-                  </View>
-                ) : (
-                  <MaterialIcons name="add" size={32} color="#999" />
-                )}
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+            ))}
+          </View>
+        </ScrollView>
+        <TouchableOpacity
+          className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
+          onPress={handleSave}
+        >
+          <Text
+            className="text-dark text-center"
+            style={{ ...FONTS.fontBold, fontSize: rf(16) }}
+          >
+            SALVAR
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </BottomSheetModalProvider>
   );
 }
 
@@ -118,8 +136,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 24,
   },
+  card: {
+    height: 150,
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    // backgroundColor: "#FFFFFF",
+  },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: rf(16),
     fontWeight: "600",
     color: "#000",
     marginBottom: 8,
@@ -132,15 +159,15 @@ const styles = StyleSheet.create({
   cardWrapper: {
     marginBottom: CARD_SPACING,
   },
-  card: {
-    width: CARD_SIZE,
-    height: CARD_SIZE,
-    borderRadius: 12,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
+  // card: {
+  //   width: CARD_SIZE,
+  //   height: CARD_SIZE,
+  //   borderRadius: 12,
+  //   backgroundColor: "#f0f0f0",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   overflow: "hidden",
+  // },
   media: {
     width: "100%",
     height: "100%",

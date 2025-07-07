@@ -19,6 +19,11 @@ interface propsCollaborator {
             birth: string;
         };
     } | null | 0;
+    presentation?:string | null;
+    about  ?:any | null;
+    service?:any | null;
+    howWork?:any | null;
+    social ?:any | null;
     birth?: string | null;
     zip_code?: string | null;
     street?: string | null;
@@ -43,8 +48,6 @@ const useCollaborator = () => {
             if (storedData) {
                 const parsedData = JSON.parse(storedData) as propsCollaborator;
                 setCollaborator(parsedData);
-                updateCollaborator(parsedData?.CPF || null);
-                // console.log("Colaborador encontrado:", parsedData);
             }
         } catch (error) {
             await AsyncStorage.removeItem('collaborator');
@@ -62,7 +65,7 @@ const useCollaborator = () => {
             const response = await DefaultCollaborator(cpf);
             if (response.status === 200) {
                 setCollaborator(response.collaborator);
-                
+                console.log('aqui puxando')    
                 // Atualiza o cache no AsyncStorage
                 await AsyncStorage.setItem('collaborator', JSON.stringify(response.collaborator));
             }

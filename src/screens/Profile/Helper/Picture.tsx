@@ -51,7 +51,7 @@ export default function Picture({ collaborator }: { collaborator?: any }) {
     <View style={Style.container} className="bg-white rounded-lg mb-4">
       <TouchableOpacity
         onPress={() => navigation.navigate("EditProfile")}
-        className="bg-white justify-between flex-row p-4 rounded-lg"
+        className="bg-white justify-between flex-row p-2 px-3 rounded-lg"
       >
         <View className="flex-row items-center w-3/12 ">
           <View style={{width:rf(55), height:rf(55)}} className={`rounded-full border-gray-200 bg-gray-200 ${!path && "p-2"}`}>
@@ -75,7 +75,7 @@ export default function Picture({ collaborator }: { collaborator?: any }) {
             </Text>
           </View>
         </View>
-        <View className="w-2/12 items-end  justify-center">
+        <View className="w-2/12 items-end  justify-center ">
           <MaterialIcons name="keyboard-arrow-right" size={21} color="black" />
         </View>
       </TouchableOpacity>
