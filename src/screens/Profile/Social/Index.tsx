@@ -53,7 +53,7 @@ export default function SocialCardForm() {
   };
 
   useEffect(()=>{
-    if(collaborator){
+    if(collaborator && collaborator.social){
       setSocialLinks(collaborator.social);
     }
   },[collaborator])
@@ -63,7 +63,6 @@ export default function SocialCardForm() {
       <Header title="Redes Sociais" leftIcon="back" />
       <ScrollView className="p-6" contentContainerStyle={{ paddingBottom: 20 }}>
         {/* <Text style={styles.title}>Adicione suas redes sociais</Text> */}
-
         {SOCIALS.map((item) => (
           <View
             key={item.key}

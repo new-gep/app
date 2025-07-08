@@ -39,7 +39,9 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
   editAnnouncement,
   deleteAnnouncement,
 }: any) {
+  
   const [visible, setVisible] = useState<boolean>(false);
+
   const renderRightActions = () => (
     <>
       <TouchableOpacity
@@ -54,6 +56,7 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
       </TouchableOpacity>
     </>
   );
+
   const renderLeftActions = () => (
     <>
       <TouchableOpacity

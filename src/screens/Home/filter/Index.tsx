@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Filter() {
-  const { collaborator } = useCollaborator();
+  const { collaborator, updateCollaborator } = useCollaborator();
   const navigation = useNavigation<any>();
   const [distance, setDistance] = useState(2);
   const [locations, setLocations] = useState<string[]>([]);
@@ -46,6 +46,7 @@ export default function Filter() {
       howWork: data,
     });
     if (response.status == 200) {
+      updateCollaborator(collaborator.CPF)
       Alert.alert("Sucesso", "Como você trabalha foi atualizado com sucesso!", [
         {
           text: "OK",
@@ -61,6 +62,19 @@ export default function Filter() {
     ]);
   };
 
+  useEffect(()=>{
+    if(collaborator && collaborator.howWork){
+      setDistance(collaborator.howWork.distance)
+      setLocations(collaborator.howWork.locations)
+      setShowFarWork(collaborator.howWork.showFarWork)
+      setContract(collaborator.howWork.contract)
+      setModality(collaborator.howWork.modality)
+      setHorary(collaborator.howWork.horary)
+      setMobility(collaborator.howWork.mobility)
+      setPayment(collaborator.howWork.payment)
+    }
+  },[collaborator]);
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Header title="Meu Trabalho" leftIcon={"back"} />
@@ -72,6 +86,7 @@ export default function Filter() {
             border={true}
             title="Contrato"
             onSelect={setContract}
+            selected={contract}
             icon="handShake_outline"
             options={[
               "CLT",
@@ -86,6 +101,7 @@ export default function Filter() {
             border={true}
             title="Modalidade"
             onSelect={setModality}
+            selected={modality}
             icon="homeWork_outline"
             options={["Presencial", "Híbrido", "Remoto"]}
           />
@@ -93,6 +109,7 @@ export default function Filter() {
             border={true}
             title="Horários"
             onSelect={setHorary}
+            selected={horary}
             icon="clock_outline"
             options={[
               "Integral",
@@ -108,6 +125,7 @@ export default function Filter() {
             border={true}
             title="Mobilidade"
             onSelect={setMobility}
+            selected={mobility}
             icon="bus_outline"
             options={[
               "Carro",
@@ -122,6 +140,7 @@ export default function Filter() {
           <InterestsFilter
             title="Pagamento"
             onSelect={setPayment}
+            selected={payment}
             icon="savings_outline"
             options={[
               "Fixo",

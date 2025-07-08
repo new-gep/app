@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -26,9 +26,7 @@ const CARD_SPACING = 8; // margem entre os cards
 const NUM_COLUMNS = 3;
 const boxSize = (screenWidth - 50 - 2 * 8) / 3;
 // Calcula a largura do card
-const CARD_SIZE =
-  (screenWidth - HORIZONTAL_PADDING * 2 - CARD_SPACING * (NUM_COLUMNS - 1)) /
-  NUM_COLUMNS;
+const CARD_SIZE = (screenWidth - HORIZONTAL_PADDING * 2 - CARD_SPACING * (NUM_COLUMNS - 1)) / NUM_COLUMNS;
 
 export default function Gallery() {
   const { collaborator } = useCollaborator();
@@ -38,9 +36,7 @@ export default function Gallery() {
   const [gallery, setGallery] = useState<Array<any>>([]);
   const [oldGallery, setOldGallery] = useState<Array<any>>([]);
   const [visibleUpload, setVisibleUpload] = useState<boolean>(false);
-  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
-    []
-  );
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>([]);
 
   const openImage = (uri: string) => {
     setActiveImage(uri);
@@ -60,16 +56,20 @@ export default function Gallery() {
             collaborator.CPF
           );
           console.log("aqui: ", response);
-        }
-      }
+        };
+      };
     } else {
       Alert.alert("Falha", "Faça o upload de uma imagem primeiro!", [
         {
           text: "OK",
         },
       ]);
-    }
+    };
   };
+
+  useEffect(()=>{
+
+  },[])
 
   return (
     <BottomSheetModalProvider>
@@ -86,6 +86,7 @@ export default function Gallery() {
             visible={visibleUpload}
             setVisible={setVisibleUpload}
           />
+
           {/* FOTOS */}
           <Text style={styles.sectionTitle}>Fotos</Text>
           <View className="flex flex-row flex-wrap gap-2 mb-4">
@@ -114,6 +115,7 @@ export default function Gallery() {
               </TouchableOpacity>
             ))}
           </View>
+          
         </ScrollView>
         <TouchableOpacity
           className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"

@@ -35,32 +35,45 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
+import { IMAGES } from "~/src/constants/Images";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MIN_MODAL_HEIGHT = SCREEN_HEIGHT * 0.4; // Minimum height (40% of screen)
 const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.9; // Maximum height (90% of screen)
-
 const ServiceInformation = ({
   handleSwipeRight,
   visible,
   setVisible,
   peopleData,
-  autoView
+  autoView,
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
+  const [image, setImage] = useState<any>(null);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [showVerifiedText, setShowVerifiedText] = useState(false);
   const modalHeight = useRef(new Animated.Value(MIN_MODAL_HEIGHT)).current;
   const lastModalHeight = useRef(MIN_MODAL_HEIGHT);
   const expandedThreshold = (MIN_MODAL_HEIGHT + MAX_MODAL_HEIGHT) / 2;
-
   const contentOpacity = modalHeight.interpolate({
     inputRange: [MIN_MODAL_HEIGHT, expandedThreshold, MAX_MODAL_HEIGHT],
     outputRange: [0, 0, 1],
     extrapolate: "clamp",
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(visible && peopleData.picture){
+        setImage(peopleData.picture)
+      }
+      // Adicione aqui o que deseja fazer após 3 segundos
+    }, 5000); // 3000 milissegundos = 3 segundos
+
+    // Limpeza do temporizador ao desmontar o componente
+    return () => clearTimeout(timer);
+  }, [visible]); // Array vazio significa que o efeito roda apenas uma vez ao montar
+
 
   // Gesture handling for header drag
   const onGestureEvent = (event: any) => {
@@ -163,6 +176,7 @@ const ServiceInformation = ({
     setActiveImage(null);
   };
 
+
   return (
     <Modal
       isVisible={visible}
@@ -237,9 +251,9 @@ const ServiceInformation = ({
               {/* Header Content */}
               <View style={styles.headerContent}>
                 <View style={{ marginRight: rf(12), position: "relative" }}>
-                  {peopleData.photoUri ? (
+                  {image ? (
                     <Image
-                      source={{ uri: peopleData.photoUri }}
+                      source={image ? { uri: image } : IMAGES.user2}
                       style={{
                         width: rf(43),
                         height: rf(43),
@@ -262,7 +276,7 @@ const ServiceInformation = ({
                       <UserRound size={rf(25)} />
                     </View>
                   )}
-                  {peopleData.isVerified && (
+                  {peopleData && peopleData.isVerified && (
                     <View
                       style={{
                         position: "absolute",
@@ -282,7 +296,7 @@ const ServiceInformation = ({
                 </View>
                 <View>
                   <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                    {peopleData.function}
+                    {peopleData && peopleData.title && peopleData.title}
                   </Text>
                   <Text
                     style={{
@@ -291,38 +305,42 @@ const ServiceInformation = ({
                       color: "#6b7280",
                     }}
                   >
-                    {peopleData.name}
+                    {peopleData &&
+                      peopleData.CPF_Creator &&
+                      peopleData.CPF_Creator.name}
                   </Text>
                 </View>
-                {peopleData.isVerified && (
-                  <TouchableOpacity
-                                      onPress={() => setShowVerifiedText((prev) => !prev)}
-                                      activeOpacity={0.7}
-                                      style={{
-                                        marginLeft: "auto",
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        paddingHorizontal: showVerifiedText ? 8 : 4,
-                                        paddingVertical: 4,
-                                        borderRadius: 999,
-                                      }}
-                                      className="bg-primary"
-                                    >
-                                      {showVerifiedText && (
-                                        <Text
-                                          style={{
-                                            ...FONTS.fontSemiBold,
-                                            fontSize: rf(6),
-                                            marginRight: rf(4),
-                                            color: "#0f172a", // text-dark
-                                          }}
-                                        >
-                                          Verificado
-                                        </Text>
-                                      )}
-                                      <CircleCheck size={rf(10)} className="text-dark" />
-                  </TouchableOpacity>
-                )}
+                {peopleData &&
+                  peopleData.isVerified &&
+                  peopleData.isVerified && (
+                    <TouchableOpacity
+                      onPress={() => setShowVerifiedText((prev) => !prev)}
+                      activeOpacity={0.7}
+                      style={{
+                        marginLeft: "auto",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingHorizontal: showVerifiedText ? 8 : 4,
+                        paddingVertical: 4,
+                        borderRadius: 999,
+                      }}
+                      className="bg-primary"
+                    >
+                      {showVerifiedText && (
+                        <Text
+                          style={{
+                            ...FONTS.fontSemiBold,
+                            fontSize: rf(6),
+                            marginRight: rf(4),
+                            color: "#0f172a", // text-dark
+                          }}
+                        >
+                          Verificado
+                        </Text>
+                      )}
+                      <CircleCheck size={rf(10)} className="text-dark" />
+                    </TouchableOpacity>
+                  )}
               </View>
             </View>
           </PanGestureHandler>
@@ -349,7 +367,9 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {Mask("amount", peopleData.salary)}
+                    {peopleData &&
+                      peopleData.salary &&
+                      Mask("amount", peopleData.salary)}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -362,7 +382,9 @@ const ServiceInformation = ({
                       textTransform: "capitalize",
                     }}
                   >
-                    {peopleData.valueType}
+                    {peopleData &&
+                      peopleData.typePayment &&
+                      peopleData.typePayment}
                   </Text>
                 </View>
               </View>
@@ -376,7 +398,9 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {Mask("hiddenPhone", peopleData.phone)}
+                    {peopleData.CPF_Creator &&
+                      peopleData.CPF_Creator.phone &&
+                      Mask("hiddenPhone", peopleData.CPF_Creator.phone)}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -388,7 +412,7 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData.locality}
+                    {/* {peopleData.CPF_Creator && peopleData.CPF_Creator.locality */}
                   </Text>
                 </View>
               </View>
@@ -416,7 +440,9 @@ const ServiceInformation = ({
                 >
                   {[0, 1, 2].map((index) => (
                     <View key={index} className="w-1/3 p-2">
-                      {peopleData.gallery && peopleData.gallery[index] ? (
+                      {peopleData &&
+                      peopleData.gallery &&
+                      peopleData.gallery[index] ? (
                         //  peopleData.gallery[index]
                         <TouchableOpacity
                           className="w-full h-full"
@@ -449,8 +475,11 @@ const ServiceInformation = ({
                 >
                   O que está incluído
                 </Text>
-                <Text className="text-justify" style={[FONTS.fontLight, {fontSize: rf(10)}]}>
-                  {peopleData.included}
+                <Text
+                  className="text-justify"
+                  style={[FONTS.fontLight, { fontSize: rf(10) }]}
+                >
+                  {peopleData && peopleData.included && peopleData.included}
                 </Text>
               </View>
 
@@ -461,8 +490,11 @@ const ServiceInformation = ({
                 >
                   O que não está incluído
                 </Text>
-                <Text className="text-justify" style={[FONTS.fontLight, {fontSize: rf(10)}]}>
-                  {peopleData.notIncluded}
+                <Text
+                  className="text-justify"
+                  style={[FONTS.fontLight, { fontSize: rf(10) }]}
+                >
+                  {peopleData && peopleData.included && peopleData.included}
                 </Text>
               </View>
 
@@ -473,8 +505,13 @@ const ServiceInformation = ({
                 >
                   Informações
                 </Text>
-                <Text className="text-justify" style={[FONTS.fontLight, {fontSize: rf(10)}]}>
-                  {peopleData.info}
+                <Text
+                  className="text-justify"
+                  style={[FONTS.fontLight, { fontSize: rf(10) }]}
+                >
+                  {peopleData && peopleData.information
+                    ? peopleData.information
+                    : "Não informado"}
                 </Text>
               </View>
             </Animated.View>
@@ -518,19 +555,19 @@ const ServiceInformation = ({
                 </>
               )}
             </TouchableOpacity>
-            { !autoView &&
+            {!autoView && (
               <TouchableOpacity
-              style={{ flex: 1, padding: 12, alignItems: "center" }}
-              onPress={handleApply}
-            >
-              <Plus size={rf(24)} color="#71717a" />
-              <Text
-                style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                style={{ flex: 1, padding: 12, alignItems: "center" }}
+                onPress={handleApply}
               >
-                Candidatar
-              </Text>
+                <Plus size={rf(24)} color="#71717a" />
+                <Text
+                  style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                >
+                  Candidatar
+                </Text>
               </TouchableOpacity>
-            }
+            )}
           </View>
         </Animated.View>
       </GestureHandlerRootView>

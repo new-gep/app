@@ -706,12 +706,14 @@ export default function Service() {
       icon: "vaccine_outline",
       title: "Biomedicina Estética",
       setSelect: setBiomedicine,
+      select: biomedicine,
       option: ["Biomedicina estética", "Remoção de tatuagem"],
     },
     {
       icon: "personInjury_outline",
       title: "Para o Corpo",
       setSelect: setBodyCare,
+      select: bodyCare,
       option: [
         "Cozinheira",
         "Dentista",
@@ -728,6 +730,7 @@ export default function Service() {
       icon: "brain_outline",
       title: "Para a Mente",
       setSelect: setMindCare,
+      select: mindCare,
       option: [
         "Aconselhamento conjugal e familiar",
         "Coach",
@@ -740,6 +743,7 @@ export default function Service() {
       icon: "family_outline",
       title: "Para a família",
       setSelect: setFamilyCare,
+      select: familyCare,
       option: ["Cuidador de pessoas", "Enfermeira"],
     },
   ];
@@ -782,7 +786,8 @@ export default function Service() {
   ];
 
   useEffect(() => {
-    if (collaborator) {
+    if (collaborator && collaborator.service) {
+
       // assistance
       setElectronics(
         collaborator.service.assistance.electronics
@@ -873,35 +878,131 @@ export default function Service() {
           : []
       );
       // DesignTec
-      setTechDesign([]);
-      setGraphicDesign([]);
-      setAudioVisual([]);
+      setTechDesign(
+        collaborator.service.designTec.techDesign
+          ? collaborator.service.designTec.techDesign
+          : []
+      );
+      setGraphicDesign(
+        collaborator.service.designTec.graphicDesign
+          ? collaborator.service.designTec.graphicDesign
+          : []
+      );
+      setAudioVisual(
+        collaborator.service.designTec.audioVisual
+          ? collaborator.service.designTec.audioVisual
+          : []
+      );
       // Event
-      setTeamSupport([]);
-      setFoodDrinks([]);
-      setMusicEntertainment([]);
-      setComplementaryServices([]);
+      setTeamSupport(
+        collaborator.service.event.teamSupport
+          ? collaborator.service.event.teamSupport
+          : []
+      );
+      setFoodDrinks(
+        collaborator.service.event.foodDrinks
+          ? collaborator.service.event.foodDrinks
+          : []
+      );
+      setMusicEntertainment(
+        collaborator.service.event.musicEntertainment
+          ? collaborator.service.event.musicEntertainment
+          : []
+      );
+      setComplementaryServices(
+        collaborator.service.event.complementaryServices
+          ? collaborator.service.event.complementaryServices
+          : []
+      );
       // Fashion
-      setBeauty([]);
-      setHair([]);
-      setStyle([]);
-      setArtsMagic([]);
+      setBeauty(
+        collaborator.service.fashion.beauty
+          ? collaborator.service.fashion.beauty
+          : []
+      );
+      setHair(
+        collaborator.service.fashion.hair
+          ? collaborator.service.fashion.hair
+          : []
+      );
+      setStyle(
+        collaborator.service.fashion.style
+          ? collaborator.service.fashion.style
+          : []
+      );
+      setArtsMagic(
+        collaborator.service.fashion.artsMagic
+          ? collaborator.service.fashion.artsMagic
+          : []
+      );
       // Reform
-      setMachineryRental([]);
-      setConstruction([]);
-      setInstallation([]);
-      setRepairs([]);
-      setGeneralServices([]);
-      setForHome([]);
+      setMachineryRental(
+        collaborator.service.reform.machineryRental
+          ? collaborator.service.reform.machineryRental
+          : []
+      );
+      setConstruction(
+        collaborator.service.reform.construction
+          ? collaborator.service.reform.construction
+          : []
+      );
+      setInstallation(
+        collaborator.service.reform.installation
+          ? collaborator.service.reform.installation
+          : []
+      );
+      setRepairs(
+        collaborator.service.reform.repairs
+          ? collaborator.service.reform.repairs
+          : []
+      );
+      setGeneralServices(
+        collaborator.service.reform.generalServices
+          ? collaborator.service.reform.generalServices
+          : []
+      );
+      setForHome(
+        collaborator.service.reform.forHome
+          ? collaborator.service.reform.forHome
+          : []
+      );
       // Health
-      setBiomedicine([]);
-      setBodyCare([]);
-      setMindCare([]);
-      setFamilyCare([]);
+      setBiomedicine(
+        collaborator.service.health.biomedicine
+          ? collaborator.service.health.biomedicine
+          : []
+      );
+      setBodyCare(
+        collaborator.service.health.bodyCare
+          ? collaborator.service.health.bodyCare
+          : []
+      );
+      setMindCare(
+        collaborator.service.health.mindCare
+          ? collaborator.service.health.mindCare
+          : []
+      );
+      setFamilyCare(
+        collaborator.service.health.familyCare
+          ? collaborator.service.health.familyCare
+          : []
+      );
       // Domestics
-      setDomesticHome([]);
-      setDomesticFamily([]);
-      setPets([]);
+      setDomesticHome(
+        collaborator.service.domestics.domesticHome
+          ? collaborator.service.domestics.domesticHome
+          : []
+      );
+      setDomesticFamily(
+        collaborator.service.domestics.domesticFamily
+          ? collaborator.service.domestics.domesticFamily
+          : []
+      );
+      setPets(
+        collaborator.service.domestics.pets
+          ? collaborator.service.domestics.pets
+          : []
+      );
     }
   }, [collaborator]);
 

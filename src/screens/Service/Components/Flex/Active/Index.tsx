@@ -113,7 +113,7 @@ export default function Active() {
                 deleteAnnouncement={() => delet(item.id)}
               />
             )}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.id}
           />
         )}
       </View>
