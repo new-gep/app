@@ -53,7 +53,7 @@ export default function Media() {
             return (
               <View key={key} className="flex-row items-center gap-2">
                 <Icon size={rf(18)} color="#6B7280" />
-                {/* //@ts-ignore */}
+                {/* @ts-ignore */}
                 <Text style={{ ...FONTS.font, fontSize: rf(14) }}>{value}</Text>
               </View>
             );
