@@ -116,7 +116,7 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
 
   return (
     <View style={styles.cardWrapper}>
-      <ModalMenu visible={visible} setVisible={setVisible} item={item} />
+      {item && <ModalMenu visible={visible} setVisible={setVisible} item={item} />}
       <Swipeable
         key={item.id}
         // renderRightActions={renderRightActions}
@@ -144,6 +144,7 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
                 style={{ ...FONTS.font, fontSize: rf(12) }}
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                className="capitalize"
               >
                 {item.title}
               </Text>

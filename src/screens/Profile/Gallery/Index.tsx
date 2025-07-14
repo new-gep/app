@@ -8,17 +8,20 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import Header from "~/src/layout/Header";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import { Video, Camera, CameraOff } from "lucide-react-native";
+import FindFile from "~/src/hooks/findOne/collaborator/file";
 import ModalUpload from "../../Service/Components/Flex/Create/ModalUpload";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import uploadFile from "~/src/hooks/upload/picture";
 import useCollaborator from "~/src/function/fetchCollaborator";
 import { FONTS } from "~/src/constants/theme";
+import deleteCollaboratorFiles from "~/src/hooks/delete/collaborator/file";
 // Tamanho da tela
 const screenWidth = Dimensions.get("window").width;
 const HORIZONTAL_PADDING = 24; // p-6 = 24px
@@ -26,50 +29,78 @@ const CARD_SPACING = 8; // margem entre os cards
 const NUM_COLUMNS = 3;
 const boxSize = (screenWidth - 50 - 2 * 8) / 3;
 // Calcula a largura do card
-const CARD_SIZE = (screenWidth - HORIZONTAL_PADDING * 2 - CARD_SPACING * (NUM_COLUMNS - 1)) / NUM_COLUMNS;
+const CARD_SIZE =
+  (screenWidth - HORIZONTAL_PADDING * 2 - CARD_SPACING * (NUM_COLUMNS - 1)) /
+  NUM_COLUMNS;
 
 export default function Gallery() {
   const { collaborator } = useCollaborator();
-  const [images, setImages] = useState<string[]>([]);
+  const [loader, setLoader] = useState<boolean>(false);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
   const [gallery, setGallery] = useState<Array<any>>([]);
   const [oldGallery, setOldGallery] = useState<Array<any>>([]);
   const [visibleUpload, setVisibleUpload] = useState<boolean>(false);
-  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>([]);
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
+    []
+  );
 
   const openImage = (uri: string) => {
     setActiveImage(uri);
     setZoomVisible(true);
   };
 
-  const handleSave = async () => {
-    if (!collaborator) return;
-    if (gallery && gallery.length > 0) {
-      for (const file of gallery) {
-        const uri = file?.uri || file;
-        if (uri) {
-          const response = await uploadFile(
-            uri,
-            "gallery",
-            "complet",
-            collaborator.CPF
-          );
-          console.log("aqui: ", response);
-        };
-      };
-    } else {
-      Alert.alert("Falha", "Faça o upload de uma imagem primeiro!", [
-        {
-          text: "OK",
-        },
-      ]);
-    };
+  const getKeysToDelete = (oldGallery: any[], currentGallery: any[]) => {
+    const oldKeys = oldGallery
+      .map((item) => (typeof item === "object" ? item.key : null))
+      .filter(Boolean);
+
+    const currentKeys = currentGallery
+      .map((item) => (typeof item === "object" ? item.key : null))
+      .filter(Boolean);
+
+    const toDelete = oldKeys.filter((key) => !currentKeys.includes(key));
+    return toDelete;
   };
 
-  useEffect(()=>{
+  const handleSave = async () => {
+    if (!collaborator) return;
 
-  },[])
+    // 1. Identificar imagens removidas
+    const toDelete = getKeysToDelete(oldGallery, gallery);
+
+    // 2. Deletar se houver
+    await deleteCollaboratorFiles(toDelete);
+
+    // 3. Fazer upload das novas imagens
+    const newImages = gallery.filter((item) => {
+      if (typeof item === "string") return true;
+      return !item.key && (item.uri || item.base64);
+    });
+
+    for (const item of newImages) {
+      const uri = typeof item === "string" ? item : item.uri || item.base64;
+      await uploadFile(uri, "gallery", "complet", collaborator.CPF);
+    }
+
+    Alert.alert("Sucesso", "Imagens atualizadas!");
+  };
+
+  const useFetchData = async () => {
+    if (!collaborator) return;
+    const response = await FindFile("gallery", collaborator.CPF);
+    if (response.status == 200) {
+      setGallery(response.path);
+      setOldGallery(response.path)
+    }
+    setLoader(true)
+  };
+
+  useEffect(() => {
+    if (collaborator) {
+      useFetchData();
+    }
+  }, [collaborator]);
 
   return (
     <BottomSheetModalProvider>
@@ -89,7 +120,8 @@ export default function Gallery() {
 
           {/* FOTOS */}
           <Text style={styles.sectionTitle}>Fotos</Text>
-          <View className="flex flex-row flex-wrap gap-2 mb-4">
+          { loader ?
+            <View className="flex flex-row flex-wrap gap-2 mb-4">
             {[...Array(3)].map((_, i) => (
               <TouchableOpacity
                 key={i}
@@ -114,8 +146,13 @@ export default function Gallery() {
                 )}
               </TouchableOpacity>
             ))}
-          </View>
-          
+            </View>
+            :
+            <View className="items-center justify-center">
+              <Text className="mb-2" style={{...FONTS.fontBlack, fontSize: rf(13)}}>Carregando</Text>
+              <ActivityIndicator color={'black'} />
+            </View>
+          }
         </ScrollView>
         <TouchableOpacity
           className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"

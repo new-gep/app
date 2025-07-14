@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import { FONTS } from "~/src/constants/theme";
+import useCollaborator from "~/src/function/fetchCollaborator";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 
 export default function About() {
-  const data = {
-    about:
-      "Sou uma pessoa dedicada, focada e apaixonada pelo que faço. Sempre busco aprender e crescer profissionalmente.",
-  };
+
+  const { collaborator } = useCollaborator();
+
   return (
     <View style={Style.container} className="bg-white p-3 rounded-lg">
       <Text
@@ -16,7 +16,7 @@ export default function About() {
         Sobre Mim
       </Text>
 
-      <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{data.about}</Text>
+      <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator && collaborator.presentation ? collaborator.presentation : 'Sem informação'}</Text>
     </View>
   );
 }

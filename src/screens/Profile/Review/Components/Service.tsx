@@ -1,12 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { FONTS } from "~/src/constants/theme";
+import useCollaborator from "~/src/function/fetchCollaborator";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 
 export default function Service() {
-  const data = {
-    service: ["Geladeira", "Lava Louça", "Televisão", "Dança", "Concursos"],
+  const { collaborator } = useCollaborator();
+  const [allService, setAllService] = useState<any>(null)
+
+  const extractAllServices = (servicesObject: any): string[] => {
+  const allServices: string[] = [];
+
+  const deepExtract = (obj: any) => {
+    for (const key in obj) {
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        allServices.push(...value); // adiciona os serviços
+      } else if (typeof value === "object" && value !== null) {
+        deepExtract(value); // desce mais um nível
+      }
+    }
   };
+
+  deepExtract(servicesObject);
+  return allServices;
+  };
+
+  useEffect(() => {
+    if (collaborator) {
+      const allServiceList = extractAllServices(collaborator.service);
+      setAllService(allServiceList)
+    }
+  }, [collaborator]);
 
   const renderTagList = (items: string[]) => (
     <View>
@@ -33,7 +58,7 @@ export default function Service() {
       >
         Serviços
       </Text>
-      {renderTagList( data.service)}
+      {allService ? renderTagList(allService) : <Text>Não informado</Text>}
     </View>
   );
 }

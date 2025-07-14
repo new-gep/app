@@ -13,20 +13,11 @@ import {
   BookHeart,
   Scale,
 } from "lucide-react-native";
+import useCollaborator from "~/src/function/fetchCollaborator";
+import { useEffect } from "react";
 
 export default function Personal() {
-  const data = {
-    pets: ["Cachorro", "Gato"],
-    diet: ["Onívoro"],
-    loveLanguage: ["Toque Físico", "Tempo de Qualidade"],
-    drinks: ["Sim"],
-    smokes: ["Não"],
-    education: ["Ensino Superior Completo"],
-    communicationType: ["Assertiva", "Passiva"],
-    children: ["3"],
-    marriage: ["Sim"],
-    values: ["Familía", "Trabalho"],
-  };
+  const { collaborator } = useCollaborator();
 
   const renderTagList = (title: string, icon: JSX.Element, items: string[]) => (
     <View>
@@ -53,6 +44,19 @@ export default function Personal() {
     </View>
   );
 
+  const renderSafeTagList = (
+    title: string,
+    icon: JSX.Element,
+    value: string[] | string | undefined | null
+  ) => {
+    const items: string[] =
+      typeof value === "string" ? [value] : Array.isArray(value) ? value : [];
+
+    const finalItems = items.length > 0 ? items : ["Não informado"];
+
+    return renderTagList(title, icon, finalItems);
+  };
+
   return (
     <View style={Style.container} className="bg-white p-3 rounded-lg mt-3">
       <View className="mb-6">
@@ -61,16 +65,67 @@ export default function Personal() {
         </Text>
       </View>
 
-      {renderTagList("Valores", <Scale size={rf(16)} />, data.values)}
-      {renderTagList("Formação",<GraduationCap size={rf(16)} />,data.education)}
-      {renderTagList("Comunicação",<MessageCircle size={rf(16)} />,data.communicationType)}
-      {renderTagList("Casado(a)?", <Heart size={rf(16)} />, data.marriage)}
-      {renderTagList("Bebe?", <Wine size={rf(16)} />, data.drinks)}
-      {renderTagList("Filhos", <Baby size={rf(16)} />, data.children)}
-      {renderTagList("Fuma?", <Cigarette size={rf(16)} />, data.smokes)}
-      {renderTagList("Linguagem do Amor",<BookHeart size={rf(16)} />,data.loveLanguage)}
-      {renderTagList("Alimentação", <Salad size={rf(16)} />, data.diet)}
-      {renderTagList("Pets", <Bone size={rf(16)} />, data.pets)}
+      {collaborator && (
+        <>
+          {renderSafeTagList(
+            "Valores",
+            <Scale size={rf(16)} />,
+            collaborator.about.values
+          )}
+          {renderSafeTagList(
+            "Formação",
+            <GraduationCap size={rf(16)} />,
+            collaborator.about.formation
+          )}
+          {renderSafeTagList(
+            "Comunicação",
+            <MessageCircle size={rf(16)} />,
+            collaborator.about.communication
+          )}
+          {renderTagList("Casado(a)?", <Heart size={rf(16)} />, [
+            collaborator.marriage === "1" ? "Sim" : "Não",
+          ])}
+          {renderSafeTagList(
+            "Bebe?",
+            <Wine size={rf(16)} />,
+            collaborator.about.drink
+          )}
+          {renderTagList(
+            "Filhos",
+            <Baby size={rf(16)} />,
+            collaborator.children &&
+              Object.keys(collaborator.children).length > 0
+              ? [
+                  `${Object.keys(collaborator.children).length} ${
+                    Object.keys(collaborator.children).length === 1
+                      ? "filho"
+                      : "filhos"
+                  }`,
+                ]
+              : ["Não informado"]
+          )}
+          {renderSafeTagList(
+            "Fuma?",
+            <Cigarette size={rf(16)} />,
+            collaborator.about.smoke
+          )}
+          {renderSafeTagList(
+            "Linguagem do Amor",
+            <BookHeart size={rf(16)} />,
+            collaborator.about.languageLove
+          )}
+          {renderSafeTagList(
+            "Alimentação",
+            <Salad size={rf(16)} />,
+            collaborator.about.food
+          )}
+          {renderSafeTagList(
+            "Pets",
+            <Bone size={rf(16)} />,
+            collaborator.about.pet
+          )}
+        </>
+      )}
     </View>
   );
 }

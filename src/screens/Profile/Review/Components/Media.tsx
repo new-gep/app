@@ -10,8 +10,11 @@ import {
   Globe,
   Music,
 } from "lucide-react-native";
+import useCollaborator from "~/src/function/fetchCollaborator";
 
 export default function Media() {
+  const { collaborator } = useCollaborator();
+  
   const socialData = {
     instagram: "@meuinsta",
     facebook: "https://facebook.com/meuperfil",
@@ -41,14 +44,16 @@ export default function Media() {
       </Text>
 
       <View className="flex-row flex-wrap gap-4">
-        {Object.entries(socialData).map(([key, value]) => {
+        {collaborator && Object.entries(collaborator.social).map(([key, value]) => {
           const Icon = icons[key as keyof typeof icons];
+          //@ts-ignore
           const isLink = isUrl(value);
 
           if (isLink) {
             return (
               <Pressable
                 key={key}
+                //@ts-ignore
                 onPress={() => Linking.openURL(value)}
                 className="items-center justify-center"
               >

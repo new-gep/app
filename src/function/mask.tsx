@@ -17,7 +17,8 @@ type MaskType =
   | "fullName"
   | "cep"
   | "formatMonthYear"
-  | "dateFormatBrazil";
+  | "dateFormatBrazil"
+  | "age";
 
 export default function Mask(type: MaskType, value: string | number): string {
   switch (type) {
@@ -217,6 +218,21 @@ export default function Mask(type: MaskType, value: string | number): string {
       } else {
         return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 6)}`;
       }
+    }
+    case "age":{
+      const birthDate = new Date(value);
+      const today = new Date();
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const hasHadBirthdayThisYear =
+        today.getMonth() > birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+      if (!hasHadBirthdayThisYear) {
+        age -= 1;
+      }
+
+      return `${age} anos`;
     }
     default: {
       return value.toString();

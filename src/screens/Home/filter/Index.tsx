@@ -54,7 +54,7 @@ export default function Filter() {
         },
       ]);
       return;
-    }
+    };
     Alert.alert("Falha", "Não foi possível atualizar como você trabalha!", [
       {
         text: "OK",
@@ -66,6 +66,7 @@ export default function Filter() {
     if(collaborator && collaborator.howWork){
       setDistance(collaborator.howWork.distance)
       setLocations(collaborator.howWork.locations)
+      console.log(collaborator.howWork)
       setShowFarWork(collaborator.howWork.showFarWork)
       setContract(collaborator.howWork.contract)
       setModality(collaborator.howWork.modality)

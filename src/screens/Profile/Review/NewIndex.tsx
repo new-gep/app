@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import Header from "~/src/layout/Header";
 import Picture from "./Components/Picture";
@@ -12,6 +12,8 @@ import Media from "./Components/Media";
 import Service from "./Components/Service";
 
 export default function Review() {
+
+
   return (
     <View className="bg-white h-full">
       <Header leftIcon="back" title="Perfil" />

@@ -1,11 +1,11 @@
 import { View, Text } from "react-native";
 import { FONTS } from "~/src/constants/theme";
+import useCollaborator from "~/src/function/fetchCollaborator";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 
 export default function Interests() {
-  const data = {
-    interests: ["Música", "Tecnologia", "Esportes"],
-  };
+
+  const { collaborator } = useCollaborator();
 
   const renderTagList = ( items: string[]) => (
       <View>
@@ -29,7 +29,7 @@ export default function Interests() {
         <Text className="mb-7" style={{ fontSize: rf(18), ...FONTS.fontSemiBold }}>
           Interesses
         </Text>
-      {renderTagList( data.interests)}
+      {collaborator && collaborator.about.interests ? renderTagList( collaborator.about.interests) : <Text>Não informado</Text>}
     </View>
   );
 }

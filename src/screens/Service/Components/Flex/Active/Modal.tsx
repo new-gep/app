@@ -154,6 +154,7 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+     { item &&
       <ServiceInformation
         autoView={true}
         peopleData={item}
@@ -161,6 +162,7 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
         setVisible={setVisibleWork}
         handleSwipeRight={()=>{}}
       />
+      }
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onChange={handleSheetChanges}
@@ -179,8 +181,8 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                 </View>
                 <View>
                   <Text
-                    style={{ fontSize: rf(13), ...FONTS.fontSemiBold }}
-                    className=""
+                    style={{ fontSize: rf(13), ...FONTS.fontSemiBold, textTransform:'capitalize' }}
+                    className="capitalize"
                   >
                     {item.title}
                   </Text>

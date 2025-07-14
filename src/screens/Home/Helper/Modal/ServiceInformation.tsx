@@ -50,7 +50,7 @@ const ServiceInformation = ({
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
-  const [image, setImage] = useState<any>(null);
+  const [path, setPath ]= useState<string | null>('');
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [showVerifiedText, setShowVerifiedText] = useState(false);
   const modalHeight = useRef(new Animated.Value(MIN_MODAL_HEIGHT)).current;
@@ -63,17 +63,22 @@ const ServiceInformation = ({
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if(visible && peopleData.picture){
-        setImage(peopleData.picture)
+      if (
+        peopleData.picture &&
+        peopleData.picture.status === 200 &&
+        peopleData.picture.path
+      ) {
+        setPath(peopleData.picture.path);
+      } else {
+        setPath(null); // Garante que image seja null se não houver caminho válido
       }
-      // Adicione aqui o que deseja fazer após 3 segundos
-    }, 5000); // 3000 milissegundos = 3 segundos
+  }, [visible]);
 
-    // Limpeza do temporizador ao desmontar o componente
-    return () => clearTimeout(timer);
-  }, [visible]); // Array vazio significa que o efeito roda apenas uma vez ao montar
-
+  useEffect(()=>{
+    if(peopleData.gallery){
+      console.log(peopleData.gallery)
+    }
+  },[])
 
   // Gesture handling for header drag
   const onGestureEvent = (event: any) => {
@@ -164,8 +169,6 @@ const ServiceInformation = ({
     handleSwipeRight();
   };
 
-  if (!visible) return null;
-
   const openImage = (uri: string) => {
     setActiveImage(uri);
     setZoomVisible(true);
@@ -175,7 +178,6 @@ const ServiceInformation = ({
     setZoomVisible(false);
     setActiveImage(null);
   };
-
 
   return (
     <Modal
@@ -187,6 +189,7 @@ const ServiceInformation = ({
     >
       <>
         <Modal
+          //@ts-ignore
           visible={zoomVisible}
           transparent={true}
           onRequestClose={closeImage}
@@ -251,9 +254,9 @@ const ServiceInformation = ({
               {/* Header Content */}
               <View style={styles.headerContent}>
                 <View style={{ marginRight: rf(12), position: "relative" }}>
-                  {image ? (
+                  {path? 
                     <Image
-                      source={image ? { uri: image } : IMAGES.user2}
+                      source={ {uri:path} }
                       style={{
                         width: rf(43),
                         height: rf(43),
@@ -261,7 +264,7 @@ const ServiceInformation = ({
                       }}
                       resizeMode="cover"
                     />
-                  ) : (
+                    :
                     <View
                       style={{
                         backgroundColor: "#f4f4f5",
@@ -275,7 +278,8 @@ const ServiceInformation = ({
                     >
                       <UserRound size={rf(25)} />
                     </View>
-                  )}
+                  }
+
                   {peopleData && peopleData.isVerified && (
                     <View
                       style={{
@@ -295,7 +299,14 @@ const ServiceInformation = ({
                   )}
                 </View>
                 <View>
-                  <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
+                  <Text
+                    className="capitalize"
+                    style={{
+                      ...FONTS.fontSemiBold,
+                      fontSize: rf(16),
+                      textTransform: "capitalize",
+                    }}
+                  >
                     {peopleData && peopleData.title && peopleData.title}
                   </Text>
                   <Text
@@ -310,37 +321,35 @@ const ServiceInformation = ({
                       peopleData.CPF_Creator.name}
                   </Text>
                 </View>
-                {peopleData &&
-                  peopleData.isVerified &&
-                  peopleData.isVerified && (
-                    <TouchableOpacity
-                      onPress={() => setShowVerifiedText((prev) => !prev)}
-                      activeOpacity={0.7}
-                      style={{
-                        marginLeft: "auto",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingHorizontal: showVerifiedText ? 8 : 4,
-                        paddingVertical: 4,
-                        borderRadius: 999,
-                      }}
-                      className="bg-primary"
-                    >
-                      {showVerifiedText && (
-                        <Text
-                          style={{
-                            ...FONTS.fontSemiBold,
-                            fontSize: rf(6),
-                            marginRight: rf(4),
-                            color: "#0f172a", // text-dark
-                          }}
-                        >
-                          Verificado
-                        </Text>
-                      )}
-                      <CircleCheck size={rf(10)} className="text-dark" />
-                    </TouchableOpacity>
-                  )}
+                {peopleData && peopleData.isVerified && (
+                  <TouchableOpacity
+                    onPress={() => setShowVerifiedText((prev) => !prev)}
+                    activeOpacity={0.7}
+                    style={{
+                      marginLeft: "auto",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      paddingHorizontal: showVerifiedText ? 8 : 4,
+                      paddingVertical: 4,
+                      borderRadius: 999,
+                    }}
+                    className="bg-primary"
+                  >
+                    {showVerifiedText && (
+                      <Text
+                        style={{
+                          ...FONTS.fontSemiBold,
+                          fontSize: rf(6),
+                          marginRight: rf(4),
+                          color: "#0f172a", // text-dark
+                        }}
+                      >
+                        Verificado
+                      </Text>
+                    )}
+                    <CircleCheck size={rf(10)} className="text-dark" />
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </PanGestureHandler>
@@ -412,7 +421,10 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {/* {peopleData.CPF_Creator && peopleData.CPF_Creator.locality */}
+                    {peopleData.CPF_Creator &&
+                      peopleData.CPF_Creator.city &&
+                      peopleData.CPF_Creator.uf &&
+                      `${peopleData.CPF_Creator.city}, ${peopleData.CPF_Creator.uf}`}
                   </Text>
                 </View>
               </View>
@@ -440,29 +452,34 @@ const ServiceInformation = ({
                 >
                   {[0, 1, 2].map((index) => (
                     <View key={index} className="w-1/3 p-2">
-                      {peopleData &&
+                      {
+                      peopleData &&
                       peopleData.gallery &&
-                      peopleData.gallery[index] ? (
-                        //  peopleData.gallery[index]
-                        <TouchableOpacity
-                          className="w-full h-full"
-                          onPress={() => openImage(peopleData.gallery[index])}
-                        >
-                          <Image
-                            source={{ uri: peopleData.gallery[index] }}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              borderRadius: rf(12),
-                            }}
-                            resizeMode="cover"
-                          />
-                        </TouchableOpacity>
-                      ) : (
-                        <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
-                          <CameraOff size={rf(20)} />
-                        </View>
-                      )}
+                      peopleData.gallery[index] &&
+                      peopleData.gallery[index].base64 ? 
+                        (
+                          //  peopleData.gallery[index]
+                          <TouchableOpacity
+                            className="w-full h-full"
+                            onPress={() => openImage(peopleData.gallery[index].base64)}
+                          >
+                            <Image
+                              source={{ uri: peopleData.gallery[index].base64 }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: rf(12),
+                              }}
+                              resizeMode="cover"
+                            />
+                          </TouchableOpacity>
+                        ) : 
+                        (
+                          <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
+                            <CameraOff size={rf(20)} />
+                          </View>
+                        )
+                      }
                     </View>
                   ))}
                 </View>
