@@ -14,17 +14,6 @@ import useCollaborator from "~/src/function/fetchCollaborator";
 
 export default function Media() {
   const { collaborator } = useCollaborator();
-  
-  const socialData = {
-    instagram: "@meuinsta",
-    facebook: "https://facebook.com/meuperfil",
-    linkedin: "https://linkedin.com/in/meulinkedin",
-    twitter: "@meutwitter",
-    tiktok: "https://www.tiktok.com/@meutiktok",
-    youtube: "https://www.youtube.com/channel/abc123",
-    website: "https://www.meusite.com.br",
-  };
-
   const isUrl = (value: string) => value.startsWith("http");
 
   const icons = {
@@ -64,6 +53,7 @@ export default function Media() {
             return (
               <View key={key} className="flex-row items-center gap-2">
                 <Icon size={rf(18)} color="#6B7280" />
+                {/* //@ts-ignore */}
                 <Text style={{ ...FONTS.font, fontSize: rf(14) }}>{value}</Text>
               </View>
             );
