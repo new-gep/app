@@ -21,7 +21,7 @@ import ModalErrors from "./Modal";
 import ModalUpload from "./ModalUpload";
 import Mask from "~/src/function/mask";
 import CreateAnnouncement from "~/src/hooks/create/announcement";
-import UpdateAnnouncement from "~/src/hooks/update/announcement";
+import UpdateAnnouncement from "~/src/hooks/update/announcement/announcement";
 import useCollaborator from "~/src/function/fetchCollaborator";
 export default function Form({ title, setSelectedCategory, item }: any) {
   const [visible, setVisible] = useState<boolean>(false);

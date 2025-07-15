@@ -25,6 +25,7 @@ import {
   ChevronDown,
   Plus,
   ChevronLeft,
+  Minus,
 } from "lucide-react-native";
 import {
   PanGestureHandler,
@@ -73,12 +74,6 @@ const ServiceInformation = ({
         setPath(null); // Garante que image seja null se não houver caminho válido
       }
   }, [visible]);
-
-  useEffect(()=>{
-    if(peopleData.gallery){
-      console.log(peopleData.gallery)
-    }
-  },[])
 
   // Gesture handling for header drag
   const onGestureEvent = (event: any) => {
@@ -573,6 +568,19 @@ const ServiceInformation = ({
               )}
             </TouchableOpacity>
             {!autoView && (
+              peopleData.apply ?
+              <TouchableOpacity
+                style={{ flex: 1, padding: 12, alignItems: "center" }}
+                onPress={handleApply}
+              >
+                <Minus size={rf(24)} color="#71717a" />
+                <Text
+                  style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                >
+                  Cancelar candidatura
+                </Text>
+              </TouchableOpacity>
+              :
               <TouchableOpacity
                 style={{ flex: 1, padding: 12, alignItems: "center" }}
                 onPress={handleApply}

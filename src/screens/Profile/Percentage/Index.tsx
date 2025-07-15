@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, Dimensions } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import ModalPercentage from "./Modal";
-
+import getPercentage from "~/src/hooks/get/collaborator/Percentage";
+import useCollaborator from "~/src/function/fetchCollaborator";
 const { width: screenWidth } = Dimensions.get("window");
 
 const SIZE = screenWidth * 0.2;
@@ -17,15 +18,37 @@ const getProgressColor = (progress: number): string => {
   return "#22c55e"; // verde
 };
 
-export default function Percentage({ progress = 50 }: { progress?: number }) {
-  const strokeDashoffset = CIRCLE_LENGTH - (CIRCLE_LENGTH * progress) / 100;
+export default function Percentage() {
+  const { collaborator, updateCollaborator } = useCollaborator();
+  const [percentage, setPercentage] = React.useState<number | null>(null);
+  const [progress, setProgress] = React.useState<number | null>(null);
   const [modal, setModal] = React.useState<boolean>(false);
-  const progressColor = getProgressColor(progress);
+  //@ts-ignore
+  const strokeDashoffset = CIRCLE_LENGTH - (CIRCLE_LENGTH * percentage) / 100;
+  //@ts-ignore
+  const progressColor = getProgressColor(percentage);
+  
+
+  const fetchData = async () => {
+    if(!collaborator) return
+    const response = await getPercentage(collaborator.CPF);
+    if(response.status == 200){
+      setPercentage(response.progress.percentage)
+      setProgress(response.progress)
+    }
+  }
+
+  useEffect(()=>{
+    if(collaborator){
+      fetchData()
+    }
+  },[collaborator, modal])
 
   return (
     <>
-      <ModalPercentage visible={modal} setVisible={setModal} />
-      <TouchableOpacity
+      <ModalPercentage progress={progress} visible={modal} setVisible={setModal} />
+      { percentage && percentage != 100 &&
+        <TouchableOpacity
         onPress={() => setModal(!modal)}
         className="absolute justify-center items-center bg-dark rounded-full opacity-80"
         style={{
@@ -63,9 +86,10 @@ export default function Percentage({ progress = 50 }: { progress?: number }) {
           className="text-white font-semibold text-center"
           style={{ fontSize: rf(15) }}
         >
-          {progress}%
+          {percentage}%
         </Text>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      }
     </>
   );
 }

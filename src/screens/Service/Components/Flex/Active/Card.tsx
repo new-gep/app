@@ -39,7 +39,6 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
   editAnnouncement,
   deleteAnnouncement,
 }: any) {
-  
   const [visible, setVisible] = useState<boolean>(false);
 
   const renderRightActions = () => (
@@ -116,7 +115,9 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
 
   return (
     <View style={styles.cardWrapper}>
-      {item && <ModalMenu visible={visible} setVisible={setVisible} item={item} />}
+      {item && (
+        <ModalMenu visible={visible} setVisible={setVisible} item={item} />
+      )}
       <Swipeable
         key={item.id}
         // renderRightActions={renderRightActions}
@@ -152,7 +153,9 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {`${Mask("amount", item.salary)} ${item.typePayment && item.typePayment}`}
+                {`${Mask("amount", item.salary)} ${
+                  item.typePayment && item.typePayment
+                }`}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
@@ -164,14 +167,14 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.candidates && item.candidates.length > 0 ? item.candidates.length : 0}{" "}
-                Candidatos
+                {item.candidates?.length || 0}{" "}
+                {item.candidates?.length === 1 ? "Candidato" : "Candidatos"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                Anunciado em {Mask('dateFormat',item.create_at)}
+                Anunciado em {Mask("dateFormat", item.create_at)}
               </Text>
             </View>
           </View>

@@ -35,6 +35,7 @@ import {
   Send,
   ChevronRight,
   Eye,
+  CircleCheck
 } from "lucide-react-native";
 import Candidate from "./Candidate/Index";
 import Promotion from "./Promotion/Index";
@@ -229,19 +230,32 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                         onPress={() => goToStep("candidates")}
                       >
                         <View className="flex-row">
-                          <UsersRound size={rf(20)} className="mr-1" />
-                          <Text
-                            style={{ ...FONTS.fontSemiBold, fontSize: rf(12) }}
-                          >
-                            Candidatos
-                          </Text>
+                          { !item.CPF_responder ?
+                            <>
+                              <UsersRound size={rf(20)} className="mr-1" />
+                              <Text
+                                style={{ ...FONTS.fontSemiBold, fontSize: rf(12) }}
+                              >
+                                Candidatos
+                              </Text>
+                            </>
+                            :
+                            <>
+                              <UserRound size={rf(20)} className="mr-1" />
+                              <Text
+                                style={{ ...FONTS.fontSemiBold, fontSize: rf(12) }}
+                              >
+                                Prestador de Serviço
+                              </Text>
+                            </>
+                          }
                         </View>
                         <ChevronRight
                           size={rf(20)}
                           className="ml-1 text-zinc-500"
                         />
                       </TouchableOpacity>
-                      <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
+                      {/* <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
                         onPress={()=> goToStep("promotion")}
                       >
                         <View className="flex-row ">
@@ -256,7 +270,7 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           size={rf(20)}
                           className="ml-1 text-zinc-500"
                         />
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
                       <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
                         onPress={() => setVisibleWork(true)}
                       >
@@ -273,7 +287,23 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           className="ml-1 text-zinc-500"
                         />
                       </TouchableOpacity>
-                      <TouchableOpacity className="flex-row justify-between">
+                      <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
+                        onPress={()=> goToStep("promotion")}
+                      >
+                        <View className="flex-row ">
+                          <CircleCheck size={rf(20)} className="mr-1" />
+                          <Text
+                            style={{ ...FONTS.fontSemiBold, fontSize: rf(12) }}
+                          >
+                            Concluir Serviço
+                          </Text>
+                        </View>
+                        <ChevronRight
+                          size={rf(20)}
+                          className="ml-1 text-zinc-500"
+                        />
+                      </TouchableOpacity>
+                      {/* <TouchableOpacity className="flex-row justify-between">
                         <View className="flex-row">
                           <Send size={rf(20)} className="mr-1" />
                           <Text
@@ -286,7 +316,7 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           size={rf(20)}
                           className="ml-1 text-zinc-500"
                         />
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
                     </View>
                   ) : modalStep === "promotion" ? (
                     <Promotion item={item} setModalStep={goToStep} />

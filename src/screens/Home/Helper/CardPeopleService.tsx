@@ -67,76 +67,32 @@ const SwipeableCard = React.memo(function SwipeableCard({
 }: any) {
   const [visible, setVisible] = useState<boolean>(false);
 
-  const renderIcon = (categories: string[]) => {
-    return categories.map((category, index) => {
-      switch (category) {
-        case "Assistência Técnica":
-          return (
-            <Wrench className="text-zinc-500 mr-1" size={rf(14)} key={index} />
-          );
-        case "Aulas":
-          return (
-            <GraduationCap
-              className="text-zinc-500 mr-1"
-              size={rf(14)}
-              key={index}
-            />
-          );
-        case "Mecânica e Transportes":
-          return (
-            <CarFront
-              className="text-zinc-500 mr-1"
-              size={rf(14)}
-              key={index}
-            />
-          );
-        case "Consultoria":
-          return (
-            <Handshake
-              className="text-zinc-500 mr-1"
-              size={rf(14)}
-              key={index}
-            />
-          );
-        case "Design e Tecnologia":
-          return (
-            <MonitorSmartphone
-              className="text-zinc-500 mr-1"
-              size={rf(14)}
-              key={index}
-            />
-          );
-        case "Eventos":
-          return (
-            <PartyPopper
-              className="text-zinc-500 mr-1"
-              size={rf(14)}
-              key={index}
-            />
-          );
-        case "Moda e Beleza":
-          return (
-            <Shirt className="text-zinc-500 mr-1" size={rf(14)} key={index} />
-          );
-        case "Reformas e Reparos":
-          return (
-            <Hammer className="text-zinc-500 mr-1" size={rf(14)} key={index} />
-          );
-        case "Saúde":
-          return (
-            <HeartPulse
-              className="text-zinc-500 mr-1"
-              size={rf(14)}
-              key={index}
-            />
-          );
-        case "Serviços Domésticos":
-          return (
-            <House className="text-zinc-500 mr-1" size={rf(14)} key={index} />
-          );
-        default:
-          return <Building size={rf(14)} key={index} />;
-      }
+  const iconMap: Record<string, JSX.Element> = {
+    assistance: <Wrench className="text-zinc-500 mr-1" size={rf(14)} />,
+    school: <GraduationCap className="text-zinc-500 mr-1" size={rf(14)} />,
+    auto: <CarFront className="text-zinc-500 mr-1" size={rf(14)} />,
+    consultancy: <Handshake className="text-zinc-500 mr-1" size={rf(14)} />,
+    designTec: (
+      <MonitorSmartphone className="text-zinc-500 mr-1" size={rf(14)} />
+    ),
+    event: <PartyPopper className="text-zinc-500 mr-1" size={rf(14)} />,
+    fashion: <Shirt className="text-zinc-500 mr-1" size={rf(14)} />,
+    reform: <Hammer className="text-zinc-500 mr-1" size={rf(14)} />,
+    health: <HeartPulse className="text-zinc-500 mr-1" size={rf(14)} />,
+    domestics: <House className="text-zinc-500 mr-1" size={rf(14)} />,
+  };
+
+  const renderIconFromCategoryMap = (categoryObject: Record<string, any>) => {
+    if (!categoryObject || typeof categoryObject !== "object") return null;
+
+    return Object.keys(categoryObject).map((key, index) => {
+      return (
+        <React.Fragment key={index}>
+          {iconMap[key] ?? (
+            <Building className="text-zinc-500 mr-1" size={rf(14)} />
+          )}
+        </React.Fragment>
+      );
     });
   };
 
@@ -175,6 +131,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
     );
   };
 
+
   return (
     <>
       <PeopleInformation
@@ -192,13 +149,13 @@ const SwipeableCard = React.memo(function SwipeableCard({
           <TouchableOpacity
             className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
             style={styles.card}
-            onPress={navigateToCardInformation}
+            onPress={()=>setVisible(true)}
           >
             <View className="flex-row items-center flex-1">
               <View className="mr-3" style={{ position: "relative" }}>
-                {item.photoUri ? (
+                {item.picture ? (
                   <Image
-                    source={{ uri: item.photoUri }}
+                    source={{ uri: item.picture }}
                     style={{ width: rf(43), height: rf(43) }}
                     className="w-12 h-12 rounded-full"
                     resizeMode="cover"
@@ -232,21 +189,33 @@ const SwipeableCard = React.memo(function SwipeableCard({
                     numberOfLines={1}
                     ellipsizeMode="tail"
                   >
-                    {item.name}
+                    {item.collaborator &&
+                      Mask("fullName", item.collaborator.name)}
                   </Text>
                 </View>
-                <View className="flex-row">{renderIcon(item.category)}</View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    maxWidth: SCREEN_WIDTH * 0.4,
+                  }}
+                >
+                  {item.collaborator &&
+                    renderIconFromCategoryMap(item.collaborator.service)}
+                </View>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className="text-zinc-500"
                 >
-                  {item.workPreferences.contractType?.join(", ")}
+                  {item.collaborator &&
+                    item.collaborator.howWork.contract?.join(", ")}
                 </Text>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className="text-zinc-500"
                 >
-                  {item.locality}
+                  {item.collaborator &&
+                    `${item.collaborator.city}, ${item.collaborator.uf}`}
                 </Text>
               </View>
             </View>
@@ -323,7 +292,7 @@ export default function CardPeople({
           navigateToCardInformation={() =>
             navigateToCardInformation({ data: item })
           }
-          item={item}
+          item={item.collaborator}
           isMenuVisible={visibleMenuIds.includes(item.id)}
           setMenuVisible={setMenuVisible}
           onSwipeLeft={handleSwipeLeft}
@@ -857,9 +826,8 @@ export default function CardPeople({
   return (
     <View style={styles.container} className="px-4 py-2">
       <FlatList
-        data={fakeData}
+        data={data}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ paddingBottom: 30 }}
         initialNumToRender={5}
         maxToRenderPerBatch={5}

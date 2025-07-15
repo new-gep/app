@@ -28,6 +28,7 @@ import { useNavigation } from "@react-navigation/native";
 import WorkInformation from "./Helper/Modal/WorkInformation";
 import PeopleInformation from "./Helper/Modal/ServiceInformation";
 import { Swipeable } from "react-native-gesture-handler";
+import Apply from "~/src/hooks/update/announcement/apply";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = 120;
@@ -184,19 +185,20 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
             onSwipeRight(item.id);
           }
         }}
-        renderRightActions={renderRightActions}
+        // renderRightActions={renderRightActions}
+
         renderLeftActions={renderLeftActions} // <- necessário para permitir o swipe à direita
       >
         <TouchableOpacity
           className="px-4 py-2 bg-white border-b border-zinc-300 rounded-lg flex-row items-center justify-between"
           style={styles.card}
-          onPress={navigateToCardInformation}
+          onPress={() => setVisible(true)}
         >
           <View className="flex-row items-center flex-1">
             <View className="mr-3" style={{ position: "relative" }}>
-              {item.photoUri ? (
+              {item.picture && item.picture.status == 200 ? (
                 <Image
-                  source={{ uri: item.photoUri }}
+                  source={{ uri: item.picture.path }}
                   style={{ width: rf(43), height: rf(43) }}
                   className="w-12 h-12 rounded-full"
                   resizeMode="cover"
@@ -227,26 +229,27 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
                 style={{ ...FONTS.font, fontSize: rf(12) }}
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                className="capitalize"
               >
-                {item.function}
+                {item.title}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {`${Mask("amount", item.salary)} ${item.valueType}`}
+                {`${Mask("amount", item.salary)} ${item.typePayment}`}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.model}
+                {item.category}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.locality}
+                anunciado {Mask("dateFormatBrazil", item.create_at)}
               </Text>
             </View>
           </View>
@@ -261,7 +264,7 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
 
 export default function CathoStyleCards({
   data,
-  // setCards,
+  setCards,
   collaborator,
   showPopupMessage,
 }: any) {
@@ -518,7 +521,7 @@ export default function CathoStyleCards({
       benefits: ["VT", "VA", "Vale Cultura", "Seguro de Vida"],
     },
   ];
-  const [cards, setCards] = useState(fakeData);
+  // const [cards, setCards] = useState<any>(data);
   const navigation = useNavigation();
 
   const removeCard = (id: any) => {
@@ -549,7 +552,21 @@ export default function CathoStyleCards({
   };
 
   const handleSwipeRightPeople = async (id: any) => {
-    removeCard(id);
+    if (!collaborator) {
+      console.log("caiu aqui", collaborator);
+      showPopupMessage("Você precisa estar logado para aplicar!");
+      return;
+    }
+    const response = await Apply(id, collaborator.CPF);
+    if (response.status === 200) {
+      removeCard(id);
+      showPopupMessage("Você aplicou ao serviço com sucesso!");
+    } else if (response.status === 400) {
+      removeCard(id);
+      showPopupMessage("Você já aplicou para esse serviço!");
+    } else {
+      showPopupMessage("Erro ao aplicar para o serviço!");
+    }
   };
 
   const navigateToCardInformation = ({ data }: any) => {
@@ -590,16 +607,24 @@ export default function CathoStyleCards({
 
   return (
     <View style={styles.container} className="px-4 py-2">
-      <FlatList
-        data={cards}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ paddingBottom: 30 }}
-        initialNumToRender={5}
-        maxToRenderPerBatch={5}
-        windowSize={10}
-        removeClippedSubviews={true}
-      />
+      {Array.isArray(data) && data.length > 0 ? (
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={{ paddingBottom: 30 }}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={10}
+          removeClippedSubviews={true}
+        />
+      ) : (
+        <View style={{ paddingVertical: 40, alignItems: "center" }}>
+          <Text style={{ fontSize: rf(16), color: "gray" }}>
+            Nenhum trabalho ou serviço encontrado.
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

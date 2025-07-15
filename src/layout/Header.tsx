@@ -53,6 +53,20 @@ const Header = ({
   const { colors }: { colors: any } = theme;
 
   const navigation = useNavigation<any>();
+  const isNavigating = React.useRef(false);
+
+  const handleBackPress = () => {
+    if (isNavigating.current) return;
+    isNavigating.current = true;
+    if (leftAction) {
+      leftAction();
+    } else {
+      navigation.goBack();
+    }
+    setTimeout(() => {
+      isNavigating.current = false;
+    }, 500);
+  };
 
   return (
     <View
@@ -86,8 +100,7 @@ const Header = ({
       >
         {leftIcon === "back" && !dynamic && (
           <TouchableOpacity
-            onPress={() => (leftAction ? leftAction() : navigation.goBack())}
-
+            onPress={handleBackPress}
             style={[styles.actionBtn, { backgroundColor: "#F6F6F6" }]}
           >
             <Feather size={rf(24)} color={COLORS.title} name={"arrow-left"} />

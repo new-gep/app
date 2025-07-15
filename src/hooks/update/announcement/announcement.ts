@@ -1,6 +1,6 @@
-import config from "../../../config.json";
+import config from "../../../../config.json";
 import axios from "axios";
-import uploadFileAnnouncement from "../upload/announcement";
+import uploadFileAnnouncement from "../../upload/announcement";
 type Props = {
   category?: string;
   title?: string;

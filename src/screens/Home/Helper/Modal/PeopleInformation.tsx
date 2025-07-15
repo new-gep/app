@@ -223,6 +223,7 @@ const PeopleInformation = ({
     >
       <>
         <Modal
+        //@ts-ignore
           visible={zoomVisible}
           transparent={true}
           onRequestClose={closeImage}
@@ -287,9 +288,9 @@ const PeopleInformation = ({
               {/* Header Content */}
               <View style={styles.headerContent}>
                 <View style={{ marginRight: rf(12), position: "relative" }}>
-                  {peopleData && peopleData.photoUri && peopleData.photoUri ? (
+                  {peopleData && peopleData.picture  ? (
                     <Image
-                      source={{ uri: peopleData.photoUri }}
+                      source={{ uri: peopleData.picture }}
                       style={{
                         width: rf(43),
                         height: rf(43),
@@ -332,7 +333,7 @@ const PeopleInformation = ({
                 </View>
                 <View>
                   <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                    {`${peopleData.name}, ${peopleData.age}`}
+                    {`${peopleData.collaborator && Mask('fullName', peopleData.collaborator.name)}, ${peopleData.collaborator && Mask('age', peopleData.collaborator.birth)}`}
                   </Text>
                   <Text
                     style={{
@@ -344,7 +345,7 @@ const PeopleInformation = ({
                     {/* {peopleData.name} */}
                   </Text>
                 </View>
-                {peopleData && peopleData.isVerified && (
+                {/* {peopleData && peopleData.isVerified && (
                   <TouchableOpacity
                     onPress={() => setShowVerifiedText((prev) => !prev)}
                     activeOpacity={0.7}
@@ -372,7 +373,7 @@ const PeopleInformation = ({
                     )}
                     <CircleCheck size={rf(10)} className="text-dark" />
                   </TouchableOpacity>
-                )}
+                )} */}
               </View>
             </View>
           </PanGestureHandler>
@@ -399,7 +400,7 @@ const PeopleInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData && peopleData.phone ? Mask("hiddenPhone", peopleData.phone) : `Telefone não informado`}
+                    {peopleData && peopleData.collaborator ? Mask("hiddenPhone", peopleData.collaborator.phone) : `Telefone não informado`}
                   </Text>
                 </View>
 
@@ -412,7 +413,7 @@ const PeopleInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData && peopleData.email ? Mask("hiddenEmail", peopleData.email) : `E-mail não informado`}
+                    {peopleData && peopleData.collaborator ? Mask("hiddenEmail", peopleData.collaborator.email) : `E-mail não informado`}
                   </Text>
                 </View>
 
@@ -426,7 +427,7 @@ const PeopleInformation = ({
                       textTransform: "capitalize",
                     }}
                   >
-                    {`${peopleData.street}, ${peopleData.district} - ${peopleData.city}, ${peopleData.uf}`}
+                    {peopleData.collaborator && `${peopleData.collaborator.street}, ${peopleData.collaborator.district} - ${peopleData.collaborator.city}, ${peopleData.collaborator.uf}`}
                   </Text>
                 </View>
               </View>
@@ -444,7 +445,6 @@ const PeopleInformation = ({
               <View className={"gap-2"}>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                  className={""}
                 >
                   Galeria
                 </Text>
@@ -454,7 +454,7 @@ const PeopleInformation = ({
                 >
                   {[0, 1, 2].map((index) => (
                     <View key={index} className="w-1/3 p-2">
-                      {peopleData.gallery && peopleData.gallery[index] ? (
+                      { peopleData.gallery && peopleData.gallery[index] ? (
                         //  peopleData.gallery[index]
                         <TouchableOpacity
                           className="w-full h-full"
@@ -491,7 +491,7 @@ const PeopleInformation = ({
                   className="text-justify"
                   style={[FONTS.fontLight, { fontSize: rf(10) }]}
                 >
-                  {peopleData.about}
+                  {/* {peopleData.workPreferences && peopleData.about} */}
                 </Text>
               </View>
 
@@ -502,7 +502,7 @@ const PeopleInformation = ({
                 >
                   Serviços
                 </Text>
-                {peopleData.service && renderTagList(peopleData.service)}
+                {/* {peopleData.workPreferences && renderTagList(peopleData.service)} */}
               </View>
 
               <View className={"gap-2 mt-3"}>
@@ -516,11 +516,11 @@ const PeopleInformation = ({
                   <View className="flex-row">
                     <MapPin size={rf(12)} className="mr-1" />
                     <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
-                      {`Distancia maxima até ${peopleData.workPreferences.maxDistanceKm} km`}
+                      {/* {`Distancia maxima até ${peopleData.workPreferences && peopleData.workPreferences.maxDistanceKm} km`} */}
                     </Text>
                   </View>
                   <View className="gap-2">
-                    {peopleData.workPreferences.allowFurtherDistance ? (
+                    {peopleData.workPreferences && peopleData.workPreferences.allowFurtherDistance ? (
                       <View className="flex-row">
                         <MapPinCheckInside size={rf(12)} className="mr-1" />
                         <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
@@ -546,7 +546,7 @@ const PeopleInformation = ({
                         Contratos
                       </Text>
                     </View>
-                    {renderTagList(peopleData.workPreferences.contractType)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.contractType)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -558,7 +558,7 @@ const PeopleInformation = ({
                         Modalidade
                       </Text>
                     </View>
-                    {renderTagList(peopleData.workPreferences.modality)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.modality)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -570,7 +570,7 @@ const PeopleInformation = ({
                         Período
                       </Text>
                     </View>
-                    {renderTagList(peopleData.workPreferences.schedule)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.schedule)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -582,7 +582,7 @@ const PeopleInformation = ({
                         Mobilidade
                       </Text>
                     </View>
-                    {renderTagList(peopleData.workPreferences.mobility)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.mobility)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -594,7 +594,7 @@ const PeopleInformation = ({
                         Pagamentos
                       </Text>
                     </View>
-                    {renderTagList(peopleData.workPreferences.paymentType)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.paymentType)} */}
                   </View>
                 </View>
               </View>
@@ -606,7 +606,7 @@ const PeopleInformation = ({
                 >
                   Interesses
                 </Text>
-                <View>{renderTagList(peopleData.interests)}</View>
+                {/* <View>{peopleData.workPreferences && renderTagList(peopleData.interests)}</View> */}
               </View>
 
               <View className={"gap-2 mt-3"}>
@@ -627,7 +627,7 @@ const PeopleInformation = ({
                         Valores
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.values)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.values)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -639,7 +639,7 @@ const PeopleInformation = ({
                         Formação
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.education)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.education)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -651,7 +651,7 @@ const PeopleInformation = ({
                         Comunicação
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.communicationType)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.communicationType)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -663,7 +663,7 @@ const PeopleInformation = ({
                         Casado (a) ?
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.marriage)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.marriage)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -675,7 +675,7 @@ const PeopleInformation = ({
                         Bebe ?
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.drinks)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.drinks)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -687,7 +687,7 @@ const PeopleInformation = ({
                         Filhos
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.children)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.children)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -699,7 +699,7 @@ const PeopleInformation = ({
                         Fuma?
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.smokes)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.smokes)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -711,7 +711,7 @@ const PeopleInformation = ({
                         Linguagem do Amor
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.loveLanguage)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.loveLanguage)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -723,7 +723,7 @@ const PeopleInformation = ({
                         Alimentação
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.diet)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.diet)} */}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row ">
@@ -735,7 +735,7 @@ const PeopleInformation = ({
                         Pets
                       </Text>
                     </View>
-                    {renderTagList(peopleData.personal.pets)}
+                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.pets)} */}
                   </View>
                 </View>
               </View>
@@ -750,7 +750,7 @@ const PeopleInformation = ({
                 <View className="gap-3">
                   {/* Textos (não links) em coluna */}
                   <View className="gap-2">
-                    {Object.entries(peopleData.social).map(
+                    {/* {Object.entries(peopleData.social).map(
                       ([key, value]: any) => {
                         const Icon = icons[key as keyof typeof icons];
                         const isLink = isUrl(value);
@@ -771,12 +771,12 @@ const PeopleInformation = ({
                         }
                         return null; // Pula se for link
                       }
-                    )}
+                    )} */}
                   </View>
 
                   {/* Botões (links) lado a lado */}
                   <View className="flex-row flex-wrap gap-x-3 gap-y-2">
-                    {peopleData.social && Object.entries(peopleData.social).map(
+                    {/* {peopleData.social && Object.entries(peopleData.social).map(
                       ([key, value]: any) => {
                         const Icon = icons[key as keyof typeof icons];
                         const isLink = isUrl(value);
@@ -794,7 +794,7 @@ const PeopleInformation = ({
                         }
                         return null; // Pula se não for link
                       }
-                    )}
+                    )} */}
                   </View>
                 </View>
               </View>

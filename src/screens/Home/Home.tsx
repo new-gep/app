@@ -21,6 +21,7 @@ import CardSearch from "./CardSearch";
 import BannerImage from "./Helper/BannerImage";
 import BannerCircle from "./Helper/BannerCircle";
 import { rf } from "~/src/hooks/utils/responsiveFont";
+import FindAll from "~/src/hooks/get/announcement/all";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -41,21 +42,16 @@ const Home = () => {
 
   const fetchJobs = async () => {
     try {
+      if (!collaborator) return;
       setIsLoading(true);
-      const response = await GetAllJob();
-
+      const response = await FindAll(collaborator.CPF);
       if (response.status !== 200) {
         throw new Error(response.message || "Erro ao buscar os jobs.");
       }
 
-      const uniqueJobs = response.job.filter(
-        (job: any, index: any, self: any) =>
-          self.findIndex((j: any) => j.id === job.id) === index
-      );
-
-      setCards(uniqueJobs);
+      setCards(response.announcements)
     } catch (error: any) {
-      console.error("Ocorreu um erro ao buscar os jobs:", error.message);
+      console.log("Ocorreu um erro ao buscar os jobs:", error.message);
       alert("Erro ao buscar os jobs. Por favor, tente novamente.");
     } finally {
       setIsLoading(false);
@@ -64,19 +60,11 @@ const Home = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      // await fetchJobs();
-      await fetchCollaborator();
-      validateCollaborator();
+      await fetchJobs();
     };
 
     loadData();
-  }, []);
-
-  // useEffect(() => {
-  //   if (missingData) {
-  //     navigation.navigate("CheckCadasterCollaboratorDocument");
-  //   }
-  // }, [missingData, navigation]);
+  }, [collaborator]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -142,90 +130,21 @@ const Home = () => {
         </View>
         <BannerImage />
         <BannerCircle />
-        {
-          cardSearch == "Service" ? (
-            <Card
-              data={cards}
-              setCards={setCards}
-              collaborator={collaborator}
-              showPopupMessage={showPopupMessage}
-            />
-          ) : (
-            <CardPeople
-              data={cards}
-              setCards={setCards}
-              collaborator={collaborator}
-              showPopupMessage={showPopupMessage}
-            />
-          )
-        }
-        {/* Container relativo para os cards */}
-        {/* <View
-          style={{
-            marginTop: 20,
-            paddingHorizontal: 10,
-          }}
-        >
-          {isLoading ? (
-            <View className="justify-center items-center py-10">
-              <ActivityIndicator size="large" color={COLORS.primary} />
-            </View>
-          ) : Array.isArray(cards) && cards.length > 0 ? (
-            cardSearch == "Service" ? (
-              <Card
-                data={cards}
-                setCards={setCards}
-                collaborator={collaborator}
-                showPopupMessage={showPopupMessage}
-              />
-            ) : (
-              <CardPeople
-                data={cards}
-                setCards={setCards}
-                collaborator={collaborator}
-                showPopupMessage={showPopupMessage}
-              />
-            )
-          ) : (
-            <View className="flex justify-center items-center px-5">
-              <Text
-                style={{
-                  ...FONTS.fontSemiBold,
-                  fontSize: rf(16),
-                  color: COLORS.title,
-                  marginBottom: 5,
-                }}
-              >
-                {cards === false
-                  ? "Busque sua vaga"
-                  : "Não encontramos sua vaga"}
-              </Text>
-              <Text
-                style={{
-                  ...FONTS.fontLight,
-                  fontSize: rf(13),
-                }}
-                className="text-center text-gray-400 font-normal"
-              >
-                {cards === false
-                  ? "Pesquise sua vaga pelo nome ou palavra-chave"
-                  : "Não há mais vagas no momento, busque outra!"}
-              </Text>
-              <Image
-                source={
-                  cards === false
-                    ? require("../../assets/picture/unique/unique27.png")
-                    : require("../../assets/images/brand/Waiting.png")
-                }
-                style={{
-                  width: Dimensions.get("window").width * 0.8,
-                  height: Dimensions.get("window").height * 0.4,
-                }}
-                resizeMode="contain"
-              />
-            </View>
-          )}
-        </View> */}
+        {cardSearch == "Service" ? (
+          <Card
+            data={cards}
+            setCards={setCards}
+            collaborator={collaborator}
+            showPopupMessage={showPopupMessage}
+          />
+        ) : (
+          <CardPeople
+            data={cards}
+            setCards={setCards}
+            collaborator={collaborator}
+            showPopupMessage={showPopupMessage}
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
