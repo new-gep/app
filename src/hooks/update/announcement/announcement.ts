@@ -18,6 +18,7 @@ type Props = {
 export default async function UpdateAnnouncement(id: any, props: Props) {
   const response = await axios.patch(`${config.API_URL}announcement/${id}`, {
     category: props.category,
+    CPF_Responder: props.CPF_responder,
     title: props.title,
     typePayment: props.typePayment,
     typeAnnouncement: props.typeAnnouncement,

@@ -6,7 +6,8 @@ import CardPeople from "~/src/screens/Home/Helper/CardPeopleService";
 import { ScrollView } from "react-native-gesture-handler";
 import { FONTS } from "~/src/constants/theme";
 export default function Candidate({ setModalStep, item }: any) {
-  console.log(item.candidates)
+
+
   return (
     <View className=" bg-white h-full w-full">
       <TouchableOpacity
@@ -17,7 +18,7 @@ export default function Candidate({ setModalStep, item }: any) {
       </TouchableOpacity>
       {item.candidates ? (
         <ScrollView>
-          <CardPeople data={item.candidates} />
+          <CardPeople id={item.id} data={item.candidates} />
         </ScrollView>
       ) : (
         <View className="items-center justify-center py-10">

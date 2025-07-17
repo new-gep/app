@@ -31,8 +31,7 @@ const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const { collaborator, fetchCollaborator } = useCollaborator();
-  const { validateCollaborator } = useCollaboratorContext();
+  const { collaborator} = useCollaborator();
 
   const showPopupMessage = (message: string) => {
     setPopupMessage(message);
@@ -51,7 +50,6 @@ const Home = () => {
 
       setCards(response.announcements)
     } catch (error: any) {
-      console.log("Ocorreu um erro ao buscar os jobs:", error.message);
       alert("Erro ao buscar os jobs. Por favor, tente novamente.");
     } finally {
       setIsLoading(false);
@@ -138,12 +136,13 @@ const Home = () => {
             showPopupMessage={showPopupMessage}
           />
         ) : (
-          <CardPeople
-            data={cards}
-            setCards={setCards}
-            collaborator={collaborator}
-            showPopupMessage={showPopupMessage}
-          />
+          // <CardPeople
+          //   data={cards}
+          //   setCards={setCards}
+          //   collaborator={collaborator}
+          //   showPopupMessage={showPopupMessage}
+          // />
+          <></>
         )}
       </ScrollView>
     </SafeAreaView>

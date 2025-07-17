@@ -64,6 +64,7 @@ const ServiceInformation = ({
   });
 
   useEffect(() => {
+    console.log('aqui',peopleData.id)
       if (
         peopleData.picture &&
         peopleData.picture.status === 200 &&

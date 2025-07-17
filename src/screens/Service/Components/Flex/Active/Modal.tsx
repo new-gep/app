@@ -1,4 +1,10 @@
-import React, { useCallback, useRef, useEffect, useState, useMemo } from "react";
+import React, {
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import {
   View,
   Text,
@@ -15,7 +21,7 @@ import {
   BottomSheetBackdrop,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { ScrollView, FlatList } from 'react-native-gesture-handler';
+import { ScrollView, FlatList } from "react-native-gesture-handler";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import {
@@ -35,17 +41,21 @@ import {
   Send,
   ChevronRight,
   Eye,
-  CircleCheck
+  CircleCheck,
 } from "lucide-react-native";
 import Candidate from "./Candidate/Index";
 import Promotion from "./Promotion/Index";
 import ServiceInformation from "~/src/screens/Home/Helper/Modal/ServiceInformation";
 import Mask from "~/src/function/mask";
+import PeopleInformation from "~/src/screens/Home/Helper/Modal/PeopleInformation";
 export default function ModalMenu({ visible, setVisible, item }: any) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [modalStep, setModalStep] = useState<"menu" | "candidates" | "promotion">("menu");
+  const [modalStep, setModalStep] = useState<
+    "menu" | "candidates" | "promotion"
+  >("menu");
   const [currentSnapIndex, setCurrentSnapIndex] = useState(0);
   const [visibleWork, setVisibleWork] = useState<boolean>(false);
+  const [visibleResponder, setVisibleResponder] = useState<boolean>(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(20)).current;
   const serviceIcons = {
@@ -155,15 +165,22 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-     { item &&
-      <ServiceInformation
-        autoView={true}
-        peopleData={item}
-        visible={visibleWork}
-        setVisible={setVisibleWork}
-        handleSwipeRight={()=>{}}
-      />
-      }
+      {item && (
+        <ServiceInformation
+          autoView={true}
+          peopleData={item}
+          visible={visibleWork}
+          setVisible={setVisibleWork}
+          handleSwipeRight={() => {}}
+        />
+      )}
+      {/* { item.CPF_Responder && (
+        <PeopleInformation
+          visible={visibleResponder}
+          setVisible={setVisibleResponder}
+          peopleData={{...item.CPF_Responder, isRecruit:true }}
+        />
+      )} */}
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onChange={handleSheetChanges}
@@ -172,90 +189,106 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
         enablePanDownToClose={true}
       >
         <BottomSheetView style={{ flex: 1 }}>
-            {modalStep === "menu" && (
-              <View className="flex-row items-center mb-8 px-5">
-                <View
-                  style={{ height: rf(45), width: rf(45) }}
-                  className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-2"
-                >
-                  {renderIcon(item.category)}
-                </View>
-                <View>
-                  <Text
-                    style={{ fontSize: rf(13), ...FONTS.fontSemiBold, textTransform:'capitalize' }}
-                    className="capitalize"
-                  >
-                    {item.title}
-                  </Text>
-                  <Text
-                    className="text-gray-500"
-                    style={{ ...FONTS.fontLight, fontSize: rf(12) }}
-                  >
-                    Categoria: {item.category}
-                  </Text>
-                  <Text
-                    className="text-gray-500"
-                    style={{ ...FONTS.fontLight, fontSize: rf(12) }}
-                  >
-                    Anúncio: {item.typeAnnouncement}
-                  </Text>
-                  <Text
-                    className="text-gray-500"
-                    style={{ ...FONTS.fontLight, fontSize: rf(12) }}
-                  >
-                    Publicado: {Mask('dateFormat',item.create_at)}
-                  </Text>
-                </View>
-              </View>
-            )}
-            {currentSnapIndex > 0 && (
-              <BottomSheetScrollView
-                contentContainerStyle={{
-                  flexGrow: 1, // Permite que o conteúdo cresça
-                  flex: 1,
-                }}
+          {modalStep === "menu" && (
+            <View className="flex-row items-center mb-8 px-5">
+              <View
+                style={{ height: rf(45), width: rf(45) }}
+                className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-2"
               >
-                <Animated.View
+                {renderIcon(item.category)}
+              </View>
+              <View>
+                <Text
                   style={{
-                    flex: 1,
-                    opacity: fadeAnim,
-                    transform: [{ translateY: translateYAnim }],
+                    fontSize: rf(13),
+                    ...FONTS.fontSemiBold,
+                    textTransform: "capitalize",
                   }}
-                  className="px-5 "
+                  className="capitalize"
                 >
-                  {modalStep === "menu" ? (
-                    <View className="gap-5">
-                      <TouchableOpacity
-                        className="flex-row border-b border-zinc-200 pb-3 justify-between"
-                        onPress={() => goToStep("candidates")}
-                      >
-                        <View className="flex-row">
-                          { !item.CPF_responder ?
-                            <>
-                              <UsersRound size={rf(20)} className="mr-1" />
-                              <Text
-                                style={{ ...FONTS.fontSemiBold, fontSize: rf(12) }}
-                              >
-                                Candidatos
-                              </Text>
-                            </>
-                            :
-                            <>
-                              <UserRound size={rf(20)} className="mr-1" />
-                              <Text
-                                style={{ ...FONTS.fontSemiBold, fontSize: rf(12) }}
-                              >
-                                Prestador de Serviço
-                              </Text>
-                            </>
-                          }
-                        </View>
-                        <ChevronRight
-                          size={rf(20)}
-                          className="ml-1 text-zinc-500"
-                        />
-                      </TouchableOpacity>
-                      {/* <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
+                  {item.title}
+                </Text>
+                <Text
+                  className="text-gray-500"
+                  style={{ ...FONTS.fontLight, fontSize: rf(12) }}
+                >
+                  Categoria: {item?.category && renderIcon(item.category)}
+                </Text>
+                <Text
+                  className="text-gray-500"
+                  style={{ ...FONTS.fontLight, fontSize: rf(12) }}
+                >
+                  Anúncio: {item.typeAnnouncement}
+                </Text>
+                <Text
+                  className="text-gray-500"
+                  style={{ ...FONTS.fontLight, fontSize: rf(12) }}
+                >
+                  Publicado: {Mask("dateFormat", item.create_at)}
+                </Text>
+              </View>
+            </View>
+          )}
+          {currentSnapIndex > 0 && (
+            <BottomSheetScrollView
+              contentContainerStyle={{
+                flexGrow: 1, // Permite que o conteúdo cresça
+                flex: 1,
+              }}
+            >
+              <Animated.View
+                style={{
+                  flex: 1,
+                  opacity: fadeAnim,
+                  transform: [{ translateY: translateYAnim }],
+                }}
+                className="px-5 "
+              >
+                {modalStep === "menu" ? (
+                  <View className="gap-5">
+                    <TouchableOpacity
+                      className="flex-row border-b border-zinc-200 pb-3 justify-between"
+                      onPress={() => {
+                        if(!item.CPF_Responder){
+                          goToStep("candidates")
+                        }else{
+                          setVisibleResponder(true)
+                        }
+                      }}
+                    >
+                      <View className="flex-row">
+                        {!item.CPF_Responder ? (
+                          <>
+                            <UsersRound size={rf(20)} className="mr-1" />
+                            <Text
+                              style={{
+                                ...FONTS.fontSemiBold,
+                                fontSize: rf(12),
+                              }}
+                            >
+                              Candidatos
+                            </Text>
+                          </>
+                        ) : (
+                          <>
+                            <UserRound size={rf(20)} className="mr-1" />
+                            <Text
+                              style={{
+                                ...FONTS.fontSemiBold,
+                                fontSize: rf(12),
+                              }}
+                            >
+                              Prestador de Serviço
+                            </Text>
+                          </>
+                        )}
+                      </View>
+                      <ChevronRight
+                        size={rf(20)}
+                        className="ml-1 text-zinc-500"
+                      />
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
                         onPress={()=> goToStep("promotion")}
                       >
                         <View className="flex-row ">
@@ -271,24 +304,27 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           className="ml-1 text-zinc-500"
                         />
                       </TouchableOpacity> */}
-                      <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
-                        onPress={() => setVisibleWork(true)}
-                      >
-                        <View className="flex-row ">
-                          <Eye size={rf(20)} className="mr-1" />
-                          <Text
-                            style={{ ...FONTS.fontSemiBold, fontSize: rf(12) }}
-                          >
-                            Visualizar
-                          </Text>
-                        </View>
-                        <ChevronRight
-                          size={rf(20)}
-                          className="ml-1 text-zinc-500"
-                        />
-                      </TouchableOpacity>
-                      <TouchableOpacity className="flex-row border-b border-zinc-200 pb-3 justify-between"
-                        onPress={()=> goToStep("promotion")}
+                    <TouchableOpacity
+                      className="flex-row border-b border-zinc-200 pb-3 justify-between"
+                      onPress={() => setVisibleWork(true)}
+                    >
+                      <View className="flex-row ">
+                        <Eye size={rf(20)} className="mr-1" />
+                        <Text
+                          style={{ ...FONTS.fontSemiBold, fontSize: rf(12) }}
+                        >
+                          Visualizar
+                        </Text>
+                      </View>
+                      <ChevronRight
+                        size={rf(20)}
+                        className="ml-1 text-zinc-500"
+                      />
+                    </TouchableOpacity>
+                    {item.CPF_Responder && (
+                      <TouchableOpacity
+                        className="flex-row border-b border-zinc-200 pb-3 justify-between"
+                        onPress={() => goToStep("promotion")}
                       >
                         <View className="flex-row ">
                           <CircleCheck size={rf(20)} className="mr-1" />
@@ -303,7 +339,8 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           className="ml-1 text-zinc-500"
                         />
                       </TouchableOpacity>
-                      {/* <TouchableOpacity className="flex-row justify-between">
+                    )}
+                    {/* <TouchableOpacity className="flex-row justify-between">
                         <View className="flex-row">
                           <Send size={rf(20)} className="mr-1" />
                           <Text
@@ -317,15 +354,15 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                           className="ml-1 text-zinc-500"
                         />
                       </TouchableOpacity> */}
-                    </View>
-                  ) : modalStep === "promotion" ? (
-                    <Promotion item={item} setModalStep={goToStep} />
-                  ) : (
-                    <Candidate item={item} setModalStep={goToStep} />
-                  )}
-                </Animated.View>
-              </BottomSheetScrollView>
-            )}
+                  </View>
+                ) : modalStep === "promotion" ? (
+                  <Promotion item={item} setModalStep={goToStep} />
+                ) : (
+                  <Candidate item={item} setModalStep={goToStep} />
+                )}
+              </Animated.View>
+            </BottomSheetScrollView>
+          )}
         </BottomSheetView>
       </BottomSheetModal>
     </GestureHandlerRootView>
@@ -345,6 +382,3 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee",
   },
 });
-
-
-

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ScrollView,
   Linking,
+  Alert,
 } from "react-native";
 import Modal from "react-native-modal";
 import {
@@ -59,6 +60,8 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
+import UpdateAnnouncement from "~/src/hooks/update/announcement/announcement";
+import { useNavigation } from "@react-navigation/native";
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MIN_MODAL_HEIGHT = SCREEN_HEIGHT * 0.4; // Minimum height (40% of screen)
 const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.95; // Maximum height (95% of screen)
@@ -70,10 +73,12 @@ const PeopleInformation = ({
   peopleData,
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isContract, setIsContract] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
   const [activeImage, setActiveImage] = useState<string | null>(null);
-  const [showVerifiedText, setShowVerifiedText] = useState(false);
+  const [allService, setAllService] = useState<any>(null);
+  const navigation = useNavigation();
   const modalHeight = useRef(new Animated.Value(MIN_MODAL_HEIGHT)).current;
   const lastModalHeight = useRef(MIN_MODAL_HEIGHT);
   const expandedThreshold = (MIN_MODAL_HEIGHT + MAX_MODAL_HEIGHT) / 2;
@@ -171,10 +176,12 @@ const PeopleInformation = ({
   };
 
   const handleApply = () => {
+    if (peopleData.isCandidate) {
+      handleSave();
+      return
+    }
     handleSwipeRight();
   };
-
-  if (!visible) return null;
 
   const openImage = (uri: string) => {
     setActiveImage(uri);
@@ -196,22 +203,77 @@ const PeopleInformation = ({
     website: Globe,
   };
 
-  const renderTagList = (items: string[]) => (
-    <View>
+  const extractAllServices = (servicesObject: any): string[] => {
+    const allServices: string[] = [];
+
+    const deepExtract = (obj: any) => {
+      for (const key in obj) {
+        const value = obj[key];
+        if (Array.isArray(value)) {
+          allServices.push(...value); // adiciona os serviços
+        } else if (typeof value === "object" && value !== null) {
+          deepExtract(value); // desce mais um nível
+        }
+      }
+    };
+
+    deepExtract(servicesObject);
+    return allServices;
+  };
+
+  const renderTagList = (items: string[]) => {
+    return (
       <View>
         <View className="flex-row flex-wrap">
-          {/* {items && items.map((item, index) => (
+          {items.map((item, index) => (
             <Text
               key={index}
               style={[styles.tag, FONTS.fontLight, { fontSize: rf(10) }]}
             >
               {item}
             </Text>
-          ))} */}
+          ))}
         </View>
       </View>
-    </View>
-  );
+    );
+  };
+
+  const handleSave = async () => {
+    const data = {
+      CPF_responder: peopleData.collaborator.CPF,
+    };
+    const response = await UpdateAnnouncement(peopleData.id, data);
+    if (response.status == 200) {
+      Alert.alert(
+        "Sucesso!",
+        `O ${Mask(
+          "firstName",
+          peopleData.collaborator.name
+        )} foi contratado com sucesso.`,
+        [{ text: "OK", onPress: () =>{ 
+          setIsContract(true) 
+          navigation.goBack();
+        }}],
+        { cancelable: false }
+      );
+      return;
+    }
+    Alert.alert(
+      "Erro!",
+      `Não foi possível realizar o contratado.`,
+      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+      { cancelable: false }
+    );
+  };
+
+  useEffect(() => {
+    if (peopleData && peopleData?.collaborator?.service) {
+      const allServiceList = extractAllServices(
+        peopleData.collaborator.service
+      );
+      setAllService(allServiceList);
+    }
+  }, []);
 
   return (
     <Modal
@@ -221,9 +283,8 @@ const PeopleInformation = ({
       useNativeDriver={true}
       propagateSwipe={true}
     >
-      <>
         <Modal
-        //@ts-ignore
+          //@ts-ignore
           visible={zoomVisible}
           transparent={true}
           onRequestClose={closeImage}
@@ -266,7 +327,6 @@ const PeopleInformation = ({
             </TouchableOpacity>
           </GestureHandlerRootView>
         </Modal>
-      </>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Animated.View
           style={[
@@ -288,7 +348,7 @@ const PeopleInformation = ({
               {/* Header Content */}
               <View style={styles.headerContent}>
                 <View style={{ marginRight: rf(12), position: "relative" }}>
-                  {peopleData && peopleData.picture  ? (
+                  {peopleData && peopleData.picture ? (
                     <Image
                       source={{ uri: peopleData.picture }}
                       style={{
@@ -333,7 +393,13 @@ const PeopleInformation = ({
                 </View>
                 <View>
                   <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                    {`${peopleData.collaborator && Mask('fullName', peopleData.collaborator.name)}, ${peopleData.collaborator && Mask('age', peopleData.collaborator.birth)}`}
+                    {`${
+                      peopleData.collaborator &&
+                      Mask("fullName", peopleData.collaborator.name)
+                    }, ${
+                      peopleData.collaborator &&
+                      Mask("age", peopleData.collaborator.birth)
+                    }`}
                   </Text>
                   <Text
                     style={{
@@ -345,21 +411,20 @@ const PeopleInformation = ({
                     {/* {peopleData.name} */}
                   </Text>
                 </View>
-                {/* {peopleData && peopleData.isVerified && (
+                {peopleData && peopleData.isVerified && (
                   <TouchableOpacity
-                    onPress={() => setShowVerifiedText((prev) => !prev)}
                     activeOpacity={0.7}
                     style={{
                       marginLeft: "auto",
                       flexDirection: "row",
                       alignItems: "center",
-                      paddingHorizontal: showVerifiedText ? 8 : 4,
+                      paddingHorizontal: 8,
                       paddingVertical: 4,
                       borderRadius: 999,
                     }}
                     className="bg-primary"
                   >
-                    {showVerifiedText && (
+                    {/* {showVerifiedText && (
                       <Text
                         style={{
                           ...FONTS.fontSemiBold,
@@ -370,10 +435,10 @@ const PeopleInformation = ({
                       >
                         Verificado
                       </Text>
-                    )}
+                    )} */}
                     <CircleCheck size={rf(10)} className="text-dark" />
                   </TouchableOpacity>
-                )} */}
+                )}
               </View>
             </View>
           </PanGestureHandler>
@@ -400,7 +465,9 @@ const PeopleInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData && peopleData.collaborator ? Mask("hiddenPhone", peopleData.collaborator.phone) : `Telefone não informado`}
+                    {peopleData && peopleData.collaborator
+                      ? Mask("hiddenPhone", peopleData.collaborator.phone)
+                      : `Telefone não informado`}
                   </Text>
                 </View>
 
@@ -413,7 +480,9 @@ const PeopleInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData && peopleData.collaborator ? Mask("hiddenEmail", peopleData.collaborator.email) : `E-mail não informado`}
+                    {peopleData && peopleData.collaborator
+                      ? Mask("hiddenEmail", peopleData.collaborator.email)
+                      : `E-mail não informado`}
                   </Text>
                 </View>
 
@@ -427,7 +496,8 @@ const PeopleInformation = ({
                       textTransform: "capitalize",
                     }}
                   >
-                    {peopleData.collaborator && `${peopleData.collaborator.street}, ${peopleData.collaborator.district} - ${peopleData.collaborator.city}, ${peopleData.collaborator.uf}`}
+                    {peopleData.collaborator &&
+                      `${peopleData.collaborator.street}, ${peopleData.collaborator.district} - ${peopleData.collaborator.city}, ${peopleData.collaborator.uf}`}
                   </Text>
                 </View>
               </View>
@@ -443,40 +513,41 @@ const PeopleInformation = ({
             >
               {/* Conteúdo extra */}
               <View className={"gap-2"}>
-                <Text
-                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                >
+                <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}>
                   Galeria
                 </Text>
                 <View
                   className="flex-1 flex-row justify-between"
                   style={{ height: rf(150) }}
                 >
-                  {[0, 1, 2].map((index) => (
-                    <View key={index} className="w-1/3 p-2">
-                      { peopleData.gallery && peopleData.gallery[index] ? (
-                        //  peopleData.gallery[index]
-                        <TouchableOpacity
-                          className="w-full h-full"
-                          onPress={() => openImage(peopleData.gallery[index])}
-                        >
-                          <Image
-                            source={{ uri: peopleData.gallery[index] }}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              borderRadius: rf(12),
-                            }}
-                            resizeMode="cover"
-                          />
-                        </TouchableOpacity>
-                      ) : (
-                        <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
-                          <CameraOff size={rf(20)} />
-                        </View>
-                      )}
-                    </View>
-                  ))}
+                  {[0, 1, 2].map((index) => {
+                    const item = peopleData?.gallery?.path?.[index];
+
+                    return (
+                      <View key={index} className="w-1/3 p-2">
+                        {item?.base64 ? (
+                          <TouchableOpacity
+                            className="w-full h-full"
+                            onPress={() => openImage(item.base64)} // passa { base64, key }
+                          >
+                            <Image
+                              source={{ uri: item.base64 }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: rf(12),
+                              }}
+                              resizeMode="cover"
+                            />
+                          </TouchableOpacity>
+                        ) : (
+                          <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
+                            <CameraOff size={rf(20)} />
+                          </View>
+                        )}
+                      </View>
+                    );
+                  })}
                 </View>
               </View>
 
@@ -491,7 +562,8 @@ const PeopleInformation = ({
                   className="text-justify"
                   style={[FONTS.fontLight, { fontSize: rf(10) }]}
                 >
-                  {/* {peopleData.workPreferences && peopleData.about} */}
+                  {peopleData.collaborator &&
+                    peopleData.collaborator.presentation}
                 </Text>
               </View>
 
@@ -502,7 +574,7 @@ const PeopleInformation = ({
                 >
                   Serviços
                 </Text>
-                {/* {peopleData.workPreferences && renderTagList(peopleData.service)} */}
+                {allService && renderTagList(allService)}
               </View>
 
               <View className={"gap-2 mt-3"}>
@@ -516,11 +588,15 @@ const PeopleInformation = ({
                   <View className="flex-row">
                     <MapPin size={rf(12)} className="mr-1" />
                     <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
-                      {/* {`Distancia maxima até ${peopleData.workPreferences && peopleData.workPreferences.maxDistanceKm} km`} */}
+                      {`Distancia maxima até ${
+                        peopleData.collaborator &&
+                        peopleData.collaborator.howWork.distance
+                      } km`}
                     </Text>
                   </View>
                   <View className="gap-2">
-                    {peopleData.workPreferences && peopleData.workPreferences.allowFurtherDistance ? (
+                    {peopleData.collaborator &&
+                    peopleData.collaborator.howWork.showFarWork ? (
                       <View className="flex-row">
                         <MapPinCheckInside size={rf(12)} className="mr-1" />
                         <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
@@ -546,7 +622,8 @@ const PeopleInformation = ({
                         Contratos
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.contractType)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.howWork.contract)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -558,7 +635,8 @@ const PeopleInformation = ({
                         Modalidade
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.modality)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.howWork.modality)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -570,7 +648,8 @@ const PeopleInformation = ({
                         Período
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.schedule)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.howWork.horary)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -582,7 +661,8 @@ const PeopleInformation = ({
                         Mobilidade
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.mobility)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.howWork.mobility)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -594,7 +674,8 @@ const PeopleInformation = ({
                         Pagamentos
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.workPreferences.paymentType)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.howWork.payment)}
                   </View>
                 </View>
               </View>
@@ -606,7 +687,10 @@ const PeopleInformation = ({
                 >
                   Interesses
                 </Text>
-                {/* <View>{peopleData.workPreferences && renderTagList(peopleData.interests)}</View> */}
+                <View>
+                  {peopleData.collaborator &&
+                    renderTagList(peopleData.collaborator.about.interests)}
+                </View>
               </View>
 
               <View className={"gap-2 mt-3"}>
@@ -627,7 +711,8 @@ const PeopleInformation = ({
                         Valores
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.values)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.about.values)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -639,7 +724,8 @@ const PeopleInformation = ({
                         Formação
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.education)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.about.formation)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -651,7 +737,10 @@ const PeopleInformation = ({
                         Comunicação
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.communicationType)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(
+                        peopleData.collaborator.about.communication
+                      )}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -663,7 +752,12 @@ const PeopleInformation = ({
                         Casado (a) ?
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.marriage)} */}
+                    {peopleData.collaborator &&
+                      renderTagList([
+                        peopleData.collaborator.marriage === "1"
+                          ? "Sim"
+                          : "Não",
+                      ])}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -675,7 +769,8 @@ const PeopleInformation = ({
                         Bebe ?
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.drinks)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.about.drink)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -687,7 +782,24 @@ const PeopleInformation = ({
                         Filhos
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.children)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(
+                        peopleData.collaborator.children &&
+                          Object.keys(peopleData.collaborator.children).length >
+                            0
+                          ? [
+                              `${
+                                Object.keys(peopleData.collaborator.children)
+                                  .length
+                              } ${
+                                Object.keys(peopleData.collaborator.children)
+                                  .length === 1
+                                  ? "filho"
+                                  : "filhos"
+                              }`,
+                            ]
+                          : ["Não informado"]
+                      )}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -699,7 +811,8 @@ const PeopleInformation = ({
                         Fuma?
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.smokes)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.about.smoke)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -711,7 +824,8 @@ const PeopleInformation = ({
                         Linguagem do Amor
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.loveLanguage)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.about.languageLove)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row">
@@ -723,7 +837,8 @@ const PeopleInformation = ({
                         Alimentação
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.diet)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.about.food)}
                   </View>
                   <View className="gap-2">
                     <View className="flex-row ">
@@ -735,7 +850,8 @@ const PeopleInformation = ({
                         Pets
                       </Text>
                     </View>
-                    {/* {peopleData.workPreferences && renderTagList(peopleData.personal.pets)} */}
+                    {peopleData.collaborator &&
+                      renderTagList(peopleData.collaborator.about.pet)}
                   </View>
                 </View>
               </View>
@@ -750,51 +866,42 @@ const PeopleInformation = ({
                 <View className="gap-3">
                   {/* Textos (não links) em coluna */}
                   <View className="gap-2">
-                    {/* {Object.entries(peopleData.social).map(
-                      ([key, value]: any) => {
-                        const Icon = icons[key as keyof typeof icons];
-                        const isLink = isUrl(value);
+                    {peopleData.collaborator &&
+                      Object.entries(peopleData.collaborator.social).map(
+                        ([key, value]) => {
+                          const Icon = icons[key as keyof typeof icons];
+                          //@ts-ignore
+                          const isLink = isUrl(value);
 
-                        if (!isLink) {
-                          return (
-                            <View key={key} className="flex-row items-center">
-                              <Icon
-                                size={rf(12)}
-                                color="#6B7280"
-                                className="mr-1"
-                              />
-                              <Text style={{ ...FONTS.font, fontSize: rf(12) }}>
-                                {value}
-                              </Text>
-                            </View>
-                          );
+                          if (isLink) {
+                            return (
+                              <TouchableOpacity
+                                key={key}
+                                //@ts-ignore
+                                onPress={() => Linking.openURL(value)}
+                                className="items-center justify-center"
+                              >
+                                <Icon size={rf(22)} color="#2563EB" />
+                              </TouchableOpacity>
+                            );
+                          } else {
+                            return (
+                              <View
+                                key={key}
+                                className="flex-row items-center gap-2"
+                              >
+                                <Icon size={rf(18)} color="#6B7280" />
+                                <Text
+                                  style={{ ...FONTS.font, fontSize: rf(14) }}
+                                >
+                                  {/* @ts-ignore */}
+                                  {value}
+                                </Text>
+                              </View>
+                            );
+                          }
                         }
-                        return null; // Pula se for link
-                      }
-                    )} */}
-                  </View>
-
-                  {/* Botões (links) lado a lado */}
-                  <View className="flex-row flex-wrap gap-x-3 gap-y-2">
-                    {/* {peopleData.social && Object.entries(peopleData.social).map(
-                      ([key, value]: any) => {
-                        const Icon = icons[key as keyof typeof icons];
-                        const isLink = isUrl(value);
-
-                        if (isLink) {
-                          return (
-                            <TouchableOpacity
-                              key={key}
-                              onPress={() => Linking.openURL(value)}
-                              className="bg-primary rounded-full p-2 h-8 w-8 items-center justify-center"
-                            >
-                              <Icon size={rf(14)} className="text-dark" />
-                            </TouchableOpacity>
-                          );
-                        }
-                        return null; // Pula se não for link
-                      }
-                    )} */}
+                      )}
                   </View>
                 </View>
               </View>
@@ -804,7 +911,7 @@ const PeopleInformation = ({
 
           {/* Fixed Footer */}
           <View style={styles.footerContainer}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{ flex: 1, padding: 12, alignItems: "center" }}
               onPress={handleShare}
             >
@@ -814,7 +921,7 @@ const PeopleInformation = ({
               >
                 Compartilhar
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={{ flex: 1, padding: 12, alignItems: "center" }}
               onPress={handleView}
@@ -839,8 +946,8 @@ const PeopleInformation = ({
                 </>
               )}
             </TouchableOpacity>
-            
-           { handleSwipeRight &&
+
+            {handleSwipeRight && !isContract && (
               <TouchableOpacity
                 style={{ flex: 1, padding: 12, alignItems: "center" }}
                 onPress={handleApply}
@@ -852,11 +959,11 @@ const PeopleInformation = ({
                   Contratar
                 </Text>
               </TouchableOpacity>
-            }
-
+            )}
           </View>
         </Animated.View>
       </GestureHandlerRootView>
+      
     </Modal>
   );
 };

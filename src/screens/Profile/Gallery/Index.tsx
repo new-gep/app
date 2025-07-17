@@ -64,7 +64,10 @@ export default function Gallery() {
   };
 
   const handleSave = async () => {
-    if (!collaborator) return;
+    if (!collaborator){
+      Alert.alert("Erro", "Não foi possivel verificar o usuario!");
+      return
+    } 
 
     // 1. Identificar imagens removidas
     const toDelete = getKeysToDelete(oldGallery, gallery);

@@ -110,7 +110,7 @@ export default function Form({ title, setSelectedCategory, item }: any) {
       };
       setAwaitCreat(true);
       const response = await UpdateAnnouncement(item.id, data);
-      console.log(response)
+    
       if (response.status == 200) {
         Alert.alert(
           "Sucesso!",
