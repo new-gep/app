@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Alert,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -43,17 +44,20 @@ import {
   Eye,
   CircleCheck,
 } from "lucide-react-native";
-import Candidate from "./Candidate/Index";
-import Promotion from "./Promotion/Index";
+import Candidate from "../Candidate/Index";
+import Promotion from "../Promotion/Index";
 import ServiceInformation from "~/src/screens/Home/Helper/Modal/ServiceInformation";
 import Mask from "~/src/function/mask";
 import PeopleInformation from "~/src/screens/Home/Helper/Modal/PeopleInformation";
+import deleteAnnouncement from "~/src/hooks/delete/announcement";
+import { useNavigation } from "@react-navigation/native";
 export default function ModalMenu({ visible, setVisible, item }: any) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [modalStep, setModalStep] = useState<
     "menu" | "candidates" | "promotion"
   >("menu");
   const [currentSnapIndex, setCurrentSnapIndex] = useState(0);
+  const navigation = useNavigation();
   const [visibleWork, setVisibleWork] = useState<boolean>(false);
   const [visibleResponder, setVisibleResponder] = useState<boolean>(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -163,6 +167,35 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
     [setVisible]
   );
 
+
+  const finishAnnouncement = async () => {
+    Alert.alert(
+      "Finalizar serviço",
+      "Tem certeza que deseja finalizar este serviço?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Sim, finalizar",
+          onPress: async () => {
+            try {
+              // Sua lógica de finalização aqui
+              const response = await deleteAnnouncement(item.id);
+              if(response?.status == 200){
+                navigation.goBack()
+              }
+            } catch (error) {
+              console.error("Erro ao finalizar serviço:", error);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       {item && (
@@ -174,13 +207,13 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
           handleSwipeRight={() => {}}
         />
       )}
-      {/* { item.CPF_Responder && (
+      {item.CPF_Responder && (
         <PeopleInformation
           visible={visibleResponder}
           setVisible={setVisibleResponder}
-          peopleData={{...item.CPF_Responder, isRecruit:true }}
+          peopleData={{ ...item.CPF_Responder.collaborator, match: true }}
         />
-      )} */}
+      )}
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onChange={handleSheetChanges}
@@ -212,7 +245,7 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                   className="text-gray-500"
                   style={{ ...FONTS.fontLight, fontSize: rf(12) }}
                 >
-                  Categoria: {item?.category && renderIcon(item.category)}
+                  Categoria: {item?.category && item.category}
                 </Text>
                 <Text
                   className="text-gray-500"
@@ -249,10 +282,10 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                     <TouchableOpacity
                       className="flex-row border-b border-zinc-200 pb-3 justify-between"
                       onPress={() => {
-                        if(!item.CPF_Responder){
-                          goToStep("candidates")
-                        }else{
-                          setVisibleResponder(true)
+                        if (!item.CPF_Responder) {
+                          goToStep("candidates");
+                        } else {
+                          setVisibleResponder(true);
                         }
                       }}
                     >
@@ -324,7 +357,7 @@ export default function ModalMenu({ visible, setVisible, item }: any) {
                     {item.CPF_Responder && (
                       <TouchableOpacity
                         className="flex-row border-b border-zinc-200 pb-3 justify-between"
-                        onPress={() => goToStep("promotion")}
+                        onPress={finishAnnouncement}
                       >
                         <View className="flex-row ">
                           <CircleCheck size={rf(20)} className="mr-1" />

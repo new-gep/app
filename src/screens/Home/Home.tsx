@@ -22,16 +22,17 @@ import BannerImage from "./Helper/BannerImage";
 import BannerCircle from "./Helper/BannerCircle";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import FindAll from "~/src/hooks/get/announcement/all";
+import AllPeople from "~/src/hooks/get/collaborator/AllPeople";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
   const [cardSearch, setCardSearch] = useState<any>("Service");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [previousCards, setPreviousCards] = useState<any>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const { collaborator} = useCollaborator();
+  const { collaborator } = useCollaborator();
 
   const showPopupMessage = (message: string) => {
     setPopupMessage(message);
@@ -42,13 +43,11 @@ const Home = () => {
   const fetchJobs = async () => {
     try {
       if (!collaborator) return;
-      setIsLoading(true);
       const response = await FindAll(collaborator.CPF);
       if (response.status !== 200) {
         throw new Error(response.message || "Erro ao buscar os jobs.");
       }
-
-      setCards(response.announcements)
+      setCards(response.announcements);
     } catch (error: any) {
       alert("Erro ao buscar os jobs. Por favor, tente novamente.");
     } finally {
@@ -56,13 +55,36 @@ const Home = () => {
     }
   };
 
+  const fetchPeople = async () => {
+    if (!collaborator) return;
+    const response = await AllPeople(collaborator.CPF)
+    if(response?.status == 200){
+      setCards(response.peoples);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     const loadData = async () => {
       await fetchJobs();
     };
-
     loadData();
   }, [collaborator]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (cardSearch == "Service") {
+        console.log("buscando emprego");
+        await fetchJobs();
+      } else {
+        console.log("buscando pessoa");
+        await fetchPeople();
+      }
+    };
+    setCards(null);
+    setIsLoading(true);
+    loadData();
+  }, [cardSearch]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -128,21 +150,32 @@ const Home = () => {
         </View>
         <BannerImage />
         <BannerCircle />
-        {cardSearch == "Service" ? (
-          <Card
-            data={cards}
-            setCards={setCards}
-            collaborator={collaborator}
-            showPopupMessage={showPopupMessage}
-          />
+
+        {!isLoading ? (
+          <>
+            {cardSearch == "Service" ? (
+              <Card
+                data={cards}
+                setCards={setCards}
+                collaborator={collaborator}
+                showPopupMessage={showPopupMessage}
+              />
+            ) : (
+              <CardPeople
+                data={cards}
+                setCards={setCards}
+                collaborator={collaborator}
+                showPopupMessage={showPopupMessage}
+              />
+            )}
+          </>
         ) : (
-          // <CardPeople
-          //   data={cards}
-          //   setCards={setCards}
-          //   collaborator={collaborator}
-          //   showPopupMessage={showPopupMessage}
-          // />
-          <></>
+          <View className="mt-10 items-center justify-center">
+            <ActivityIndicator color={'black'} size={rf(20)}/>
+            <Text style={{...FONTS.fontBlack, fontSize:rf(15)}}>
+              Buscando
+            </Text>
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>

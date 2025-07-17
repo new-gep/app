@@ -33,7 +33,7 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
-import ModalMenu from "./Modal";
+import ModalMenu from "./Modal/Modal";
 const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
   item,
   editAnnouncement,
@@ -113,6 +113,8 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
     );
   };
 
+  console.log(item.CPF_Responder)
+
   return (
     <View style={styles.cardWrapper}>
       {item && (
@@ -122,7 +124,7 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
         key={item.id}
         // renderRightActions={renderRightActions}
         renderRightActions={() => null}
-        renderLeftActions={renderLeftActions}
+        renderLeftActions={item?.CPF_Responder ? () => null : renderLeftActions}
       >
         <TouchableOpacity
           onPress={() => {

@@ -6,7 +6,7 @@ import {
   Alert,
   Text,
   ActivityIndicator,
-  Image
+  Image,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { rf } from "~/src/hooks/utils/responsiveFont";
@@ -21,6 +21,7 @@ import { useNavigation } from "@react-navigation/native";
 import useCollaborator from "~/src/function/fetchCollaborator";
 import { FONTS } from "~/src/constants/theme";
 import { IMAGES } from "~/src/constants/Images";
+import Service from "./Card/Service";
 export default function Active() {
   const [data, setData] = useState<any>(null);
   const navigation = useNavigation<any>();
@@ -38,7 +39,7 @@ export default function Active() {
           onPress: async () => {
             try {
               const response = await deleteAnnouncement(id);
-              if (response.status === 200) {
+              if (response?.status === 200) {
                 setData((prev: any) =>
                   prev.filter((item: any) => item.id !== id)
                 );
@@ -67,16 +68,37 @@ export default function Active() {
 
   const find = async (cpf: string) => {
     const response = await FindAnnouncement(cpf);
-    if (response.status == 200) {
+    if (response?.status == 200 && response.announcements.length > 0) {
       setData(response.announcements);
+      return;
     }
+    setData(false);
+  };
+
+  const render = ({ item }: { item: any }) => {
+    if (item.creator == "my") {
+      return (
+        <SwipeableCardPeopleActive
+          item={item}
+          editAnnouncement={() => edit(item)}
+          deleteAnnouncement={() => delet(item.id)}
+        />
+      );
+    }
+    if (item.creator == "other") {
+      return (
+        <Service item={item} />
+      )
+    }
+
+    return null;
   };
 
   useEffect(() => {
     if (collaborator && (!data || data.length === 0)) {
       find(collaborator.CPF);
     }
-  }, [collaborator, data]);
+  }, [collaborator]);
 
   return (
     <BottomSheetModalProvider>
@@ -100,19 +122,27 @@ export default function Active() {
                 opacity: 0.8,
               }}
             />
-            <Text style={{...FONTS.fontSemiBold, fontSize:rf(13)}} className="">Nenhum anúncio encontrado!</Text>
-            <Text style={{...FONTS.fontLight, fontSize:rf(11)}} className="">Crie um agora para começar</Text>
+            <Text
+              style={{ ...FONTS.fontSemiBold, fontSize: rf(13) }}
+              className=""
+            >
+              Nenhum anúncio encontrado!
+            </Text>
+            <Text style={{ ...FONTS.fontLight, fontSize: rf(11) }} className="">
+              Crie um agora para começar
+            </Text>
           </View>
         ) : (
           <FlatList
             data={data}
-            renderItem={({ item }) => (
-              <SwipeableCardPeopleActive
-                item={item}
-                editAnnouncement={() => edit(item)}
-                deleteAnnouncement={() => delet(item.id)}
-              />
-            )}
+            // renderItem={({ item }) => (
+            //   <SwipeableCardPeopleActive
+            //     item={item}
+            //     editAnnouncement={() => edit(item)}
+            //     deleteAnnouncement={() => delet(item.id)}
+            //   />
+            // )}
+            renderItem={render}
             keyExtractor={(item) => item.id}
           />
         )}

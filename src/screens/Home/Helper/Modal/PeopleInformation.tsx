@@ -84,6 +84,8 @@ const PeopleInformation = ({
   const expandedThreshold = (MIN_MODAL_HEIGHT + MAX_MODAL_HEIGHT) / 2;
   const isUrl = (value: string) => value.startsWith("http");
 
+  // console.log(peopleData)
+
   const contentOpacity = modalHeight.interpolate({
     inputRange: [MIN_MODAL_HEIGHT, expandedThreshold, MAX_MODAL_HEIGHT],
     outputRange: [0, 0, 1],
@@ -394,10 +396,10 @@ const PeopleInformation = ({
                 <View>
                   <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
                     {`${
-                      peopleData.collaborator &&
+                      peopleData.collaborator && peopleData.collaborator.name &&
                       Mask("fullName", peopleData.collaborator.name)
                     }, ${
-                      peopleData.collaborator &&
+                      peopleData.collaborator && peopleData.collaborator.birth &&
                       Mask("age", peopleData.collaborator.birth)
                     }`}
                   </Text>
@@ -465,8 +467,8 @@ const PeopleInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData && peopleData.collaborator
-                      ? Mask("hiddenPhone", peopleData.collaborator.phone)
+                    {peopleData && peopleData.collaborator && peopleData.collaborator.phone
+                      ? peopleData.match ? Mask("phone", peopleData.collaborator.phone) : Mask("hiddenPhone", peopleData.collaborator.phone)
                       : `Telefone não informado`}
                   </Text>
                 </View>
@@ -480,8 +482,8 @@ const PeopleInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData && peopleData.collaborator
-                      ? Mask("hiddenEmail", peopleData.collaborator.email)
+                    {peopleData && peopleData.collaborator && peopleData.collaborator.email
+                      ? peopleData.match ? peopleData.collaborator.email:Mask("hiddenEmail", peopleData.collaborator.email)
                       : `E-mail não informado`}
                   </Text>
                 </View>
@@ -496,7 +498,7 @@ const PeopleInformation = ({
                       textTransform: "capitalize",
                     }}
                   >
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator.street && peopleData.collaborator.district && peopleData.collaborator.city && peopleData.collaborator.uf &&
                       `${peopleData.collaborator.street}, ${peopleData.collaborator.district} - ${peopleData.collaborator.city}, ${peopleData.collaborator.uf}`}
                   </Text>
                 </View>
@@ -562,7 +564,7 @@ const PeopleInformation = ({
                   className="text-justify"
                   style={[FONTS.fontLight, { fontSize: rf(10) }]}
                 >
-                  {peopleData.collaborator &&
+                  {peopleData.collaborator && peopleData.collaborator.presentation &&
                     peopleData.collaborator.presentation}
                 </Text>
               </View>
@@ -589,13 +591,13 @@ const PeopleInformation = ({
                     <MapPin size={rf(12)} className="mr-1" />
                     <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
                       {`Distancia maxima até ${
-                        peopleData.collaborator &&
+                        peopleData.collaborator && peopleData.collaborator?.howWork?.distance &&
                         peopleData.collaborator.howWork.distance
                       } km`}
                     </Text>
                   </View>
                   <View className="gap-2">
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.howWork?.showFarWork &&
                     peopleData.collaborator.howWork.showFarWork ? (
                       <View className="flex-row">
                         <MapPinCheckInside size={rf(12)} className="mr-1" />
@@ -622,7 +624,7 @@ const PeopleInformation = ({
                         Contratos
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.howWork?.contract &&
                       renderTagList(peopleData.collaborator.howWork.contract)}
                   </View>
                   <View className="gap-2">
@@ -635,7 +637,7 @@ const PeopleInformation = ({
                         Modalidade
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.howWork?.modality &&
                       renderTagList(peopleData.collaborator.howWork.modality)}
                   </View>
                   <View className="gap-2">
@@ -648,7 +650,7 @@ const PeopleInformation = ({
                         Período
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.howWork?.horary &&
                       renderTagList(peopleData.collaborator.howWork.horary)}
                   </View>
                   <View className="gap-2">
@@ -661,7 +663,7 @@ const PeopleInformation = ({
                         Mobilidade
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.howWork?.mobility &&
                       renderTagList(peopleData.collaborator.howWork.mobility)}
                   </View>
                   <View className="gap-2">
@@ -674,7 +676,7 @@ const PeopleInformation = ({
                         Pagamentos
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.howWork?.payment &&
                       renderTagList(peopleData.collaborator.howWork.payment)}
                   </View>
                 </View>
@@ -688,7 +690,7 @@ const PeopleInformation = ({
                   Interesses
                 </Text>
                 <View>
-                  {peopleData.collaborator &&
+                  {peopleData.collaborator && peopleData?.collaborator.about?.interests &&
                     renderTagList(peopleData.collaborator.about.interests)}
                 </View>
               </View>
@@ -711,7 +713,7 @@ const PeopleInformation = ({
                         Valores
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.about?.values &&
                       renderTagList(peopleData.collaborator.about.values)}
                   </View>
                   <View className="gap-2">
@@ -724,7 +726,7 @@ const PeopleInformation = ({
                         Formação
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.about?.formation &&
                       renderTagList(peopleData.collaborator.about.formation)}
                   </View>
                   <View className="gap-2">
@@ -737,7 +739,7 @@ const PeopleInformation = ({
                         Comunicação
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.about?.communication && 
                       renderTagList(
                         peopleData.collaborator.about.communication
                       )}
@@ -752,7 +754,7 @@ const PeopleInformation = ({
                         Casado (a) ?
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.marriage &&
                       renderTagList([
                         peopleData.collaborator.marriage === "1"
                           ? "Sim"
@@ -769,7 +771,7 @@ const PeopleInformation = ({
                         Bebe ?
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.about?.drink && 
                       renderTagList(peopleData.collaborator.about.drink)}
                   </View>
                   <View className="gap-2">
@@ -782,9 +784,9 @@ const PeopleInformation = ({
                         Filhos
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.children &&
                       renderTagList(
-                        peopleData.collaborator.children &&
+                        peopleData.collaborator?.children &&
                           Object.keys(peopleData.collaborator.children).length >
                             0
                           ? [
@@ -811,7 +813,7 @@ const PeopleInformation = ({
                         Fuma?
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.about?.smoke &&
                       renderTagList(peopleData.collaborator.about.smoke)}
                   </View>
                   <View className="gap-2">
@@ -824,7 +826,7 @@ const PeopleInformation = ({
                         Linguagem do Amor
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.about?.languageLove &&
                       renderTagList(peopleData.collaborator.about.languageLove)}
                   </View>
                   <View className="gap-2">
@@ -837,7 +839,7 @@ const PeopleInformation = ({
                         Alimentação
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.about?.food &&
                       renderTagList(peopleData.collaborator.about.food)}
                   </View>
                   <View className="gap-2">
@@ -850,7 +852,7 @@ const PeopleInformation = ({
                         Pets
                       </Text>
                     </View>
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.about?.pet &&
                       renderTagList(peopleData.collaborator.about.pet)}
                   </View>
                 </View>
@@ -866,7 +868,7 @@ const PeopleInformation = ({
                 <View className="gap-3">
                   {/* Textos (não links) em coluna */}
                   <View className="gap-2">
-                    {peopleData.collaborator &&
+                    {peopleData.collaborator && peopleData.collaborator?.social &&
                       Object.entries(peopleData.collaborator.social).map(
                         ([key, value]) => {
                           const Icon = icons[key as keyof typeof icons];

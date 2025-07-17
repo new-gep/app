@@ -60,7 +60,7 @@ if (
 const SwipeableCard = React.memo(function SwipeableCard({
   item,
   onSwipeRight,
-  id
+  id,
 }: any) {
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -128,14 +128,13 @@ const SwipeableCard = React.memo(function SwipeableCard({
     );
   };
 
-
   return (
     <>
       <PeopleInformation
         handleSwipeRight={onSwipeRight}
         visible={visible}
         setVisible={setVisible}
-        peopleData={{...item, isCandidate:true, id: id}}
+        peopleData={{ ...item, isCandidate: true, id: id }}
       />
       <Swipeable
         key={item.id}
@@ -146,11 +145,11 @@ const SwipeableCard = React.memo(function SwipeableCard({
           <TouchableOpacity
             className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
             style={styles.card}
-            onPress={()=>setVisible(true)}
+            onPress={() => setVisible(true)}
           >
             <View className="flex-row items-center flex-1">
               <View className="mr-3" style={{ position: "relative" }}>
-                {item.picture ? (
+                {item?.picture ? (
                   <Image
                     source={{ uri: item.picture }}
                     style={{ width: rf(43), height: rf(43) }}
@@ -228,13 +227,12 @@ const SwipeableCard = React.memo(function SwipeableCard({
   );
 });
 
-export default function 
-CardPeople({
+export default function CardPeople({
   data,
   setCards,
   collaborator,
   showPopupMessage,
-  id
+  id,
 }: any) {
   const [visibleMenuIds, setVisibleMenuIds] = useState<number[]>([]);
   const navigation = useNavigation();
@@ -305,15 +303,23 @@ CardPeople({
 
   return (
     <View style={styles.container} className="px-4 py-2">
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 30 }}
-        initialNumToRender={5}
-        maxToRenderPerBatch={5}
-        windowSize={10}
-        removeClippedSubviews={true}
-      />
+      {Array.isArray(data) && data.length > 0 ? (
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          contentContainerStyle={{ paddingBottom: 30 }}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={10}
+          removeClippedSubviews={true}
+        />
+      ) : (
+        <View style={{ paddingVertical: 40, alignItems: "center" }}>
+          <Text style={{ fontSize: rf(16), color: "gray" }}>
+            Nenhuma pessoa encontrada.
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

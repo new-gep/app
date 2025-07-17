@@ -64,13 +64,9 @@ const ServiceInformation = ({
   });
 
   useEffect(() => {
-    console.log('aqui',peopleData.id)
-      if (
-        peopleData.picture &&
-        peopleData.picture.status === 200 &&
-        peopleData.picture.path
+      if (peopleData?.CPF_Creator?.collaborator?.picture
       ) {
-        setPath(peopleData.picture.path);
+        setPath(peopleData.CPF_Creator.collaborator.picture);
       } else {
         setPath(null); // Garante que image seja null se não houver caminho válido
       }
@@ -312,9 +308,7 @@ const ServiceInformation = ({
                       color: "#6b7280",
                     }}
                   >
-                    {peopleData &&
-                      peopleData.CPF_Creator &&
-                      peopleData.CPF_Creator.name}
+                    {peopleData.CPF_Creator?.collaborator?.collaborator?.name && peopleData.CPF_Creator.collaborator.collaborator.name}
                   </Text>
                 </View>
                 {peopleData && peopleData.isVerified && (
@@ -403,9 +397,8 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData.CPF_Creator &&
-                      peopleData.CPF_Creator.phone &&
-                      Mask("hiddenPhone", peopleData.CPF_Creator.phone)}
+                    { peopleData?.CPF_Creator?.collaborator?.collaborator?.phone &&
+                      Mask("hiddenPhone", peopleData.CPF_Creator.collaborator.collaborator.phone)}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -417,10 +410,9 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData.CPF_Creator &&
-                      peopleData.CPF_Creator.city &&
-                      peopleData.CPF_Creator.uf &&
-                      `${peopleData.CPF_Creator.city}, ${peopleData.CPF_Creator.uf}`}
+                    { peopleData?.CPF_Creator?.collaborator?.collaborator?.city &&
+                      peopleData?.CPF_Creator?.collaborator?.collaborator?.uf &&
+                      `${peopleData?.CPF_Creator?.collaborator?.collaborator?.city}, ${peopleData.CPF_Creator.collaborator.collaborator.uf}`}
                   </Text>
                 </View>
               </View>
@@ -533,7 +525,7 @@ const ServiceInformation = ({
 
           {/* Fixed Footer */}
           <View style={styles.footerContainer}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{ flex: 1, padding: 12, alignItems: "center" }}
               onPress={handleShare}
             >
@@ -543,7 +535,7 @@ const ServiceInformation = ({
               >
                 Compartilhar
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={{ flex: 1, padding: 12, alignItems: "center" }}
               onPress={handleView}
