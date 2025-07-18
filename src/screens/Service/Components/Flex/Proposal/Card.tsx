@@ -9,6 +9,7 @@ import ModalProposal from "./Modal";
 
 export default function ProposalCard({ item }: any) {
   const [visibleService, setVisibleService] = useState<boolean>(false);
+  console.log(item)
 
   const renderLeftActions = () => (
     <TouchableOpacity
@@ -49,14 +50,15 @@ export default function ProposalCard({ item }: any) {
                 style={{ ...FONTS.font, fontSize: rf(12) }}
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                className="capitalize"
                 >
-                {item.function}
+                {item.title}
                 </Text>
                 <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
                 >
-                {`${Mask("amount", item.salary)} ${item.valueType}`}
+                {`${item?.salary && Mask("amount", item.salary)} ${item?.typePayment && item.typePayment}`}
                 </Text>
                 <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}

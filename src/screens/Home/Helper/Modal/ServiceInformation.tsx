@@ -311,7 +311,7 @@ const ServiceInformation = ({
                     {peopleData.CPF_Creator?.collaborator?.collaborator?.name && peopleData.CPF_Creator.collaborator.collaborator.name}
                   </Text>
                 </View>
-                {peopleData && peopleData.isVerified && (
+                {peopleData && peopleData?.isVerified && (
                   <TouchableOpacity
                     onPress={() => setShowVerifiedText((prev) => !prev)}
                     activeOpacity={0.7}

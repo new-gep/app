@@ -18,7 +18,7 @@ export default function Candidate({ setModalStep, item }: any) {
       </TouchableOpacity>
       {item.candidates ? (
         <ScrollView>
-          <CardPeople id={item.id} data={item.candidates} />
+          <CardPeople id={item.id} isCandidate={true} data={item.candidates} />
         </ScrollView>
       ) : (
         <View className="items-center justify-center py-10">

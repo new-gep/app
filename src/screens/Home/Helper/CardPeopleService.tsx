@@ -61,6 +61,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
   item,
   onSwipeRight,
   id,
+  isCandidate 
 }: any) {
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -128,17 +129,18 @@ const SwipeableCard = React.memo(function SwipeableCard({
     );
   };
 
+
   return (
     <>
       <PeopleInformation
         handleSwipeRight={onSwipeRight}
         visible={visible}
         setVisible={setVisible}
-        peopleData={{ ...item, isCandidate: true, id: id }}
+        peopleData={{ ...item, isCandidate: isCandidate, id: id }}
       />
       <Swipeable
-        key={item.id}
-        renderRightActions={(progress) => renderRightActions(item.id, progress)}
+        key={item?.id}
+        renderRightActions={(progress) => renderRightActions(item?.id, progress)}
         leftThreshold={0}
       >
         <View>
@@ -162,7 +164,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
                   </View>
                 )}
 
-                {item.isVerified && (
+                {item?.isVerified && (
                   <View
                     style={{
                       position: "absolute",
@@ -185,8 +187,8 @@ const SwipeableCard = React.memo(function SwipeableCard({
                     numberOfLines={1}
                     ellipsizeMode="tail"
                   >
-                    {item.collaborator &&
-                      Mask("fullName", item.collaborator.name)}
+                    {item?.collaborator &&
+                      Mask("fullName", item?.collaborator.name)}
                   </Text>
                 </View>
                 <View
@@ -196,22 +198,22 @@ const SwipeableCard = React.memo(function SwipeableCard({
                     maxWidth: SCREEN_WIDTH * 0.4,
                   }}
                 >
-                  {item.collaborator &&
-                    renderIconFromCategoryMap(item.collaborator.service)}
+                  {item?.collaborator &&
+                    renderIconFromCategoryMap(item?.collaborator.service)}
                 </View>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className="text-zinc-500"
                 >
-                  {item.collaborator &&
-                    item.collaborator.howWork.contract?.join(", ")}
+                  {item?.collaborator &&
+                    item?.collaborator.howWork.contract?.join(", ")}
                 </Text>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className="text-zinc-500"
                 >
-                  {item.collaborator &&
-                    `${item.collaborator.city}, ${item.collaborator.uf}`}
+                  {item?.collaborator &&
+                    `${item?.collaborator.city}, ${item?.collaborator.uf}`}
                 </Text>
               </View>
             </View>
@@ -233,6 +235,7 @@ export default function CardPeople({
   collaborator,
   showPopupMessage,
   id,
+  isCandidate
 }: any) {
   const [visibleMenuIds, setVisibleMenuIds] = useState<number[]>([]);
   const navigation = useNavigation();
@@ -244,7 +247,7 @@ export default function CardPeople({
 
   const removeCard = (id: any) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setCards((prev: any) => prev.filter((item: any) => item.id !== id));
+    setCards((prev: any) => prev.filter((item: any) => item?.id !== id));
   };
 
   const handleSwipeLeft = () => {
@@ -252,27 +255,8 @@ export default function CardPeople({
   };
 
   const handleSwipeRight = async (id: any) => {
-    showPopupMessage("Você aplicou para a vaga com sucesso!");
-    return;
-    if (!collaborator) {
-      showPopupMessage("Você precisa estar logado para aplicar!");
-      return;
-    }
-
-    try {
-      const response = await ApplyJob(id, collaborator?.CPF);
-      if (response.status === 200) {
-        removeCard(id);
-        showPopupMessage("Você aplicou para a vaga com sucesso!");
-      } else if (response.status === 400) {
-        removeCard(id);
-        showPopupMessage("Você já aplicou para essa vaga!");
-      } else {
-        showPopupMessage("Erro ao aplicar para a vaga!");
-      }
-    } catch (error) {
-      showPopupMessage("Erro ao aplicar para a vaga!");
-    }
+    console.log('aqui')
+   
   };
 
   const navigateToCardInformation = ({ data }: any) => {
@@ -285,13 +269,15 @@ export default function CardPeople({
   const renderItem = useCallback(
     ({ item }: any) => {
       return (
+        
         <SwipeableCard
           navigateToCardInformation={() =>
             navigateToCardInformation({ data: item })
           }
-          item={item.collaborator}
+          item={item?.collaborator}
           id={id}
-          isMenuVisible={visibleMenuIds.includes(item.id)}
+          isCandidate={isCandidate}
+          isMenuVisible={visibleMenuIds.includes(item?.id)}
           setMenuVisible={setMenuVisible}
           onSwipeLeft={handleSwipeLeft}
           onSwipeRight={handleSwipeRight}

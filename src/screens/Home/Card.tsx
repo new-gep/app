@@ -99,7 +99,7 @@ const SwipeableCardCompany = React.memo(function SwipeableCard({
                 </View>
               )}
 
-              {item.isVerified && (
+              {/* {item?.isVerified && (
                 <View
                   style={{
                     position: "absolute",
@@ -112,7 +112,7 @@ const SwipeableCardCompany = React.memo(function SwipeableCard({
                 >
                   <Check className="text-dark" size={rf(10)} />
                 </View>
-              )}
+              )} */}
             </View>
 
             <View className="pr-2">
@@ -209,7 +209,7 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
                 </View>
               )}
 
-              {item.isVerified && (
+              {/* {item?.isVerified && (
                 <View
                   style={{
                     position: "absolute",
@@ -222,7 +222,7 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
                 >
                   <Check className="text-dark" size={rf(10)} />
                 </View>
-              )}
+              )} */}
             </View>
             <View className="pr-2">
               <Text
@@ -553,7 +553,6 @@ export default function CathoStyleCards({
 
   const handleSwipeRightPeople = async (id: any) => {
     if (!collaborator) {
-      console.log("caiu aqui", collaborator);
       showPopupMessage("Você precisa estar logado para aplicar!");
       return;
     }
@@ -611,7 +610,6 @@ export default function CathoStyleCards({
         <FlatList
           data={data}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ paddingBottom: 30 }}
           initialNumToRender={5}
           maxToRenderPerBatch={5}
