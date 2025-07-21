@@ -60,7 +60,7 @@ export default function ModalMyService({ item, visible, setVisible }: any) {
       <PeopleInformation
         visible={visiblePeople}
         setVisible={setVisiblePeople}
-        peopleData={item.CPF_Collaborator}
+        peopleData={item.CPF_Responder.collaborator}
       />
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -77,11 +77,11 @@ export default function ModalMyService({ item, visible, setVisible }: any) {
               <History size={rf(20)} />
             </View>
             <View>
-              <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                {item && item.title && item.title}
+              <Text className="capitalize" style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
+                {item?.title ? item.title : "Sem título"}
               </Text>
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Criado em: {item && item.create && item.create}
+                Criado em: {item.create_at ? Mask("dateFormat", item.create_at) : "Data não informada"}
               </Text>
             </View>
           </View>
@@ -89,25 +89,25 @@ export default function ModalMyService({ item, visible, setVisible }: any) {
             <View className="flex-row">
               <CircleCheck size={rf(16)} className="mr-1" />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Finalizado em {item && item.finish && item.finish}
+                Finalizado em {item.delete_at ? Mask("dateFormat", item.delete_at) : "Data não informada"}
               </Text>
             </View>
             <View className="flex-row">
               <Banknote size={rf(16)} className="mr-1" />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Pagamento {`${Mask("amount", item.salary)} ${item.valueType}`}
+                Pagamento {`${item?.salary && Mask("amount", item.salary)} ${ item.typePayment ? item.typePayment : "Não informado"}`}
               </Text>
             </View>
             <View className="flex-row">
               <Megaphone size={rf(16)} className="mr-1" />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Anúncio {item.visibility}
+                Anúncio {item.typeAnnouncement}
               </Text>
             </View>
             <View className="flex-row">
               <Home size={rf(16)} className="mr-1" />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Modelo {item && item.model && item.model}
+                Categoria {item?.category ? item.category : "Não informado"}
               </Text>
             </View>
           </View>
@@ -133,15 +133,13 @@ export default function ModalMyService({ item, visible, setVisible }: any) {
                     <UserRound size={rf(16)} className="mr-1"/>
                   )}
                   <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                    {item &&
-                      item.CPF_Collaborator &&
-                      item.CPF_Collaborator.name}
+                    {item?.CPF_Responder?.collaborator.collaborator.name ? Mask("fullName", item?.CPF_Responder?.collaborator.collaborator.name) : "Não informado"}
                   </Text>
                 </View>
               </View>
               <ChevronRight size={rf(16)} />
               </TouchableOpacity>
-              <TouchableOpacity className="flex-row w-full justify-between items-center mt-5">
+              {/* <TouchableOpacity className="flex-row w-full justify-between items-center mt-5">
                 <View className="flex-row">
                   <Info size={rf(16)} className="mr-1" />
                   <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
@@ -149,7 +147,7 @@ export default function ModalMyService({ item, visible, setVisible }: any) {
                   </Text>
                 </View>
                 <ChevronRight size={rf(16)} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           }
         </View>

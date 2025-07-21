@@ -92,6 +92,7 @@ import ServiceDefault from "../screens/Service/Index";
 import FixHistory from "../screens/Service/Components/Fix/History/Index";
 import FixProposal from "../screens/Service/Components/Fix/Proposal/Index";
 import FixProcess from "../screens/Service/Components/Fix/Process/Index";
+import Default from "../screens/Cycle/Index";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
@@ -129,6 +130,7 @@ const StackNavigator = () => {
         <Stack.Screen name="Myorder"  component={Myorder} />
         <Stack.Screen name="Trackorder" component={Trackorder} />
         <Stack.Screen name="Writereview" component={Writereview} />
+        
         <Stack.Screen name="Rewards" component={Rewards} />
         <Stack.Screen name="Demo" component={Demo} />
         <Stack.Screen name="Chat" component={Chat} />
@@ -188,7 +190,7 @@ const StackNavigator = () => {
         <Stack.Screen name="FixHistory" component={FixHistory} />
         <Stack.Screen name="FixProposal" component={FixProposal} />
         <Stack.Screen name="FixProcess" component={FixProcess} />
-
+        <Stack.Screen name="FixActual" component={Default} />
         <Stack.Screen name="Social" component={Social} />
         {/* @ts-ignore */}
         <Stack.Screen name="CardInformationPeople" component={CardInformationPeople}/>

@@ -62,7 +62,7 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
       <ServiceInformation
         visible={visiblePeople}
         setVisible={setVisiblePeople}
-        peopleData={item}
+        peopleData={{...item, isPropostal: true}}
       />
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -79,11 +79,11 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
               <Mail size={rf(20)} />
             </View>
             <View>
-              <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                {item && item.title && item.title}
+              <Text className="capitalize" style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
+                {item?.title ? item.title : "Título não informado"}
               </Text>
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Criado em: {item && item.create && item.create}
+                Criado em: { item?.create_at && Mask('dateFormat', item.create_at)}
               </Text>
             </View>
           </View>
@@ -91,19 +91,19 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
             <View className="flex-row">
               <Banknote size={rf(16)} className="mr-1" />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Pagando {`${Mask("amount", item.salary)} ${item.valueType}`}
+                Pagando {`${item?.salary ? Mask("amount", item.salary) : "Valor não informado"} ${item.typePayment ? item.typePayment : "Tipo de pagamento não informado"}`}
               </Text>
             </View>
             <View className="flex-row">
               <Home size={rf(16)} className="mr-1" />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                Modelo {item && item.model && item.model}
+                Categoria: {item?.category ? item.category : "Categoria não informada"}
               </Text>
             </View>
             <View className="flex-row">
               <MapPin size={rf(16)} className="mr-1" />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                {item && item.locality && item.locality}
+                {item?.CPF_Creator?.collaborator?.collaborator?.city && item?.CPF_Creator?.collaborator?.collaborator?.uf ? `${item.CPF_Creator.collaborator.collaborator.city}, ${item.CPF_Creator.collaborator.collaborator.uf}` : "Localização não informada"}
               </Text>
             </View>
           </View>
@@ -130,9 +130,7 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
                       <UserRound size={rf(16)} className="mr-1" />
                     )}
                     <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
-                      {item &&
-                        item.name &&
-                        item.name}
+                      {item?.CPF_Creator?.collaborator?.collaborator?.name ? Mask('fullName',item.CPF_Creator.collaborator.collaborator.name) : "Nome não informado"}
                     </Text>
                   </View>
                 </View>
@@ -141,7 +139,7 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
               </TouchableOpacity>
 
 
-              <TouchableOpacity className="flex-row w-full justify-between items-center mt-5">
+              {/* <TouchableOpacity className="flex-row w-full justify-between items-center mt-5">
                 <View className="flex-row">
                   <Info size={rf(16)} className="mr-1" />
                   <Text style={{ ...FONTS.fontLight, fontSize: rf(12) }}>
@@ -149,7 +147,7 @@ export default function ModalProposal({ item, visible, setVisible }: any) {
                   </Text>
                 </View>
                 <ChevronRight size={rf(16)} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           )}
         </View>

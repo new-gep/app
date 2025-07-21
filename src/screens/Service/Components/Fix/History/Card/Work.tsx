@@ -48,31 +48,31 @@ export default function Work({item}:any){
 
             <View className="pr-2">
               <Text style={{ ...FONTS.font, fontSize: rf(12) }}>
-                {item.function}
+                {item?.function ? item.function : "Função não especificada"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {Mask("amount", item.salary)}
+                {item?.salary ? Mask("amount", item.salary) : "Salário não especificado"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.model}
+                {item?.model ? item.model : "Modelo não especificado"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.locality}
+                {item?.locality ? item.locality : "Localidade não especificada"}
               </Text>
             </View>
           </View>
-          <View className="mr-3">
+          {/* <View className="mr-3">
             <ChevronRight size={rf(20)} />
-          </View>
+          </View> */}
         </TouchableOpacity>
       </Swipeable>
     )

@@ -9,7 +9,7 @@ import {
   Mail,
   MessageCircle,
 } from "lucide-react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -21,26 +21,18 @@ import {
 import { Swipeable } from "react-native-gesture-handler";
 import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
+import FindActualOrLastCompanyJob from "~/src/hooks/get/job/findActualOrLastCompany";
+import useCollaborator from "~/src/function/fetchCollaborator";
 
-type StatusKey = "atual" | "demissao" | "ultimo";
+
 
 export default function Card() {
-  const empresaAtualFake = {
-    empresa: "Mix Serviços Logisticos LTDA",
-    cargo: "Motoboy",
-    logoUrl: "",
-    status: "atual" as StatusKey, // <- use isso pra mudar a bolinha e mensagem
-  };
-  const statusMap: Record<StatusKey, { color: string; label: string }> = {
-    atual: { color: "#22c55e", label: "Atual" }, // verde
-    demissao: { color: "#facc15", label: "Em processo de demissão" }, // amarelo
-    ultimo: { color: "#ef4444", label: "Último serviço" }, // vermelho
-  };
-  const { color, label } = statusMap[empresaAtualFake.status];
   const navigation = useNavigation<any>();
+  const { collaborator } = useCollaborator();
+  const [actualCompany, setActualCompany] = useState<any>(null);
 
   const handleStatusPress = () => {
-    Alert.alert("Status", label);
+    
   };
 
   const renderLeftActions = (
@@ -59,64 +51,82 @@ export default function Card() {
     );
   };
 
+
+
+  useEffect(()=>{
+    const fetchData = async () => {
+      if (collaborator) {
+        const response = await FindActualOrLastCompanyJob(collaborator.CPF);
+        if (response.status === 200) {
+          setActualCompany(response.company);
+        }
+      }
+    };
+    fetchData();
+  }, [collaborator])
+
   return (
     <View style={Style.container} className="mt-5 bg-white p-3 rounded-2xl">
-      <View className="px-2">
-        <Swipeable
-          renderLeftActions={(progress) => renderLeftActions(progress)}
-        >
-          <TouchableOpacity
-
-            className="w-full bg-white border-b border-zinc-300 rounded-lg p-3 flex-row items-center"
-            style={{ height: rf(80) }}
+      { actualCompany &&
+        <View className="px-2">
+          <Swipeable
+            renderLeftActions={() => null}
           >
-            {/* Logo */}
-            {empresaAtualFake.logoUrl ? (
-              <Image
-                source={{ uri: empresaAtualFake.logoUrl }}
-                className="w-12 h-12 rounded-full mr-3"
-                resizeMode="cover"
-              />
-            ) : (
-              <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
-                <Building2 size={rf(25)} />
-              </View>
-            )}
-            <TouchableOpacity onPress={handleStatusPress}>
-              <View
-                className="absolute"
-                style={{
-                  bottom: -18,
-                  left: -21,
-                  backgroundColor: color,
-                  width: rf(10),
-                  height: rf(10),
-                  borderRadius: rf(10),
-                }}
-              />
-            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                actualCompany?.status == 'actual' && navigation.navigate("FixActual");
+              }}
+              className="w-full bg-white border-b border-zinc-300 rounded-lg p-3 flex-row items-center"
+              style={{ height: rf(80) }}
+            >
+              {/* Logo */}
+              {actualCompany?.logoUrl ? (
+                <Image
+                  source={{ uri: actualCompany.logoUrl }}
+                  className="w-12 h-12 rounded-full mr-3"
+                  resizeMode="cover"
+                />
+              ) : (
+                <View className="rounded-full bg-zinc-100 items-center justify-center p-3 mr-3">
+                  <Building2 size={rf(25)} />
+                </View>
+              )}
+              <TouchableOpacity onPress={handleStatusPress}>
+                <View
+                  className={`${actualCompany?.status == 'actual' ? 'bg-green-500' : 'bg-red-500'} absolute`}
+                  style={{
+                    bottom: -18,
+                    left: -21,
+                    width: rf(10),
+                    height: rf(10),
+                    borderRadius: rf(10),
+                  }}
+                  
+                />
+              </TouchableOpacity>
 
-            <View className="flex-1">
-              <View className="flex-row items-center justify-between">
+              <View className="flex-1">
+                <View className="flex-row items-center justify-between">
+                  <Text
+                    style={{ ...FONTS.fontSemiBold, fontSize: rf(13) }}
+                    className="text-zinc-800 font-semibold"
+                  >
+                    {actualCompany?.CNPJ_company?.company_name ? actualCompany.CNPJ_company.company_name : "Sem empresa"}
+                  </Text>
+                </View>
                 <Text
-                  style={{ ...FONTS.fontSemiBold, fontSize: rf(14) }}
-                  className="text-zinc-800 font-semibold"
+                  style={{ ...FONTS.font, fontSize: rf(11) }}
+                  className="text-zinc-500"
                 >
-                  {empresaAtualFake.empresa || "Empresa Atual"}
+                  {actualCompany?.function ? actualCompany.function : "Sem cargo"}
                 </Text>
               </View>
-              <Text
-                style={{ ...FONTS.font, fontSize: rf(11) }}
-                className="text-zinc-500"
-              >
-                {empresaAtualFake.cargo || "Cargo não informado"}
-              </Text>
-            </View>
 
-            <ChevronRight size={20} className="text-zinc-400" />
-          </TouchableOpacity>
-        </Swipeable>
-      </View>
+              <ChevronRight size={20} className="text-zinc-400" />
+            </TouchableOpacity>
+          </Swipeable>
+        </View>
+      }
 
       <>
         <View className="flex-row justify-between mt-5">
@@ -172,7 +182,7 @@ export default function Card() {
                 navigation.navigate("FixHistory");
               }}
             >
-              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Historico</Text>
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Histórico</Text>
               <History size={rf(20)} />
             </TouchableOpacity>
           </View>

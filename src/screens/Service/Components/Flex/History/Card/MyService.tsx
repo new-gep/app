@@ -11,109 +11,51 @@ import {
   PartyPopper,
   Shirt,
   Wrench,
+  UserRound,
 } from "lucide-react-native";
 import React, { useState } from "react";
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import ModalMyService from "../Modal/MyService";
-const MyServiceCard = React.memo(function SwipeableCard({
-  item
-}: any) {
+const MyServiceCard = React.memo(function SwipeableCard({ item }: any) {
   const [visible, setVisible] = useState<boolean>(false);
 
-  const renderIcon = (categories: string[]) => {
-    return categories.map((category, index) => {
-      switch (category) {
-        case "Assistência Técnica":
-          return (
-            <Wrench className="text-zinc-500 mr-1" size={rf(20)} key={index} />
-          );
-        case "Aulas":
-          return (
-            <GraduationCap
-              className="text-zinc-500 mr-1"
-              size={rf(20)}
-              key={index}
-            />
-          );
-        case "Mecânica e Transportes":
-          return (
-            <CarFront
-              className="text-zinc-500 mr-1"
-              size={rf(20)}
-              key={index}
-            />
-          );
-        case "Consultoria":
-          return (
-            <Handshake
-              className="text-zinc-500 mr-1"
-              size={rf(20)}
-              key={index}
-            />
-          );
-        case "Design e Tecnologia":
-          return (
-            <MonitorSmartphone
-              className="text-zinc-500 mr-1"
-              size={rf(20)}
-              key={index}
-            />
-          );
-        case "Eventos":
-          return (
-            <PartyPopper
-              className="text-zinc-500 mr-1"
-              size={rf(20)}
-              key={index}
-            />
-          );
-        case "Moda e Beleza":
-          return (
-            <Shirt className="text-zinc-500 mr-1" size={rf(20)} key={index} />
-          );
-        case "Reformas e Reparos":
-          return (
-            <Hammer className="text-zinc-500 mr-1" size={rf(20)} key={index} />
-          );
-        case "Saúde":
-          return (
-            <HeartPulse
-              className="text-zinc-500 mr-1"
-              size={rf(20)}
-              key={index}
-            />
-          );
-        case "Serviços Domésticos":
-          return (
-            <House className="text-zinc-500 mr-1" size={rf(20)} key={index} />
-          );
-        default:
-          return <Building size={rf(20)} key={index} />;
-      }
-    });
+  // 1. Mapeamento entre serviço e ícone
+  const serviceIcons = {
+    "Assistência Técnica": <Wrench size={rf(25)} className="text-dark" />,
+    Aulas: <GraduationCap size={rf(25)} className="text-dark" />,
+    "Mecânica e Transportes": <CarFront size={rf(25)} className="text-dark" />,
+    Consultoria: <Handshake size={rf(25)} className="text-dark" />,
+    "Design e Tecnologia": (
+      <MonitorSmartphone size={rf(25)} className="text-dark" />
+    ),
+    Eventos: <PartyPopper size={rf(25)} className="text-dark" />,
+    "Moda e Beleza": <Shirt size={rf(25)} className="text-dark" />,
+    "Reformas e Reparos": <Hammer size={rf(25)} className="text-dark" />,
+    Saúde: <HeartPulse size={rf(25)} className="text-dark" />,
+    "Serviços Domésticos": <House size={rf(25)} className="text-dark" />,
   };
-
-
+  // 2. Função para retornar o ícone de forma segura
+  const renderIcon = (serviceName: string) => {
+    return (
+      //@ts-ignore
+      serviceIcons[serviceName] || (
+        <UserRound size={rf(25)} className="text-dark" />
+      )
+    );
+  };
 
   return (
     <>
-    <ModalMyService visible={visible} setVisible={setVisible} item={item} />
-      <Swipeable
-        key={item.id}
-      >
+      <ModalMyService visible={visible} setVisible={setVisible} item={item} />
+      <Swipeable key={item.id}>
         <TouchableOpacity
           className="px-5 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
           style={styles.card}
-          onPress={()=> setVisible(true)}
+          onPress={() => setVisible(true)}
         >
           <View className="flex-row items-center flex-1">
             <View className="mr-3" style={{ position: "relative" }}>
@@ -121,7 +63,7 @@ const MyServiceCard = React.memo(function SwipeableCard({
                 style={{ height: rf(45), width: rf(45) }}
                 className="rounded-full bg-zinc-100 items-center justify-center p-3"
               >
-                {renderIcon(item.service)}
+                {item?.category ? renderIcon(item.category) : null}
               </View>
             </View>
             <View className="pr-2">
@@ -129,33 +71,35 @@ const MyServiceCard = React.memo(function SwipeableCard({
                 style={{ ...FONTS.font, fontSize: rf(12) }}
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                className="capitalize"
               >
-                {item.function}
+                {item?.title ? item.title : "Sem título"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {`${Mask("amount", item.salary)} ${item.valueType}`}
+                {`${item?.salary && Mask("amount", item.salary)} ${
+                  item.typePayment ? item.typePayment : "Não informado"
+                }`}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                Anúncio {item.visibility}
+                Anúncio{" "}
+                {item?.typeAnnouncement
+                  ? item.typeAnnouncement
+                  : "Não informado"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.candidate.length > 0 ? item.candidate.length : 0}{" "}
-                Candidatos
-              </Text>
-              <Text
-                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                className="text-zinc-500"
-              >
-                Anunciado em {item.create}
+                Anunciado em{" "}
+                {item?.create_at
+                  ? Mask("dateFormat", item.create_at)
+                  : "Data não informada"}
               </Text>
             </View>
           </View>

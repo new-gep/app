@@ -37,7 +37,7 @@ export default function Service({item}:any) {
                 </View>
               )}
 
-              {item.isVerified && (
+              {item?.isVerified && (
                 <View
                   style={{
                     position: "absolute",
@@ -58,26 +58,27 @@ export default function Service({item}:any) {
                 style={{ ...FONTS.font, fontSize: rf(12) }}
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                className="capitalize"
               >
-                {item.function}
+                {item?.title ? item.title : "Sem título"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {`${Mask("amount", item.salary)} ${item.valueType}`}
+                {`${ item?.salary && Mask("amount", item.salary)} ${item.typePayment ? item.typePayment : "Não informado"}`}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.model}
+                {item?.category ? item.category : "Categoria não informada"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.locality}
+                {item?.CPF_Creator?.collaborator?.collaborator?.city && item?.CPF_Creator?.collaborator?.collaborator?.uf ? `${item.CPF_Creator.collaborator.collaborator.city}, ${item.CPF_Creator.collaborator.collaborator.uf}` : "Localização não informada"}
               </Text>
             </View>
           </View>

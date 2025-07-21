@@ -129,7 +129,6 @@ const SwipeableCard = React.memo(function SwipeableCard({
     );
   };
 
-
   return (
     <>
       <PeopleInformation

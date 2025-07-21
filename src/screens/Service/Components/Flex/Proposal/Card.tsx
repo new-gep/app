@@ -9,7 +9,6 @@ import ModalProposal from "./Modal";
 
 export default function ProposalCard({ item }: any) {
   const [visibleService, setVisibleService] = useState<boolean>(false);
-  console.log(item)
 
   const renderLeftActions = () => (
     <TouchableOpacity
@@ -52,7 +51,7 @@ export default function ProposalCard({ item }: any) {
                 ellipsizeMode="tail"
                 className="capitalize"
                 >
-                {item.title}
+                {item?.title ? item.title : "Título não informado"}
                 </Text>
                 <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
@@ -64,13 +63,13 @@ export default function ProposalCard({ item }: any) {
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
                 >
-                {item.model}
+                {item?.category ? item.category : "Categoria não informada"}
                 </Text>
                 <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
                 >
-                {item.locality}
+                {item?.CPF_Creator?.collaborator?.collaborator?.city && item?.CPF_Creator?.collaborator?.collaborator?.uf ? `${item.CPF_Creator.collaborator.collaborator.city}, ${item.CPF_Creator.collaborator.collaborator.uf}` : "Localização não informada"}
                 </Text>
             </View>
             </View>

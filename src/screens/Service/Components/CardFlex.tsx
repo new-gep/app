@@ -66,7 +66,7 @@ export default function CardFlex() {
 
   return (
     <View style={Style.container} className="mt-5 bg-white p-3 rounded-2xl">
-      <View className="px-2">
+      {/* <View className="px-2">
         <Swipeable
           renderLeftActions={(progress) => renderLeftActions(progress)}
         >
@@ -75,7 +75,7 @@ export default function CardFlex() {
             className="w-full bg-white border-b border-zinc-300 rounded-lg p-3 flex-row items-center"
             style={{ height: rf(80) }}
           >
-            {/* Logo */}
+           
             {empresaAtualFake.logoUrl ? (
               <Image
                 source={{ uri: empresaAtualFake.logoUrl }}
@@ -121,7 +121,7 @@ export default function CardFlex() {
             <ChevronRight size={20} className="text-zinc-400" />
           </TouchableOpacity>
         </Swipeable>
-      </View>
+      </View> */}
                 
       <>
         {/* <View className="flex-row justify-between mt-5">

@@ -15,7 +15,9 @@ import Mask from "~/src/function/mask";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 
 export default function ProcessCard({ item }: any) {
+  console.log(item)
   const step = () => {
+    
     if (item.process === "admission") {
       switch (item.step) {
         case 1:
@@ -41,6 +43,7 @@ export default function ProcessCard({ item }: any) {
       }
     }
   };
+
 
   return (
     <>
@@ -69,13 +72,13 @@ export default function ProcessCard({ item }: any) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {item && item.CNPJ_Company.name}
+                {item && item?.CNPJ_Company?.function}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item && item.job.function}
+                {item && item?.job?.function}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}

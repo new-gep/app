@@ -8,12 +8,14 @@ import {
   Animated,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import Modal from "react-native-modal";
 import {
   Share2,
   CameraOff,
   Eye,
+  MailCheck,
   Banknote,
   MapPin,
   HandCoins,
@@ -36,7 +38,9 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
-import { IMAGES } from "~/src/constants/Images";
+import UpdateAnnouncement from "~/src/hooks/update/announcement/announcement";
+import { useNavigation } from "@react-navigation/native";
+import useCollaborator from "~/src/function/fetchCollaborator";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MIN_MODAL_HEIGHT = SCREEN_HEIGHT * 0.4; // Minimum height (40% of screen)
@@ -48,10 +52,12 @@ const ServiceInformation = ({
   peopleData,
   autoView,
 }: any) => {
+  const navigation = useNavigation();
+  const { collaborator } = useCollaborator();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
-  const [path, setPath ]= useState<string | null>('');
+  const [path, setPath] = useState<string | null>("");
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [showVerifiedText, setShowVerifiedText] = useState(false);
   const modalHeight = useRef(new Animated.Value(MIN_MODAL_HEIGHT)).current;
@@ -64,12 +70,11 @@ const ServiceInformation = ({
   });
 
   useEffect(() => {
-      if (peopleData?.CPF_Creator?.collaborator?.picture
-      ) {
-        setPath(peopleData.CPF_Creator.collaborator.picture);
-      } else {
-        setPath(null); // Garante que image seja null se não houver caminho válido
-      }
+    if (peopleData?.CPF_Creator?.collaborator?.picture) {
+      setPath(peopleData.CPF_Creator.collaborator.picture);
+    } else {
+      setPath(null); // Garante que image seja null se não houver caminho válido
+    }
   }, [visible]);
 
   // Gesture handling for header drag
@@ -171,6 +176,48 @@ const ServiceInformation = ({
     setActiveImage(null);
   };
 
+  const handleSave = async () => {
+    if(!collaborator) return;
+
+    const data = {
+      CPF_responder: collaborator.CPF,
+    };
+
+    try {
+      const response = await UpdateAnnouncement(peopleData.id, data);
+
+      if (response.status === 200) {
+        Alert.alert(
+          "Sucesso!",
+          `O contratado foi aceito com sucesso.`,
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.goBack();
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+        return;
+      }
+
+      Alert.alert(
+        "Erro!",
+        `Não foi possível realizar o contratado.`,
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        { cancelable: false }
+      );
+    } 
+    catch (error) {
+      console.error("Erro ao tentar salvar:", error);
+      Alert.alert("Erro!", `Ocorreu um erro inesperado.`, [{ text: "OK" }], {
+        cancelable: false,
+      });
+    }
+  };
+
   return (
     <Modal
       isVisible={visible}
@@ -246,9 +293,9 @@ const ServiceInformation = ({
               {/* Header Content */}
               <View style={styles.headerContent}>
                 <View style={{ marginRight: rf(12), position: "relative" }}>
-                  {path? 
+                  {path ? (
                     <Image
-                      source={ {uri:path} }
+                      source={{ uri: path }}
                       style={{
                         width: rf(43),
                         height: rf(43),
@@ -256,7 +303,7 @@ const ServiceInformation = ({
                       }}
                       resizeMode="cover"
                     />
-                    :
+                  ) : (
                     <View
                       style={{
                         backgroundColor: "#f4f4f5",
@@ -270,7 +317,7 @@ const ServiceInformation = ({
                     >
                       <UserRound size={rf(25)} />
                     </View>
-                  }
+                  )}
 
                   {peopleData && peopleData.isVerified && (
                     <View
@@ -308,7 +355,8 @@ const ServiceInformation = ({
                       color: "#6b7280",
                     }}
                   >
-                    {peopleData.CPF_Creator?.collaborator?.collaborator?.name && peopleData.CPF_Creator.collaborator.collaborator.name}
+                    {peopleData.CPF_Creator?.collaborator?.collaborator?.name &&
+                      peopleData.CPF_Creator.collaborator.collaborator.name}
                   </Text>
                 </View>
                 {peopleData && peopleData?.isVerified && (
@@ -397,8 +445,12 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    { peopleData?.CPF_Creator?.collaborator?.collaborator?.phone &&
-                      Mask("hiddenPhone", peopleData.CPF_Creator.collaborator.collaborator.phone)}
+                    {peopleData?.CPF_Creator?.collaborator?.collaborator
+                      ?.phone &&
+                      Mask(
+                        "hiddenPhone",
+                        peopleData.CPF_Creator.collaborator.collaborator.phone
+                      )}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -410,7 +462,8 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    { peopleData?.CPF_Creator?.collaborator?.collaborator?.city &&
+                    {peopleData?.CPF_Creator?.collaborator?.collaborator
+                      ?.city &&
                       peopleData?.CPF_Creator?.collaborator?.collaborator?.uf &&
                       `${peopleData?.CPF_Creator?.collaborator?.collaborator?.city}, ${peopleData.CPF_Creator.collaborator.collaborator.uf}`}
                   </Text>
@@ -440,34 +493,32 @@ const ServiceInformation = ({
                 >
                   {[0, 1, 2].map((index) => (
                     <View key={index} className="w-1/3 p-2">
-                      {
-                      peopleData &&
+                      {peopleData &&
                       peopleData.gallery &&
                       peopleData.gallery[index] &&
-                      peopleData.gallery[index].base64 ? 
-                        (
-                          //  peopleData.gallery[index]
-                          <TouchableOpacity
-                            className="w-full h-full"
-                            onPress={() => openImage(peopleData.gallery[index].base64)}
-                          >
-                            <Image
-                              source={{ uri: peopleData.gallery[index].base64 }}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                borderRadius: rf(12),
-                              }}
-                              resizeMode="cover"
-                            />
-                          </TouchableOpacity>
-                        ) : 
-                        (
-                          <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
-                            <CameraOff size={rf(20)} />
-                          </View>
-                        )
-                      }
+                      peopleData.gallery[index].base64 ? (
+                        //  peopleData.gallery[index]
+                        <TouchableOpacity
+                          className="w-full h-full"
+                          onPress={() =>
+                            openImage(peopleData.gallery[index].base64)
+                          }
+                        >
+                          <Image
+                            source={{ uri: peopleData.gallery[index].base64 }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: rf(12),
+                            }}
+                            resizeMode="cover"
+                          />
+                        </TouchableOpacity>
+                      ) : (
+                        <View className="w-full h-full rounded-xl bg-zinc-200 items-center justify-center">
+                          <CameraOff size={rf(20)} />
+                        </View>
+                      )}
                     </View>
                   ))}
                 </View>
@@ -560,31 +611,59 @@ const ServiceInformation = ({
                 </>
               )}
             </TouchableOpacity>
-            {!autoView && (
-              peopleData.apply ?
+            {peopleData.isPropostal ? (
               <TouchableOpacity
                 style={{ flex: 1, padding: 12, alignItems: "center" }}
-                onPress={handleApply}
+                onPress={handleSave}
               >
-                <Minus size={rf(24)} color="#71717a" />
+                <MailCheck size={rf(24)} color="#71717a" />
                 <Text
-                  style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                  style={{
+                    ...FONTS.font,
+                    fontSize: rf(9),
+                    color: "#71717a",
+                  }}
                 >
-                  Cancelar candidatura
+                  Aceitar proposta
                 </Text>
               </TouchableOpacity>
-              :
-              <TouchableOpacity
-                style={{ flex: 1, padding: 12, alignItems: "center" }}
-                onPress={handleApply}
-              >
-                <Plus size={rf(24)} color="#71717a" />
-                <Text
-                  style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
-                >
-                  Candidatar
-                </Text>
-              </TouchableOpacity>
+            ) : (
+              <>
+                {!autoView &&
+                  (peopleData.apply ? (
+                    <TouchableOpacity
+                      style={{ flex: 1, padding: 12, alignItems: "center" }}
+                      onPress={handleApply}
+                    >
+                      <Minus size={rf(24)} color="#71717a" />
+                      <Text
+                        style={{
+                          ...FONTS.font,
+                          fontSize: rf(9),
+                          color: "#71717a",
+                        }}
+                      >
+                        Cancelar candidatura
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={{ flex: 1, padding: 12, alignItems: "center" }}
+                      onPress={handleApply}
+                    >
+                      <Plus size={rf(24)} color="#71717a" />
+                      <Text
+                        style={{
+                          ...FONTS.font,
+                          fontSize: rf(9),
+                          color: "#71717a",
+                        }}
+                      >
+                        Candidatar
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+              </>
             )}
           </View>
         </Animated.View>

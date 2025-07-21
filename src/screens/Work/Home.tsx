@@ -100,13 +100,13 @@ export default function HomeWork({ jobConected, CPF, }: any) {
       image: IMAGES.warning,
       route: "Point",
     },
-    {
-      id: "2",
-      title: "Multas",
-      subtitle: "acesso",
-      image: IMAGES.swap,
-      route: "PayStub",
-    },
+    // {
+    //   id: "2",
+    //   title: "Multas",
+    //   subtitle: "acesso",
+    //   image: IMAGES.swap,
+    //   route: "PayStub",
+    // },
 
   ];
 
@@ -150,6 +150,7 @@ export default function HomeWork({ jobConected, CPF, }: any) {
             close={closeDevelopment}
             visible={isShowDevelopment}
           />
+          <Header leftIcon="back" title="" />
           <View className="flex-1">
             <View className="px-8 pt-8">
               <View className="flex flex-row items-start">
