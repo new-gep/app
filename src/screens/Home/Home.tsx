@@ -23,6 +23,7 @@ import BannerCircle from "./Helper/BannerCircle";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import FindAll from "~/src/hooks/get/announcement/all";
 import AllPeople from "~/src/hooks/get/collaborator/AllPeople";
+import FindAllService from "~/src/hooks/get/job/allService";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -43,11 +44,11 @@ const Home = () => {
   const fetchJobs = async () => {
     try {
       if (!collaborator) return;
-      const response = await FindAll(collaborator.CPF);
+      const response = await FindAllService(collaborator.CPF);
       if (response.status !== 200) {
         throw new Error(response.message || "Erro ao buscar os jobs.");
       }
-      setCards(response.announcements);
+      setCards(response.data);
     } catch (error: any) {
       alert("Erro ao buscar os jobs. Por favor, tente novamente.");
     } finally {
@@ -65,6 +66,7 @@ const Home = () => {
   };
 
   useEffect(() => {
+    if(!collaborator) return
     const loadData = async () => {
       await fetchJobs();
     };
@@ -141,7 +143,7 @@ const Home = () => {
 
       <ScrollView keyboardShouldPersistTaps="handled">
         {/* Topo da tela */}
-        <View className="w-full z-50 mt-1">
+        <View className="w-full z-50 mt-1 mb-10">
           <CardSearch
             setActiveTab={setCardSearch}
             activeTab={cardSearch}

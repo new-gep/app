@@ -8,6 +8,7 @@ import {
   Animated,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import Modal from "react-native-modal";
 import {
@@ -25,6 +26,7 @@ import {
   BriefcaseBusiness,
   Accessibility,
   Shapes,
+  Minus,
 } from "lucide-react-native";
 import {
   PanGestureHandler,
@@ -34,16 +36,20 @@ import {
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
-import { ImageZoom } from "@likashefqet/react-native-image-zoom";
+import UnapplyJob from "~/src/hooks/update/job/unapplyJob";
+import ApplyJob from "~/src/hooks/update/job/applyJob";
+import useCollaborator from "~/src/function/fetchCollaborator";
+
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MIN_MODAL_HEIGHT = SCREEN_HEIGHT * 0.4; // Minimum height (40% of screen)
 const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.9; // Maximum height (90% of screen
 
 const WorkInformation = ({
-  handleSwipeRight,
   visible,
   setVisible,
   jobData,
+  refresh,
+  setRefresh,
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
@@ -58,6 +64,7 @@ const WorkInformation = ({
     outputRange: [0, 0, 1],
     extrapolate: "clamp",
   });
+  const { collaborator } = useCollaborator();
 
   // Gesture handling for header drag
   const onGestureEvent = (event: any) => {
@@ -144,20 +151,55 @@ const WorkInformation = ({
     }).start(() => updateIsExpanded(targetHeight));
   };
 
-  const handleApply = () => {
-    handleSwipeRight();
+  const handleApply = async () => {
+    if (!collaborator) return;
+    const response = await ApplyJob(jobData.job.id, collaborator.CPF);
   };
 
-  if (!visible) return null;
+  const handleUnapply = async () => {
+    if (!collaborator) return;
 
-  const openImage = (uri: string) => {
-    setActiveImage(uri);
-    setZoomVisible(true);
-  };
-
-  const closeImage = () => {
-    setZoomVisible(false);
-    setActiveImage(null);
+    Alert.alert(
+      "Confirmar desistência",
+      "Tem certeza que deseja desistir desta candidatura?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Sim, desistir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const response = await UnapplyJob(
+                jobData.job.id,
+                collaborator.CPF
+              );
+              if (response.status === 200) {
+                Alert.alert(
+                  "Sucesso",
+                  "Você desistiu da candidatura com sucesso."
+                );
+                setRefresh((prev: number) => prev + 1);
+                setVisible(false);
+              } else {
+                Alert.alert(
+                  "Erro",
+                  "Não foi possível desistir da candidatura. Tente novamente."
+                );
+              }
+            } catch (error) {
+              console.error(error);
+              Alert.alert(
+                "Erro",
+                "Ocorreu um erro ao tentar desistir da candidatura."
+              );
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -233,7 +275,9 @@ const WorkInformation = ({
                 </View>
                 <View>
                   <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
-                    {jobData.function}
+                    {jobData?.job?.function
+                      ? jobData.job.function
+                      : "Cargo não informado"}
                   </Text>
                   <Text
                     style={{
@@ -242,7 +286,9 @@ const WorkInformation = ({
                       color: "#6b7280",
                     }}
                   >
-                    {jobData.name}
+                    {jobData?.job?.CNPJ_company?.company_name
+                      ? jobData.job.CNPJ_company.company_name
+                      : "Nome da empresa não informado"}
                   </Text>
                 </View>
                 {jobData && jobData.isVerified && (
@@ -277,13 +323,18 @@ const WorkInformation = ({
               </View>
             </View>
           </PanGestureHandler>
-          <ScrollView style={styles.contentContainer} contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}>
+          <ScrollView
+            style={styles.contentContainer}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+          >
             <View className="p-2 px-5 mb-5 bg-gray-50 rounded-xl flex-row justify-between">
               <View className="gap-4">
                 <View className="flex-row items-center">
                   <Banknote size={rf(16)} className="mr-1" />
                   <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                    {Mask("amount", jobData.salary)}
+                    {jobData?.job?.salary
+                      ? Mask("amount", jobData.job.salary)
+                      : "Salário não informado"}
                   </Text>
                 </View>
                 <View className="flex-row items-center">
@@ -292,10 +343,12 @@ const WorkInformation = ({
                     className=""
                     style={{ ...FONTS.fontBlack, fontSize: rf(11) }}
                   >
-                    {jobData.locality}
+                    {jobData?.job?.locality
+                      ? jobData.job.locality
+                      : "Localidade não informada"}
                   </Text>
                 </View>
-                {jobData.DEI && (
+                {jobData?.job?.DEI && (
                   <View className="flex-row  items-center">
                     <Shapes size={rf(16)} className="mr-1" />
                     <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
@@ -308,17 +361,21 @@ const WorkInformation = ({
                 <View className="flex-row items-center">
                   <FileText size={rf(16)} className="mr-1" />
                   <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                    {jobData.contract}
+                    {jobData?.job?.contract
+                      ? jobData.job.contract
+                      : "Contrato não informado"}
                   </Text>
                 </View>
                 <View className="flex-row items-center">
                   <BriefcaseBusiness size={rf(16)} className="mr-1" />
                   <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
-                    {jobData.model}
+                    {jobData?.job?.model
+                      ? jobData.job.model
+                      : "Modelo não informado"}
                   </Text>
                 </View>
 
-                {jobData.PCD && (
+                {jobData?.job?.PCD && (
                   <View className="flex-row items-center">
                     <Accessibility size={rf(16)} className="mr-1" />
                     <Text style={{ ...FONTS.fontBlack, fontSize: rf(11) }}>
@@ -348,8 +405,8 @@ const WorkInformation = ({
                   className="text-justify"
                   style={[FONTS.fontLight, { fontSize: rf(10) }]}
                 >
-                  {jobData.responsibility
-                    ? jobData.responsibility
+                  {jobData?.job?.responsibility
+                    ? jobData.job.responsibility
                     : "Nenhuma informação disponível"}
                 </Text>
               </View>
@@ -365,8 +422,8 @@ const WorkInformation = ({
                   className="text-justify"
                   style={[FONTS.fontLight, { fontSize: rf(10) }]}
                 >
-                  {jobData.requirements
-                    ? jobData.requirements
+                  {jobData?.job?.requirements
+                    ? jobData.job.requirements
                     : "Nenhuma informação disponível"}
                 </Text>
               </View>
@@ -382,9 +439,24 @@ const WorkInformation = ({
                   className="text-justify"
                   style={[FONTS.fontLight, { fontSize: rf(10) }]}
                 >
-                  {Array.isArray(jobData.skills) && jobData.skills.length > 0
-                    ? jobData.skills.join(", ")
-                    : "Nenhuma informação disponível"}
+                  {(() => {
+                    let skills = [];
+
+                    try {
+                      // Dá parse se for string
+                      skills =
+                        typeof jobData?.job?.skills === "string"
+                          ? JSON.parse(jobData.job.skills)
+                          : jobData.job.skills;
+                    } catch (e) {
+                      // Em caso de erro no parse, deixa vazio
+                      skills = [];
+                    }
+
+                    return Array.isArray(skills) && skills.length > 0
+                      ? skills.join(", ")
+                      : "Nenhuma informação disponível";
+                  })()}
                 </Text>
               </View>
 
@@ -396,16 +468,28 @@ const WorkInformation = ({
                   Benefícios
                 </Text>
                 <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
-                  {Array.isArray(jobData.benefits) &&
-                  jobData.benefits.length > 0
-                    ? jobData.benefits.join(", ")
-                    : "Nenhuma informação disponível"}
+                  {(() => {
+                    let benefits = [];
+
+                    try {
+                      benefits =
+                        typeof jobData?.job?.benefits === "string"
+                          ? JSON.parse(jobData.job.benefits)
+                          : jobData.job.benefits;
+                    } catch (e) {
+                      benefits = [];
+                    }
+
+                    return Array.isArray(benefits) && benefits.length > 0
+                      ? benefits.join(", ")
+                      : "Nenhuma informação disponível";
+                  })()}
                 </Text>
               </View>
             </Animated.View>
           </ScrollView>
           <View style={styles.footerContainer}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{ flex: 1, padding: 12, alignItems: "center" }}
               onPress={handleShare}
             >
@@ -415,7 +499,8 @@ const WorkInformation = ({
               >
                 Compartilhar
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+
             <TouchableOpacity
               style={{ flex: 1, padding: 12, alignItems: "center" }}
               onPress={handleView}
@@ -440,17 +525,32 @@ const WorkInformation = ({
                 </>
               )}
             </TouchableOpacity>
-            <TouchableOpacity
-              style={{ flex: 1, padding: 12, alignItems: "center" }}
-              onPress={handleApply}
-            >
-              <Plus size={rf(24)} color="#71717a" />
-              <Text
-                style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+
+            {jobData.isCandidate ? (
+              <TouchableOpacity
+                style={{ flex: 1, padding: 12, alignItems: "center" }}
+                onPress={handleUnapply}
               >
-                Candidatar
-              </Text>
-            </TouchableOpacity>
+                <Minus size={rf(24)} color="#71717a" />
+                <Text
+                  style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                >
+                  Cancelar Candidatura
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={{ flex: 1, padding: 12, alignItems: "center" }}
+                onPress={handleApply}
+              >
+                <Plus size={rf(24)} color="#71717a" />
+                <Text
+                  style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                >
+                  Candidatar
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </Animated.View>
       </GestureHandlerRootView>

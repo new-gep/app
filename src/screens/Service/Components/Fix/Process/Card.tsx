@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import {
   Check,
   ChevronRight,
@@ -15,9 +16,8 @@ import Mask from "~/src/function/mask";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 
 export default function ProcessCard({ item }: any) {
-  console.log(item)
+  const navigation = useNavigation<any>();
   const step = () => {
-    
     if (item.process === "admission") {
       switch (item.step) {
         case 1:
@@ -29,7 +29,8 @@ export default function ProcessCard({ item }: any) {
         default:
           return item.step;
       }
-    } else {
+    } 
+    else {
       switch (item.step) {
         case 1:
           return 'Exame Médico'
@@ -37,7 +38,12 @@ export default function ProcessCard({ item }: any) {
           return 'Kit Demissional'
         case 3:
           return 'Assinatura'
-
+        case '1':
+          return 'Exame Médico'
+        case '2':
+          return 'Kit Demissional'
+        case '3':
+          return 'Assinatura'
         default:
           return item.step;
       }
@@ -51,7 +57,7 @@ export default function ProcessCard({ item }: any) {
         <TouchableOpacity
           className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
           style={styles.card}
-          onPress={() => console.log('aq')}
+          onPress={() => navigation.navigate("FixActual")}
         >
           <View className="flex-row items-center flex-1">
             <View className="mr-3" style={{ position: "relative" }}>
@@ -71,14 +77,9 @@ export default function ProcessCard({ item }: any) {
                 style={{ ...FONTS.font, fontSize: rf(12) }}
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                className="capitalize"
               >
-                {item && item?.CNPJ_Company?.function}
-              </Text>
-              <Text
-                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                className="text-zinc-500"
-              >
-                {item && item?.job?.function}
+                {item && item?.function}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}

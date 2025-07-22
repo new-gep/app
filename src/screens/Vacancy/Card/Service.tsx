@@ -1,56 +1,87 @@
 import { Check, ChevronRight, EllipsisVertical, UserRound } from "lucide-react-native";
 import React, { useState } from "react";
-import { TouchableOpacity, View, Image, Text, StyleSheet, Dimensions } from "react-native";
+import { TouchableOpacity, View, Image, Text, StyleSheet, Dimensions, Alert } from "react-native";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import { Swipeable } from "react-native-gesture-handler";
 import { FONTS } from "~/src/constants/theme";
 import Mask from "~/src/function/mask";
 import ServiceInformation from "../../Home/Helper/Modal/ServiceInformation";
+import Unapply from "~/src/hooks/update/announcement/unapply";
+import useCollaborator from "~/src/function/fetchCollaborator";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const Service = React.memo(function SwipeableCard({
   item,
-  onSwipeRight,
-  onSwipeLeft,
-  navigateToCardInformation,
+  refresh,
+  setRefresh,
 }: any) {
   const [visible, setVisible] = useState<boolean>(false);
+  const { collaborator } = useCollaborator();
 
-  const renderLeftActions = () => (
-    <View className=" justify-center pl-6 flex-1 rounded-lg"></View>
-  );
-
-  const renderRightActions = () => (
-    <View className="justify-center items-center  w-20">
-      <TouchableOpacity onPress={() => setVisible(true)}>
-        <EllipsisVertical size={rf(25)} />
-      </TouchableOpacity>
-    </View>
-  );
+  const handleUnapply = async () => {
+      if (!collaborator) return;
+  
+      Alert.alert(
+        "Confirmar desistência",
+        "Tem certeza que deseja desistir desta candidatura?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+          {
+            text: "Sim, desistir",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                const response = await Unapply(
+                  item.announcement.announcement.id,
+                  collaborator.CPF
+                );
+                if (response.status === 200) {
+                  Alert.alert(
+                    "Sucesso",
+                    "Você desistiu da candidatura com sucesso."
+                  );
+                  setRefresh((prev: number) => prev + 1);
+                  setVisible(false);
+                } else {
+                  Alert.alert(
+                    "Erro",
+                    "Não foi possível desistir da candidatura. Tente novamente."
+                  );
+                }
+              } catch (error) {
+                console.error(error);
+                Alert.alert(
+                  "Erro",
+                  "Ocorreu um erro ao tentar desistir da candidatura."
+                );
+              }
+            },
+          },
+        ]
+      );
+  };
 
   return (
     <View style={styles.cardWrapper}>
       <ServiceInformation
-        handleSwipeRight={onSwipeRight}
+        handleSwipeRight={handleUnapply}
         visible={visible}
         setVisible={setVisible}
-        peopleData={item}
-        autoView={true}
+        peopleData={{...item.announcement.announcement, apply:true}}
       />
       <Swipeable
         key={item.id}
-        onSwipeableOpen={(direction) => {
-          if (direction === "left") {
-            onSwipeRight(item.id);
-          }
-        }}
-        renderRightActions={renderRightActions}
-        renderLeftActions={renderLeftActions} // <- necessário para permitir o swipe à direita
+        onSwipeableOpen={() => null}
+        renderRightActions={() => null}
+        renderLeftActions={() => null} // <- necessário para permitir o swipe à direita
       >
         <TouchableOpacity
           className="px-4 py-2 bg-white border-b border-zinc-300 rounded-lg flex-row items-center justify-between"
           style={styles.card}
-          onPress={navigateToCardInformation}
+          onPress={() => setVisible(true)}
         >
           <View className="flex-row items-center flex-1">
             <View className="mr-3" style={{ position: "relative" }}>
@@ -87,20 +118,21 @@ const Service = React.memo(function SwipeableCard({
                 style={{ ...FONTS.font, fontSize: rf(12) }}
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                className="capitalize"
               >
-                {item.function}
+                {item.announcement?.announcement?.title ? item.announcement?.announcement?.title : "Sem título"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {`${Mask("amount", item.salary)} ${item.valueType}`}
+                {`${item.announcement?.announcement?.salary && Mask("amount", item.announcement?.announcement?.salary)} ${item.announcement?.announcement?.typePayment ? item.announcement?.announcement?.typePayment : ""}`}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.model}
+                {item.announcement?.announcement?.category ? item.announcement?.announcement?.category : "Sem categoria"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}

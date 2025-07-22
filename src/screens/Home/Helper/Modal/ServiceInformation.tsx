@@ -71,7 +71,7 @@ const ServiceInformation = ({
 
   useEffect(() => {
     if (peopleData?.CPF_Creator?.collaborator?.picture) {
-      setPath(peopleData.CPF_Creator.collaborator.picture);
+      setPath(peopleData?.CPF_Creator?.collaborator?.picture);
     } else {
       setPath(null); // Garante que image seja null se não houver caminho válido
     }
@@ -355,8 +355,8 @@ const ServiceInformation = ({
                       color: "#6b7280",
                     }}
                   >
-                    {peopleData.CPF_Creator?.collaborator?.collaborator?.name &&
-                      peopleData.CPF_Creator.collaborator.collaborator.name}
+                    {peopleData?.CPF_Creator?.collaborator?.collaborator?.name &&
+                      peopleData?.CPF_Creator.collaborator.collaborator.name}
                   </Text>
                 </View>
                 {peopleData && peopleData?.isVerified && (
@@ -611,7 +611,7 @@ const ServiceInformation = ({
                 </>
               )}
             </TouchableOpacity>
-            {peopleData.isPropostal ? (
+            {peopleData?.isPropostal ? (
               <TouchableOpacity
                 style={{ flex: 1, padding: 12, alignItems: "center" }}
                 onPress={handleSave}
@@ -630,7 +630,7 @@ const ServiceInformation = ({
             ) : (
               <>
                 {!autoView &&
-                  (peopleData.apply ? (
+                  (peopleData?.apply ? (
                     <TouchableOpacity
                       style={{ flex: 1, padding: 12, alignItems: "center" }}
                       onPress={handleApply}

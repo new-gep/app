@@ -182,7 +182,7 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
         </View>
       </View>
       {/* // */}
-      <View
+      {/* <View
         style={Style.container}
         className="flex-1 flex-row items-center bg-white rounded-xl shadow-md pr-3 mt-3 mx-4 mb-5"
       >
@@ -213,7 +213,7 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
             <Settings2 size={22} color="#9CA3AF" />
           </TouchableOpacity>
         )}
-      </View>
+      </View> */}
     </View>
   );
 };

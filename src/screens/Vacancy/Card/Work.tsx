@@ -11,8 +11,8 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const Work = React.memo(function SwipeableCard({
   item,
-  onSwipeRight,
-  navigateToCardInformation,
+  refresh,
+  setRefresh,
   handleSwipeRight,
 }: any) {
   const [visible, setVisible] = useState<boolean>();
@@ -35,7 +35,8 @@ const Work = React.memo(function SwipeableCard({
         jobData={item}
         visible={visible}
         setVisible={setVisible}
-        handleSwipeRight={handleSwipeRight}
+        refresh={refresh}
+        setRefresh={setRefresh}
       />
       <Swipeable
         key={item.id}
@@ -44,13 +45,13 @@ const Work = React.memo(function SwipeableCard({
             handleSwipeRight(item.id);
           }
         }}
-        renderRightActions={renderRightActions}
-        renderLeftActions={renderLeftActions} // <- necessário para permitir o swipe à direita
+        renderRightActions={()=>null}
+        renderLeftActions={()=>null} // <- necessário para permitir o swipe à direita
       >
         <TouchableOpacity
           className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
           style={styles.card}
-          onPress={navigateToCardInformation}
+          onPress={() => {setVisible(true)}}
         >
           <View className="flex-row items-center">
             <View className="mr-3" style={{ position: "relative" }}>
@@ -84,26 +85,29 @@ const Work = React.memo(function SwipeableCard({
             </View>
 
             <View className="pr-2">
-              <Text style={{ ...FONTS.font, fontSize: rf(12) }}>
-                {item.function}
+              <Text className="capitalize" style={{ ...FONTS.font, fontSize: rf(12) }}>
+                {item?.job?.function ? item.job.function : "Cargo não informado"}
+              </Text>
+              <Text className="capitalize" style={{ ...FONTS.font, fontSize: rf(10) }}>
+                {item?.job?.CNPJ_company?.company_name ? item.job.CNPJ_company.company_name : "Nome da empresa não informado"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-green-600"
               >
-                {Mask("amount", item.salary)}
+                { item?.job?.salary ? Mask("amount", item.job.salary) : "Salário não informado"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.model}
+                {item?.job?.model ? item.job.model : "Modelo não informado"}
               </Text>
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                {item.locality}
+                {item?.job?.locality ? item.job.locality : "Localidade não informada"}
               </Text>
             </View>
           </View>
