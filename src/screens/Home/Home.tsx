@@ -25,7 +25,8 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import FindAll from "~/src/hooks/get/announcement/all";
 import AllPeople from "~/src/hooks/get/collaborator/AllPeople";
 import FindAllService from "~/src/hooks/get/job/allService";
-import messaging from "@react-native-firebase/messaging";
+// import messaging from "@react-native-firebase/messaging";
+import * as Notifications from "expo-notifications";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -97,50 +98,78 @@ const Home = () => {
   };
 
   async function registerForPushNotificationsAsync() {
-    if (!collaborator) return;
-    if (isEmulator()) {
-      console.log("Emulador detectado, notificações não serão registradas.");
+    //     let token;
+
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
       return;
     }
-    console.log('Celular Real, registrando notificações...');
-    // Verifica se o dispositivo é um emulador
 
-    // try {
-    //   const authStatus = await messaging().requestPermission();
-    //   const enabled =
-    //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    //   if (!enabled) {
-    //     console.log("Permissão de notificação não foi concedida");
-    //     return;
-    //   }
-
-    //   console.log("Permissão de notificação concedida", collaborator);
-
-    //   // Obter token FCM
-    //   const token = await messaging().getToken();
-    //   console.log("🔥 FCM Token:", token);
-
-    //   // Salve o token no backend, associando ao collaborator
-    //   // Exemplo (substitua pela sua API):
-    //   // await api.post('/save-token', { collaboratorId: collaborator.id, token });
-
-    //   // Escute atualização do token (caso ele mude)
-    //   messaging().onTokenRefresh(async (newToken) => {
-    //     console.log("FCM Token atualizado:", newToken);
-    //     // Atualize no backend também
-    //     // await api.post('/save-token', { collaboratorId: collaborator.id, token: newToken });
-    //   });
-    // } catch (error) {
-    //   console.log("Erro ao registrar notificações:", error);
-    // }
+    //     return token;
   }
+
+  // async function registerForPushNotificationsAsync() {
+  //   if (!collaborator) return;
+  //   if (isEmulator()) {
+  //     console.log("Emulador detectado, notificações não serão registradas.");
+  //     return;
+  //   }
+  //   console.log("Celular Real, registrando notificações...");
+  //   // Verifica se o dispositivo é um emulador
+
+  //   try {
+  //     let finalStatus;
+  //     console.log("aq");
+  //     // Verifica se já tem permissão
+  //     const { status: existingStatus } =
+  //       await Notifications.getPermissionsAsync();
+  //     finalStatus = existingStatus;
+
+  //     // Se não tiver, pede permissão
+  //     if (existingStatus !== "granted") {
+  //       const { status } = await Notifications.requestPermissionsAsync();
+  //       finalStatus = status;
+  //     }
+
+  //     // Se ainda não foi concedido, sai
+  //     if (finalStatus !== "granted") {
+  //       alert("Permissão de notificações não concedida!");
+  //       return;
+  //     }
+
+  //     return;
+
+  //     // Obter token FCM
+  //     // const token = await messaging().getToken();
+  //     // console.log("🔥 FCM Token:", token);
+
+  //     // // Salve o token no backend, associando ao collaborator
+  //     // // Exemplo (substitua pela sua API):
+  //     // // await api.post('/save-token', { collaboratorId: collaborator.id, token });
+
+  //     // // Escute atualização do token (caso ele mude)
+  //     // messaging().onTokenRefresh(async (newToken) => {
+  //     //   console.log("FCM Token atualizado:", newToken);
+  //     //   // Atualize no backend também
+  //     //   // await api.post('/save-token', { collaboratorId: collaborator.id, token: newToken });
+  //     // });
+  //   } catch (error) {
+  //     console.log("Erro ao registrar notificações:", error);
+  //   }
+  // }
 
   useEffect(() => {
     if (!collaborator) return;
     const loadData = async () => {
-      registerForPushNotificationsAsync();
+      await registerForPushNotificationsAsync();
       await fetchJobs();
     };
     loadData();

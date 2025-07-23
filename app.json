@@ -66,9 +66,7 @@
           "initialOrientation": "DEFAULT"
         }
       ],
-      "expo-build-properties",
-      "expo-font",
-      "expo-router"
+      ["expo-notifications"]
     ],
     "extra": {
       "eas": {
