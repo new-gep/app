@@ -9,6 +9,7 @@ import {
   Dimensions,
   Keyboard,
   ScrollView,
+  Platform,
 } from "react-native";
 import Card from "./Card";
 import CardPeople from "./Helper/CardPeopleService";
@@ -24,6 +25,7 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import FindAll from "~/src/hooks/get/announcement/all";
 import AllPeople from "~/src/hooks/get/collaborator/AllPeople";
 import FindAllService from "~/src/hooks/get/job/allService";
+import messaging from "@react-native-firebase/messaging";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -58,16 +60,87 @@ const Home = () => {
 
   const fetchPeople = async () => {
     if (!collaborator) return;
-    const response = await AllPeople(collaborator.CPF)
-    if(response?.status == 200){
+    const response = await AllPeople(collaborator.CPF);
+    if (response?.status == 200) {
       setCards(response.peoples);
     }
     setIsLoading(false);
   };
 
+  const isEmulator = () => {
+    if (Platform.OS !== "android") {
+      // Para iOS, verificar 'Simulator' no Model
+      return Platform.constants.Model?.toLowerCase().includes("simulator");
+    }
+
+    // Para Android, verificar propriedades típicas de emuladores
+    const { Brand, Model, Fingerprint, Manufacturer } = Platform.constants;
+
+    const isEmulatorByModel =
+      Model?.toLowerCase().includes("sdk") ||
+      Model?.toLowerCase().includes("emulator");
+    const isEmulatorByFingerprint =
+      Fingerprint?.toLowerCase().includes("generic") ||
+      Fingerprint?.toLowerCase().includes("sdk");
+    const isEmulatorByManufacturer =
+      Manufacturer?.toLowerCase().includes("genymotion") ||
+      Manufacturer?.toLowerCase() === "google";
+    const isEmulatorByBrand = Brand?.toLowerCase() === "google";
+
+    // Considera emulador se qualquer uma das condições for verdadeira
+    return (
+      isEmulatorByModel ||
+      isEmulatorByFingerprint ||
+      isEmulatorByManufacturer ||
+      isEmulatorByBrand
+    );
+  };
+
+  async function registerForPushNotificationsAsync() {
+    if (!collaborator) return;
+    if (isEmulator()) {
+      console.log("Emulador detectado, notificações não serão registradas.");
+      return;
+    }
+    console.log('Celular Real, registrando notificações...');
+    // Verifica se o dispositivo é um emulador
+
+    // try {
+    //   const authStatus = await messaging().requestPermission();
+    //   const enabled =
+    //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    //   if (!enabled) {
+    //     console.log("Permissão de notificação não foi concedida");
+    //     return;
+    //   }
+
+    //   console.log("Permissão de notificação concedida", collaborator);
+
+    //   // Obter token FCM
+    //   const token = await messaging().getToken();
+    //   console.log("🔥 FCM Token:", token);
+
+    //   // Salve o token no backend, associando ao collaborator
+    //   // Exemplo (substitua pela sua API):
+    //   // await api.post('/save-token', { collaboratorId: collaborator.id, token });
+
+    //   // Escute atualização do token (caso ele mude)
+    //   messaging().onTokenRefresh(async (newToken) => {
+    //     console.log("FCM Token atualizado:", newToken);
+    //     // Atualize no backend também
+    //     // await api.post('/save-token', { collaboratorId: collaborator.id, token: newToken });
+    //   });
+    // } catch (error) {
+    //   console.log("Erro ao registrar notificações:", error);
+    // }
+  }
+
   useEffect(() => {
-    if(!collaborator) return
+    if (!collaborator) return;
     const loadData = async () => {
+      registerForPushNotificationsAsync();
       await fetchJobs();
     };
     loadData();
@@ -76,10 +149,8 @@ const Home = () => {
   useEffect(() => {
     const loadData = async () => {
       if (cardSearch == "Service") {
-        console.log("buscando emprego");
         await fetchJobs();
       } else {
-        console.log("buscando pessoa");
         await fetchPeople();
       }
     };
@@ -173,8 +244,8 @@ const Home = () => {
           </>
         ) : (
           <View className="mt-10 items-center justify-center">
-            <ActivityIndicator color={'black'} size={rf(20)}/>
-            <Text style={{...FONTS.fontBlack, fontSize:rf(15)}}>
+            <ActivityIndicator color={"black"} size={rf(20)} />
+            <Text style={{ ...FONTS.fontBlack, fontSize: rf(15) }}>
               Buscando
             </Text>
           </View>

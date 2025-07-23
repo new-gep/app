@@ -21,12 +21,24 @@ import Service from "./Card/Service";
 import Work from "./Card/Work";
 import FindCandidacy from "~/src/hooks/get/job/findCandidacy";
 
-
 export default function Vacancy() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<any>();
   const [searchQuery, setSearchQuery] = useState("");
-  const [jobConected, setJobConected] = useState([]); // Substitua por seus dados reais
+  type JobItem = {
+    job?: {
+      function?: string;
+    };
+    announcement?: {
+      announcement?: {
+        title?: string;
+      };
+    };
+    service?: string;
+    [key: string]: any;
+  };
+
+  const [jobConected, setJobConected] = useState<JobItem[]>([]); // Substitua por seus dados reais
   const [isLoading, setIsLoading] = useState(false);
   const [reload, setReload] = useState<number>(1);
   const { collaborator } = useCollaborator();
@@ -51,6 +63,11 @@ export default function Vacancy() {
     }
   };
 
+  const filteredJobs = jobConected.filter((item) => {
+    const title = item?.job?.function || item?.announcement?.announcement?.title || ""; 
+    return title.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
   useFocusEffect(
     React.useCallback(() => {
       fetchJobs();
@@ -60,16 +77,12 @@ export default function Vacancy() {
   const renderItem = useCallback(({ item }: any) => {
     return item.service === "fix" ? (
       <Work
-        item={{...item, isCandidate:true}}
+        item={{ ...item, isCandidate: true }}
         refresh={reload}
         setRefresh={setReload}
       />
     ) : (
-      <Service
-        item={item}
-        refresh={reload}
-        setRefresh={setReload}
-      />
+      <Service item={item} refresh={reload} setRefresh={setReload} />
     );
   }, []);
 
@@ -89,18 +102,19 @@ export default function Vacancy() {
             {/* Search */}
             {jobConected && jobConected.length > 0 && (
               <View className="px-4 mb-5" style={{ paddingTop: 90 }}>
-                {/* <TextInput
+                <TextInput
                   placeholder="Buscar Vaga..."
                   placeholderTextColor="#9CA3AF"
                   className="p-3 border border-gray-300 rounded-lg text-gray-900"
                   value={searchQuery}
                   onChangeText={setSearchQuery}
-                /> */}
+                />
               </View>
             )}
-            {jobConected?.length > 0 ? (
+            {filteredJobs.length > 0  ? (
               <FlatList
-                data={jobConected}
+                // data={jobConected}
+                data={filteredJobs}
                 renderItem={renderItem}
                 contentContainerStyle={{ paddingBottom: 30 }}
                 initialNumToRender={5}

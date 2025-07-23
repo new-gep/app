@@ -105,6 +105,8 @@ const Onboarding = ({ navigation }: OnboardingScreenProps) => {
     ]).start();
   }, [sliderIndex]);
 
+  
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.card }}>
       {!waitProcess ? (

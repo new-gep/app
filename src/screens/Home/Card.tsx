@@ -77,7 +77,8 @@ const SwipeableCardCompany = React.memo(function SwipeableCard({
             handleSwipeRight(item.job.id);
           }
         }}
-        renderRightActions={renderRightActions}
+        // renderRightActions={renderRightActions}
+        renderRightActions={()=> null}
         renderLeftActions={renderLeftActions} // <- necessário para permitir o swipe à direita
       >
         <TouchableOpacity
@@ -186,7 +187,7 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
           }
         }}
         // renderRightActions={renderRightActions}
-
+        renderRightActions={()=> null}
         renderLeftActions={renderLeftActions} // <- necessário para permitir o swipe à direita
       >
         <TouchableOpacity
@@ -283,7 +284,6 @@ export default function CathoStyleCards({
   );
 };
 
-
   const handleSwipeRight = async (id: any) => {
     if (!collaborator) {
       showPopupMessage("Você precisa estar logado para aplicar!");
@@ -367,7 +367,7 @@ export default function CathoStyleCards({
           data={data}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 30 }}
-          keyExtractor={(item) => item?.service === "fix" ? item.job.id : item.announcement.announcement.id}
+          keyExtractor={(item) => item?.service === "fix" ? item.job.id : item?.service === "fix" ? item?.announcement?.announcement?.id : item.id}
           initialNumToRender={5}
           maxToRenderPerBatch={5}
           windowSize={10}

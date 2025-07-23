@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1085982183198",
+    "project_id": "new-gep",
+    "storage_bucket": "new-gep.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085982183198:android:73e930bf0b12053380830f",
+        "android_client_info": {
+          "package_name": "com.newgep.gep"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-6Y8qqL4wj0drrf61N5bgFjJqQISgc9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
