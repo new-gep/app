@@ -25,8 +25,8 @@ import UpdateAnnouncement from "~/src/hooks/update/announcement/announcement";
 import useCollaborator from "~/src/function/fetchCollaborator";
 export default function Form({ title, setSelectedCategory, item }: any) {
   const [visible, setVisible] = useState<boolean>(false);
-  const [gallery, setGallery] = useState<Array<any>>(item ? item.gallery : []);
-  const [oldGallery, setOldGallery] = useState<Array<any>>(item.gallery);
+  const [gallery, setGallery] = useState<Array<any>>(item ? item?.gallery : []);
+  const [oldGallery, setOldGallery] = useState<Array<any>>(item?.gallery);
   const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
     []
   );

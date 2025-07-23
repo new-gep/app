@@ -197,15 +197,25 @@ const SwipeableCard = React.memo(function SwipeableCard({
                     maxWidth: SCREEN_WIDTH * 0.4,
                   }}
                 >
-                  {item?.collaborator &&
-                    renderIconFromCategoryMap(item?.collaborator.service)}
+                  {item?.collaborator && item?.collaborator?.service?.length > 0
+                    ? renderIconFromCategoryMap(item?.collaborator.service)
+                    : 
+                    <Text style={{ ...FONTS.fontBlack, fontSize: rf(10) }}>
+                      Sem especialização definida
+                    </Text>
+                  }
                 </View>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className="text-zinc-500"
                 >
-                  {item?.collaborator &&
-                    item?.collaborator.howWork.contract?.join(", ")}
+                  {item?.collaborator && item?.collaborator?.howWork?.contract?.length > 0
+                    ? item?.collaborator?.howWork?.contract?.join(", ")
+                    : 
+                    <Text style={{ ...FONTS.fontBlack, fontSize: rf(10) }}>
+                      Sem preferencia de contrato
+                    </Text>
+                  }
                 </Text>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
@@ -228,7 +238,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
   );
 });
 
-export default function CardPeople({
+export default function   CardPeople({
   data,
   setCards,
   collaborator,

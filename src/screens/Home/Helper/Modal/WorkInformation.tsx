@@ -50,6 +50,7 @@ const WorkInformation = ({
   jobData,
   refresh,
   setRefresh,
+  handleSwipeRight,
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
@@ -153,7 +154,8 @@ const WorkInformation = ({
 
   const handleApply = async () => {
     if (!collaborator) return;
-    const response = await ApplyJob(jobData.job.id, collaborator.CPF);
+
+    handleSwipeRight();
   };
 
   const handleUnapply = async () => {
@@ -274,7 +276,10 @@ const WorkInformation = ({
                   )}
                 </View>
                 <View>
-                  <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
+                  <Text
+                    className="capitalize"
+                    style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}
+                  >
                     {jobData?.job?.function
                       ? jobData.job.function
                       : "Cargo não informado"}
@@ -285,6 +290,7 @@ const WorkInformation = ({
                       fontSize: rf(12),
                       color: "#6b7280",
                     }}
+                    className="w-10/12"
                   >
                     {jobData?.job?.CNPJ_company?.company_name
                       ? jobData.job.CNPJ_company.company_name

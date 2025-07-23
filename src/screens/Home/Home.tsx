@@ -26,7 +26,7 @@ import FindAll from "~/src/hooks/get/announcement/all";
 import AllPeople from "~/src/hooks/get/collaborator/AllPeople";
 import FindAllService from "~/src/hooks/get/job/allService";
 // import messaging from "@react-native-firebase/messaging";
-import * as Notifications from "expo-notifications";
+// import * as Notifications from "expo-notifications";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -71,6 +71,7 @@ const Home = () => {
   const isEmulator = () => {
     if (Platform.OS !== "android") {
       // Para iOS, verificar 'Simulator' no Model
+      //@ts-ignore
       return Platform.constants.Model?.toLowerCase().includes("simulator");
     }
 
@@ -97,24 +98,24 @@ const Home = () => {
     );
   };
 
-  async function registerForPushNotificationsAsync() {
-    //     let token;
+  // async function registerForPushNotificationsAsync() {
+  //   //     let token;
 
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
+  //   const { status: existingStatus } =
+  //     await Notifications.getPermissionsAsync();
+  //   let finalStatus = existingStatus;
 
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
-    }
+  //   if (existingStatus !== "granted") {
+  //     const { status } = await Notifications.requestPermissionsAsync();
+  //     finalStatus = status;
+  //   }
+  //   if (finalStatus !== "granted") {
+  //     alert("Failed to get push token for push notification!");
+  //     return;
+  //   }
 
-    //     return token;
-  }
+  //   //     return token;
+  // }
 
   // async function registerForPushNotificationsAsync() {
   //   if (!collaborator) return;
@@ -169,7 +170,7 @@ const Home = () => {
   useEffect(() => {
     if (!collaborator) return;
     const loadData = async () => {
-      await registerForPushNotificationsAsync();
+      // await registerForPushNotificationsAsync();
       await fetchJobs();
     };
     loadData();
@@ -241,7 +242,7 @@ const Home = () => {
         </View>
       )}
 
-      <ScrollView keyboardShouldPersistTaps="handled">
+      {/* <ScrollView keyboardShouldPersistTaps="handled"> */}
         {/* Topo da tela */}
         <View className="w-full z-50 mt-1 mb-10">
           <CardSearch
@@ -279,7 +280,7 @@ const Home = () => {
             </Text>
           </View>
         )}
-      </ScrollView>
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 };

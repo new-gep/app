@@ -116,7 +116,7 @@ export default function Card() {
                 </View>
                 <Text
                   style={{ ...FONTS.font, fontSize: rf(11) }}
-                  className="text-zinc-500"
+                  className="text-zinc-500 capitalize"
                 >
                   {actualCompany?.function ? actualCompany.function : "Sem cargo"}
                 </Text>

@@ -183,9 +183,9 @@ const PeopleInformation = ({
   const handleApply = () => {
     if (peopleData.isCandidate) {
       handleSave();
-      return
+      return;
     }
-    setModalPropostal(true)
+    setModalPropostal(true);
   };
 
   const openImage = (uri: string) => {
@@ -255,10 +255,15 @@ const PeopleInformation = ({
           "firstName",
           peopleData.collaborator.name
         )} foi contratado com sucesso.`,
-        [{ text: "OK", onPress: () =>{ 
-          setIsContract(true) 
-          navigation.goBack();
-        }}],
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              setIsContract(true);
+              navigation.goBack();
+            },
+          },
+        ],
         { cancelable: false }
       );
       return;
@@ -281,62 +286,65 @@ const PeopleInformation = ({
   }, []);
 
   return (
+    <Modal
+      isVisible={visible}
+      backdropOpacity={0.8}
+      style={{ margin: 0, justifyContent: "flex-end" }}
+      useNativeDriver={true}
+      propagateSwipe={true}
+    >
       <Modal
-        isVisible={visible}
-        backdropOpacity={0.8}
-        style={{ margin: 0, justifyContent: "flex-end" }}
-        useNativeDriver={true}
-        propagateSwipe={true}
+        //@ts-ignore
+        visible={zoomVisible}
+        transparent={true}
+        onRequestClose={closeImage}
       >
-          <Modal
-            //@ts-ignore
-            visible={zoomVisible}
-            transparent={true}
-            onRequestClose={closeImage}
+        <GestureHandlerRootView
+          style={{ height: "80%", backgroundColor: "white" }}
+        >
+          {/* Ícone de voltar */}
+          <TouchableOpacity
+            className={"rounded-full items-center justify-center"}
+            onPress={closeImage}
+            style={{
+              height: rf(30),
+              width: rf(30),
+            }}
           >
-            <GestureHandlerRootView
-              style={{ height: "80%", backgroundColor: "white" }}
-            >
-              {/* Ícone de voltar */}
-              <TouchableOpacity
-                className={"rounded-full items-center justify-center"}
-                onPress={closeImage}
-                style={{
-                  height: rf(30),
-                  width: rf(30),
-                }}
-              >
-                <ChevronLeft size={rf(25)} color="#000" />
-              </TouchableOpacity>
+            <ChevronLeft size={rf(25)} color="#000" />
+          </TouchableOpacity>
 
-              {/* Imagem com zoom */}
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={closeImage}
+          {/* Imagem com zoom */}
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={closeImage}
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {activeImage && (
+              <ImageZoom
                 style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
+                  width: "100%",
+                  height: Dimensions.get("window").height * 0.7,
+                  resizeMode: "contain",
                 }}
-              >
-                {activeImage && (
-                  <ImageZoom
-                    style={{
-                      width: "100%",
-                      height: Dimensions.get("window").height * 0.7,
-                      resizeMode: "contain",
-                    }}
-                    source={{ uri: activeImage }}
-                  />
-                )}
-              </TouchableOpacity>
-            </GestureHandlerRootView>
-          </Modal>
-          
-          
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-          <ModalPropostal visible={modalPropostal} setVisible={setModalPropostal} item={peopleData}/>
+                source={{ uri: activeImage }}
+              />
+            )}
+          </TouchableOpacity>
+        </GestureHandlerRootView>
+      </Modal>
+
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <ModalPropostal
+            visible={modalPropostal}
+            setVisible={setModalPropostal}
+            item={peopleData}
+          />
           <Animated.View
             style={[
               styles.modalContainer,
@@ -403,11 +411,13 @@ const PeopleInformation = ({
                   <View>
                     <Text style={{ ...FONTS.fontSemiBold, fontSize: rf(16) }}>
                       {`${
-                        peopleData.collaborator && peopleData.collaborator.name &&
+                        peopleData.collaborator &&
+                        peopleData.collaborator.name &&
                         Mask("fullName", peopleData.collaborator.name)
-                      }, ${
-                        peopleData.collaborator && peopleData.collaborator.birth &&
-                        Mask("age", peopleData.collaborator.birth)
+                      }${
+                        peopleData?.collaborator?.birth
+                          ? `, ${Mask("age", peopleData.collaborator.birth)}`
+                          : ""
                       }`}
                     </Text>
                     <Text
@@ -474,8 +484,12 @@ const PeopleInformation = ({
                         marginLeft: rf(4),
                       }}
                     >
-                      {peopleData && peopleData.collaborator && peopleData.collaborator.phone
-                        ? peopleData.match ? Mask("phone", peopleData.collaborator.phone) : Mask("hiddenPhone", peopleData.collaborator.phone)
+                      {peopleData &&
+                      peopleData.collaborator &&
+                      peopleData.collaborator.phone
+                        ? peopleData.match
+                          ? Mask("phone", peopleData.collaborator.phone)
+                          : Mask("hiddenPhone", peopleData.collaborator.phone)
                         : `Telefone não informado`}
                     </Text>
                   </View>
@@ -489,8 +503,12 @@ const PeopleInformation = ({
                         marginLeft: rf(4),
                       }}
                     >
-                      {peopleData && peopleData.collaborator && peopleData.collaborator.email
-                        ? peopleData.match ? peopleData.collaborator.email:Mask("hiddenEmail", peopleData.collaborator.email)
+                      {peopleData &&
+                      peopleData.collaborator &&
+                      peopleData.collaborator.email
+                        ? peopleData.match
+                          ? peopleData.collaborator.email
+                          : Mask("hiddenEmail", peopleData.collaborator.email)
                         : `E-mail não informado`}
                     </Text>
                   </View>
@@ -505,7 +523,11 @@ const PeopleInformation = ({
                         textTransform: "capitalize",
                       }}
                     >
-                      {peopleData.collaborator && peopleData.collaborator.street && peopleData.collaborator.district && peopleData.collaborator.city && peopleData.collaborator.uf &&
+                      {peopleData.collaborator &&
+                        peopleData.collaborator.street &&
+                        peopleData.collaborator.district &&
+                        peopleData.collaborator.city &&
+                        peopleData.collaborator.uf &&
                         `${peopleData.collaborator.street}, ${peopleData.collaborator.district} - ${peopleData.collaborator.city}, ${peopleData.collaborator.uf}`}
                     </Text>
                   </View>
@@ -571,8 +593,9 @@ const PeopleInformation = ({
                     className="text-justify"
                     style={[FONTS.fontLight, { fontSize: rf(10) }]}
                   >
-                    {peopleData.collaborator && peopleData.collaborator.presentation &&
-                      peopleData.collaborator.presentation}
+                    {peopleData?.collaborator?.presentation
+                      ? peopleData.collaborator.presentation
+                      : "Sem apresentação definida"}
                   </Text>
                 </View>
 
@@ -583,7 +606,13 @@ const PeopleInformation = ({
                   >
                     Serviços
                   </Text>
-                  {allService && renderTagList(allService)}
+                  {allService ? (
+                    renderTagList(allService)
+                  ) : (
+                    <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                      Sem serviços definidos
+                    </Text>
+                  )}
                 </View>
 
                 <View className={"gap-2 mt-3"}>
@@ -596,15 +625,25 @@ const PeopleInformation = ({
                   <View className="">
                     <View className="flex-row">
                       <MapPin size={rf(12)} className="mr-1" />
-                      <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
-                        {`Distancia maxima até ${
-                          peopleData.collaborator && peopleData.collaborator?.howWork?.distance &&
-                          peopleData.collaborator.howWork.distance
-                        } km`}
-                      </Text>
+
+                      {peopleData.collaborator?.howWork?.distance ? (
+                        <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
+                          {`Distancia maxima até ${
+                            peopleData.collaborator &&
+                            peopleData.collaborator?.howWork?.distance &&
+                            peopleData.collaborator.howWork.distance
+                          } km`}
+                        </Text>
+                      ) : (
+                        <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
+                          Sem distância definida
+                        </Text>
+                      )}
                     </View>
+
                     <View className="gap-2">
-                      {peopleData.collaborator && peopleData.collaborator?.howWork?.showFarWork &&
+                      {peopleData.collaborator &&
+                      peopleData.collaborator?.howWork?.showFarWork &&
                       peopleData.collaborator.howWork.showFarWork ? (
                         <View className="flex-row">
                           <MapPinCheckInside size={rf(12)} className="mr-1" />
@@ -612,11 +651,19 @@ const PeopleInformation = ({
                             Aceita maiores distâncias
                           </Text>
                         </View>
-                      ) : (
+                      ) : peopleData?.collaborator?.howWork?.showFarWork ===
+                        false ? (
                         <View className="flex-row">
-                          <MapPinXInside size={rf(12)} />
+                          <MapPinXInside size={rf(12)} className="mr-1" />
                           <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
                             Não aceita maiores distâncias
+                          </Text>
+                        </View>
+                      ) : (
+                        <View className="flex-row">
+                          <MapPinXInside size={rf(12)} className="mr-1" />
+                          <Text style={[FONTS.fontLight, { fontSize: rf(10) }]}>
+                            Sem distância definida
                           </Text>
                         </View>
                       )}
@@ -631,8 +678,13 @@ const PeopleInformation = ({
                           Contratos
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.howWork?.contract &&
-                        renderTagList(peopleData.collaborator.howWork.contract)}
+                      {peopleData?.collaborator?.howWork?.contract ? (
+                        renderTagList(peopleData.collaborator.howWork.contract)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem preferencia de contrato definida
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -644,8 +696,13 @@ const PeopleInformation = ({
                           Modalidade
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.howWork?.modality &&
-                        renderTagList(peopleData.collaborator.howWork.modality)}
+                      {peopleData?.collaborator?.howWork?.modality ? (
+                        renderTagList(peopleData.collaborator.howWork.modality)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem modalidade definida
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -657,8 +714,13 @@ const PeopleInformation = ({
                           Período
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.howWork?.horary &&
-                        renderTagList(peopleData.collaborator.howWork.horary)}
+                      {peopleData?.collaborator?.howWork?.horary ? (
+                        renderTagList(peopleData.collaborator.howWork.horary)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem horário definido
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -670,8 +732,13 @@ const PeopleInformation = ({
                           Mobilidade
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.howWork?.mobility &&
-                        renderTagList(peopleData.collaborator.howWork.mobility)}
+                      {peopleData?.collaborator?.howWork?.mobility ? (
+                        renderTagList(peopleData.collaborator.howWork.mobility)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem mobilidade definida
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -683,8 +750,13 @@ const PeopleInformation = ({
                           Pagamentos
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.howWork?.payment &&
-                        renderTagList(peopleData.collaborator.howWork.payment)}
+                      {peopleData?.collaborator?.howWork?.payment ? (
+                        renderTagList(peopleData.collaborator.howWork.payment)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem forma de pagamento definida
+                        </Text>
+                      )}
                     </View>
                   </View>
                 </View>
@@ -697,8 +769,13 @@ const PeopleInformation = ({
                     Interesses
                   </Text>
                   <View>
-                    {peopleData.collaborator && peopleData?.collaborator.about?.interests &&
-                      renderTagList(peopleData.collaborator.about.interests)}
+                    {peopleData?.collaborator?.about?.interests ? (
+                      renderTagList(peopleData.collaborator.about.interests)
+                    ) : (
+                      <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                        Sem interesses definidos
+                      </Text>
+                    )}
                   </View>
                 </View>
 
@@ -720,8 +797,13 @@ const PeopleInformation = ({
                           Valores
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.about?.values &&
-                        renderTagList(peopleData.collaborator.about.values)}
+                      { peopleData?.collaborator?.about?.values ?
+                        renderTagList(peopleData.collaborator.about.values)
+                        :
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre valores
+                        </Text>
+                      }
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -733,8 +815,13 @@ const PeopleInformation = ({
                           Formação
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.about?.formation &&
-                        renderTagList(peopleData.collaborator.about.formation)}
+                      { peopleData?.collaborator?.about?.formation ?
+                        renderTagList(peopleData.collaborator.about.formation)
+                        :
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre formação
+                        </Text>
+                      }
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -746,10 +833,15 @@ const PeopleInformation = ({
                           Comunicação
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.about?.communication && 
+                      {peopleData?.collaborator?.about?.communication ? (
                         renderTagList(
                           peopleData.collaborator.about.communication
-                        )}
+                        )
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre comunicação
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -761,12 +853,17 @@ const PeopleInformation = ({
                           Casado (a) ?
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.marriage &&
+                      {peopleData?.collaborator?.marriage ? (
                         renderTagList([
                           peopleData.collaborator.marriage === "1"
                             ? "Sim"
                             : "Não",
-                        ])}
+                        ])
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre estado civil
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -778,8 +875,13 @@ const PeopleInformation = ({
                           Bebe ?
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.about?.drink && 
-                        renderTagList(peopleData.collaborator.about.drink)}
+                      {peopleData?.collaborator?.about?.drink ? (
+                        renderTagList(peopleData.collaborator.about.drink)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre bebida
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -791,11 +893,11 @@ const PeopleInformation = ({
                           Filhos
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.children &&
+                      {peopleData?.collaborator?.children ? (
                         renderTagList(
                           peopleData.collaborator?.children &&
-                            Object.keys(peopleData.collaborator.children).length >
-                              0
+                            Object.keys(peopleData.collaborator.children)
+                              .length > 0
                             ? [
                                 `${
                                   Object.keys(peopleData.collaborator.children)
@@ -808,7 +910,12 @@ const PeopleInformation = ({
                                 }`,
                               ]
                             : ["Não informado"]
-                        )}
+                        )
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre filhos
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -820,8 +927,13 @@ const PeopleInformation = ({
                           Fuma?
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.about?.smoke &&
-                        renderTagList(peopleData.collaborator.about.smoke)}
+                      {peopleData?.collaborator?.about?.smoke ? (
+                        renderTagList(peopleData.collaborator.about.smoke)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre fumo
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -833,8 +945,15 @@ const PeopleInformation = ({
                           Linguagem do Amor
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.about?.languageLove &&
-                        renderTagList(peopleData.collaborator.about.languageLove)}
+                      {peopleData?.collaborator?.about?.languageLove ? (
+                        renderTagList(
+                          peopleData.collaborator.about.languageLove
+                        )
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre Linguagem do Amor
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -846,8 +965,13 @@ const PeopleInformation = ({
                           Alimentação
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.about?.food &&
-                        renderTagList(peopleData.collaborator.about.food)}
+                      {peopleData?.collaborator?.about?.food ? (
+                        renderTagList(peopleData.collaborator.about.food)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre alimentação
+                        </Text>
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row ">
@@ -859,8 +983,13 @@ const PeopleInformation = ({
                           Pets
                         </Text>
                       </View>
-                      {peopleData.collaborator && peopleData.collaborator?.about?.pet &&
-                        renderTagList(peopleData.collaborator.about.pet)}
+                      {peopleData?.collaborator?.about?.pet ? (
+                        renderTagList(peopleData.collaborator.about.pet)
+                      ) : (
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem informação sobre pets
+                        </Text>
+                      )}
                     </View>
                   </View>
                 </View>
@@ -875,7 +1004,7 @@ const PeopleInformation = ({
                   <View className="gap-3">
                     {/* Textos (não links) em coluna */}
                     <View className="gap-2">
-                      {peopleData.collaborator && peopleData.collaborator?.social &&
+                      { peopleData.collaborator?.social ?
                         Object.entries(peopleData.collaborator.social).map(
                           ([key, value]) => {
                             const Icon = icons[key as keyof typeof icons];
@@ -910,7 +1039,12 @@ const PeopleInformation = ({
                               );
                             }
                           }
-                        )}
+                        )
+                        :
+                        <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
+                          Sem redes sociais definidas
+                        </Text>
+                      }
                     </View>
                   </View>
                 </View>
@@ -939,7 +1073,11 @@ const PeopleInformation = ({
                   <>
                     <ChevronDown size={rf(24)} color="#71717a" />
                     <Text
-                      style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                      style={{
+                        ...FONTS.font,
+                        fontSize: rf(9),
+                        color: "#71717a",
+                      }}
                     >
                       Recolher
                     </Text>
@@ -948,7 +1086,11 @@ const PeopleInformation = ({
                   <>
                     <ChevronUp size={rf(24)} color="#71717a" />
                     <Text
-                      style={{ ...FONTS.font, fontSize: rf(9), color: "#71717a" }}
+                      style={{
+                        ...FONTS.font,
+                        fontSize: rf(9),
+                        color: "#71717a",
+                      }}
                     >
                       Visualizar
                     </Text>
@@ -972,9 +1114,8 @@ const PeopleInformation = ({
             </View>
           </Animated.View>
         </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-      </Modal>
- 
+      </GestureHandlerRootView>
+    </Modal>
   );
 };
 

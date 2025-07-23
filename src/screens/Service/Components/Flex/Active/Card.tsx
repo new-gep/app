@@ -113,7 +113,6 @@ const SwipeableCardPeopleActive = React.memo(function SwipeableCard({
     );
   };
 
-  console.log(item.CPF_Responder)
 
   return (
     <View style={styles.cardWrapper}>
