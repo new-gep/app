@@ -15,8 +15,9 @@ const CVPreview = ({ visible, setVisible, collaborator }: any) => {
     const response = await FindBucketCollaborator(collaborator.CPF, 'cv');
     if (response.status === 200) {
       setPath(response.path);
+      return
     }
-    return response.path;
+
   }
 
   useEffect(() => {
@@ -96,7 +97,9 @@ const CVPreview = ({ visible, setVisible, collaborator }: any) => {
               CV Gep
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
+
+          { path &&
+            <TouchableOpacity
             className="p-2.5 bg-primary rounded-lg w-1/2"
             onPress={() => {
               setPDFView(true);
@@ -112,7 +115,8 @@ const CVPreview = ({ visible, setVisible, collaborator }: any) => {
             >
               CV PDF
             </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          }
         </View>
       )}
     </Modal>

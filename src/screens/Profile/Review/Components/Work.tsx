@@ -9,22 +9,15 @@ import {
   Banknote,
   BusFront,
   Clock,
-  House
+  House,
 } from "lucide-react-native";
+import useCollaborator from "~/src/function/fetchCollaborator";
+import { useEffect, useState } from "react";
 
 export default function Work() {
-  const data = {
-    workPreferences: {
-      location: "São Paulo - SP",
-      maxDistanceKm: 50,
-      allowFurtherDistance: true,
-      contractType: ["Autônomo", "CLT"],
-      modality: ["Híbrido", "Presencial"],
-      schedule: ["Dia", "Noite"],
-      mobility: ["Carro", "Moto"],
-      paymentType: ["Por dia", "Por hora", "A combinar"],
-    },
-  };
+  const { collaborator } = useCollaborator();
+  const [data, setData] = useState<any>(null);
+
 
   const renderTagList = (title: string, icon: JSX.Element, items: string[]) => (
     <View>
@@ -38,18 +31,32 @@ export default function Work() {
           </Text>
         </View>
         <View className="flex-row flex-wrap">
-          {items.map((item, index) => (
+          {items && items.length > 0 ? (
+            items.map((item, index) => (
+              <Text
+                key={index}
+                style={[Style.tag, FONTS.fontLight, { fontSize: rf(14) }]}
+              >
+                {item}
+              </Text>
+            ))
+          ) : (
             <Text
-              key={index}
               style={[Style.tag, FONTS.fontLight, { fontSize: rf(14) }]}
             >
-              {item}
+              Não informado
             </Text>
-          ))}
+          )}
         </View>
       </View>
     </View>
   );
+
+  useEffect(() => {
+    if (collaborator) {
+      setData(collaborator.howWork);
+    }
+  }, [collaborator]);
 
   return (
     <View style={Style.container} className="bg-white p-3 rounded-lg mt-3">
@@ -61,33 +68,45 @@ export default function Work() {
       </Text>
       <View>
         <View className="flex-row gap-2">
-          <MapPin size={rf(16)} />
-          <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>
-            Distância máxima até {data.workPreferences.maxDistanceKm} km
-          </Text>
+          { data?.distance ?
+            <>
+              <MapPin size={rf(16)} />
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>
+                Distância máxima até {data.distance} km
+              </Text>
+            </>
+            :
+            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>
+              Localização: Não informado
+            </Text>
+          }
         </View>
         <View className="flex-row gap-2">
-          {data.workPreferences.allowFurtherDistance ? (
+          {data?.showFarWork ? (
             <>
               <MapPinCheckInside size={rf(16)} />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>
                 Aceita maiores distâncias
               </Text>
             </>
-          ) : (
+          ) : data?.showFarWork === false ? (
             <>
               <MapPinXInside size={rf(16)} />
               <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>
                 Não aceita maiores distâncias
               </Text>
             </>
+          ) : (
+            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>
+              Distância não informada
+            </Text>
           )}
         </View>
-            {renderTagList("Contratatos", <Handshake size={rf(16)} />, data.workPreferences.contractType)}
-            {renderTagList("Modalidade", <House size={rf(16)} />, data.workPreferences.modality)}
-            {renderTagList("Período", <Clock size={rf(16)} />, data.workPreferences.schedule)}
-            {renderTagList("Mobilidade", <BusFront size={rf(16)} />, data.workPreferences.mobility)}
-            {renderTagList("Pagamentos", <Banknote size={rf(16)} />, data.workPreferences.paymentType)}
+        {renderTagList("Contratatos", <Handshake size={rf(16)} />, data?.contract)}
+            {renderTagList("Modalidade", <House size={rf(16)} />, data?.modality)}
+            {renderTagList("Período", <Clock size={rf(16)} />, data?.horary)}
+            {renderTagList("Mobilidade", <BusFront size={rf(16)} />, data?.mobility)}
+            {renderTagList("Pagamentos", <Banknote size={rf(16)} />, data?.payment)}
       </View>
     </View>
   );

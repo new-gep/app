@@ -139,7 +139,8 @@ const SwipeableCard = React.memo(function SwipeableCard({
       />
       <Swipeable
         key={item?.id}
-        renderRightActions={(progress) => renderRightActions(item?.id, progress)}
+        // renderRightActions={(progress) => renderRightActions(item?.id, progress)}
+        renderRightActions={()=>null}
         leftThreshold={0}
       >
         <View>

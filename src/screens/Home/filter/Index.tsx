@@ -24,11 +24,11 @@ export default function Filter() {
   const [distance, setDistance] = useState(2);
   const [locations, setLocations] = useState<string[]>([]);
   const [showFarWork, setShowFarWork] = useState<boolean>(false);
-  const [payment, setPayment]   = useState<any>(null)
-  const [mobility, setMobility] = useState<any>(null)
-  const [horary, setHorary]     = useState<any>(null)
-  const [modality, setModality] = useState<any>(null) 
-  const [contract, setContract] = useState<any>(null)
+  const [payment, setPayment]   = useState<any>([])
+  const [mobility, setMobility] = useState<any>([])
+  const [horary, setHorary]     = useState<any>([])
+  const [modality, setModality] = useState<any>([]) 
+  const [contract, setContract] = useState<any>([])
 
   const handleSave = async () => {
     if (!collaborator) return;
@@ -64,15 +64,14 @@ export default function Filter() {
 
   useEffect(()=>{
     if(collaborator && collaborator.howWork){
-      setDistance(collaborator.howWork.distance)
-      setLocations(collaborator.howWork.locations)
-      console.log(collaborator.howWork)
-      setShowFarWork(collaborator.howWork.showFarWork)
-      setContract(collaborator.howWork.contract)
-      setModality(collaborator.howWork.modality)
-      setHorary(collaborator.howWork.horary)
-      setMobility(collaborator.howWork.mobility)
-      setPayment(collaborator.howWork.payment)
+      setDistance(collaborator?.howWork?.distance ? collaborator.howWork.distance : 2)
+      setLocations(collaborator?.howWork?.locations ? collaborator.howWork.locations : [])
+      setShowFarWork(collaborator?.howWork?.showFarWork ? collaborator.howWork.showFarWork : false)
+      setContract(collaborator?.howWork?.contract ? collaborator.howWork.contract : [])
+      setModality(collaborator?.howWork?.modality ? collaborator.howWork.modality : [])
+      setHorary(collaborator?.howWork?.horary ? collaborator.howWork.horary : [])
+      setMobility(collaborator?.howWork?.mobility ? collaborator.howWork.mobility : [])
+      setPayment(collaborator?.howWork?.payment ? collaborator.howWork.payment : [])
     }
   },[collaborator]);
 

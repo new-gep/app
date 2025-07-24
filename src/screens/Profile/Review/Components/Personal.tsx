@@ -31,14 +31,20 @@ export default function Personal() {
           </Text>
         </View>
         <View className="flex-row flex-wrap">
-          {items.map((item, index) => (
-            <Text
-              key={index}
-              style={[Style.tag, FONTS.fontLight, { fontSize: rf(14) }]}
-            >
-              {item}
+          { items.length > 0 ?
+            items.map((item, index) => (
+              <Text
+                key={index}
+                style={[Style.tag, FONTS.fontLight, { fontSize: rf(14) }]}
+              >
+                {item}
+              </Text>
+            ))
+            :
+            <Text style={[Style.tag, FONTS.fontLight, { fontSize: rf(14) }]}>
+              Não informado
             </Text>
-          ))}
+          }
         </View>
       </View>
     </View>
@@ -70,30 +76,30 @@ export default function Personal() {
           {renderSafeTagList(
             "Valores",
             <Scale size={rf(16)} />,
-            collaborator.about.values
+            collaborator?.about?.values
           )}
           {renderSafeTagList(
             "Formação",
             <GraduationCap size={rf(16)} />,
-            collaborator.about.formation
+            collaborator?.about?.formation
           )}
           {renderSafeTagList(
             "Comunicação",
             <MessageCircle size={rf(16)} />,
-            collaborator.about.communication
+            collaborator?.about?.communication
           )}
           {renderTagList("Casado(a)?", <Heart size={rf(16)} />, [
-            collaborator.marriage === "1" ? "Sim" : "Não",
+            collaborator?.marriage === "1" ? "Sim" : "Não",
           ])}
           {renderSafeTagList(
             "Bebe?",
             <Wine size={rf(16)} />,
-            collaborator.about.drink
+            collaborator?.about?.drink
           )}
           {renderTagList(
             "Filhos",
             <Baby size={rf(16)} />,
-            collaborator.children &&
+            collaborator?.children &&
               Object.keys(collaborator.children).length > 0
               ? [
                   `${Object.keys(collaborator.children).length} ${
@@ -107,22 +113,22 @@ export default function Personal() {
           {renderSafeTagList(
             "Fuma?",
             <Cigarette size={rf(16)} />,
-            collaborator.about.smoke
+            collaborator?.about?.smoke
           )}
           {renderSafeTagList(
             "Linguagem do Amor",
             <BookHeart size={rf(16)} />,
-            collaborator.about.languageLove
+            collaborator?.about?.languageLove
           )}
           {renderSafeTagList(
             "Alimentação",
             <Salad size={rf(16)} />,
-            collaborator.about.food
+            collaborator?.about?.food
           )}
           {renderSafeTagList(
             "Pets",
             <Bone size={rf(16)} />,
-            collaborator.about.pet
+            collaborator?.about?.pet
           )}
         </>
       )}

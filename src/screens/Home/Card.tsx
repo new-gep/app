@@ -172,6 +172,7 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
   );
 
   return (
+
     <View style={styles.cardWrapper}>
       <PeopleInformation
         handleSwipeRight={onSwipeRight}
@@ -197,9 +198,9 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
         >
           <View className="flex-row items-center flex-1">
             <View className="mr-3" style={{ position: "relative" }}>
-              {item.picture && item.picture.status == 200 ? (
+              {item?.announcement?.announcement.CPF_Creator?.collaborator?.picture ? (
                 <Image
-                  source={{ uri: item.picture.path }}
+                  source={{ uri: item?.announcement.announcement.CPF_Creator.collaborator.picture }}
                   style={{ width: rf(43), height: rf(43) }}
                   className="w-12 h-12 rounded-full"
                   resizeMode="cover"
@@ -250,7 +251,7 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
-                anunciado {Mask("dateFormatBrazil", item.create_at)}
+                anunciado {Mask("dateFormatBrazil", item?.announcement?.announcement?.create_at)}
               </Text>
             </View>
           </View>

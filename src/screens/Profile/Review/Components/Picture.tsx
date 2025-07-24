@@ -18,13 +18,6 @@ export default function Picture() {
   const [path, setPath] = useState<any>(false);
   const { collaborator } = useCollaborator();
 
-  const data = {
-    fullName: "João da Silva",
-    photoUri: "https://randomuser.me/api/portraits/men/75.jpg",
-    age: "20",
-    sex: "Masculino",
-  };
-
   const getPicture = async () => {
     const storedImagePath = await AsyncStorage.getItem("collaboratorImage");
     if (storedImagePath) {
@@ -73,22 +66,22 @@ export default function Picture() {
             />
           </View>
         </View>
-        {1 && (
+        {/* {1 && (
           <View className="absolute bottom-0 right-0 bg-white rounded-full p-0.5">
             <CircleCheck size={24} color="#fde047" />
           </View>
-        )}
+        )} */}
       </View>
       <Text
         style={{ fontSize: rf(20), ...FONTS.fontBold }}
         className="text-center"
       >
-        {collaborator && collaborator.name && `${Mask('fullName',collaborator.name)}`}
+        {collaborator?.name ? `${Mask('fullName',collaborator.name)}` : "Nome não informado"}
       </Text>
       <Text className="text-base text-custom-gray-500 mb-3">
-        {collaborator && collaborator.birth && `${Mask('age',collaborator.birth)}`}
+        {collaborator?.birth ? `${Mask('age',collaborator.birth)}` : "Idade não informada"}
       </Text>
-      {1 && (
+      {/* {1 && (
         <View className="flex-row items-center bg-primary px-3 py-1.5 rounded-xl">
           <CircleCheckBig size={20} color="#2f2f2f" />
           <Text
@@ -98,7 +91,7 @@ export default function Picture() {
             Verificado
           </Text>
         </View>
-      )}
+      )} */}
     </View>
   );
 }

@@ -24,9 +24,9 @@ export default function Service({item}:any) {
         >
           <View className="flex-row items-center flex-1">
             <View className="mr-3" style={{ position: "relative" }}>
-              {item.photoUri ? (
+              {item?.CPF_Creator?.collaborator?.picture ? (
                 <Image
-                  source={{ uri: item.photoUri }}
+                  source={{ uri: item.CPF_Creator.collaborator.picture }}
                   style={{ width: rf(43), height: rf(43) }}
                   className="w-12 h-12 rounded-full"
                   resizeMode="cover"

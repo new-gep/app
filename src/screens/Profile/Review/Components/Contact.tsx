@@ -15,15 +15,15 @@ export default function Contact() {
       <View className="flex-col">
         <View className="flex-row gap-2">
             <Phone size={rf(16)}/>
-            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator && collaborator.phone ? Mask('phone',collaborator.phone) : 'Não informado'}</Text>
+            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator?.phone ? Mask('phone',collaborator.phone) : 'Não informado'}</Text>
         </View>
         <View className="flex-row gap-2">
             <Mail size={rf(16)}/>
-            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator && collaborator.email ? collaborator.email : 'Não informado'}</Text>
+            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator?.email ? collaborator.email : 'Não informado'}</Text>
         </View>
         <View className="flex-row gap-2">
             <MapPin size={rf(16)}/>
-            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator && collaborator.city && collaborator.uf ? `${collaborator.city}, ${collaborator.uf}` : 'Não informado'}</Text>
+            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator?.city && collaborator?.uf ? `${collaborator.city}, ${collaborator.uf}` : 'Não informado'}</Text>
         </View>
       </View>
 

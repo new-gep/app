@@ -29,7 +29,7 @@ export default function Interests() {
         <Text className="mb-7" style={{ fontSize: rf(18), ...FONTS.fontSemiBold }}>
           Interesses
         </Text>
-      {collaborator && collaborator.about.interests ? renderTagList( collaborator.about.interests) : <Text>Não informado</Text>}
+      { collaborator?.about?.interests ? renderTagList( collaborator.about.interests) : <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>Não informado</Text>}
     </View>
   );
 }

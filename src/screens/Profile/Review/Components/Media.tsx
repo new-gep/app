@@ -33,32 +33,37 @@ export default function Media() {
       </Text>
 
       <View className="flex-row flex-wrap gap-4">
-        {collaborator && Object.entries(collaborator.social).map(([key, value]) => {
-          const Icon = icons[key as keyof typeof icons];
-          //@ts-ignore
-          const isLink = isUrl(value);
+        {
+          collaborator?.social ? Object.entries(collaborator.social).map(([key, value]) => {
+            const Icon = icons[key as keyof typeof icons];
+            //@ts-ignore
+            const isLink = isUrl(value);
 
-          if (isLink) {
-            return (
-              <Pressable
-                key={key}
-                //@ts-ignore
-                onPress={() => Linking.openURL(value)}
-                className="items-center justify-center"
-              >
-                <Icon size={rf(22)} color="#2563EB" />
-              </Pressable>
-            );
-          } else {
-            return (
-              <View key={key} className="flex-row items-center gap-2">
-                <Icon size={rf(18)} color="#6B7280" />
-                {/* @ts-ignore */}
-                <Text style={{ ...FONTS.font, fontSize: rf(14) }}>{value}</Text>
-              </View>
-            );
-          }
-        })}
+            if (isLink) {
+              return (
+                <Pressable
+                  key={key}
+                  //@ts-ignore
+                  onPress={() => Linking.openURL(value)}
+                  className="items-center justify-center"
+                >
+                  <Icon size={rf(22)} color="#2563EB" />
+                </Pressable>
+              );
+            } 
+            else {
+              return (
+                <View key={key} className="flex-row items-center gap-2">
+                  <Icon size={rf(18)} color="#6B7280" />
+                  {/* @ts-ignore */}
+                  <Text style={{ ...FONTS.font, fontSize: rf(14) }}>{value}</Text>
+                </View>
+              );
+            }
+          })
+          :
+          <Text>Não informado</Text>
+        }
       </View>
     </View>
   );

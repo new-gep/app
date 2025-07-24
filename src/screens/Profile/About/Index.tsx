@@ -63,15 +63,15 @@ export default function About() {
 
   useEffect(()=>{
     if(collaborator){
-      setPresentation(collaborator.presentation ? collaborator.presentation : '')
-      setDrink(collaborator.about.drink ? collaborator.about.drink : [])
-      setInterests(collaborator.about.interests ? collaborator.about.interests : [])
-      setLanguageLove(collaborator.about.languageLove ? collaborator.about.languageLove : [])
-      setFood(collaborator.about.food ? collaborator.about.food : [])
-      setPet(collaborator.about.pet ? collaborator.about.pet : [])
-      setSmoke(collaborator.about.smoke ? collaborator.about.smoke : [])
-      setCommunication(collaborator.about.communication ? collaborator.about.communication : [])
-      setFormation(collaborator.about.formation ? collaborator.about.formation : [])
+      setPresentation(collaborator?.presentation ? collaborator.presentation : '')
+      setDrink(collaborator?.about?.drink ? collaborator.about.drink : [])
+      setInterests(collaborator?.about?.interests ? collaborator.about.interests : [])
+      setLanguageLove(collaborator?.about?.languageLove ? collaborator.about.languageLove : [])
+      setFood(collaborator?.about?.food ? collaborator.about.food : [])
+      setPet(collaborator?.about?.pet ? collaborator.about.pet : [])
+      setSmoke(collaborator?.about?.smoke ? collaborator.about.smoke : [])
+      setCommunication(collaborator?.about?.communication ? collaborator.about.communication : [])
+      setFormation(collaborator?.about?.formation ? collaborator.about.formation : [])
     }
   },[collaborator])
 

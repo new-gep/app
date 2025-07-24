@@ -37,14 +37,16 @@ export default function Service() {
     <View>
       <View>
         <View className="flex-row flex-wrap">
-          {items.map((item, index) => (
+          {items.length > 0 ? items.map((item, index) => (
             <Text
               key={index}
               style={[Style.tag, FONTS.fontLight, { fontSize: rf(14) }]}
             >
               {item}
             </Text>
-          ))}
+          )) : (
+            <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>Não informado</Text>
+          )}
         </View>
       </View>
     </View>
@@ -58,7 +60,7 @@ export default function Service() {
       >
         Serviços
       </Text>
-      {allService ? renderTagList(allService) : <Text>Não informado</Text>}
+      {allService ? renderTagList(allService) : <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>Não informado</Text>}
     </View>
   );
 }

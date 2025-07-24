@@ -25,11 +25,15 @@ import applyPropostal from "~/src/hooks/update/announcement/applyPropostal";
 export default function ModalPropostal({ visible, setVisible, item }: any) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [currentSnapIndex, setCurrentSnapIndex] = useState(0);
+  const [refreshing, setRefreshing] = useState<number>(1);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(20)).current;
   const [propostal, setPropostal] = useState<any>(null);
   const [loader, setLoader] = useState<boolean>(true);
   const { collaborator } = useCollaborator();
+
+
+
   const handleSheetChanges = useCallback(
     (index: number) => {
       setCurrentSnapIndex(index);
@@ -60,7 +64,6 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
         collaborator.CPF
       );
       if (response.status == 200) {
-        console.log(response.propostal);
         setPropostal(response.propostal);
       }
     } finally {
@@ -98,6 +101,7 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
               console.log(response);
               if (response.status == 200) {
                 Alert.alert("Sucesso", "Proposta enviada com sucesso.");
+                setRefreshing(refreshing + 1);
               } else {
                 Alert.alert(
                   "Erro",
@@ -155,7 +159,7 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
 
   useEffect(() => {
     fetchData();
-  }, [collaborator]);
+  }, [collaborator, refreshing]);
 
   return (
     <BottomSheetModal
@@ -212,7 +216,7 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
               className="px-5 "
             >
               {!loader ? (
-                propostal.lenght > 0 ? (
+                propostal.length > 0 ? (
                   propostal.map((item: any, index: number) => (
                     <View
                       key={index}

@@ -414,9 +414,11 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData &&
-                      peopleData.salary &&
-                      Mask("amount", peopleData.salary)}
+                    { peopleData?.salary ?
+                      Mask("amount", peopleData.salary)
+                      :
+                      "A combinar"
+                    }
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>

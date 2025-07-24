@@ -38,7 +38,7 @@ export default function Gallery() {
       </Text>
 
       <View className="flex-row flex-wrap justify-between">
-        {gallery && gallery.length > 0 ? (
+        {gallery ? (
           <View className="flex flex-row flex-wrap gap-3 mb-4">
             {[...Array(3)].map((_, i) => (
               <View

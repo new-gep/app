@@ -16,7 +16,7 @@ export default function About() {
         Sobre Mim
       </Text>
 
-      <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator && collaborator.presentation ? collaborator.presentation : 'Sem informação'}</Text>
+      <Text style={{ ...FONTS.fontLight, fontSize: rf(14) }}>{collaborator?.presentation ? collaborator.presentation : 'Não informado'}</Text>
     </View>
   );
 }
