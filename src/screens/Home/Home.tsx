@@ -25,8 +25,9 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import FindAll from "~/src/hooks/get/announcement/all";
 import AllPeople from "~/src/hooks/get/collaborator/AllPeople";
 import FindAllService from "~/src/hooks/get/job/allService";
-// import messaging from "@react-native-firebase/messaging";
-// import * as Notifications from "expo-notifications";
+import messaging from "@react-native-firebase/messaging";
+import { getApps, initializeApp } from '@react-native-firebase/app';
+import * as Notifications from "expo-notifications";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -117,60 +118,56 @@ const Home = () => {
   //   //     return token;
   // }
 
-  // async function registerForPushNotificationsAsync() {
-  //   if (!collaborator) return;
-  //   if (isEmulator()) {
-  //     console.log("Emulador detectado, notificações não serão registradas.");
-  //     return;
-  //   }
-  //   console.log("Celular Real, registrando notificações...");
-  //   // Verifica se o dispositivo é um emulador
+  async function registerForPushNotificationsAsync() {
+  if (!collaborator) return;
 
-  //   try {
-  //     let finalStatus;
-  //     console.log("aq");
-  //     // Verifica se já tem permissão
-  //     const { status: existingStatus } =
-  //       await Notifications.getPermissionsAsync();
-  //     finalStatus = existingStatus;
+  try {
+    // ✅ Inicializa o Firebase se ainda não tiver sido
+    if (getApps().length === 0) {
+      initializeApp();
+    }
 
-  //     // Se não tiver, pede permissão
-  //     if (existingStatus !== "granted") {
-  //       const { status } = await Notifications.requestPermissionsAsync();
-  //       finalStatus = status;
-  //     }
+    let finalStatus;
 
-  //     // Se ainda não foi concedido, sai
-  //     if (finalStatus !== "granted") {
-  //       alert("Permissão de notificações não concedida!");
-  //       return;
-  //     }
+    // Verifica se já tem permissão
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    finalStatus = existingStatus;
 
-  //     return;
+    // Se não tiver, pede permissão
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
 
-  //     // Obter token FCM
-  //     // const token = await messaging().getToken();
-  //     // console.log("🔥 FCM Token:", token);
+    // Se ainda não foi concedido, sai
+    if (finalStatus !== "granted") {
+      alert("Permissão de notificações não concedida!");
+      return;
+    }
 
-  //     // // Salve o token no backend, associando ao collaborator
-  //     // // Exemplo (substitua pela sua API):
-  //     // // await api.post('/save-token', { collaboratorId: collaborator.id, token });
+    // ✅ Obter token FCM
+    const token = await messaging().getToken();
+    console.log("🔥 FCM Token:", token);
 
-  //     // // Escute atualização do token (caso ele mude)
-  //     // messaging().onTokenRefresh(async (newToken) => {
-  //     //   console.log("FCM Token atualizado:", newToken);
-  //     //   // Atualize no backend também
-  //     //   // await api.post('/save-token', { collaboratorId: collaborator.id, token: newToken });
-  //     // });
-  //   } catch (error) {
-  //     console.log("Erro ao registrar notificações:", error);
-  //   }
-  // }
+    // Salvar no backend
+    // await api.post('/save-token', { collaboratorId: collaborator.id, token });
+
+    // Atualização automática do token
+    messaging().onTokenRefresh(async (newToken) => {
+      console.log("FCM Token atualizado:", newToken);
+      // await api.post('/save-token', { collaboratorId: collaborator.id, token: newToken });
+    });
+  } catch (error) {
+    console.log("Erro ao registrar notificações:", error);
+  }
+}
 
   useEffect(() => {
     if (!collaborator) return;
     const loadData = async () => {
-      // await registerForPushNotificationsAsync();
+      if(!isEmulator()){
+        await registerForPushNotificationsAsync();
+      }
       await fetchJobs();
     };
     loadData();
