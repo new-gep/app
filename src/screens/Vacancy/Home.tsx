@@ -20,6 +20,7 @@ import { FlatList } from "react-native-gesture-handler";
 import Service from "./Card/Service";
 import Work from "./Card/Work";
 import FindCandidacy from "~/src/hooks/get/job/findCandidacy";
+import AwaitFetch from "~/src/components/LoadScreen/Load";
 
 export default function Vacancy() {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -39,7 +40,7 @@ export default function Vacancy() {
   };
 
   const [jobConected, setJobConected] = useState<JobItem[]>([]); // Substitua por seus dados reais
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [reload, setReload] = useState<number>(1);
   const { collaborator } = useCollaborator();
 
@@ -51,11 +52,11 @@ export default function Vacancy() {
         if (response.status === 200) {
           setJobConected(response.data);
         } else {
-          console.error("Erro ao buscar os cards:", response.message);
+          console.log("Erro ao buscar os cards:", response.message);
           setJobConected([]);
         }
       } catch (error) {
-        console.error("Erro ao buscar os cards:", error);
+        console.log("Erro ao buscar os cards:", error);
         setJobConected([]);
       } finally {
         setIsLoading(false);
@@ -90,85 +91,93 @@ export default function Vacancy() {
     <>
       <HeaderStyle4 title="Serviços" scrollY={scrollY} />
       <View className="flex justify-between items-center h-full bg-white">
-        {jobConected && jobConected.length > 0 ? (
-          <Animated.ScrollView
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              { useNativeDriver: false }
-            )}
-            style={{ width: "100%" }}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Search */}
-            {jobConected && jobConected.length > 0 && (
-              <View className="px-4 mb-5" style={{ paddingTop: 90 }}>
-                <TextInput
-                  placeholder="Buscar Vaga..."
-                  placeholderTextColor="#9CA3AF"
-                  className="p-3 border border-gray-300 rounded-lg text-gray-900"
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                />
-              </View>
-            )}
-            {filteredJobs.length > 0  ? (
-              <FlatList
-                // data={jobConected}
-                data={filteredJobs}
-                renderItem={renderItem}
-                contentContainerStyle={{ paddingBottom: 30 }}
-                initialNumToRender={5}
-                maxToRenderPerBatch={5}
-                windowSize={10}
-                removeClippedSubviews={true}
-              />
+        { isLoading?
+        <View style={{ width: "100%", paddingTop: 70 }}>
+          <AwaitFetch/>
+        </View>
+        :
+          <>
+            {jobConected && jobConected.length > 0 ? (
+              <Animated.ScrollView
+                onScroll={Animated.event(
+                  [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                  { useNativeDriver: false }
+                )}
+                style={{ width: "100%" }}
+                showsVerticalScrollIndicator={false}
+              >
+                {/* Search */}
+                {jobConected && jobConected.length > 0 && (
+                  <View className="px-4 mb-5" style={{ paddingTop: 90 }}>
+                    <TextInput
+                      placeholder="Buscar Vaga..."
+                      placeholderTextColor="#9CA3AF"
+                      className="p-3 border border-gray-300 rounded-lg text-gray-900"
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
+                    />
+                  </View>
+                )}
+                {filteredJobs.length > 0  ? (
+                  <FlatList
+                    // data={jobConected}
+                    data={filteredJobs}
+                    renderItem={renderItem}
+                    contentContainerStyle={{ paddingBottom: 30 }}
+                    initialNumToRender={5}
+                    maxToRenderPerBatch={5}
+                    windowSize={10}
+                    removeClippedSubviews={true}
+                  />
+                ) : (
+                  <View className="py-20 items-center justify-center">
+                    <Text className="text-lg text-gray-500 font-semibold">
+                      Não há uma vaga com este nome
+                    </Text>
+                    <Text className="text-gray-400 mt-2 text-center px-8">
+                      Tente buscar com outro termo
+                    </Text>
+                  </View>
+                )}
+              </Animated.ScrollView>
             ) : (
-              <View className="py-20 items-center justify-center">
-                <Text className="text-lg text-gray-500 font-semibold">
-                  Não há uma vaga com este nome
+              <Animated.ScrollView
+                onScroll={Animated.event(
+                  [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                  { useNativeDriver: false }
+                )}
+                style={{ width: "100%", paddingTop: 70 }}
+                contentContainerStyle={{ alignItems: "center", paddingBottom: 90 }}
+                showsVerticalScrollIndicator={false}
+              >
+                <Text
+                  style={{
+                    ...FONTS.fontSemiBold,
+                    fontSize: rf(16),
+                    color: COLORS.title,
+                    marginBottom: 5,
+                    marginTop: 40,
+                  }}
+                >
+                  Sem serviços cadastrados
                 </Text>
-                <Text className="text-gray-400 mt-2 text-center px-8">
-                  Tente buscar com outro termo
+
+                <Text
+                  style={{ fontSize: rf(10), ...FONTS.fontLight }}
+                  className=" text-gray-400 "
+                >
+                  Não se cadastrou em nenhuma serviço até o momento
                 </Text>
-              </View>
-            )}
-          </Animated.ScrollView>
-        ) : (
-          <Animated.ScrollView
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              { useNativeDriver: false }
-            )}
-            style={{ width: "100%", paddingTop: 70 }}
-            contentContainerStyle={{ alignItems: "center", paddingBottom: 90 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <Text
-              style={{
-                ...FONTS.fontSemiBold,
-                fontSize: rf(16),
-                color: COLORS.title,
-                marginBottom: 5,
-                marginTop: 40,
-              }}
-            >
-              Sem serviços cadastrados
-            </Text>
 
-            <Text
-              style={{ fontSize: rf(10), ...FONTS.fontLight }}
-              className=" text-gray-400 "
-            >
-              Não se cadastrou em nenhuma serviço até o momento
-            </Text>
-
-            <Image
-              source={require("../../assets/images/brand/Business-nojob.png")}
-              style={{ width: width * 0.7, height: height * 0.5 }}
-              resizeMode="contain"
-            />
-          </Animated.ScrollView>
-        )}
+                <Image
+                  source={require("../../assets/images/brand/Business-nojob.png")}
+                  style={{ width: width * 0.7, height: height * 0.5 }}
+                  resizeMode="contain"
+                />
+              </Animated.ScrollView>
+            )}
+          </>
+        }
       </View>
     </>
   );

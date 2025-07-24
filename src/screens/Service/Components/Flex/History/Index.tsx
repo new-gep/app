@@ -26,8 +26,9 @@ export default function History() {
         if (response.status == 200) {
           setHistoryData(response.history);
         }
-      } finally {
         setLoader(false);
+      } finally {
+        
       }
     };
 

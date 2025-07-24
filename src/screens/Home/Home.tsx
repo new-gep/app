@@ -160,20 +160,22 @@ const Home = () => {
   } catch (error) {
     console.log("Erro ao registrar notificações:", error);
   }
-}
+  }
 
   useEffect(() => {
-    if (!collaborator) return;
-    const loadData = async () => {
-      if(!isEmulator()){
-        await registerForPushNotificationsAsync();
-      }
-      await fetchJobs();
+    if (collaborator) {
+      const loadData = async () => {
+        // if(!isEmulator()){
+        //   await registerForPushNotificationsAsync();
+        // }
+        await fetchJobs();
+      };
+      loadData();
     };
-    loadData();
   }, [collaborator]);
 
   useEffect(() => {
+    if(!collaborator) return;
     const loadData = async () => {
       if (cardSearch == "Service") {
         await fetchJobs();
@@ -184,7 +186,7 @@ const Home = () => {
     setCards(null);
     setIsLoading(true);
     loadData();
-  }, [cardSearch]);
+  }, [cardSearch, collaborator]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
