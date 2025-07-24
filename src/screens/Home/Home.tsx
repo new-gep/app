@@ -124,7 +124,6 @@ const Home = () => {
   try {
     // ✅ Inicializa o Firebase se ainda não tiver sido
     if (getApps().length === 0) {
-      //@ts-ignore
       initializeApp();
     }
 
@@ -167,7 +166,7 @@ const Home = () => {
     if (collaborator) {
       const loadData = async () => {
         // if(!isEmulator()){
-        //   await registerForPushNotificationsAsync();
+          // await registerForPushNotificationsAsync();
         // }
         await fetchJobs();
       };

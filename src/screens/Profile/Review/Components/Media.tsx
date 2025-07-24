@@ -9,6 +9,7 @@ import {
   Youtube,
   Globe,
   Music,
+  Link,
 } from "lucide-react-native";
 import useCollaborator from "~/src/function/fetchCollaborator";
 
@@ -23,47 +24,73 @@ export default function Media() {
     twitter: Twitter,
     tiktok: Music, // ícone alternativo para TikTok
     youtube: Youtube,
-    website: Globe,
+    site: Globe,
+    default: Link, // ícone padrão para links não reconhecidos
   };
 
   return (
     <View style={Style.container} className="bg-white p-3 rounded-lg mt-3">
-      <Text style={{ fontSize: rf(18), ...FONTS.fontSemiBold }} className="mb-6">
+      <Text
+        style={{ fontSize: rf(18), ...FONTS.fontSemiBold }}
+        className="mb-6"
+      >
         Redes Sociais
       </Text>
 
       <View className="flex-row flex-wrap gap-4">
-        {
-          collaborator?.social ? Object.entries(collaborator.social).map(([key, value]) => {
-            const Icon = icons[key as keyof typeof icons];
-            //@ts-ignore
-            const isLink = isUrl(value);
+        {collaborator?.social &&
+        Object.entries(collaborator.social).length > 0 ? (
+          Object.entries(collaborator.social).map(([key, value]) => {
+            if (!value) return null;
 
-            if (isLink) {
+
+            const Icon = icons[key as keyof typeof icons] || icons.default;
+            const lowerValue = value.toLowerCase();
+            const isLikelyLink =
+              key === "site" ||
+              lowerValue.includes("http") ||
+              lowerValue.includes("www.") ||
+              lowerValue.includes("linktr.ee") ||
+              lowerValue.includes("facebook.com");
+
+            const openLink = async () => {
+              let url = value;
+              if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = `https://${url}`;
+              }
+
+              const canOpen = await Linking.canOpenURL(url);
+              if (canOpen) {
+                Linking.openURL(url);
+              } else {
+                Alert.alert("Erro", "Não foi possível abrir o link.");
+              }
+            };
+
+            if (isLikelyLink) {
               return (
                 <Pressable
                   key={key}
-                  //@ts-ignore
-                  onPress={() => Linking.openURL(value)}
+                  onPress={openLink}
                   className="items-center justify-center"
                 >
                   <Icon size={rf(22)} color="#2563EB" />
                 </Pressable>
               );
-            } 
-            else {
+            } else {
               return (
                 <View key={key} className="flex-row items-center gap-2">
                   <Icon size={rf(18)} color="#6B7280" />
-                  {/* @ts-ignore */}
-                  <Text style={{ ...FONTS.font, fontSize: rf(14) }}>{value}</Text>
+                  <Text style={{ ...FONTS.font, fontSize: rf(14) }}>
+                    {value}
+                  </Text>
                 </View>
               );
             }
           })
-          :
-          <Text>Não informado</Text>
-        }
+        ) : (
+          <Text style={{ ...FONTS.font, fontSize: rf(14) }}>Não informado</Text>
+        )}
       </View>
     </View>
   );

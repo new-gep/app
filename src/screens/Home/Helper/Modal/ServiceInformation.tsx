@@ -339,7 +339,7 @@ const ServiceInformation = ({
                 </View>
                 <View>
                   <Text
-                    className="capitalize"
+                    className="capitalize w-5/6"
                     style={{
                       ...FONTS.fontSemiBold,
                       fontSize: rf(16),

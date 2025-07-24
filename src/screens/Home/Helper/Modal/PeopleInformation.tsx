@@ -50,6 +50,7 @@ import {
   Youtube,
   Globe,
   Music,
+  Link,
 } from "lucide-react-native";
 import {
   PanGestureHandler,
@@ -205,7 +206,8 @@ const PeopleInformation = ({
     twitter: Twitter,
     tiktok: Music, // ícone alternativo para TikTok
     youtube: Youtube,
-    website: Globe,
+    site: Globe,
+    default:Link
   };
 
   const extractAllServices = (servicesObject: any): string[] => {
@@ -1007,7 +1009,7 @@ const PeopleInformation = ({
                       { peopleData.collaborator?.social ?
                         Object.entries(peopleData.collaborator.social).map(
                           ([key, value]) => {
-                            const Icon = icons[key as keyof typeof icons];
+                            const Icon = icons[key as keyof typeof icons] || icons.default;
                             //@ts-ignore
                             const isLink = isUrl(value);
 

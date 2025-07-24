@@ -22,7 +22,7 @@ export default function Proposal() {
       const response = await findAllPropostalsByCPF(collaborator.CPF);
       if (response.status == 200) {
         setPropostal(response.receivedPropostals);
-
+        console.log(response.receivedPropostals);
       }
       setLoader(false);
     } finally {

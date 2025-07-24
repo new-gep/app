@@ -37,33 +37,52 @@ export default function SocialCardForm() {
 
   const saveSocial = async () => {
     if (!collaborator) return;
+
+    // Cria uma cópia dos dados com https:// adicionado se necessário
+    const sanitizedSocials: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(socialLinks)) {
+      if (!value) continue;
+
+      // Se parecer um link, mas não começar com http ou https, adiciona https://
+      const looksLikeUrl = value.includes(".") || value.includes("/");
+      const startsWithHttp =
+        value.startsWith("http://") || value.startsWith("https://");
+
+      if (looksLikeUrl && !startsWithHttp) {
+        sanitizedSocials[key] = `https://${value}`;
+      } else {
+        sanitizedSocials[key] = value;
+      }
+    }
+
     const response = await UpdateCollaborator(collaborator.CPF, {
-      social: socialLinks,
+      social: sanitizedSocials,
     });
-    if (response.status == 200) {
-      updateCollaborator(collaborator.CPF)
-      Alert.alert("Sucesso", "Redes Sociais atualizado com sucesso!", [
+
+    if (response.status === 200) {
+      updateCollaborator(collaborator.CPF);
+      Alert.alert("Sucesso", "Redes Sociais atualizadas com sucesso!", [
         {
           text: "OK",
           onPress: () => navigation.goBack(),
         },
       ]);
-      return;
     }
   };
 
-  useEffect(()=>{
-    if(collaborator && collaborator.social){
+  useEffect(() => {
+    if (collaborator && collaborator.social) {
       setSocialLinks(collaborator.social);
     }
-  },[collaborator])
+  }, [collaborator]);
 
   return (
     <View className="h-full bg-white">
       <Header title="Redes Sociais" leftIcon="back" />
       <ScrollView className="p-6" contentContainerStyle={{ paddingBottom: 20 }}>
         {/* <Text style={styles.title}>Adicione suas redes sociais</Text> */}
-        {SOCIALS.map((item) => (
+        {SOCIALS.map((item) => ( // linktr.ee/adm.michellecunha
           <View
             key={item.key}
             className="bg-white flex-row rounded-lg items-center p-3 mb-5"
