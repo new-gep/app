@@ -124,6 +124,7 @@ const Home = () => {
   try {
     // ✅ Inicializa o Firebase se ainda não tiver sido
     if (getApps().length === 0) {
+      //@ts-ignore
       initializeApp();
     }
 
