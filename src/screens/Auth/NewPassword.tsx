@@ -24,6 +24,7 @@ import DangerSheet from "../../components/BottomSheet/DangerSheet";
 import UpdateCollaborator from "../../hooks/update/collaborator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "~/src/layout/Header";
+import UpdatePasswordCollaborator from "~/src/hooks/update/collaborator/password";
 type NewPasswordScreenProps = StackScreenProps<
   RootStackParamList,
   "NewPassword"
@@ -68,10 +69,11 @@ const NewPassword = ({ navigation }: NewPasswordScreenProps) => {
       let cpf = collaborator.cpf;
       let password = formValues.password;
       if (cpf && password) {
-        let updateCollaborator = {
-          password: formValues.password,
-        };
-        const response = await UpdateCollaborator(cpf, updateCollaborator);
+        // const response = await UpdateCollaborator(cpf, updateCollaborator);
+        const response = await UpdatePasswordCollaborator(cpf, {
+          currentPassword: 'newpass@32735714^^^^^^^~~çsaklfmsçkflçk',
+          newPassword: formValues.password,
+        }); 
         switch (response.status) {
           case 200:
             await AsyncStorage.setItem(
