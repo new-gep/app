@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { FONTS } from "~/src/constants/theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -30,10 +31,12 @@ export default function About() {
   const [smoke, setSmoke] = useState<any>([]);
   const [communication, setCommunication] = useState<any>([]);
   const [formation, setFormation] = useState<any>([]);
+  const [saveLoad, setSaveLoad] = useState<boolean>(false);
   const navigation = useNavigation<any>();
 
   const handleSave = async () => {
     if (!collaborator) return;
+    setSaveLoad(true)
     const about = {
       drink: drink,
       interests: interests,
@@ -54,11 +57,13 @@ export default function About() {
       Alert.alert("Sucesso", "Informações pessoais atualizados com sucesso!", [
         {
           text: "OK",
-          onPress: () => navigation.goBack(),
+          // onPress: () => navigation.goBack(),
         },
       ]);
+      setSaveLoad(false)
       return;
     }
+    setSaveLoad(false)
   };
 
   useEffect(()=>{
@@ -240,12 +245,16 @@ export default function About() {
         className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
         onPress={handleSave}
       >
-        <Text
-          className="text-dark text-center"
-          style={{ ...FONTS.fontBold, fontSize: 16 }}
-        >
-          CONCLUÍDO
-        </Text>
+        { !saveLoad ?
+          <Text
+            className="text-dark text-center"
+            style={{ ...FONTS.fontBold, fontSize: 16 }}
+          >
+            CONCLUÍDO
+          </Text>
+          :
+          <ActivityIndicator color={'black'} size={28}/>
+        }
       </TouchableOpacity>
     </SafeAreaView>
   );

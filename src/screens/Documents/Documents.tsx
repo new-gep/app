@@ -43,6 +43,7 @@ const Documents = () => {
 
   const Picture = async () => {
     try {
+      if(!collaborator) return
       const response = await FindPicture(collaborator.CPF);
       if(response.status == 404){
         setError(true);
@@ -92,6 +93,7 @@ const Documents = () => {
               const key = `Birth_Certificate_${children}`; // Criar chave dinâmica
 
               // Verifica se a chave já existe no objeto
+              //@ts-ignore
               if (!prevData[key]) {
                 return {
                   [key]: null, // Se não existir, adiciona o novo campo
@@ -114,6 +116,7 @@ const Documents = () => {
             }
             setPicturesData((prevData) => {
               // Verifica se a chave já existe no objeto
+              //@ts-ignore
               if (!prevData[document]) {
                 return {
                   [document]: null, // Se não existir, adiciona o novo campo
@@ -251,6 +254,7 @@ const Documents = () => {
   };
 
   const getPathDocument = async (name: string) => {
+    if(!collaborator) return
     let response: any;
     if (name.toLowerCase().includes("birth_certificate")) {
       response = await FindBucketCollaborator(collaborator.CPF, name);
@@ -303,6 +307,7 @@ const Documents = () => {
   };
 
   const getTypeDocument = async (name: string) => {
+    if(!collaborator) return
     let response: any;
     if (name.toLowerCase().includes("birth_certificate")) {
       response = await FindBucketCollaborator(collaborator.CPF, name);

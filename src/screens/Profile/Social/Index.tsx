@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Header from "~/src/layout/Header";
@@ -30,6 +31,7 @@ export default function SocialCardForm() {
   const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
   const { collaborator, updateCollaborator } = useCollaborator();
   const navigation = useNavigation<any>();
+  const [saveLoad, setSaveLoad] = useState<boolean>(false);
 
   const handleChange = (key: string, value: string) => {
     setSocialLinks((prev) => ({ ...prev, [key]: value }));
@@ -37,7 +39,7 @@ export default function SocialCardForm() {
 
   const saveSocial = async () => {
     if (!collaborator) return;
-
+    setSaveLoad(true)
     // Cria uma cópia dos dados com https:// adicionado se necessário
     const sanitizedSocials: Record<string, string> = {};
 
@@ -62,13 +64,15 @@ export default function SocialCardForm() {
 
     if (response.status === 200) {
       updateCollaborator(collaborator.CPF);
+      setSaveLoad(false)
       Alert.alert("Sucesso", "Redes Sociais atualizadas com sucesso!", [
         {
           text: "OK",
-          onPress: () => navigation.goBack(),
+          // onPress: () => navigation.goBack(),
         },
       ]);
     }
+    setSaveLoad(false)
   };
 
   useEffect(() => {
@@ -82,46 +86,53 @@ export default function SocialCardForm() {
       <Header title="Redes Sociais" leftIcon="back" />
       <ScrollView className="p-6" contentContainerStyle={{ paddingBottom: 20 }}>
         {/* <Text style={styles.title}>Adicione suas redes sociais</Text> */}
-        {SOCIALS.map((item) => ( // linktr.ee/adm.michellecunha
-          <View
-            key={item.key}
-            className="bg-white flex-row rounded-lg items-center p-3 mb-5"
-            style={styles.container}
-          >
-            <FontAwesome5
-              name={item.icon}
-              size={22}
-              color="#444"
-              style={styles.icon}
-            />
-            {/* <Text style={styles.label}>{item.label}</Text> */}
-            <TextInput
-              style={styles.input}
-              placeholder={
-                item.label.toLowerCase() === "site"
-                  ? "Link do seu Site"
-                  : `Link ou @ do ${item.label}`
-              }
-              placeholderTextColor="#999"
-              value={socialLinks[item.key] || ""}
-              onChangeText={(value) => handleChange(item.key, value)}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-          </View>
-        ))}
+        {SOCIALS.map(
+          (
+            item // linktr.ee/adm.michellecunha
+          ) => (
+            <View
+              key={item.key}
+              className="bg-white flex-row rounded-lg items-center p-3 mb-5"
+              style={styles.container}
+            >
+              <FontAwesome5
+                name={item.icon}
+                size={22}
+                color="#444"
+                style={styles.icon}
+              />
+              {/* <Text style={styles.label}>{item.label}</Text> */}
+              <TextInput
+                style={styles.input}
+                placeholder={
+                  item.label.toLowerCase() === "site"
+                    ? "Link do seu Site"
+                    : `Link ou @ do ${item.label}`
+                }
+                placeholderTextColor="#999"
+                value={socialLinks[item.key] || ""}
+                onChangeText={(value) => handleChange(item.key, value)}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+          )
+        )}
       </ScrollView>
       <TouchableOpacity
         className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
-        onPress={() => console.log("CONCLUÍDO pressed")}
+        onPress={saveSocial}
       >
-        <Text
-          className="text-dark text-center"
-          style={{ ...FONTS.fontBold, fontSize: rf(16) }}
-          onPress={saveSocial}
-        >
-          CONCLUÍDO
-        </Text>
+        {!saveLoad ? (
+          <Text
+            className="text-dark text-center"
+            style={{ ...FONTS.fontBold, fontSize: 16 }}
+          >
+            CONCLUÍDO
+          </Text>
+        ) : (
+          <ActivityIndicator color={"black"} size={28} />
+        )}
       </TouchableOpacity>
     </View>
   );

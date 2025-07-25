@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
@@ -12,6 +19,7 @@ import UpdateCollaborator from "~/src/hooks/update/collaborator";
 export default function Service() {
   const navigation = useNavigation<any>();
   const [menu, setMenu] = useState<string>("default");
+  const [saveLoad, setSaveLoad] = useState<boolean>(false);
   const { collaborator, updateCollaborator } = useCollaborator();
   // Assistance
   const [electronics, setElectronics] = useState<any>([]);
@@ -67,6 +75,7 @@ export default function Service() {
 
   const handleSave = async () => {
     if (!collaborator) return;
+    setSaveLoad(true);
     const data = {
       assistance: {
         electronics: electronics,
@@ -138,11 +147,13 @@ export default function Service() {
       Alert.alert("Sucesso", "Serviços atualizado com sucesso!", [
         {
           text: "OK",
-          onPress: () => navigation.goBack(),
+          // onPress: () => navigation.goBack(),
         },
       ]);
+      setSaveLoad(false);
       return;
     }
+    setSaveLoad(false);
     Alert.alert("Falha", "Não foi possível atualizar os serviços!", [
       {
         text: "OK",
@@ -787,7 +798,6 @@ export default function Service() {
 
   useEffect(() => {
     if (collaborator && collaborator.service) {
-
       // assistance
       setElectronics(
         collaborator.service.assistance.electronics
@@ -1048,12 +1058,16 @@ export default function Service() {
         className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
         onPress={handleSave}
       >
-        <Text
-          className="text-dark text-center"
-          style={{ ...FONTS.fontBold, fontSize: rf(16) }}
-        >
-          CONCLUÍDO
-        </Text>
+        {!saveLoad ? (
+          <Text
+            className="text-dark text-center"
+            style={{ ...FONTS.fontBold, fontSize: 16 }}
+          >
+            CONCLUÍDO
+          </Text>
+        ) : (
+          <ActivityIndicator color={"black"} size={28} />
+        )}
       </TouchableOpacity>
     </View>
   );
