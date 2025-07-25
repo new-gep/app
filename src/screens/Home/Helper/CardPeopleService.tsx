@@ -208,12 +208,12 @@ const SwipeableCard = React.memo(function SwipeableCard({
                 </View>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                  className="text-zinc-500"
+                  className="text-zinc-500 w-10/12"
                 >
                   {item?.collaborator && item?.collaborator?.howWork?.contract?.length > 0
                     ? item?.collaborator?.howWork?.contract?.join(", ")
                     : 
-                    <Text style={{ ...FONTS.fontBlack, fontSize: rf(10) }}>
+                    <Text className="" style={{ ...FONTS.fontBlack, fontSize: rf(10) }}>
                       Sem preferencia de contrato
                     </Text>
                   }
