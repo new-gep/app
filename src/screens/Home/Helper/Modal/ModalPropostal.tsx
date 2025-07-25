@@ -32,8 +32,6 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
   const [loader, setLoader] = useState<boolean>(true);
   const { collaborator } = useCollaborator();
 
-
-
   const handleSheetChanges = useCallback(
     (index: number) => {
       setCurrentSnapIndex(index);
@@ -43,6 +41,7 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
     },
     [setVisible]
   );
+
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
@@ -59,11 +58,14 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
     try {
       if (!collaborator) return;
       setLoader(true);
+      console.log(item.collaborator.CPF)
+      console.log(collaborator.CPF)
       const response = await FindPropostal(
         item.collaborator.CPF,
         collaborator.CPF
       );
       if (response.status == 200) {
+        console.log(response)
         setPropostal(response.propostal);
       }
     } finally {
@@ -72,7 +74,7 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
   };
 
   const sendPropostal = async (data: any) => {
-    if (data.alreadyCandidate) {
+    if (data.alreadyCandidate != '0' || data.propostal != '0') {
       Alert.alert(
         "Atenção",
         "Esta pessoa já se candidatou a esta vaga.",
@@ -98,7 +100,6 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
                 data.id,
                 item.collaborator.CPF
               );
-              console.log(response);
               if (response.status == 200) {
                 Alert.alert("Sucesso", "Proposta enviada com sucesso.");
                 setRefreshing(refreshing + 1);
@@ -216,7 +217,7 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
               className="px-5 "
             >
               {!loader ? (
-                propostal.length > 0 ? (
+                propostal?.length > 0 ? (
                   propostal.map((item: any, index: number) => (
                     <View
                       key={index}
@@ -250,7 +251,7 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
                           </Text>
 
                           {/* ✅ Mensagem correta baseada na combinação das flags */}
-                          {item.propostal ? (
+                          {item?.propostal != '0' ? (
                             <Text
                               style={{
                                 ...FONTS.fontLight,
@@ -261,7 +262,7 @@ export default function ModalPropostal({ visible, setVisible, item }: any) {
                             >
                               (Proposta enviada)
                             </Text>
-                          ) : item.alreadyCandidate ? (
+                          ) : item.alreadyCandidate  != '0' ? (
                             <Text
                               style={{
                                 ...FONTS.fontLight,
