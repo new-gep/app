@@ -4,6 +4,7 @@ type Props = {
     cpf     ?: string;
     sex     ?: string;
     email   ?: string;
+    push_token?:string;
     PCD     ?: string;
     name    ?: string;
     password?: string;

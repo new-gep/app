@@ -26,26 +26,23 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import FindAll from "~/src/hooks/get/announcement/all";
 import AllPeople from "~/src/hooks/get/collaborator/AllPeople";
 import FindAllService from "~/src/hooks/get/job/allService";
-import * as Notifications from 'expo-notifications';
-import { getMessaging, getToken } from '@react-native-firebase/messaging';
+import * as Notifications from "expo-notifications";
+import UpdateCollaborator from "~/src/hooks/update/collaborator";
+import {
+  getMessaging,
+  getToken,
+  onTokenRefresh,
+} from "@react-native-firebase/messaging";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
   const [cardSearch, setCardSearch] = useState<any>("Service");
   const [isLoading, setIsLoading] = useState(true);
-  const [previousCards, setPreviousCards] = useState<any>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [previousCards, setPreviousCards] = useState<any>([]);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { collaborator } = useCollaborator();
-  const firebaseConfig = {
-    apiKey: "AIzaSyD-6Y8qqL4wj0drrf61N5bgFjJqQISgc9s",
-    authDomain: "new-gep.firebaseapp.com",
-    projectId: "new-gep",
-    storageBucket: "new-gep.firebasestorage.app",
-    messagingSenderId: "1085982183198",
-    appId: "1:1085982183198:android:73e930bf0b12053380830f",
-  };
 
   const showPopupMessage = (message: string) => {
     setPopupMessage(message);
@@ -107,12 +104,9 @@ const Home = () => {
     );
   };
 
-  
-
   async function registerForPushNotificationsAsync() {
     if (!collaborator) return;
     try {
-
       const { status: existingStatus } =
         await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
@@ -127,31 +121,29 @@ const Home = () => {
         return;
       }
 
-      // Get FCM token
-      // const token = await getToken(messagingInstance, {
-      //   vapidKey: "YOUR_VAPID_KEY", // Optional: Add your VAPID key if required
-      // });
-      // console.log("🔥 FCM Token:", token);
-
-      // Handle token refresh
-      // messaging().onTokenRefresh(async (newToken) => {
-      //   console.log("FCM Token atualizado:", newToken);
-      //   // await api.post('/save-token', { collaboratorId: collaborator.id, token: newToken });
-      // });
-
-      // // Handle foreground messages (optional)
-      // onMessage(messagingInstance, (message) => {
-      //   console.log("Foreground message received:", message);
-      //   // Handle the message as needed (e.g., show a notification)
-      // });
-
-      const messagingInstance = getMessaging();
-      const token = await getToken(messagingInstance);
-      console.log('token', token)
+      if (!collaborator.push_token) {
+        const messagingInstance = getMessaging();
+        const token = await getToken(messagingInstance);
+        const date = {
+          push_token: token,
+        };
+        await UpdateCollaborator(collaborator.CPF, date);
+      }
     } catch (error) {
       console.log("Erro ao registrar notificações:", error);
     }
   }
+
+  useEffect(() => {
+    if (!collaborator) return;
+    const messaging = getMessaging();
+    const unsubscribe = onTokenRefresh(messaging, async (newToken) => {
+      console.log("🔄 Token atualizado:", newToken);
+      await UpdateCollaborator(collaborator.CPF, { push_token: newToken });
+    });
+
+    return () => unsubscribe();
+  }, [collaborator]);
 
   useEffect(() => {
     if (collaborator) {

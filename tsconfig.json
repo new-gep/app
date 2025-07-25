@@ -13,8 +13,6 @@
     "paths": {
       "~/*": ["./*"]
     }
-    // 🔥 remova "typeRoots"
-    // 🔥 remova "types" se tiver
   },
   "extends": "expo/tsconfig.base",
   "exclude": ["node_modules", "**/*.test.ts", "**/*.test.tsx"]
