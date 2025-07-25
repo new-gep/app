@@ -10,6 +10,7 @@ import {
   Keyboard,
   ScrollView,
   Platform,
+  Alert,
 } from "react-native";
 import Card from "./Card";
 import CardPeople from "./Helper/CardPeopleService";
@@ -25,9 +26,8 @@ import { rf } from "~/src/hooks/utils/responsiveFont";
 import FindAll from "~/src/hooks/get/announcement/all";
 import AllPeople from "~/src/hooks/get/collaborator/AllPeople";
 import FindAllService from "~/src/hooks/get/job/allService";
-import messaging from "@react-native-firebase/messaging";
-import { getApps, initializeApp } from '@react-native-firebase/app';
-import * as Notifications from "expo-notifications";
+import * as Notifications from 'expo-notifications';
+import { getMessaging, getToken } from '@react-native-firebase/messaging';
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -38,6 +38,14 @@ const Home = () => {
   const [popupMessage, setPopupMessage] = useState("");
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { collaborator } = useCollaborator();
+  const firebaseConfig = {
+    apiKey: "AIzaSyD-6Y8qqL4wj0drrf61N5bgFjJqQISgc9s",
+    authDomain: "new-gep.firebaseapp.com",
+    projectId: "new-gep",
+    storageBucket: "new-gep.firebasestorage.app",
+    messagingSenderId: "1085982183198",
+    appId: "1:1085982183198:android:73e930bf0b12053380830f",
+  };
 
   const showPopupMessage = (message: string) => {
     setPopupMessage(message);
@@ -99,83 +107,66 @@ const Home = () => {
     );
   };
 
-  // async function registerForPushNotificationsAsync() {
-  //   //     let token;
-
-  //   const { status: existingStatus } =
-  //     await Notifications.getPermissionsAsync();
-  //   let finalStatus = existingStatus;
-
-  //   if (existingStatus !== "granted") {
-  //     const { status } = await Notifications.requestPermissionsAsync();
-  //     finalStatus = status;
-  //   }
-  //   if (finalStatus !== "granted") {
-  //     alert("Failed to get push token for push notification!");
-  //     return;
-  //   }
-
-  //   //     return token;
-  // }
+  
 
   async function registerForPushNotificationsAsync() {
-  if (!collaborator) return;
+    if (!collaborator) return;
+    try {
 
-  try {
-    // ✅ Inicializa o Firebase se ainda não tiver sido
-    if (getApps().length === 0) {
-      initializeApp();
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== "granted") {
+        alert("Permissão de notificações não concedida!");
+        return;
+      }
+
+      // Get FCM token
+      // const token = await getToken(messagingInstance, {
+      //   vapidKey: "YOUR_VAPID_KEY", // Optional: Add your VAPID key if required
+      // });
+      // console.log("🔥 FCM Token:", token);
+
+      // Handle token refresh
+      // messaging().onTokenRefresh(async (newToken) => {
+      //   console.log("FCM Token atualizado:", newToken);
+      //   // await api.post('/save-token', { collaboratorId: collaborator.id, token: newToken });
+      // });
+
+      // // Handle foreground messages (optional)
+      // onMessage(messagingInstance, (message) => {
+      //   console.log("Foreground message received:", message);
+      //   // Handle the message as needed (e.g., show a notification)
+      // });
+
+      const messagingInstance = getMessaging();
+      const token = await getToken(messagingInstance);
+      console.log('token', token)
+    } catch (error) {
+      console.log("Erro ao registrar notificações:", error);
     }
-
-    let finalStatus;
-
-    // Verifica se já tem permissão
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    finalStatus = existingStatus;
-
-    // Se não tiver, pede permissão
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-
-    // Se ainda não foi concedido, sai
-    if (finalStatus !== "granted") {
-      alert("Permissão de notificações não concedida!");
-      return;
-    }
-
-    // ✅ Obter token FCM
-    const token = await messaging().getToken();
-    console.log("🔥 FCM Token:", token);
-
-    // Salvar no backend
-    // await api.post('/save-token', { collaboratorId: collaborator.id, token });
-
-    // Atualização automática do token
-    messaging().onTokenRefresh(async (newToken) => {
-      console.log("FCM Token atualizado:", newToken);
-      // await api.post('/save-token', { collaboratorId: collaborator.id, token: newToken });
-    });
-  } catch (error) {
-    console.log("Erro ao registrar notificações:", error);
-  }
   }
 
   useEffect(() => {
     if (collaborator) {
       const loadData = async () => {
-        // if(!isEmulator()){
-          // await registerForPushNotificationsAsync();
-        // }
+        await registerForPushNotificationsAsync();
+        if (!isEmulator()) {
+        }
         await fetchJobs();
       };
       loadData();
-    };
+    }
   }, [collaborator]);
 
   useEffect(() => {
-    if(!collaborator) return;
+    if (!collaborator) return;
     const loadData = async () => {
       if (cardSearch == "Service") {
         await fetchJobs();
@@ -242,43 +233,41 @@ const Home = () => {
       )}
 
       {/* <ScrollView keyboardShouldPersistTaps="handled"> */}
-        {/* Topo da tela */}
-        <View className="w-full z-50 mt-1 mb-10">
-          <CardSearch
-            setActiveTab={setCardSearch}
-            activeTab={cardSearch}
-            setCards={setCards}
-          />
-        </View>
-        <BannerImage />
-        <BannerCircle />
+      {/* Topo da tela */}
+      <View className="w-full z-50 mt-1 mb-10">
+        <CardSearch
+          setActiveTab={setCardSearch}
+          activeTab={cardSearch}
+          setCards={setCards}
+        />
+      </View>
+      <BannerImage />
+      <BannerCircle />
 
-        {!isLoading ? (
-          <>
-            {cardSearch == "Service" ? (
-              <Card
-                data={cards}
-                setCards={setCards}
-                collaborator={collaborator}
-                showPopupMessage={showPopupMessage}
-              />
-            ) : (
-              <CardPeople
-                data={cards}
-                setCards={setCards}
-                collaborator={collaborator}
-                showPopupMessage={showPopupMessage}
-              />
-            )}
-          </>
-        ) : (
-          <View className="mt-10 items-center justify-center">
-            <ActivityIndicator color={"black"} size={rf(20)} />
-            <Text style={{ ...FONTS.fontBlack, fontSize: rf(15) }}>
-              Buscando
-            </Text>
-          </View>
-        )}
+      {!isLoading ? (
+        <>
+          {cardSearch == "Service" ? (
+            <Card
+              data={cards}
+              setCards={setCards}
+              collaborator={collaborator}
+              showPopupMessage={showPopupMessage}
+            />
+          ) : (
+            <CardPeople
+              data={cards}
+              setCards={setCards}
+              collaborator={collaborator}
+              showPopupMessage={showPopupMessage}
+            />
+          )}
+        </>
+      ) : (
+        <View className="mt-10 items-center justify-center">
+          <ActivityIndicator color={"black"} size={rf(20)} />
+          <Text style={{ ...FONTS.fontBlack, fontSize: rf(15) }}>Buscando</Text>
+        </View>
+      )}
       {/* </ScrollView> */}
     </SafeAreaView>
   );
