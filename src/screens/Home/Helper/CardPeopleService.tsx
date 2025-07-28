@@ -61,7 +61,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
   item,
   onSwipeRight,
   id,
-  isCandidate 
+  isCandidate,
 }: any) {
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -129,6 +129,25 @@ const SwipeableCard = React.memo(function SwipeableCard({
     );
   };
 
+  const hasAnyService = (serviceObj:any) => {
+    if (!serviceObj || typeof serviceObj !== "object") return false;
+
+    // Percorre todas as chaves de nível 1
+    return Object.values(serviceObj).some((sub) => {
+      // Se for outro objeto, percorre os valores dele também
+      if (typeof sub === "object" && !Array.isArray(sub)) {
+        return sub && Object.values(sub).some(
+          (arr) => Array.isArray(arr) && arr.length > 0
+        );
+      }
+
+      // Se for um array direto (pouco provável nesse caso), verifica o tamanho
+      return Array.isArray(sub) && sub.length > 0;
+    });
+  };
+
+  console.log(item?.collaborator && item?.collaborator?.service.length > 0);
+
   return (
     <>
       <PeopleInformation
@@ -140,7 +159,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
       <Swipeable
         key={item?.id}
         // renderRightActions={(progress) => renderRightActions(item?.id, progress)}
-        renderRightActions={()=>null}
+        renderRightActions={() => null}
         leftThreshold={0}
       >
         <View>
@@ -198,25 +217,30 @@ const SwipeableCard = React.memo(function SwipeableCard({
                     maxWidth: SCREEN_WIDTH * 0.4,
                   }}
                 >
-                  {item?.collaborator && item?.collaborator?.service?.length > 0
-                    ? renderIconFromCategoryMap(item?.collaborator.service)
-                    : 
+                  {item?.collaborator &&
+                  hasAnyService(item?.collaborator?.service) ? (
+                    renderIconFromCategoryMap(item?.collaborator.service)
+                  ) : (
                     <Text style={{ ...FONTS.fontBlack, fontSize: rf(10) }}>
                       Sem especialização definida
                     </Text>
-                  }
+                  )}
                 </View>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className="text-zinc-500 w-10/12"
                 >
-                  {item?.collaborator && item?.collaborator?.howWork?.contract?.length > 0
-                    ? item?.collaborator?.howWork?.contract?.join(", ")
-                    : 
-                    <Text className="" style={{ ...FONTS.fontBlack, fontSize: rf(10) }}>
+                  {item?.collaborator &&
+                  item?.collaborator?.howWork?.contract?.length > 0 ? (
+                    item?.collaborator?.howWork?.contract?.join(", ")
+                  ) : (
+                    <Text
+                      className=""
+                      style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
+                    >
                       Sem preferencia de contrato
                     </Text>
-                  }
+                  )}
                 </Text>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
@@ -239,13 +263,13 @@ const SwipeableCard = React.memo(function SwipeableCard({
   );
 });
 
-export default function   CardPeople({
+export default function CardPeople({
   data,
   setCards,
   collaborator,
   showPopupMessage,
   id,
-  isCandidate
+  isCandidate,
 }: any) {
   const [visibleMenuIds, setVisibleMenuIds] = useState<number[]>([]);
   const navigation = useNavigation();
@@ -265,8 +289,7 @@ export default function   CardPeople({
   };
 
   const handleSwipeRight = async (id: any) => {
-    console.log('aqui')
-   
+    console.log("aqui");
   };
 
   const navigateToCardInformation = ({ data }: any) => {
@@ -279,7 +302,6 @@ export default function   CardPeople({
   const renderItem = useCallback(
     ({ item }: any) => {
       return (
-        
         <SwipeableCard
           navigateToCardInformation={() =>
             navigateToCardInformation({ data: item })

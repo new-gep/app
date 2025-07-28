@@ -392,6 +392,7 @@ const WorkInformation = ({
               </View>
             </View>
             <Animated.View
+              onLayout={() => setShowContent(true)}
               style={[
                 {
                   opacity: contentOpacity,

@@ -274,16 +274,16 @@ export default function CathoStyleCards({
   const navigation = useNavigation();
 
   const removeCard = (id: any) => {
-  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  console.log('removendo card com id:', id);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    console.log('removendo card com id:', id);
 
-  setCards((prev: any[]) =>
-    prev.filter((item: any) => {
-      const itemId = item?.service === "fix" ? item?.job?.id : item?.announcement?.announcement?.id;
-      return itemId !== id;
-    })
-  );
-};
+    setCards((prev: any[]) =>
+      prev.filter((item: any) => {
+        const itemId = item?.service === "fix" ? item?.job?.id : item?.announcement?.announcement?.id;
+        return itemId !== id;
+      })
+    );
+  };
 
   const handleSwipeRight = async (id: any) => {
     if (!collaborator) {

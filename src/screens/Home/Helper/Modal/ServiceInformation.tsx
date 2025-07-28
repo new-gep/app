@@ -473,6 +473,7 @@ const ServiceInformation = ({
               </View>
             </View>
             <Animated.View
+              onLayout={() => setShowContent(true)}
               style={[
                 {
                   opacity: contentOpacity,

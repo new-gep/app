@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import {
-  Share2,
+  HeartOff,
   CameraOff,
   Banknote,
   MapPin,
@@ -65,6 +65,8 @@ import UpdateAnnouncement from "~/src/hooks/update/announcement/announcement";
 import { useNavigation } from "@react-navigation/native";
 import ModalPropostal from "./ModalPropostal";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import UpdateCollaborator from "~/src/hooks/update/collaborator";
+import useCollaborator from "~/src/function/fetchCollaborator";
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MIN_MODAL_HEIGHT = SCREEN_HEIGHT * 0.4; // Minimum height (40% of screen)
 const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.95; // Maximum height (95% of screen)
@@ -81,14 +83,15 @@ const PeopleInformation = ({
   const [modalPropostal, setModalPropostal] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(false);
   const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [allService, setAllService] = useState<any>(null);
+  const [isReady, setIsReady] = useState(false);
+  const { collaborator, updateCollaborator } = useCollaborator();
   const navigation = useNavigation();
   const modalHeight = useRef(new Animated.Value(MIN_MODAL_HEIGHT)).current;
   const lastModalHeight = useRef(MIN_MODAL_HEIGHT);
   const expandedThreshold = (MIN_MODAL_HEIGHT + MAX_MODAL_HEIGHT) / 2;
   const isUrl = (value: string) => value.startsWith("http");
-
-  // console.log(peopleData)
 
   const contentOpacity = modalHeight.interpolate({
     inputRange: [MIN_MODAL_HEIGHT, expandedThreshold, MAX_MODAL_HEIGHT],
@@ -207,7 +210,7 @@ const PeopleInformation = ({
     tiktok: Music, // ícone alternativo para TikTok
     youtube: Youtube,
     site: Globe,
-    default:Link
+    default: Link,
   };
 
   const extractAllServices = (servicesObject: any): string[] => {
@@ -278,6 +281,44 @@ const PeopleInformation = ({
     );
   };
 
+  const handleFavorite = async () => {
+    if (!collaborator || !peopleData?.collaborator?.CPF) return;
+
+    const currentCpf = String(peopleData.collaborator.CPF);
+    let favorites: string[] = [];
+
+    // Lida com favorito sendo array OU string JSON
+    if (Array.isArray(collaborator.favorite)) {
+      favorites = collaborator.favorite.map(String);
+    } else if (typeof collaborator.favorite === "string") {
+      try {
+        favorites = JSON.parse(collaborator.favorite || "[]");
+      } catch (e) {
+        favorites = [];
+      }
+    }
+
+    const alreadyExists = favorites.includes(currentCpf);
+
+    const updatedFavorites = alreadyExists
+      ? favorites.filter((cpf) => cpf !== currentCpf)
+      : [...favorites, currentCpf];
+
+    const props = {
+      favorite: JSON.stringify(updatedFavorites),
+    };
+
+
+    const response = await UpdateCollaborator(collaborator.CPF, props);
+
+    if (response?.status === 200) {
+      Alert.alert("Sucesso", "Favoritos atualizados com sucesso!");
+      updateCollaborator(collaborator.CPF);
+    } else {
+      console.warn("Erro ao atualizar favoritos.");
+    }
+  };
+
   useEffect(() => {
     if (peopleData && peopleData?.collaborator?.service) {
       const allServiceList = extractAllServices(
@@ -286,6 +327,26 @@ const PeopleInformation = ({
       setAllService(allServiceList);
     }
   }, []);
+
+  useEffect(() => {
+    if (!collaborator || !peopleData?.collaborator?.CPF) return;
+
+    const currentCpf = String(peopleData.collaborator.CPF);
+
+    let favorites: string[] = [];
+
+    if (Array.isArray(collaborator.favorite)) {
+      favorites = collaborator.favorite.map(String);
+    } else if (typeof collaborator.favorite === "string") {
+      try {
+        favorites = JSON.parse(collaborator.favorite || "[]");
+      } catch {
+        favorites = [];
+      }
+    }
+
+    setIsFavorite(favorites.includes(currentCpf));
+  }, [collaborator, peopleData]);
 
   return (
     <Modal
@@ -353,7 +414,8 @@ const PeopleInformation = ({
               {
                 height: modalHeight,
               },
-            ]}
+            ]
+          }
           >
             {/* Draggable Header */}
             <PanGestureHandler
@@ -536,6 +598,7 @@ const PeopleInformation = ({
                 </View>
               </View>
               <Animated.View
+                onLayout={() => setShowContent(true)}
                 style={[
                   {
                     opacity: contentOpacity,
@@ -799,13 +862,13 @@ const PeopleInformation = ({
                           Valores
                         </Text>
                       </View>
-                      { peopleData?.collaborator?.about?.values ?
+                      {peopleData?.collaborator?.about?.values ? (
                         renderTagList(peopleData.collaborator.about.values)
-                        :
+                      ) : (
                         <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
                           Sem informação sobre valores
                         </Text>
-                      }
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -817,13 +880,13 @@ const PeopleInformation = ({
                           Formação
                         </Text>
                       </View>
-                      { peopleData?.collaborator?.about?.formation ?
+                      {peopleData?.collaborator?.about?.formation ? (
                         renderTagList(peopleData.collaborator.about.formation)
-                        :
+                      ) : (
                         <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
                           Sem informação sobre formação
                         </Text>
-                      }
+                      )}
                     </View>
                     <View className="gap-2">
                       <View className="flex-row">
@@ -1006,10 +1069,11 @@ const PeopleInformation = ({
                   <View className="gap-3">
                     {/* Textos (não links) em coluna */}
                     <View className="gap-2">
-                      { peopleData.collaborator?.social ?
+                      {peopleData.collaborator?.social ? (
                         Object.entries(peopleData.collaborator.social).map(
                           ([key, value]) => {
-                            const Icon = icons[key as keyof typeof icons] || icons.default;
+                            const Icon =
+                              icons[key as keyof typeof icons] || icons.default;
                             //@ts-ignore
                             const isLink = isUrl(value);
 
@@ -1042,11 +1106,11 @@ const PeopleInformation = ({
                             }
                           }
                         )
-                        :
+                      ) : (
                         <Text style={{ ...FONTS.fontLight, fontSize: rf(10) }}>
                           Sem redes sociais definidas
                         </Text>
-                      }
+                      )}
                     </View>
                   </View>
                 </View>
@@ -1067,6 +1131,7 @@ const PeopleInformation = ({
                   Compartilhar
                 </Text>
               </TouchableOpacity> */}
+
               <TouchableOpacity
                 style={{ flex: 1, padding: 12, alignItems: "center" }}
                 onPress={handleView}
@@ -1095,6 +1160,39 @@ const PeopleInformation = ({
                       }}
                     >
                       Visualizar
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{ flex: 1, padding: 12, alignItems: "center" }}
+                onPress={handleFavorite}
+              >
+                {!isFavorite ? (
+                  <>
+                    <Heart size={rf(24)} color="#71717a" />
+                    <Text
+                      style={{
+                        ...FONTS.font,
+                        fontSize: rf(9),
+                        color: "#71717a",
+                      }}
+                    >
+                      Favoritar
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <HeartOff size={rf(24)} color="#71717a" />
+                    <Text
+                      style={{
+                        ...FONTS.font,
+                        fontSize: rf(9),
+                        color: "#71717a",
+                      }}
+                    >
+                      Desfavoritar
                     </Text>
                   </>
                 )}

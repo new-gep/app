@@ -10,6 +10,7 @@ interface propsCollaborator {
     email: string;
     phone: string;
     id_work: string;
+    favorite: any
     push_token:string;
     terms?: string | null;
     sex?: string | null;

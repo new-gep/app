@@ -3,6 +3,7 @@ import axios from 'axios'
 type Props = {
     cpf     ?: string;
     sex     ?: string;
+    favorite?: any
     email   ?: string;
     push_token?:string;
     PCD     ?: string;

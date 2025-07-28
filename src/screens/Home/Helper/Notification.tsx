@@ -31,15 +31,6 @@ export default function Notification() {
   const [notifications, setNotifications] = useState<any>(null);
   const [loader, setLoader] = useState<boolean>(true);
 
-  // {
-  //     id: 1,
-  //     type: "success",
-  //     title: "Anúncio publicado",
-  //     message: "Seu anúncio 'Entrega expressa' foi publicado com sucesso!",
-  //     date: "06/06/2025",
-  //     hour: "22:17 PM",
-  //   },
-
   const renderIcon = (type: string) => {
     switch (type) {
       case "success":
@@ -67,7 +58,6 @@ export default function Notification() {
           style: "destructive",
           onPress: async () => {
             const response = await deleteNotification(id);
-            console.log(response)
             if (response.status === 200) {
               Alert.alert("Sucesso", "Notificação deletada com sucesso!");
               setNotifications((prev: any) =>
