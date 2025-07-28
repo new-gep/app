@@ -42,7 +42,7 @@ const Home = () => {
   const [popupMessage, setPopupMessage] = useState("");
   const [previousCards, setPreviousCards] = useState<any>([]);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const { collaborator } = useCollaborator();
+  const { collaborator, updateCollaborator } = useCollaborator();
 
   const showPopupMessage = (message: string) => {
     setPopupMessage(message);
@@ -74,41 +74,11 @@ const Home = () => {
     setIsLoading(false);
   };
 
-  const isEmulator = () => {
-    if (Platform.OS !== "android") {
-      // Para iOS, verificar 'Simulator' no Model
-      //@ts-ignore
-      return Platform.constants.Model?.toLowerCase().includes("simulator");
-    }
-
-    // Para Android, verificar propriedades típicas de emuladores
-    const { Brand, Model, Fingerprint, Manufacturer } = Platform.constants;
-
-    const isEmulatorByModel =
-      Model?.toLowerCase().includes("sdk") ||
-      Model?.toLowerCase().includes("emulator");
-    const isEmulatorByFingerprint =
-      Fingerprint?.toLowerCase().includes("generic") ||
-      Fingerprint?.toLowerCase().includes("sdk");
-    const isEmulatorByManufacturer =
-      Manufacturer?.toLowerCase().includes("genymotion") ||
-      Manufacturer?.toLowerCase() === "google";
-    const isEmulatorByBrand = Brand?.toLowerCase() === "google";
-
-    // Considera emulador se qualquer uma das condições for verdadeira
-    return (
-      isEmulatorByModel ||
-      isEmulatorByFingerprint ||
-      isEmulatorByManufacturer ||
-      isEmulatorByBrand
-    );
-  };
-
-  async function registerForPushNotificationsAsync() {
+  const registerForPushNotificationsAsync = async () => {
     if (!collaborator) return;
     try {
       const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
+      await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
 
       if (existingStatus !== "granted") {
@@ -117,28 +87,35 @@ const Home = () => {
       }
 
       if (finalStatus !== "granted") {
+        
         alert("Permissão de notificações não concedida!");
         return;
       }
 
       if (!collaborator.push_token) {
+        console.log('aq')
         const messagingInstance = getMessaging();
         const token = await getToken(messagingInstance);
         const date = {
           push_token: token,
         };
+
         await UpdateCollaborator(collaborator.CPF, date);
+
+        setTimeout(() => {
+          updateCollaborator(collaborator.CPF)
+        }, 3000);
       }
+
     } catch (error) {
       console.log("Erro ao registrar notificações:", error);
     }
-  }
+  };
 
   useEffect(() => {
     if (!collaborator) return;
     const messaging = getMessaging();
     const unsubscribe = onTokenRefresh(messaging, async (newToken) => {
-      console.log("🔄 Token atualizado:", newToken);
       await UpdateCollaborator(collaborator.CPF, { push_token: newToken });
     });
 
@@ -149,8 +126,6 @@ const Home = () => {
     if (collaborator) {
       const loadData = async () => {
         await registerForPushNotificationsAsync();
-        if (!isEmulator()) {
-        }
         await fetchJobs();
       };
       loadData();
