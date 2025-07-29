@@ -21,6 +21,11 @@ import { IMAGES } from "~/src/constants/Images";
 import { FONTS } from "~/src/constants/theme";
 import { rf } from "~/src/hooks/utils/responsiveFont";
 import useCollaborator from "~/src/function/fetchCollaborator";
+import SearchModal from "./Search/Index";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+
 interface CardSearchProps {
   setCards: any;
   setActiveTab: any;
@@ -32,6 +37,7 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
   const { collaborator, fetchCollaborator } = useCollaborator();
   const [searchText, setSearchText] = useState("");
   const [path, setPath] = useState<any>(false);
+  const [visible, setVisible] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { wp, hp } = useScreen(); // 📱 dimensões da tela
 
@@ -122,11 +128,11 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
 
   return (
     <View>
+      <SearchModal activeTab={activeTab} visible={visible} setVisible={setVisible} />
       <View className="px-4  flex-row justify-between items-end ">
         {/* Toggle */}
         <View
           style={Style.container}
-          
           className="flex-row bg-white rounded-full mb-2 p-1"
         >
           <TouchableOpacity
@@ -182,9 +188,9 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
         </View>
       </View>
       {/* // */}
-      {/* <View
+      <View
         style={Style.container}
-        className="flex-1 flex-row items-center bg-white rounded-xl shadow-md pr-3 mt-3 mx-4 mb-5"
+        className="flex-row items-center bg-white rounded-xl shadow-md pr-3 mt-3 mx-4 "
       >
         <Icon
           name="search"
@@ -201,19 +207,13 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
           onChangeText={handleSearch}
           onSubmitEditing={() => searchJob()}
         />
-        {searchText.length > 0 ? (
-          <TouchableOpacity onPress={clearSearch} className="mr-2">
-            <Settings2 size={22} color="#9CA3AF" />
-          </TouchableOpacity>
-        ) : (
           <TouchableOpacity
-            // onPress={openFilters}
+            onPress={()=> navigation.navigate('FilterCard')}
             className="pl-2 border-l border-gray-200 ml-1"
           >
             <Settings2 size={22} color="#9CA3AF" />
           </TouchableOpacity>
-        )}
-      </View> */}
+      </View>
     </View>
   );
 };
