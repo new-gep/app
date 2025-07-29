@@ -76,6 +76,8 @@ const PeopleInformation = ({
   visible,
   setVisible,
   peopleData,
+  setReload,
+  reload
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isContract, setIsContract] = useState<boolean>(false);
@@ -316,6 +318,10 @@ const PeopleInformation = ({
       updateCollaborator(collaborator.CPF);
     } else {
       console.warn("Erro ao atualizar favoritos.");
+    }
+
+    if(reload){
+      setReload((prev: number) => prev + 1);
     }
   };
 

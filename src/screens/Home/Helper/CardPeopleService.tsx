@@ -62,6 +62,8 @@ const SwipeableCard = React.memo(function SwipeableCard({
   onSwipeRight,
   id,
   isCandidate,
+  reload,
+  setReload
 }: any) {
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -146,14 +148,14 @@ const SwipeableCard = React.memo(function SwipeableCard({
     });
   };
 
-  console.log(item?.collaborator && item?.collaborator?.service.length > 0);
-
   return (
     <>
       <PeopleInformation
         handleSwipeRight={onSwipeRight}
         visible={visible}
         setVisible={setVisible}
+        setReload={setReload}
+        reload={reload}
         peopleData={{ ...item, isCandidate: isCandidate, id: id }}
       />
       <Swipeable
@@ -164,7 +166,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
       >
         <View>
           <TouchableOpacity
-            className="px-4 py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
+            className="py-2 bg-white border-b border-zinc-300 flex-row items-center justify-between"
             style={styles.card}
             onPress={() => setVisible(true)}
           >
@@ -253,7 +255,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
             </View>
 
             {/* Se quiser o ícone de seta de volta: */}
-            <View>
+            <View className="mr-10">
               <ChevronRight size={rf(20)} />
             </View>
           </TouchableOpacity>
@@ -270,6 +272,8 @@ export default function CardPeople({
   showPopupMessage,
   id,
   isCandidate,
+  setReload,
+  reload
 }: any) {
   const [visibleMenuIds, setVisibleMenuIds] = useState<number[]>([]);
   const navigation = useNavigation();
@@ -309,6 +313,8 @@ export default function CardPeople({
           item={item?.collaborator}
           id={id}
           isCandidate={isCandidate}
+          reload={reload}
+          setReload={setReload}
           isMenuVisible={visibleMenuIds.includes(item?.id)}
           setMenuVisible={setMenuVisible}
           onSwipeLeft={handleSwipeLeft}

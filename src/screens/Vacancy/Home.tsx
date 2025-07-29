@@ -21,6 +21,7 @@ import Service from "./Card/Service";
 import Work from "./Card/Work";
 import FindCandidacy from "~/src/hooks/get/job/findCandidacy";
 import AwaitFetch from "~/src/components/LoadScreen/Load";
+import CardPeople from "../Home/Helper/CardPeopleService";
 
 export default function Vacancy() {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -39,7 +40,8 @@ export default function Vacancy() {
     [key: string]: any;
   };
 
-  const [jobConected, setJobConected] = useState<JobItem[]>([]); // Substitua por seus dados reais
+  const [jobConected, setJobConected] = useState<JobItem[]>([]);
+  const [favorites, setFavorites] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [reload, setReload] = useState<number>(1);
   const { collaborator } = useCollaborator();
@@ -51,6 +53,7 @@ export default function Vacancy() {
         const response = await FindCandidacy(collaborator.CPF);
         if (response.status === 200) {
           setJobConected(response.data);
+          setFavorites(response.favorite)
         } else {
           console.log("Erro ao buscar os cards:", response.message);
           setJobConected([]);
@@ -119,16 +122,23 @@ export default function Vacancy() {
                   </View>
                 )}
                 {filteredJobs.length > 0  ? (
-                  <FlatList
-                    // data={jobConected}
-                    data={filteredJobs}
-                    renderItem={renderItem}
-                    contentContainerStyle={{ paddingBottom: 30 }}
-                    initialNumToRender={5}
-                    maxToRenderPerBatch={5}
-                    windowSize={10}
-                    removeClippedSubviews={true}
-                  />
+                  <>
+                    <FlatList
+                      // data={jobConected}
+                      data={filteredJobs}
+                      renderItem={renderItem}
+                      contentContainerStyle={{}}
+                      initialNumToRender={5}
+                      maxToRenderPerBatch={5}
+                      windowSize={10}
+                      removeClippedSubviews={true}
+                    />
+
+                    { favorites.length > 0  &&
+                      <CardPeople data={favorites} setData={setFavorites} setReload={setReload} reload={reload}/>
+                    }
+                  </>
+                  
                 ) : (
                   <View className="py-20 items-center justify-center">
                     <Text className="text-lg text-gray-500 font-semibold">

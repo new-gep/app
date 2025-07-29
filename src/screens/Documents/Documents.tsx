@@ -43,26 +43,25 @@ const Documents = () => {
 
   const Picture = async () => {
     try {
-      if(!collaborator) return
+      if (!collaborator) return;
       const response = await FindPicture(collaborator.CPF);
-      if(response.status == 404){
-        setError(true);
-        return;
+      if (response.status == 404) {
+
       }
       if (response.status != 500) {
-        setError(false);
         // const picturesFromAPI = response.pictures;
 
-        const picturesFromAPI = response.pictures && response.pictures.length > 0 
-          ? response.pictures.filter((picture: any) => {
-              return (
-                !picture.picture.toLowerCase().includes("signature") &&
-                !picture.picture.toLowerCase().includes("medical") &&
-                !picture.picture.toLowerCase().includes("dismissal") &&
-                !picture.picture.toLowerCase().includes("admission")
-              );
-            })
-          : [];
+        const picturesFromAPI =
+          response.pictures && response.pictures.length > 0
+            ? response.pictures.filter((picture: any) => {
+                return (
+                  !picture.picture.toLowerCase().includes("signature") &&
+                  !picture.picture.toLowerCase().includes("medical") &&
+                  !picture.picture.toLowerCase().includes("dismissal") &&
+                  !picture.picture.toLowerCase().includes("admission")
+                );
+              })
+            : [];
 
         let tempPictureCard: { [key: string]: any } = {};
 
@@ -254,7 +253,7 @@ const Documents = () => {
   };
 
   const getPathDocument = async (name: string) => {
-    if(!collaborator) return
+    if (!collaborator) return;
     let response: any;
     if (name.toLowerCase().includes("birth_certificate")) {
       response = await FindBucketCollaborator(collaborator.CPF, name);
@@ -307,7 +306,7 @@ const Documents = () => {
   };
 
   const getTypeDocument = async (name: string) => {
-    if(!collaborator) return
+    if (!collaborator) return;
     let response: any;
     if (name.toLowerCase().includes("birth_certificate")) {
       response = await FindBucketCollaborator(collaborator.CPF, name);
@@ -373,117 +372,96 @@ const Documents = () => {
   }, [collaborator, process, missingData]);
 
   return (
-    <>
-      {error ? (
-        <View>
-          <Header
-            title="Documentos"
-            leftIcon="back"
-            //titleLeft
-            iconSimple={`folder`}
-          />
-          <View className={`mt-10 items-center`}>
-            <Text style={{ ...FONTS.fontMedium }} className={`text-danger`}>
-              ERRO
-            </Text>
-            <Text style={{ ...FONTS.fontMedium }}>
-              Algo deu errado, tente mais tarde
-            </Text>
-          </View>
-        </View>
-      ) : (
-        <View style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
-          <Header title="Documentos" leftIcon="back" iconSimple={`folder`} />
-          <View>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
+    <View style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
+      <Header title="Documentos" leftIcon="back" iconSimple={`folder`} />
+      <View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
+        >
+          {/* <View className={`px-5`}>
+            <CheckCadasterCollaboratorDocument />
+          </View> */}
+          {/* <View className={`p-3 mt-5`}>
+            <View
+              className={`mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-between`}
             >
-              <View className={`px-5`}>
-                <CheckCadasterCollaboratorDocument />
-              </View>
-              <View className={`p-3 mt-5`}>
-                <View
-                  className={`mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-between`}
+              <View className={`w-2/4`}>
+                <Text
+                  className={`absolute w-44`}
+                  style={{
+                    ...FONTS.fontSemiBold,
+                    fontSize: 24,
+                    color: "#000000",
+                    marginTop: -38,
+                  }}
                 >
-                  <View className={`w-2/4`}>
-                    <Text
-                      className={`absolute w-44`}
-                      style={{
-                        ...FONTS.fontSemiBold,
-                        fontSize: 24,
-                        color: "#000000",
-                        marginTop: -38,
-                      }}
-                    >
-                      Organização
-                    </Text>
-                    <Text
-                      className={`mt-2`}
-                      style={{ ...FONTS.fontRegular, fontSize: 14 }}
-                    >
-                      Aqui organizamos seus documentos para que as empresas
-                      possam acessá-los facilmente.
-                    </Text>
-                  </View>
-                  <View className={`w-2/4`}>
-                    <Image
-                      source={IMAGES.unique14}
-                      style={{
-                        height: height * 0.3, // Ajuste dinâmico para altura
-                        width: width * 0.5, // Ajuste dinâmico para largura
-                        resizeMode: "contain",
-                        marginTop: -120,
-                      }}
-                    />
-                  </View>
-                </View>
+                  Organização
+                </Text>
+                <Text
+                  className={`mt-2`}
+                  style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                >
+                  Aqui organizamos seus documentos para que as empresas possam
+                  acessá-los facilmente.
+                </Text>
               </View>
-              <View
-                style={[
-                  GlobalStyleSheet.container,
-                  { paddingTop: 20, paddingHorizontal: 10 },
-                ]}
-              >
-                <View style={{ marginTop: 50 }}>
-                  <ScrollView showsVerticalScrollIndicator={false}>
-                    <View className={`px-2`}>
-                      {myDocsData &&
-                        process &&
-                        myDocsData.map((data: any) => {
-                          return (
-                            <View
-                              key={data.DocumentName}
-                              style={{ marginBottom: 30 }}
-                            >
-                              <Cardstyle4
-                                documentName={data.DocumentName}
-                                sendDocument={data.sendDocument}
-                                typeDocument={data.typeDocument}
-                                statusDocument={data.statusDocument}
-                                twoPicture={data.twoPicture}
-                                path={data.path}
-                                jobId={null}
-                              />
-                            </View>
-                          );
-                        })}
-                    </View>
-                    <View className={`w-full h-72 items-center justify-center`}>
-                      <Image
-                        source={IMAGES.unique13}
-                        resizeMode="contain"
-                        className={`h-full w-full`}
-                      />
-                    </View>
-                  </ScrollView>
-                </View>
+              <View className={`w-2/4`}>
+                <Image
+                  source={IMAGES.unique14}
+                  style={{
+                    height: height * 0.3, // Ajuste dinâmico para altura
+                    width: width * 0.5, // Ajuste dinâmico para largura
+                    resizeMode: "contain",
+                    marginTop: -120,
+                  }}
+                />
               </View>
-            </ScrollView>
+            </View>
+          </View> */}
+          <View
+            style={[
+              GlobalStyleSheet.container,
+              { paddingTop: 20, paddingHorizontal: 10 },
+            ]}
+          >
+            <View style={{ marginTop: 50 }}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <View className={`px-2`}>
+                  {myDocsData &&
+                    process &&
+                    myDocsData.map((data: any) => {
+                      return (
+                        <View
+                          key={data.DocumentName}
+                          style={{ marginBottom: 30 }}
+                        >
+                          <Cardstyle4
+                            documentName={data.DocumentName}
+                            sendDocument={data.sendDocument}
+                            typeDocument={data.typeDocument}
+                            statusDocument={data.statusDocument}
+                            twoPicture={data.twoPicture}
+                            path={data.path}
+                            jobId={null}
+                          />
+                        </View>
+                      );
+                    })}
+                </View>
+                <View className={`w-full h-72 items-center justify-center`}>
+                  <Image
+                    source={IMAGES.unique13}
+                    resizeMode="contain"
+                    className={`h-full w-full`}
+                  />
+                </View>
+              </ScrollView>
+            </View>
           </View>
-        </View>
-      )}
-    </>
+        </ScrollView>
+      </View>
+    </View>
   );
 };
 

@@ -33,6 +33,7 @@ export default function Percentage() {
     if(!collaborator) return
     const response = await getPercentage(collaborator.CPF);
     if(response.status == 200){
+      console.log('aqaaa')
       setPercentage(response.progress.percentage)
       setProgress(response.progress)
     }
