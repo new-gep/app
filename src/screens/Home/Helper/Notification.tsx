@@ -170,7 +170,7 @@ export default function Notification() {
             ))}
 
             {notifications.length === 0 && (
-              <Text className="text-center text-zinc-500 mt-10">
+              <Text style={{fontSize:rf(16)}} className="text-center text-zinc-500 mt-10">
                 Você não tem notificações no momento.
               </Text>
             )}

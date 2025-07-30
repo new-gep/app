@@ -109,6 +109,7 @@ export default function Card() {
                 <View className="flex-row items-center justify-between">
                   <Text
                     style={{ ...FONTS.fontSemiBold, fontSize: rf(13) }}
+                    numberOfLines={2}
                     className="text-zinc-800 font-semibold"
                   >
                     {actualCompany?.CNPJ_company?.company_name ? actualCompany.CNPJ_company.company_name : "Sem empresa"}
@@ -116,6 +117,7 @@ export default function Card() {
                 </View>
                 <Text
                   style={{ ...FONTS.font, fontSize: rf(11) }}
+                   numberOfLines={1}
                   className="text-zinc-500 capitalize"
                 >
                   {actualCompany?.function ? actualCompany.function : "Sem cargo"}
@@ -138,7 +140,7 @@ export default function Card() {
                 navigation.navigate("FixProcess");
               }}
             >
-              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>Processos</Text>
+              <Text style={{...FONTS.fontLight, fontSize:rf(13)}}>GEP digital</Text>
               <Repeat size={rf(20)} />
             </TouchableOpacity>
           </View>

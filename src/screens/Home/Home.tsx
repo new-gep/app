@@ -171,77 +171,79 @@ const Home = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
-          {showPopup && (
-            <View
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                backgroundColor: "#333",
-                padding: 16,
-                borderRadius: 10,
-                alignItems: "center",
-                zIndex: 1000,
-                // desloca para o centro exato:
-                transform: [
-                  { translateX: -0.5 * 250 }, // metade da largura do popup (ajuste conforme seu tamanho)
-                  { translateY: -0.5 * 60 }, // metade da altura do popup (ajuste conforme seu tamanho)
-                ],
-                width: 250, // largura fixa ou pode ser dinâmica
-              }}
-            >
-              <Text
-                className="text-center"
-                style={{ color: "#fff", fontSize: rf(14), ...FONTS.fontSemiBold }}
+      <ScrollView>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <BottomSheetModalProvider>
+            {showPopup && (
+              <View
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  backgroundColor: "#333",
+                  padding: 16,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  zIndex: 1000,
+                  // desloca para o centro exato:
+                  transform: [
+                    { translateX: -0.5 * 250 }, // metade da largura do popup (ajuste conforme seu tamanho)
+                    { translateY: -0.5 * 60 }, // metade da altura do popup (ajuste conforme seu tamanho)
+                  ],
+                  width: 250, // largura fixa ou pode ser dinâmica
+                }}
               >
-                {popupMessage}
-              </Text>
-            </View>
-          )}
+                <Text
+                  className="text-center"
+                  style={{ color: "#fff", fontSize: rf(14), ...FONTS.fontSemiBold }}
+                >
+                  {popupMessage}
+                </Text>
+              </View>
+            )}
 
-          {/* <ScrollView keyboardShouldPersistTaps="handled"> */}
-          {/* Topo da tela */}
-          <View className="w-full z-50 mt-1 mb-10">
-            <CardSearch
-              setActiveTab={setCardSearch}
-              activeTab={cardSearch}
-              setCards={setCards}
-            />
-          </View>
-          <BannerImage />
-          <BannerCircle />
-
-          {!isLoading ? (
-            <>
-              {cardSearch == "Service" ? (
-                <Card
-                  data={cards}
-                  setCards={setCards}
-                  collaborator={collaborator}
-                  showPopupMessage={showPopupMessage}
-                />
-              ) : (
-                <CardPeople
-                  data={cards}
-                  setCards={setCards}
-                  collaborator={collaborator}
-                  showPopupMessage={showPopupMessage}
-                />
-              )}
-            </>
-          ) : (
-            <View className="mt-10 items-center justify-center">
-              <ActivityIndicator color={"black"} size={rf(20)} />
-              <Text style={{ ...FONTS.fontBlack, fontSize: rf(15) }}>
-                Buscando
-              </Text>
+            {/* <ScrollView keyboardShouldPersistTaps="handled"> */}
+            {/* Topo da tela */}
+            <View className="w-full z-50 mt-1 mb-10">
+              <CardSearch
+                setActiveTab={setCardSearch}
+                activeTab={cardSearch}
+                setCards={setCards}
+              />
             </View>
-          )}
-          {/* </ScrollView> */}
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
+            <BannerImage />
+            <BannerCircle />
+
+            {!isLoading ? (
+              <>
+                {cardSearch == "Service" ? (
+                  <Card
+                    data={cards}
+                    setCards={setCards}
+                    collaborator={collaborator}
+                    showPopupMessage={showPopupMessage}
+                  />
+                ) : (
+                  <CardPeople
+                    data={cards}
+                    setCards={setCards}
+                    collaborator={collaborator}
+                    showPopupMessage={showPopupMessage}
+                  />
+                )}
+              </>
+            ) : (
+              <View className="mt-10 items-center justify-center">
+                <ActivityIndicator color={"black"} size={rf(20)} />
+                <Text style={{ ...FONTS.fontBlack, fontSize: rf(15) }}>
+                  Buscando
+                </Text>
+              </View>
+            )}
+            {/* </ScrollView> */}
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </ScrollView>
     </SafeAreaView>
   );
 };

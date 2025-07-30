@@ -27,13 +27,20 @@ export default function Form({ title, setSelectedCategory, item }: any) {
   const [visible, setVisible] = useState<boolean>(false);
   const [gallery, setGallery] = useState<Array<any>>(item ? item?.gallery : []);
   const [oldGallery, setOldGallery] = useState<Array<any>>(item?.gallery);
-  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
-    []
-  );
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>([]);
   const [visibleUpload, setVisibleUpload] = useState<boolean>(false);
+  const [street, setStreet] = useState("");
+  const [complement, setComplement] = useState("");
+  const [number, setNumber] = useState("");
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [state, setState] = useState("");
+  const [zip, setZip] = useState("");
+  const [noNumber, setNoNumber] = useState(false);
   const [errors, setErrors] = useState({});
   const [selectAdTypeView, setSelectAdTypeView] = useState<boolean>(false);
   const [priceType, setPriceType] = useState(item ? item.typePayment : "");
+  const [model, setModel] = useState(item ? item.model : "");
   const [titleValue, setTitleValue] = useState(item ? item.title : "");
   const [price, setPrice] = useState(item ? item.salary : "");
   const [included, setIncluded] = useState(item ? item.included : "");
@@ -48,13 +55,27 @@ export default function Form({ title, setSelectedCategory, item }: any) {
 
   const validateForm = () => {
     const newErrors: any = {};
+
+    // Campos já existentes
     if (!titleValue.trim()) newErrors.title = "Título é Obrigatório";
     if (!included.trim()) newErrors.included = "Campo Obrigatório";
     if (!priceType) newErrors.priceType = "Selecione uma forma de pagamento";
+    if (!model) newErrors.model = "Selecione um modelo de trabalho";
     if (priceType !== "A combinar" && !price.trim())
       newErrors.price = "Preço Obrigatório";
     if (!adType || adType === "selecione")
       newErrors.adType = "Selecione o tipo de anúncio";
+
+    // Campos de endereço
+    if (!street?.trim()) newErrors.street = "Rua é obrigatória";
+    if (!city?.trim()) newErrors.city = "Cidade é obrigatória";
+    if (!state?.trim()) newErrors.state = "Estado é obrigatório";
+    if (!zip?.trim()) newErrors.zipCode = "CEP é obrigatório";
+
+    // Número: obrigatório apenas se não for marcado como "Sem número"
+    if (!noNumber && (!number || !number.trim())) {
+      newErrors.number = "Número é obrigatório";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -75,7 +96,15 @@ export default function Form({ title, setSelectedCategory, item }: any) {
           included: included,
           notIncluded: excluded,
           information: moreInfo,
-          gallery: gallery,
+          model: model,
+          street: street,
+          complement: complement,
+          number: number,
+          city: city,
+          district: district,
+          state: state,
+          zip: Mask('remove',zip),
+          gallery: gallery
         };
         const response = await CreateAnnouncement(data);
         if (response.status == 201) {
@@ -110,7 +139,7 @@ export default function Form({ title, setSelectedCategory, item }: any) {
       };
       setAwaitCreat(true);
       const response = await UpdateAnnouncement(item.id, data);
-    
+
       if (response.status == 200) {
         Alert.alert(
           "Sucesso!",
@@ -124,6 +153,31 @@ export default function Form({ title, setSelectedCategory, item }: any) {
         return;
       }
       setAwaitCreat(false);
+    }
+  };
+
+  const fetchAddressByCep = async (cep: string) => {
+    try {
+      const cleanCep = cep.replace(/\D/g, "");
+      if (cleanCep.length !== 8) return;
+
+      const response = await fetch(
+        `https://viacep.com.br/ws/${cleanCep}/json/`
+      );
+      const data = await response.json();
+
+      if (data.erro) {
+        Alert.alert("CEP inválido", "Não encontramos esse CEP.");
+        return;
+      }
+
+      setStreet(data.logradouro || "");
+      setCity(data.localidade || "");
+      setState(data.uf || "");
+      setDistrict(data.bairro || "");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível buscar o endereço.");
+      console.error(error);
     }
   };
 
@@ -160,90 +214,238 @@ export default function Form({ title, setSelectedCategory, item }: any) {
             <Text
               style={[FONTS.fontBlack, { fontSize: rf(20), marginBottom: 16 }]}
             >
-              Informações do Serviço
+              Formulário de Serviço
             </Text>
-            <TextInput
-              className="border border-gray-300 rounded-lg p-3 mb-4"
-              placeholder="Título"
-              value={titleValue}
-              onChangeText={setTitleValue}
-            />
-            {/* Tipo de preço */}
-            <Text style={FONTS.fontLight}>Forma de Pagamento:</Text>
-            <ScrollView
-              horizontal
-              className="px-3"
-              contentContainerStyle={{ paddingRight: 18 }}
-            >
-              <View className="flex flex-row gap-4 mb-4 py-1">
-                {[
-                  "Por mês",
-                  "Por tarefa",
-                  "Por semana",
-                  "Por dia",
-                  "Fixo",
-                  "Por hora",
-                  "A combinar",
-                ].map((type) => (
-                  <TouchableOpacity
-                    style={Styles.card}
-                    key={type}
-                    className={`px-4 py-2 rounded-full ${
-                      priceType === type ? "bg-primary" : "bg-white"
-                    }`}
-                    onPress={() => setPriceType(type)}
-                  >
-                    <Text
-                      className={`${
-                        priceType === type ? "text-dark" : "text-gray-500"
-                      }`}
-                    >
-                      {type}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
-
-            {/* Preço */}
-            {priceType !== "A combinar" && (
+            <View className="gap-1">
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Título
+              </Text>
               <TextInput
                 className="border border-gray-300 rounded-lg p-3 mb-4"
-                placeholder="Digite o preço"
-                keyboardType="numeric"
-                value={Mask("amount", price)}
-                onChangeText={(text) => {
-                  const numeric = text.replace(/\D/g, ""); // remove tudo que não é número
-                  setPrice(numeric);
-                }}
+                placeholder="Título"
+                value={titleValue}
+                onChangeText={setTitleValue}
               />
-            )}
+            </View>
+
+            {/* Tipo de preço */}
+            <View>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Forma de Pagamento
+              </Text>
+              <ScrollView
+                horizontal
+                className="px-3"
+                contentContainerStyle={{ paddingRight: 18 }}
+              >
+                <View className="flex flex-row gap-4 mb-4 py-1">
+                  {[
+                    "Por mês",
+                    "Por tarefa",
+                    "Por semana",
+                    "Por dia",
+                    "Fixo",
+                    "Por hora",
+                    "A combinar",
+                  ].map((type) => (
+                    <TouchableOpacity
+                      style={Styles.card}
+                      key={type}
+                      className={`px-4 py-2 rounded-full ${
+                        priceType === type ? "bg-primary" : "bg-white"
+                      }`}
+                      onPress={() => setPriceType(type)}
+                    >
+                      <Text
+                        className={`${
+                          priceType === type ? "text-dark" : "text-gray-500"
+                        }`}
+                      >
+                        {type}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+
+            {/* Preço */}
+            <View className="gap-1">
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Preço
+              </Text>
+              {priceType !== "A combinar" && (
+                <TextInput
+                  className="border border-gray-300 rounded-lg p-3 mb-4"
+                  placeholder="Digite o preço"
+                  keyboardType="numeric"
+                  value={Mask("amount", price)}
+                  onChangeText={(text) => {
+                    const numeric = text.replace(/\D/g, ""); // remove tudo que não é número
+                    setPrice(numeric);
+                  }}
+                />
+              )}
+            </View>
+
+            {/* Modelo */}
+            <View>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Modelo
+              </Text>
+              <ScrollView
+                horizontal
+                className="px-3"
+                contentContainerStyle={{ paddingRight: 18 }}
+              >
+                <View className="flex flex-row gap-4 mb-4 py-1">
+                  {["Presencial", "Híbrido", "Remoto"].map((type) => (
+                    <TouchableOpacity
+                      style={Styles.card}
+                      key={type}
+                      className={`px-4 py-2 rounded-full ${
+                        model === type ? "bg-primary" : "bg-white"
+                      }`}
+                      onPress={() => setModel(type)}
+                    >
+                      <Text
+                        className={`${
+                          model === type ? "text-dark" : "text-gray-500"
+                        }`}
+                      >
+                        {type}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
 
             {/* Incluído */}
-            <TextInput
-              className="border border-gray-300 rounded-lg p-3 mb-4"
-              placeholder="O que está incluído"
-              value={included}
-              onChangeText={setIncluded}
-            />
+            <View className="gap-1">
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                O que está incluído
+              </Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-3 mb-4"
+                placeholder="O que está incluído"
+                value={included}
+                onChangeText={setIncluded}
+              />
+            </View>
 
             {/* Não incluído */}
-            <TextInput
-              className="border border-gray-300 rounded-lg p-3 mb-4"
-              placeholder="O que não está incluído"
-              value={excluded}
-              onChangeText={setExcluded}
-            />
+            <View>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                O que não está incluído
+              </Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-3 mb-4"
+                placeholder="O que não está incluído"
+                value={excluded}
+                onChangeText={setExcluded}
+              />
+            </View>
 
             {/* Mais informações */}
-            <TextInput
-              multiline
-              numberOfLines={4}
-              className="border border-gray-300 rounded-lg p-3 mb-4"
-              placeholder="Mais informações sobre o serviço"
-              value={moreInfo}
-              onChangeText={setMoreInfo}
-            />
+            <View>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Mais informações sobre o serviço
+              </Text>
+              <TextInput
+                multiline
+                numberOfLines={4}
+                className="border border-gray-300 rounded-lg p-3 mb-4"
+                placeholder="Mais informações sobre o serviço"
+                value={moreInfo}
+                onChangeText={setMoreInfo}
+              />
+            </View>
+
+            {/* Endereço */}
+            <View>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>CEP</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-2 mb-4"
+                placeholder="Digite o CEP"
+                value={Mask("cep", zip)}
+                onChangeText={(value) => {
+                  setZip(value);
+                  const numericCep = value.replace(/\D/g, "");
+                  if (numericCep.length === 8) fetchAddressByCep(numericCep);
+                }}
+                keyboardType="numeric"
+              />
+
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Rua</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-2 mb-4"
+                placeholder="Digite a rua"
+                value={street}
+                onChangeText={setStreet}
+              />
+
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Bairro</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-2 mb-4"
+                placeholder="Digite a cidade"
+                value={district}
+                onChangeText={setDistrict}
+              />
+
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Complemento (opcional)</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-2 mb-4"
+                placeholder="Digite o complemento (opcional)"
+                value={complement}
+                onChangeText={setComplement}
+              />
+
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Número</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-2 mb-2"
+                placeholder="Digite o número"
+                value={noNumber ? "S/N" : number}
+                onChangeText={setNumber}
+                editable={!noNumber}
+                keyboardType="numeric"
+              />
+
+              <TouchableOpacity
+                className="mb-4"
+                onPress={() => {
+                  setNoNumber((prev) => !prev);
+                  if (!noNumber)
+                    setNumber("S/N"); // limpa se marcar como sem número
+                  else setNumber(""); // reseta se desmarcar
+                }}
+              >
+                <View className="flex-row items-center">
+                  <View
+                    className={`w-4 h-4 mr-2 rounded border border-gray-400 ${
+                      noNumber ? "bg-green-600" : "bg-white"
+                    }`}
+                  />
+                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(17) }}>Sem número</Text>
+                </View>
+              </TouchableOpacity>
+
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Cidade</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-2 mb-4"
+                placeholder="Digite a cidade"
+                value={city}
+                onChangeText={setCity}
+              />
+
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Estado</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-2 mb-4"
+                placeholder="Digite o estado"
+                value={state}
+                onChangeText={setState}
+              />
+            </View>
 
             {/* Tipo de anúncio */}
             <TouchableOpacity

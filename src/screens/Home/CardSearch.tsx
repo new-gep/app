@@ -109,7 +109,7 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
       Alert.alert("Erro", "Falha ao buscar a vaga.");
       return;
     }
-     setCards();
+    setCards();
     const uniqueJobs = response.job.filter(
       (job: any, index: any, self: any) =>
         self.findIndex((j: any) => j.id === job.id) === index
@@ -208,7 +208,9 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
           onSubmitEditing={() => searchJob()}
         />
           <TouchableOpacity
-            onPress={()=> navigation.navigate('FilterCard')}
+            onPress={()=> navigation.navigate('FilterCard',{
+              option: activeTab
+            })}
             className="pl-2 border-l border-gray-200 ml-1"
           >
             <Settings2 size={22} color="#9CA3AF" />

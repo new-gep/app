@@ -13,6 +13,14 @@ type Props = {
   included?: string;
   notIncluded?: string;
   information?: string;
+  street?: string;
+  model?: string;
+  complement?:string
+  number?: string;
+  city?: string;
+  district?: string;
+  state?: string;
+  zip?: string;
   gallery?: Array<any>; // <- importante tipar corretamente como array
 };
 
@@ -27,8 +35,16 @@ export default async function CreateAnnouncement(props: Props) {
       typeAnnouncement: props.typeAnnouncement,
       salary: props.salary && Mask("remove", props.salary),
       included: props.included,
+      model: props.model,
       notIncluded: props.notIncluded,
       information: props.information,
+      street : props.street,
+      number : props.number,
+      complement : props.complement,
+      city   : props.city,
+      district : props.district, 
+      state : props.state, 
+      zip : props.zip
     });
 
     if(response.data.status !== 201) return response.data

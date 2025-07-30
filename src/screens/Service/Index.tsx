@@ -49,7 +49,7 @@ export default function Service() {
         )}
         className={"px-4"}
         style={{ width: "100%", paddingTop: 70 }}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 140 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Tabs */}
