@@ -22,6 +22,7 @@ import Work from "./Card/Work";
 import FindCandidacy from "~/src/hooks/get/job/findCandidacy";
 import AwaitFetch from "~/src/components/LoadScreen/Load";
 import CardPeople from "../Home/Helper/CardPeopleService";
+import { useCollaboratorContext } from "~/src/context/CollaboratorContext";
 
 export default function Vacancy() {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -39,7 +40,7 @@ export default function Vacancy() {
     service?: string;
     [key: string]: any;
   };
-
+  const { validateCollaborator } = useCollaboratorContext();
   const [jobConected, setJobConected] = useState<JobItem[]>([]);
   const [favorites, setFavorites] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,6 +75,7 @@ export default function Vacancy() {
 
   useFocusEffect(
     React.useCallback(() => {
+      validateCollaborator();
       fetchJobs();
     }, [collaborator, reload])
   );

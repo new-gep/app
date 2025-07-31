@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet,TouchableOpacity, TextInput } from 'react-native'
 import { COLORS, FONTS } from '../../constants/theme';
 import { useTheme } from "@react-navigation/native";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 
 
 type props = {
@@ -93,22 +94,22 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         justifyContent:'space-evenly',
         //padding:20,
-        paddingTop:20,
+        paddingTop:rf(20),
         gap:5,
-        paddingHorizontal:40
+        paddingHorizontal:rf(40)
         //height:20
     },
     SplitBoxes :{
         borderColor:COLORS.inputborder,
         borderBottomWidth:2,
-        width:55,
+        width:rf(55),
         //padding:15,
-        height:55,
+        height:rf(55),
         alignItems:'center',
         justifyContent:'center',
     },
     SplitBoxText :{
-        fontSize:28,
+        fontSize:rf(28),
         textAlign:'center',
         color:'#000'
     },

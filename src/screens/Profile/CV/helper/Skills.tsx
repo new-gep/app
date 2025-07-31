@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 
 interface SkillsProps {
   skills: string[];
@@ -52,17 +53,17 @@ const Skills: React.FC<SkillsProps> = ({ skills, setSkills, preview }) => {
   return (
     <>
       <View className="px-1 flex-row justify-between items-center mb-3">
-        <Text className="text-dark font-bold text-lg">Competências</Text>
+        <Text style={{fontSize:rf(18)}} className="text-dark font-bold text-lg">Competências</Text>
         
         { !preview &&
           <View className="flex-row">
            {editMode ? (
               <TouchableOpacity onPress={saveData}>
-                <MaterialCommunityIcons name="content-save-all-outline" size={24} color="#10B981" />
+                <MaterialCommunityIcons name="content-save-all-outline" size={rf(24)} color="#10B981" />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={editData}>
-                <MaterialCommunityIcons name="pencil-box-multiple-outline" size={24} color="#3B82F6" />
+                <MaterialCommunityIcons name="pencil-box-multiple-outline" size={rf(24)} color="#3B82F6" />
               </TouchableOpacity>
             )}
           {/* <TouchableOpacity onPress={resetData}>
@@ -92,6 +93,7 @@ const Skills: React.FC<SkillsProps> = ({ skills, setSkills, preview }) => {
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: 0.1,
                     shadowRadius: 4,
+                    fontSize: rf(18)
                   }}
                   className={`bg-white p-2 rounded-lg mt-2 text-black ${
                     index > 0 ? "w-11/12" : "w-full"
@@ -106,25 +108,25 @@ const Skills: React.FC<SkillsProps> = ({ skills, setSkills, preview }) => {
                     onPress={() => removeSkill(index)}
                     className="ml-2"
                   >
-                    <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />
+                    <MaterialCommunityIcons name="trash-can-outline" size={rf(24)} color="black" />
                   </TouchableOpacity>
                 )}
               </View>
             ))}
             <TouchableOpacity onPress={addSkill} className="mt-8">
-              <Text className="text-black">+ Adicionar mais seções</Text>
+              <Text style={{ fontSize: rf(18) }} className="text-black">+ Adicionar mais seções</Text>
             </TouchableOpacity>
           </>
         ) : (
           <View>
             {savedSkills && savedSkills.length > 0 ? (
               savedSkills.map((skill, index) => (
-                <Text key={index} className="text-black">
+                <Text style={{fontSize: rf(16)}} key={index} className="text-black">
                   - {skill}
                 </Text>
               ))
             ) : (
-              <Text className="text-gray-500">
+              <Text style={{ fontSize: rf(16) }}  className="text-gray-500">
                 Nenhuma competência adicionada.
               </Text>
             )}

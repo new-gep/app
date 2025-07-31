@@ -10,6 +10,7 @@ import { IMAGES } from "../../constants/Images"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useCollaboratorContext } from "../../context/CollaboratorContext"
 import useCollaborator from "../../function/fetchCollaborator"
+import { rf } from "~/src/hooks/utils/responsiveFont"
 
 type MissingDatesStorage = {
     missingDocuments: string[];
@@ -118,11 +119,11 @@ export default function CheckCadasterCollaboratorDocument() {
                 </View>
             ) : (
                 <View className={`bg-dark px-5 rounded-b-3xl ${[!missingDate.Address, !missingDate.Birth_Certificate, !missingDate.Marriage_Certificate, !missingDate.RG, !missingDate.School_History, !missingDate.Military_Certificate, !missingDate.Work_Card].every(Boolean) && 'hidden'}`}>
-                    <View style={[GlobalStyleSheet.cardHeader, { borderBottomColor: COLORS.inputborder }]}>
-                        <Text className={`text-xl text-primary`} style={{ ...FONTS.fontMedium }}>
+                    <View className="mt-2" style={[GlobalStyleSheet.cardHeader, { borderBottomColor: COLORS.inputborder }]}>
+                        <Text  className={`text-xl text-primary`} style={{ ...FONTS.fontMedium, fontSize:rf(16)}}>
                             <AntDesign name="warning" size={24} color={COLORS.primary} />  Cadastro Incompleto 
                         </Text>
-                        <Text className={`text-white text-xs mt-1`}>
+                        <Text style={{fontSize:rf(13)}} className={`text-white mt-1 mb-1`}>
                             Seu cadastro está incompleto. Envie as documentação abaixo que faltam 
                             para liberar o uso da plataforma. 
                         </Text>
@@ -136,7 +137,7 @@ export default function CheckCadasterCollaboratorDocument() {
                                 <ListStyle1 
                                     
                                     arrowRight 
-                                    icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
+                                    icon={<AntDesign name={'picture'} size={rf(16)} color={COLORS.dark} />}
                                     title={'RG'}
                                 />
                             )}
@@ -152,7 +153,7 @@ export default function CheckCadasterCollaboratorDocument() {
                                 <ListStyle1 
                                     
                                     arrowRight 
-                                    icon={<AntDesign name={'picture'} size={15} color={COLORS.primary} />}
+                                    icon={<AntDesign name={'picture'} size={rf(16)} color={COLORS.dark} />}
                                     title={'Comprovante de Endereço'}
                                 />
                             )}

@@ -11,6 +11,7 @@ import PersonalInfo from "./helper/PersonalInfo";
 import Education from "./helper/Education";
 import Experience from "./helper/Experience";
 import Skills from "./helper/Skills";
+import Progress from "./helper/Progress";
 import CVPreview from "./Preview";
 import { useEffect, useState } from "react";
 import FindCV from "~/src/hooks/findOne/cv";
@@ -18,12 +19,30 @@ import useCollaborator from "~/src/function/fetchCollaborator";
 import { COLORS } from "~/src/constants/theme";
 import CreateCV from "~/src/hooks/create/cv";
 import UpdateCV from "~/src/hooks/update/cv";
+
 import Home from "./Home";
 
 export default function CV() {
   const [CVEdit, setCVEdit] = useState(false);
   const [personalInfo, setPersonalInfo] = useState<any>(null);
   const [education, setEducation] = useState<
+    {
+      degree: string;
+      institution: string;
+      currentlyStudying: boolean | undefined;
+      start: string;
+      end: string;
+    }[]
+  >([
+    {
+      degree: "",
+      institution: "",
+      currentlyStudying: false,
+      start: "",
+      end: "",
+    },
+  ]);
+  const [progress, setProgress] = useState<
     {
       degree: string;
       institution: string;
@@ -106,7 +125,9 @@ export default function CV() {
         education: JSON.stringify(validEducation),
         experience: JSON.stringify(validExperience),
         skills: JSON.stringify(skills),
+        progress: JSON.stringify(progress)
       };
+
       let response;
       if(id){
         response = await UpdateCV(id, props);
@@ -168,10 +189,12 @@ export default function CV() {
                 setPersonalInfo={setPersonalInfo}
               />
               <Education education={education} setEducation={setEducation} />
+              <Progress education={progress} setEducation={setProgress} />
               <Experience experience={experience} setExperience={setExperience} />
               <Skills skills={skills} setSkills={setSkills} />
               {/* <CVPreview /> */}
             </ScrollView>
+
             <View className="py-3 px-2 rounded-t-lg ">
               <TouchableOpacity
                 className="bg-primary rounded-lg p-2 py-3"

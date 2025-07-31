@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
   ActivityIndicator,
   SafeAreaView,
   BackHandler,
-  Image,
-  Dimensions,
   Keyboard,
   ScrollView,
-  Platform,
-  Alert,
 } from "react-native";
 import Card from "./Card";
 import CardPeople from "./Helper/CardPeopleService";
-import GetAllJob from "../../hooks/get/job/all";
 import useCollaborator from "../../function/fetchCollaborator";
 import HeaderStyle1 from "../../components/Headers/HeaderStyle1";
 import { useCollaboratorContext } from "../../context/CollaboratorContext";
@@ -35,6 +30,7 @@ import {
 } from "@react-native-firebase/messaging";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -45,6 +41,7 @@ const Home = () => {
   const [previousCards, setPreviousCards] = useState<any>([]);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { collaborator, updateCollaborator } = useCollaborator();
+  const { validateCollaborator, missingData } = useCollaboratorContext();
 
   const showPopupMessage = (message: string) => {
     setPopupMessage(message);
@@ -169,6 +166,12 @@ const Home = () => {
     };
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      validateCollaborator();
+    }, [])
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView>
@@ -195,7 +198,11 @@ const Home = () => {
               >
                 <Text
                   className="text-center"
-                  style={{ color: "#fff", fontSize: rf(14), ...FONTS.fontSemiBold }}
+                  style={{
+                    color: "#fff",
+                    fontSize: rf(14),
+                    ...FONTS.fontSemiBold,
+                  }}
                 >
                   {popupMessage}
                 </Text>

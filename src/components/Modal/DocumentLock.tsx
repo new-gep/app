@@ -21,7 +21,7 @@ type Props = {
 }
 
 const DocumentCompletionModal = ({ visible, close }: Props) => {
-    const navigation = useNavigation<RootStackParamList>();
+    const navigation = useNavigation<any>();
 
     const handleClick = async () => {
         const collaborator = await AsyncStorage.getItem('collaborator')

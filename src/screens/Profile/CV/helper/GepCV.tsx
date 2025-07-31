@@ -13,12 +13,30 @@ import Skills from "./Skills";
 import FindCV from "~/src/hooks/findOne/cv";
 import useCollaborator from "~/src/function/fetchCollaborator";
 import { COLORS } from "~/src/constants/theme";
+import Progress from "./Progress";
 
 
 export default function CVGep() {
   const [CVEdit, setCVEdit] = useState(false);
   const [personalInfo, setPersonalInfo] = useState<any>(null);
   const [education, setEducation] = useState<
+    {
+      degree: string;
+      institution: string;
+      currentlyStudying: boolean | undefined;
+      start: string;
+      end: string;
+    }[]
+  >([
+    {
+      degree: "",
+      institution: "",
+      currentlyStudying: false,
+      start: "",
+      end: "",
+    },
+  ]);
+  const [progress, setProgress] = useState<
     {
       degree: string;
       institution: string;
@@ -70,6 +88,7 @@ export default function CVGep() {
               setEducation(response.cv.education);
               setExperience(response.cv.experience);
               setSkills(response.cv.skills);
+              setProgress(response.cv.progress);
               setId(response.cv.id);
               setPersonalInfo(response.cv.CPF_collaborator);
               return;
@@ -92,12 +111,14 @@ export default function CVGep() {
     <View className="flex-1 bg-white p-2">
       {  personalInfo ? (
           <>
+            
             <ScrollView className="p-4">
               <PersonalInfo
                 personalInfo={personalInfo}
                 setPersonalInfo={setPersonalInfo}
               />
               <Education education={education} setEducation={setEducation} preview={true}/>
+              <Progress education={progress} setEducation={setProgress} preview={true}/>
               <Experience experience={experience} setExperience={setExperience} preview={true}/>
               <Skills skills={skills} setSkills={setSkills} preview={true}/>
             </ScrollView>

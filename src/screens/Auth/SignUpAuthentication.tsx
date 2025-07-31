@@ -17,6 +17,8 @@ import DangerSheet from '../../components/BottomSheet/DangerSheet'
 import SendCodeByEmail from '../../hooks/utils/SendCodeByEmail'
 import SuccessSheet from '../../components/BottomSheet/SuccessSheet'
 import CreateCollaborator from '../../hooks/create/collaborator'
+import Header from '~/src/layout/Header'
+import { rf } from '~/src/hooks/utils/responsiveFont'
 type SignUpAuthenticationNavigationProp = NavigationProp<RootStackParamList, 'SignUpAuthentication'>;
 interface Props { email: string }
 const SignUpAuthentication = () => {
@@ -136,6 +138,7 @@ const SignUpAuthentication = () => {
 
   return (
     <SafeAreaView style={{flex:1,backgroundColor: colors.card,}}>
+        <Header title="Confirmação de Acesso" leftIcon={"back"}/>
         <RBSheet
             ref={refRBSheet}
             closeOnDragDown={true}
@@ -174,30 +177,11 @@ const SignUpAuthentication = () => {
             </>
         :
             <>
-                <View className={`px-10`} style={[GlobalStyleSheet.container,GlobalStyleSheet.flexcenter,{paddingVertical:50}]}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('SignUp')}
-                        activeOpacity={0.5}
-                        style={[styles.imagebackground,{
-                            backgroundColor:'#F6F6F6',
-                            zIndex:99
-                        }]}
-                    >
-                        <Feather name='arrow-left' size={24} color={COLORS.title}/>
-                    </TouchableOpacity>
-                    <View className={`h-20 w-full `}>
-                        <Image
-                            style={{top:'-95%', left:'6%'}}
-                            className={`h-60 w-60 absolute`}
-                            source={theme.dark ? IMAGES.appnamedark :IMAGES.appname}
-                        />
-                    </View>
-                </View>
                 <View style={{flex:1}}>
                     <View style={[GlobalStyleSheet.container,{flexGrow:1,paddingHorizontal:30,paddingBottom:0}]}>
                         <ScrollView>
                             <Text style={[styles.title1,{color:colors.title,textAlign:'center'}]}>Digite o Código</Text>
-                            <Text style={[FONTS.fontRegular,{fontSize:14,color:colors.title,textAlign:'center'}]}>Um código de verificação foi enviado{"\n"} {formValues.email} </Text>
+                            <Text style={[FONTS.fontRegular,{fontSize:rf(14),color:colors.title,textAlign:'center'}]}>Um código de verificação foi enviado{"\n"} {formValues.email} </Text>
                             <View style={{marginBottom:20}}>
                                 <View>
                                     {reset ? null : (
@@ -228,7 +212,7 @@ const SignUpAuthentication = () => {
                         </ScrollView>
                         <View style={{marginBottom:10}}>
                             <View style={[GlobalStyleSheet.bottombtn]}>
-                                <Text style={[FONTS.fontRegular,{fontSize:14,color:colors.title}]}>New Gep</Text>
+                                <Text style={[FONTS.fontRegular,{fontSize:rf(14),color:colors.title}]}>New Gep</Text>
                                 <Text style={styles.title4}>technology</Text>
                             </View>
                         </View>
@@ -251,24 +235,24 @@ const styles = StyleSheet.create({
     },
     text:{
         ...FONTS.fontRegular,
-        fontSize:16,
+        fontSize:rf(16),
         color:COLORS.primary,
         textDecorationLine:'underline'
     },
     title1:{
             ...FONTS.fontSemiBold,
-            fontSize: 24,
+            fontSize: rf(24),
             color: COLORS.title,
             marginBottom: 5 
     },
     title2:{
         ...FONTS.fontRegular,
-        fontSize: 14,
+        fontSize: rf(14),
             color: COLORS.text 
     },
     title4:{
         ...FONTS.fontRegular,
-        fontSize:14,
+        fontSize:rf(14),
         color:COLORS.primary,
         textDecorationLine:'underline',
         textDecorationColor:COLORS.primary

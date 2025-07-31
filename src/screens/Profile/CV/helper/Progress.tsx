@@ -25,7 +25,7 @@ type EducationProps = {
   preview?: boolean;
 };
 
-const Education: React.FC<EducationProps> = ({
+const Progress: React.FC<EducationProps> = ({
   education,
   setEducation,
   preview,
@@ -160,7 +160,7 @@ const Education: React.FC<EducationProps> = ({
           style={{ fontSize: rf(18) }}
           className="text-dark font-bold text-lg"
         >
-          Escolaridade
+          Cursos
         </Text>
         {!preview && (
           <View className="flex-row justify-between items-center">
@@ -202,7 +202,6 @@ const Education: React.FC<EducationProps> = ({
       >
         {editMode ? (
           <View className="flex-col gap-8">
-            
             {education.map((edu, index) => (
               <View key={index} className="mt-2 flex-row items-center">
                 <View className="flex-1">
@@ -339,7 +338,7 @@ const Education: React.FC<EducationProps> = ({
         ) : (
           <View>
             <Text style={{fontSize:rf(16)}} className="text-gray-500">
-              Nenhuma escolaridade adicionada.
+              Nenhum curso adicionado.
             </Text>
           </View>
         )}
@@ -348,4 +347,4 @@ const Education: React.FC<EducationProps> = ({
   );
 };
 
-export default Education;
+export default Progress;

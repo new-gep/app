@@ -24,6 +24,7 @@ import useCollaborator from "~/src/function/fetchCollaborator";
 import AwaitFetch from "~/src/components/LoadScreen/Load";
 import Mask from "~/src/function/mask";
 import deleteNotification from "~/src/hooks/delete/notification";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Notification() {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -120,6 +121,12 @@ export default function Notification() {
     fetchData();
   }, [collaborator]);
 
+   useFocusEffect(
+      React.useCallback(() => {
+        validateCollaborator();
+      }, [])
+    );
+
   return (
     <View className="bg-white h-full">
       {/* <Header leftIcon="back" title="Notificações" /> */}
@@ -180,3 +187,7 @@ export default function Notification() {
     </View>
   );
 }
+function validateCollaborator() {
+  throw new Error("Function not implemented.");
+}
+

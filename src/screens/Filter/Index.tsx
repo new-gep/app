@@ -11,7 +11,7 @@ import Time from "./Components/Time";
 import Payment from "./Components/Payment";
 import Contract from "./Components/Contract";
 import Button from "~/src/components/Button/Button";
-import Modality from "./Components/modality";
+import Modality from "./Components/Modality";
 import Category from "./Components/Category";
 import { useRoute } from "@react-navigation/native";
 

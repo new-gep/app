@@ -104,9 +104,14 @@ export default function About() {
             icon="school_outline"
             title="Formação"
             options={[
-              "Superior completo",
+              "Ensino Fundamental Incompleto",
+              "Ensino Fundamental Cursando",
+              "Ensino Fundamental Completo",
+              "Cursando o Ensino Incompleto",
+              "Cursando o Ensino Cursando",
+              "Cursando o Ensino Completo",
               "Fazendo faculdade",
-              "Cursando o Ensino Médio",
+              "Superior completo",
               "Doutorado completo",
               "Fazendo pós",
               "Mestrado completo",
@@ -189,6 +194,21 @@ export default function About() {
             icon="balance_outline"
             title="Valores"
             options={[
+              "Respeito",
+              "Honestidade",
+              "Solidariedade",
+              "Responsabilidade",
+              "Empatia",
+              "Gratidão",
+              "Tolerância",
+              "Generosidade",
+              "Amor",
+              "Felicidade",
+              "Liberdade",
+              "Paz",
+              "Plenitude",
+              "Justiça",
+              "Igualdade",
               "Espiritualidade",
               "Relações",
               "Autonomia",

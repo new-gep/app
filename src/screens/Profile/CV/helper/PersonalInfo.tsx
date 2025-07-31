@@ -1,7 +1,8 @@
+import Mask from "~/src/function/mask";
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Mask from "~/src/function/mask";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 
 type PersonalInfoType = {
   name: string;
@@ -65,7 +66,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
   return (
     <>
       <View className="px-1 flex-row justify-between items-center mb-3">
-        <Text className="text-dark font-bold text-lg">
+        <Text style={{fontSize:rf(18)}} className="text-dark font-bold text-lg">
           Informações Pessoais
         </Text>
         {/* <View className="flex-row justify-between items-center">
@@ -86,7 +87,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
         </View> */}
       </View>
       <View
-        className="p-4 bg-white rounded-xl mb-4 shadow-md"
+        className="px-2 py-3 bg-white rounded-xl mb-4 shadow-md"
         style={{
           elevation: 8, // Sombra para Android
           shadowColor: "#000", // Sombra para iOS
@@ -138,52 +139,53 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
             />
           </>
         ) : (
-          <View className="flex-col gap-1">
-            <View className="flex-row gap-1">
+          <View className="flex-col ">
+            <View className="flex-row ">
               {/* <FontAwesome name="user-o" size={20} color="black" /> */}
               <MaterialCommunityIcons
                 name="account-outline"
-                size={24}
+                size={rf(24)}
                 color="#4B4B4B"
               />
-              <Text className="text-black">
+              <Text style={{fontSize:rf(16)}} className="text-black ml-1">
                 {personalInfo && personalInfo.name && personalInfo.name} 
               </Text>
             </View>
-            <View className="flex-row gap-1">
+            <View className="flex-row ">
               <MaterialCommunityIcons
                 name="cake-variant-outline"
-                size={24}
+                size={rf(24)}
                 color="#4B4B4B"
+                
               />
-              <Text className="text-black">
+              <Text style={{fontSize:rf(16)}} className="text-black ml-1">
                 {(personalInfo && personalInfo.birth) && Mask('dateFormatBrazil',personalInfo.birth)}
               </Text>
             </View>
-            <View className="flex-row gap-1">
-              <MaterialCommunityIcons name="whatsapp" size={24} color="#4B4B4B" />
-              <Text className="text-black">
+            <View className="flex-row ">
+              <MaterialCommunityIcons name="whatsapp" size={rf(24)} color="#4B4B4B" />
+              <Text style={{fontSize:rf(16)}} className="text-black ml-1">
                 {(personalInfo && personalInfo.phone) && Mask('phone',personalInfo.phone)}
               </Text>
             </View>
-            <View className="flex-row gap-1">
+            <View className="flex-row ">
               <MaterialCommunityIcons
                 name="email-outline"
-                size={24}
+                size={rf(24)}
                 color="#4B4B4B"
               />
-              <Text className="text-black">
+              <Text style={{fontSize:rf(16)}} className="text-black ml-1">
                 {(personalInfo && personalInfo.email) && personalInfo.email} 
               </Text>
             </View>
-            <View className="flex-row gap-1">
+            <View className="flex-row ">
               {/* <FontAwesome6 name="location-dot" size={22} color="black" /> */}
               <MaterialCommunityIcons
                 name="home-variant-outline"
-                size={24}
+                size={rf(24)}
                 color="#4B4B4B"
               />
-              <Text className="text-black">
+              <Text style={{fontSize:rf(16)}} className="text-black ml-1 w-5/6">
                 {(personalInfo.street && personalInfo.number && personalInfo.district && personalInfo.city && personalInfo.uf && personalInfo.zip_code ) && `${personalInfo.street} N° ${personalInfo.number}, ${personalInfo.district}, ${personalInfo.city} - ${personalInfo.uf}, ${Mask('cep',personalInfo.zip_code)}`}
               </Text>
             </View>

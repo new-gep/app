@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import { COLORS, FONTS, SIZES } from '../../constants/theme';
+import { rf } from '~/src/hooks/utils/responsiveFont';
 
 const ListStyle1 = (props : any) => {
     
@@ -25,7 +26,7 @@ const ListStyle1 = (props : any) => {
                             justifyContent:'center',
                         }} 
                     >
-                        { props.icon}
+                        {props.icon}
                     </View>
                 }
                 {props.image && 
@@ -39,7 +40,7 @@ const ListStyle1 = (props : any) => {
                         source={props.image}
                     />
                 }
-                <Text style={{...FONTS.fontRegular,fontSize:14,color:colors.title,flex:1}}>{props.title}</Text>
+                <Text style={{...FONTS.fontRegular,fontSize:rf(14),color:colors.title,flex:1}}>{props.title}</Text>
                 {props.arrowDown && 
                     <FontAwesome name={'angle-down'} color={colors.title} size={18}/>
                 }

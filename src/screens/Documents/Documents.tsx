@@ -18,7 +18,6 @@ import { useNavigation } from "@react-navigation/native";
 import FindPicture from "../../hooks/findOne/picture";
 import useCollaborator from "../../function/fetchCollaborator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Mask from "../../function/mask";
 import FindBucketCollaborator from "../../hooks/bucket/collaborator";
 import Header from "../../layout/Header";
 
@@ -35,9 +34,32 @@ const Documents = () => {
   const [myDocsData, setMyDocsData] = useState<any[] | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [process, setProcess] = useState<boolean>(false);
-  const [picturesData, setPicturesData] = useState<PicturesProps | {}>({
-    Voter_Registration: null,
-    CNH: null,
+  const [picturesData, setPicturesData] = useState<PicturesProps | {}>(() => {
+    const base = {
+      RG: null,
+      Voter_Registration: null,
+      CNH: null,
+      Work_Card: null,
+      Address: null,
+      School_History: null,
+    };
+
+    // Adiciona apenas se for homem
+    if (collaborator?.sex === "M") {
+      return {
+        ...base,
+        Military_Certificate: null,
+      };
+    }
+    // Adiciona apenas se for homem
+    if (collaborator?.marriage === "1") {
+      return {
+        ...base,
+        Marriage_Certificate: null,
+      };
+    }
+
+    return base;
   });
   const { width, height } = Dimensions.get("window");
 
@@ -46,11 +68,10 @@ const Documents = () => {
       if (!collaborator) return;
       const response = await FindPicture(collaborator.CPF);
       if (response.status == 404) {
-
+        console.log(response);
       }
       if (response.status != 500) {
         // const picturesFromAPI = response.pictures;
-
         const picturesFromAPI =
           response.pictures && response.pictures.length > 0
             ? response.pictures.filter((picture: any) => {
@@ -379,9 +400,9 @@ const Documents = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
         >
-          {/* <View className={`px-5`}>
+          <View className={`px-5`}>
             <CheckCadasterCollaboratorDocument />
-          </View> */}
+          </View>
           {/* <View className={`p-3 mt-5`}>
             <View
               className={`mt-16 bg-primary w-full p-3 rounded-xl flex-row justify-between`}

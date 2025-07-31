@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Mask from "~/src/function/mask";
+import { rf } from "~/src/hooks/utils/responsiveFont";
 
 type ExperienceType = {
   role: string;
@@ -25,7 +26,11 @@ interface ExperienceProps {
   preview?: boolean;
 }
 
-const Experience = ({ experience, setExperience, preview }: ExperienceProps) => {
+const Experience = ({
+  experience,
+  setExperience,
+  preview,
+}: ExperienceProps) => {
   const [editMode, setEditMode] = useState(false);
   const [savedExperience, setSavedExperience] = useState<ExperienceType[]>([]);
 
@@ -158,30 +163,33 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
   return (
     <>
       <View className="px-1 flex-row justify-between items-center mb-3">
-        <Text className="text-dark font-bold text-lg">
+        <Text
+          style={{ fontSize: rf(18) }}
+          className="text-dark font-bold text-lg"
+        >
           Experiência Profissional
         </Text>
-        { !preview &&
+        {!preview && (
           <View className="flex-row">
-          {editMode  ? (
-            <TouchableOpacity onPress={saveData}>
-              <MaterialCommunityIcons
-                name="content-save-all-outline"
-                size={24}
-                color="#10B981"
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={editData}>
-              <MaterialCommunityIcons
-                name="pencil-box-multiple-outline"
-                size={24}
-                color="#3B82F6"
-              />
-            </TouchableOpacity>
-          )}
+            {editMode ? (
+              <TouchableOpacity onPress={saveData}>
+                <MaterialCommunityIcons
+                  name="content-save-all-outline"
+                  size={rf(24)}
+                  color="#10B981"
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={editData}>
+                <MaterialCommunityIcons
+                  name="pencil-box-multiple-outline"
+                  size={rf(24)}
+                  color="#3B82F6"
+                />
+              </TouchableOpacity>
+            )}
           </View>
-        }
+        )}
       </View>
       <View
         className="p-4 bg-white rounded-xl mb-4 shadow-md"
@@ -205,6 +213,7 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
                       shadowOffset: { width: 0, height: 2 },
                       shadowOpacity: 0.1,
                       shadowRadius: 4,
+                      fontSize: rf(16),
                     }}
                     className="bg-white p-2 rounded-lg mt-2 text-black"
                     placeholder="Cargo"
@@ -221,6 +230,7 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
                       shadowOffset: { width: 0, height: 2 },
                       shadowOpacity: 0.1,
                       shadowRadius: 4,
+                      fontSize: rf(16),
                     }}
                     className="bg-white p-2 rounded-lg mt-2 text-black"
                     placeholder="Empresa"
@@ -239,6 +249,7 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
                           shadowOffset: { width: 0, height: 2 },
                           shadowOpacity: 0.1,
                           shadowRadius: 4,
+                          fontSize: rf(16),
                         }}
                         maxLength={7}
                         keyboardType="numeric"
@@ -258,6 +269,7 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
                             shadowOffset: { width: 0, height: 2 },
                             shadowOpacity: 0.1,
                             shadowRadius: 4,
+                            fontSize: rf(16),
                           }}
                           maxLength={7}
                           keyboardType="numeric"
@@ -271,9 +283,17 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
                       )}
                     </View>
 
-                    <View className="flex-row items-center mt-2">
-                      <Text className="text-black mr-1 text-xs">Atual</Text>
+                    <View className="flex-row items-center mt-2 ml-4">
+                      <Text
+                        style={{ fontSize: rf(14) }}
+                        className="text-black mr-1 text-xs"
+                      >
+                        Atual
+                      </Text>
                       <Switch
+                        style={{
+                          transform: [{ scaleX: rf(0.8) }, { scaleY: rf(0.8) }],
+                        }}
                         value={exp.currentlyWork}
                         onValueChange={(value) =>
                           updateExperience(index, "currentlyWork", value)
@@ -281,24 +301,38 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
                       />
                     </View>
                   </View>
-                  <TextInput
-                    style={{
-                      elevation: 8, // Sombra para Android
-                      shadowColor: "#000", // Sombra para iOS
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 4,
-                      textAlignVertical: "top",
-                    }}
-                    multiline
-                    className="bg-white p-2 rounded-lg mt-3 text-black h-20"
-                    placeholder="Responsabilidades"
-                    // placeholderTextColor="#d1d5db"
-                    value={exp.responsibilities}
-                    onChangeText={(text) =>
-                      updateExperience(index, "responsibilities", text)
-                    }
-                  />
+                  <View>
+                    <TextInput
+                      style={{
+                        elevation: 8,
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4,
+                        textAlignVertical: "top",
+                        fontSize: rf(16),
+                      }}
+                      multiline
+                      className="bg-white p-2 rounded-lg mt-3 text-black h-20"
+                      placeholder="Responsabilidades"
+                      maxLength={255}
+                      value={exp.responsibilities}
+                      onChangeText={(text) =>
+                        updateExperience(index, "responsibilities", text)
+                      }
+                    />
+
+                    <Text
+                      style={{
+                        textAlign: "right",
+                        fontSize: rf(12),
+                        color: "#6b7280", // Gray-500
+                        marginTop: 4,
+                      }}
+                    >
+                      {exp.responsibilities.length}/255
+                    </Text>
+                  </View>
                 </View>
                 {index > 0 && (
                   <TouchableOpacity
@@ -307,7 +341,7 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
                   >
                     <MaterialCommunityIcons
                       name="trash-can-outline"
-                      size={24}
+                      size={rf(24)}
                       color="black"
                     />
                   </TouchableOpacity>
@@ -315,7 +349,9 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
               </View>
             ))}
             <TouchableOpacity onPress={addExperience} className="mt-2">
-              <Text className="text-black">+ Adicionar mais seções</Text>
+              <Text style={{ fontSize: rf(18) }} className="text-black">
+                + Adicionar mais seções
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -324,24 +360,47 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
               savedExperience.map((exp, index) => (
                 <View key={index} className="mt-2">
                   <View className="flex-row">
-                    <Text className="text-black font-bold">Cargo: </Text>
-                    <Text>{exp.role}</Text>
+                    <Text
+                      style={{ fontSize: rf(17) }}
+                      className="text-black font-bold"
+                    >
+                      Cargo:{" "}
+                    </Text>
+                    <Text style={{ fontSize: rf(16) }}>{exp.role}</Text>
                   </View>
                   <View className="flex-row">
-                    <Text className="text-black font-bold">Empresa: </Text>
-                    <Text className="text-black">{exp.company}</Text>
+                    <Text
+                      style={{ fontSize: rf(17) }}
+                      className="text-black font-bold"
+                    >
+                      Empresa:{" "}
+                    </Text>
+                    <Text style={{ fontSize: rf(16) }} className="text-black">
+                      {exp.company}
+                    </Text>
                   </View>
                   <View className="flex-row">
-                    <Text className="text-black font-bold">Período: </Text>
-                    <Text className="text-black">
+                    <Text
+                      style={{ fontSize: rf(17) }}
+                      className="text-black font-bold"
+                    >
+                      Período:{" "}
+                    </Text>
+                    <Text style={{ fontSize: rf(16) }} className="text-black">
                       {exp.start} - {exp.currentlyWork ? "Atual" : exp.end}
                     </Text>
                   </View>
                   <View>
-                    <Text className="text-black font-bold">
+                    <Text
+                      style={{ fontSize: rf(17) }}
+                      className="text-black font-bold"
+                    >
                       Responsabilidades:
                     </Text>
-                    <Text className="text-black px-2">
+                    <Text
+                      style={{ fontSize: rf(16) }}
+                      className="text-black px-2"
+                    >
                       {exp.responsibilities.length > 80
                         ? `${exp.responsibilities.substring(0, 80)}...`
                         : exp.responsibilities}
@@ -350,7 +409,7 @@ const Experience = ({ experience, setExperience, preview }: ExperienceProps) => 
                 </View>
               ))
             ) : (
-              <Text className="text-gray-500">
+              <Text style={{ fontSize: rf(16) }} className="text-gray-500">
                 Nenhuma experiência adicionada.
               </Text>
             )}

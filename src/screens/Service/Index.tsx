@@ -13,15 +13,18 @@ import CardFix from "./Components/CardFix";
 import CardFix2 from "./Components/CardFix2";
 import CardFlex from "./Components/CardFlex";
 import CardFlex2 from "./Components/CardFlex2";
+import React from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCollaboratorContext } from "~/src/context/CollaboratorContext";
 const screenWidth = Dimensions.get("window").width;
 
 export default function Service() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [activeTab, setActiveTab] = useState("Fix");
-  
+  const { validateCollaborator } = useCollaboratorContext();
   const fixAnim = useRef(new Animated.Value(0)).current; // 0 = ativo
   const flexAnim = useRef(new Animated.Value(1)).current; // 1 = fora da tela
-
+  
   const animateTabs = (tab: any) => {
     setActiveTab(tab);
 
@@ -38,6 +41,12 @@ export default function Service() {
       }),
     ]).start();
   };
+
+   useFocusEffect(
+      React.useCallback(() => {
+        validateCollaborator();
+      }, [])
+    );
 
   return (
     <View className="bg-white h-full">
