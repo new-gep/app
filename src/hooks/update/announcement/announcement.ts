@@ -14,6 +14,7 @@ type Props = {
   information?: string;
   gallery?: any;
   oldGallery?: any;
+  isPropostal?:any
 };
 export default async function UpdateAnnouncement(id: any, props: Props) {
   const response = await axios.patch(`${config.API_URL}announcement/${id}`, {
@@ -26,6 +27,7 @@ export default async function UpdateAnnouncement(id: any, props: Props) {
     included: props.included,
     notIncluded: props.notIncluded,
     information: props.information,
+    isPropostal: props.isPropostal
   });
 
   // 1. Keys antigas (antes da edição)

@@ -251,6 +251,12 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"
               >
+                {item?.announcement?.announcement?.city}, {item?.announcement?.announcement?.state}
+              </Text>
+              <Text
+                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                className="text-zinc-500"
+              >
                 anunciado {Mask("dateFormatBrazil", item?.announcement?.announcement?.create_at)}
               </Text>
             </View>

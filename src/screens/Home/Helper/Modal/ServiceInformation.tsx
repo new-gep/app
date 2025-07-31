@@ -28,6 +28,7 @@ import {
   Plus,
   ChevronLeft,
   Minus,
+  BriefcaseBusiness,
 } from "lucide-react-native";
 import {
   PanGestureHandler,
@@ -185,7 +186,7 @@ const ServiceInformation = ({
 
     try {
       const response = await UpdateAnnouncement(peopleData.id, data);
-
+      
       if (response.status === 200) {
         Alert.alert(
           "Sucesso!",
@@ -415,14 +416,14 @@ const ServiceInformation = ({
                     }}
                   >
                     { peopleData?.salary ?
-                      Mask("amount", peopleData.salary)
+                      `${Mask("amount", peopleData.salary)}, ${peopleData.typePayment}`
                       :
                       "A combinar"
                     }
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <HandCoins size={rf(16)} />
+                  <BriefcaseBusiness size={rf(16)} />
                   <Text
                     style={{
                       ...FONTS.fontBlack,
@@ -431,9 +432,8 @@ const ServiceInformation = ({
                       textTransform: "capitalize",
                     }}
                   >
-                    {peopleData &&
-                      peopleData.typePayment &&
-                      peopleData.typePayment}
+                    { peopleData?.model &&
+                      peopleData.model}
                   </Text>
                 </View>
               </View>
@@ -464,10 +464,9 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    {peopleData?.CPF_Creator?.collaborator?.collaborator
-                      ?.city &&
-                      peopleData?.CPF_Creator?.collaborator?.collaborator?.uf &&
-                      `${peopleData?.CPF_Creator?.collaborator?.collaborator?.city}, ${peopleData.CPF_Creator.collaborator.collaborator.uf}`}
+                    {peopleData?.city &&
+                      `${peopleData?.city}, ${peopleData?.state}`
+                    }
                   </Text>
                 </View>
               </View>
