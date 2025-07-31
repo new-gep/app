@@ -35,6 +35,7 @@ const CARD_SIZE =
 
 export default function Gallery() {
   const { collaborator } = useCollaborator();
+  const [saveLoad, setSaveLoad] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [zoomVisible, setZoomVisible] = useState<boolean>(false);
@@ -68,6 +69,7 @@ export default function Gallery() {
       Alert.alert("Erro", "Não foi possivel verificar o usuario!");
       return
     } 
+    setSaveLoad(true)
 
     // 1. Identificar imagens removidas
     const toDelete = getKeysToDelete(oldGallery, gallery);
@@ -78,6 +80,7 @@ export default function Gallery() {
     // 3. Fazer upload das novas imagens
     const newImages = gallery.filter((item) => {
       if (typeof item === "string") return true;
+      setSaveLoad(false)
       return !item.key && (item.uri || item.base64);
     });
 
@@ -87,6 +90,7 @@ export default function Gallery() {
     }
 
     Alert.alert("Sucesso", "Imagens atualizadas!");
+    setSaveLoad(false)
   };
 
   const useFetchData = async () => {
@@ -157,16 +161,22 @@ export default function Gallery() {
             </View>
           }
         </ScrollView>
+
+
         <TouchableOpacity
           className="bg-[#fde047] py-4 rounded-t-[20px] mx-4 mb-2"
           onPress={handleSave}
         >
-          <Text
+          { !saveLoad ?
+            <Text
             className="text-dark text-center"
             style={{ ...FONTS.fontBold, fontSize: rf(16) }}
           >
             SALVAR
           </Text>
+          :
+           <ActivityIndicator color={"black"} size={28} />
+          }
         </TouchableOpacity>
       </View>
     </BottomSheetModalProvider>

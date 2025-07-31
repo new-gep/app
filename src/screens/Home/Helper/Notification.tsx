@@ -25,13 +25,17 @@ import AwaitFetch from "~/src/components/LoadScreen/Load";
 import Mask from "~/src/function/mask";
 import deleteNotification from "~/src/hooks/delete/notification";
 import { useFocusEffect } from "@react-navigation/native";
+import { useCollaboratorContext } from "~/src/context/CollaboratorContext";
+import { FONTS } from "~/src/constants/theme";
 
 export default function Notification() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const { collaborator } = useCollaborator();
   const [notifications, setNotifications] = useState<any>(null);
   const [loader, setLoader] = useState<boolean>(true);
+  const { validateCollaborator, missingData } = useCollaboratorContext();
 
+  
   const renderIcon = (type: string) => {
     switch (type) {
       case "success":
@@ -160,15 +164,15 @@ export default function Notification() {
                     index !== 0 ? "border-t border-zinc-200" : ""
                   }`}
                 >
-                  {renderIcon(item.type)}
+                  {renderIcon(item.status)}
                   <View className="flex-1">
-                    <Text className="font-semibold text-zinc-800 capitalize">
+                    <Text style={{...FONTS.fontSemiBold, fontSize:rf(16)}} className="font-semibold text-zinc-800 capitalize">
                       {item.title}
                     </Text>
-                    <Text className="text-sm text-zinc-600 mt-0.5">
+                    <Text style={{...FONTS.fontBlack, fontSize:rf(16)}} className="text-sm text-zinc-600 mt-0.5">
                       {item.body}
                     </Text>
-                    <Text className="text-xs text-zinc-400 mt-1">
+                    <Text style={{...FONTS.fontBlack, fontSize:rf(16)}} className="text-xs text-zinc-400 mt-1">
                       {Mask("dateFormat", item.create_at)}
                     </Text>
                   </View>
@@ -186,8 +190,5 @@ export default function Notification() {
       </Animated.ScrollView>
     </View>
   );
-}
-function validateCollaborator() {
-  throw new Error("Function not implemented.");
 }
 
