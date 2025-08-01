@@ -10,6 +10,7 @@ import {
   ScrollView,
   Linking,
   Alert,
+  ActivityIndicator
 } from "react-native";
 import Modal from "react-native-modal";
 import {
@@ -67,6 +68,7 @@ import ModalPropostal from "./ModalPropostal";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import UpdateCollaborator from "~/src/hooks/update/collaborator";
 import useCollaborator from "~/src/function/fetchCollaborator";
+
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MIN_MODAL_HEIGHT = SCREEN_HEIGHT * 0.4; // Minimum height (40% of screen)
 const MAX_MODAL_HEIGHT = SCREEN_HEIGHT * 0.95; // Maximum height (95% of screen)
@@ -77,7 +79,8 @@ const PeopleInformation = ({
   setVisible,
   peopleData,
   setReload,
-  reload
+  reload,
+  removeCard
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isContract, setIsContract] = useState<boolean>(false);
@@ -87,6 +90,7 @@ const PeopleInformation = ({
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [allService, setAllService] = useState<any>(null);
+  const [loadFavorite, setLoadFavorite] = useState<boolean>(false);
   const [isReady, setIsReady] = useState(false);
   const { collaborator, updateCollaborator } = useCollaborator();
   const navigation = useNavigation();
@@ -285,7 +289,7 @@ const PeopleInformation = ({
 
   const handleFavorite = async () => {
     if (!collaborator || !peopleData?.collaborator?.CPF) return;
-
+    setLoadFavorite(true)
     const currentCpf = String(peopleData.collaborator.CPF);
     let favorites: string[] = [];
 
@@ -310,17 +314,17 @@ const PeopleInformation = ({
       favorite: JSON.stringify(updatedFavorites),
     };
 
-
     const response = await UpdateCollaborator(collaborator.CPF, props);
 
     if (response?.status === 200) {
-      Alert.alert("Sucesso", "Favoritos atualizados com sucesso!");
+      setIsFavorite(!alreadyExists);
+      // Alert.alert("Sucesso", "Favoritos atualizados com sucesso!");
       updateCollaborator(collaborator.CPF);
     } else {
       console.warn("Erro ao atualizar favoritos.");
     }
-
-    if(reload){
+    setLoadFavorite(false)
+    if (reload) {
       setReload((prev: number) => prev + 1);
     }
   };
@@ -420,8 +424,7 @@ const PeopleInformation = ({
               {
                 height: modalHeight,
               },
-            ]
-          }
+            ]}
           >
             {/* Draggable Header */}
             <PanGestureHandler
@@ -1171,7 +1174,8 @@ const PeopleInformation = ({
                 )}
               </TouchableOpacity>
 
-              <TouchableOpacity
+              { !loadFavorite ?
+                <TouchableOpacity
                 style={{ flex: 1, padding: 12, alignItems: "center" }}
                 onPress={handleFavorite}
               >
@@ -1202,7 +1206,12 @@ const PeopleInformation = ({
                     </Text>
                   </>
                 )}
-              </TouchableOpacity>
+                </TouchableOpacity>
+                :
+                <View className="mt-1" style={{ flex: 1, padding: 12, alignItems: "center" }}>
+                  <ActivityIndicator color={'#71717a'} size={rf(25)}/>
+                </View>
+              }
 
               {handleSwipeRight && !isContract && (
                 <TouchableOpacity

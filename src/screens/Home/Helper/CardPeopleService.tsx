@@ -248,8 +248,8 @@ const SwipeableCard = React.memo(function SwipeableCard({
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                   className="text-zinc-500"
                 >
-                  {item?.collaborator &&
-                    `${item?.collaborator.city}, ${item?.collaborator.uf}`}
+                  {item?.collaborator?.city && item?.collaborator?.uf ?
+                    `${item?.collaborator.city}, ${item?.collaborator.uf}` : 'Endereço não cadastrado'}
                 </Text>
               </View>
             </View>
@@ -313,7 +313,7 @@ export default function CardPeople({
           item={item?.collaborator}
           id={id}
           isCandidate={isCandidate}
-          reload={reload}
+          reload={reload} 
           setReload={setReload}
           isMenuVisible={visibleMenuIds.includes(item?.id)}
           setMenuVisible={setMenuVisible}

@@ -23,7 +23,6 @@ export default function Filter() {
   const [contractSelected, setContractSelected] = useState<string[]>([]);
   const [modalitySelected, setModalitySelected] = useState<string[]>([]);
   const [categorySelected, setCategorySelected] = useState<string[]>([]);
-
   const route = useRoute();
   const { option } = route.params as { option?: string };
 
@@ -220,8 +219,7 @@ export default function Filter() {
                     </View>
                   )}
                 </View>
-                {serviceSelected.includes("Empresas") && (
-                  <View>
+                <View>
                     <Input
                       go="modality"
                       title={"Modalidade"}
@@ -249,8 +247,7 @@ export default function Filter() {
                         ))}
                       </View>
                     )}
-                  </View>
-                )}
+                </View>
               </ScrollView>
               <View className="px-5 py-2 ">
                 <Button

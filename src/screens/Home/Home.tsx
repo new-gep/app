@@ -31,6 +31,7 @@ import {
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
@@ -52,7 +53,23 @@ const Home = () => {
   const fetchJobs = async () => {
     try {
       if (!collaborator) return;
-      const response = await FindAllService(collaborator.CPF);
+      let filterCategory = await AsyncStorage.getItem("filterService");
+      const props: any = {
+        cpf: collaborator.CPF,
+        title:'programador'
+      };
+      if(filterCategory){
+        const parsed = JSON.parse(filterCategory)
+        props.categorySelected=parsed.category,
+        props.modalitySelected=parsed.modality,
+        props.contractSelected=parsed.contract,
+        props.paymentSelected =parsed.payment,
+        props.timeSelected    =parsed.time,
+        props.serviceSelected =parsed.serviceSelected
+      };
+
+      const response = await FindAllService(filterCategory);
+      console.log(response, 'aqui')
       if (response.status !== 200) {
         throw new Error(response.message || "Erro ao buscar os jobs.");
       }
@@ -90,20 +107,29 @@ const Home = () => {
         return;
       }
 
+      const messagingInstance = getMessaging();
+      const token = await getToken(messagingInstance);
       if (!collaborator.push_token) {
-        console.log("aq");
-        const messagingInstance = getMessaging();
-        const token = await getToken(messagingInstance);
         const date = {
           push_token: token,
         };
-
         await UpdateCollaborator(collaborator.CPF, date);
-
         setTimeout(() => {
           updateCollaborator(collaborator.CPF);
         }, 3000);
+      }else{
+        if(token !== collaborator.push_token){
+            const date = {
+            push_token: token,
+          };
+          await UpdateCollaborator(collaborator.CPF, date);
+          setTimeout(() => {
+            updateCollaborator(collaborator.CPF);
+          }, 3000);
+        }
       }
+
+
     } catch (error) {
       console.log("Erro ao registrar notificações:", error);
     }

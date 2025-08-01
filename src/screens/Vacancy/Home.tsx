@@ -73,13 +73,6 @@ export default function Vacancy() {
     return title.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
-  useFocusEffect(
-    React.useCallback(() => {
-      validateCollaborator();
-      fetchJobs();
-    }, [collaborator, reload])
-  );
-
   const renderItem = useCallback(({ item }: any) => {
     return item.service === "fix" ? (
       <Work
@@ -91,6 +84,13 @@ export default function Vacancy() {
       <Service item={item} refresh={reload} setRefresh={setReload} />
     );
   }, []);
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      validateCollaborator();
+      fetchJobs();
+    }, [collaborator, reload])
+  );
 
   return (
     <>

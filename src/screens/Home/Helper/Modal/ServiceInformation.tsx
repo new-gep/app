@@ -182,6 +182,7 @@ const ServiceInformation = ({
 
     const data = {
       CPF_responder: collaborator.CPF,
+      isPropostal: peopleData.isPropostal
     };
 
     try {
