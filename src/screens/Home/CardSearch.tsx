@@ -47,6 +47,7 @@ const CardSearch: React.FC<CardSearchProps> = ({
   const [searchText, setSearchText] = useState("");
   const [path, setPath] = useState<any>(false);
   const [visible, setVisible] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<number>(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { wp, hp } = useScreen(); // 📱 dimensões da tela
 
@@ -126,7 +127,7 @@ const CardSearch: React.FC<CardSearchProps> = ({
     }, 800); // aguarda 800ms após digitação parar
 
     return () => clearTimeout(delayDebounce);
-  }, [title]);
+  }, [title, refresh]);
 
   return (
     <View>
@@ -216,6 +217,8 @@ const CardSearch: React.FC<CardSearchProps> = ({
           onPress={() =>
             navigation.navigate("FilterCard", {
               option: activeTab,
+              reload:refresh,
+              setReload:setRefresh,
             })
           }
           className="pl-2 border-l border-gray-200 ml-1"

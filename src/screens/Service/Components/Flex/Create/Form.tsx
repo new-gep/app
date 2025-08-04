@@ -27,17 +27,18 @@ export default function Form({ title, setSelectedCategory, item }: any) {
   const [visible, setVisible] = useState<boolean>(false);
   const [gallery, setGallery] = useState<Array<any>>(item ? item?.gallery : []);
   const [oldGallery, setOldGallery] = useState<Array<any>>(item?.gallery);
-  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>([]);
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<Array<any>>(
+    []
+  );
   const [visibleUpload, setVisibleUpload] = useState<boolean>(false);
-  const [street, setStreet] = useState("");
-  const [complement, setComplement] = useState("");
-  const [number, setNumber] = useState("");
-  const [city, setCity] = useState("");
-  const [district, setDistrict] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
+  const [street, setStreet] = useState(item?.street ? item.street : "");
+  const [complement, setComplement] = useState(item?.complement ? item.complement : "");
+  const [number, setNumber] = useState(item?.number ? item.number : "");
+  const [city, setCity] = useState(item?.city ? item.city : "");
+  const [district, setDistrict] = useState(item?.district ? item.district : "");
+  const [state, setState] = useState(item?.state  ? item.state : "");
+  const [zip, setZip] = useState(item?.cep ? item.cep : "");
   const [noNumber, setNoNumber] = useState(false);
-  const [errors, setErrors] = useState({});
   const [selectAdTypeView, setSelectAdTypeView] = useState<boolean>(false);
   const [priceType, setPriceType] = useState(item ? item.typePayment : "");
   const [model, setModel] = useState(item ? item.model : "");
@@ -48,6 +49,7 @@ export default function Form({ title, setSelectedCategory, item }: any) {
   const [moreInfo, setMoreInfo] = useState(item ? item.information : "");
   const [adType, setAdType] = useState(item ? item.typeAnnouncement : "");
   const [awaitCreat, setAwaitCreat] = useState<boolean>(false);
+  const [errors, setErrors] = useState({});
   const screenWidth = Dimensions.get("window").width;
   const boxSize = (screenWidth - 50 - 2 * 8) / 3;
   const { collaborator } = useCollaborator();
@@ -83,6 +85,7 @@ export default function Form({ title, setSelectedCategory, item }: any) {
 
   const handleCreate = async () => {
     const validate = await validateForm();
+    // console.log(validate);
     if (!item) {
       if (validate && collaborator) {
         setAwaitCreat(true);
@@ -103,8 +106,8 @@ export default function Form({ title, setSelectedCategory, item }: any) {
           city: city,
           district: district,
           state: state,
-          zip: Mask('remove',zip),
-          gallery: gallery
+          zip: Mask("remove", zip),
+          gallery: gallery,
         };
         const response = await CreateAnnouncement(data);
         if (response.status == 201) {
@@ -124,7 +127,7 @@ export default function Form({ title, setSelectedCategory, item }: any) {
       }
       return;
     }
-    if (collaborator) {
+    if (validate && collaborator) {
       const data = {
         category: title,
         title: titleValue,
@@ -134,12 +137,20 @@ export default function Form({ title, setSelectedCategory, item }: any) {
         included: included,
         notIncluded: excluded,
         information: moreInfo,
+        model: model,
+        street: street,
+        complement: complement,
+        number: number,
+        city: city,
+        district: district,
+        state: state,
+        zip: Mask("remove", zip),
         gallery: gallery,
         oldGallery: oldGallery,
       };
       setAwaitCreat(true);
       const response = await UpdateAnnouncement(item.id, data);
-
+      console.log(response)
       if (response.status == 200) {
         Alert.alert(
           "Sucesso!",
@@ -153,6 +164,8 @@ export default function Form({ title, setSelectedCategory, item }: any) {
         return;
       }
       setAwaitCreat(false);
+    } else {
+      setVisible(true);
     }
   };
 
@@ -385,7 +398,9 @@ export default function Form({ title, setSelectedCategory, item }: any) {
                 onChangeText={setStreet}
               />
 
-              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Bairro</Text>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Bairro
+              </Text>
               <TextInput
                 className="border border-gray-300 rounded-lg p-2 mb-4"
                 placeholder="Digite a cidade"
@@ -393,7 +408,9 @@ export default function Form({ title, setSelectedCategory, item }: any) {
                 onChangeText={setDistrict}
               />
 
-              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Complemento (opcional)</Text>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Complemento (opcional)
+              </Text>
               <TextInput
                 className="border border-gray-300 rounded-lg p-2 mb-4"
                 placeholder="Digite o complemento (opcional)"
@@ -401,7 +418,9 @@ export default function Form({ title, setSelectedCategory, item }: any) {
                 onChangeText={setComplement}
               />
 
-              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Número</Text>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Número
+              </Text>
               <TextInput
                 className="border border-gray-300 rounded-lg p-2 mb-2"
                 placeholder="Digite o número"
@@ -426,11 +445,15 @@ export default function Form({ title, setSelectedCategory, item }: any) {
                       noNumber ? "bg-green-600" : "bg-white"
                     }`}
                   />
-                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(17) }}>Sem número</Text>
+                  <Text style={{ ...FONTS.fontBlack, fontSize: rf(17) }}>
+                    Sem número
+                  </Text>
                 </View>
               </TouchableOpacity>
 
-              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Cidade</Text>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Cidade
+              </Text>
               <TextInput
                 className="border border-gray-300 rounded-lg p-2 mb-4"
                 placeholder="Digite a cidade"
@@ -438,7 +461,9 @@ export default function Form({ title, setSelectedCategory, item }: any) {
                 onChangeText={setCity}
               />
 
-              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>Estado</Text>
+              <Text style={{ ...FONTS.fontLight, fontSize: rf(16) }}>
+                Estado
+              </Text>
               <TextInput
                 className="border border-gray-300 rounded-lg p-2 mb-4"
                 placeholder="Digite o estado"

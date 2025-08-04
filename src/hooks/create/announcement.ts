@@ -44,7 +44,7 @@ export default async function CreateAnnouncement(props: Props) {
       city   : props.city,
       district : props.district, 
       state : props.state, 
-      zip : props.zip
+      cep : props.zip
     });
 
     if(response.data.status !== 201) return response.data

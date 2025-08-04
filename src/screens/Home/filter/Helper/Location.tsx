@@ -32,6 +32,7 @@ const LocationFilter = ({locations, setLocations , distance, setDistance, showFa
   };
 
   const removeLocation = (index: number) => {
+ 
     setLocations((prev:any) => prev.filter((_, i) => i !== index));
   };
 
@@ -82,7 +83,7 @@ const LocationFilter = ({locations, setLocations , distance, setDistance, showFa
             </Text>
           </View>
 
-          {/* Locais adicionais */}
+           {/* @ts-ignore  */}
           {locations.map((loc, index) => (
             <View
               key={index}

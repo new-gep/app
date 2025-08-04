@@ -13,7 +13,7 @@ import Contract from "./Components/Contract";
 import Button from "~/src/components/Button/Button";
 import Modality from "./Components/Modality";
 import Category from "./Components/Category";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import { FONTS } from "~/src/constants/theme";
 import Slider from "@react-native-community/slider";
@@ -28,9 +28,13 @@ export default function Filter() {
   const [contractSelected, setContractSelected] = useState<string[]>([]);
   const [modalitySelected, setModalitySelected] = useState<string[]>([]);
   const [categorySelected, setCategorySelected] = useState<string[]>([]);
-
+  const navigation = useNavigation<any>();
   const route = useRoute();
-  const { option } = route.params as { option?: string };
+  const { option, reload, setReload } = route.params as {
+    option?: string;
+    reload?: any;
+    setReload?: any;
+  };
   const handleApplyFilter = async () => {
     if (option == "Service") {
       const filterService = {
@@ -40,7 +44,7 @@ export default function Filter() {
         contract: contractSelected,
         modality: modalitySelected,
         distance: distance,
-        showFarWork: showFarWork
+        showFarWork: showFarWork,
       };
       await AsyncStorage.setItem(
         "filterService",
@@ -58,14 +62,19 @@ export default function Filter() {
       contract: contractSelected,
       modality: modalitySelected,
       distance: distance,
-      showFarWork: showFarWork
+      showFarWork: showFarWork,
     };
     await AsyncStorage.setItem(
       "filterCategory",
       JSON.stringify(filterCategory)
     );
+    setReload((prev: number) => prev + 1);
+
     Alert.alert("Filtro aplicado", "Seu filtro foi aplicado com sucesso!", [
-      { text: "OK" },
+      {
+        text: "OK",
+        onPress: () => navigation.goBack(), // <- volta para a tela anterior
+      },
     ]);
   };
 

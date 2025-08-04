@@ -57,8 +57,10 @@ export default function ModalErrors({ item, visible, setVisible }: any) {
           <View className="mt-5 gap-2">
              {Object.values(item).map((errorMsg, index) => (
                 <View>
+                  
                     <Text key={index} style={{ color: "#71717a", fontSize: rf(13), ...FONTS.fontSemiBold }}>
-                        {errorMsg}
+               
+                      {errorMsg}
                     </Text>
                 </View>
               ))}

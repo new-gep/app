@@ -13,6 +13,14 @@ type Props = {
   notIncluded?: string;
   information?: string;
   gallery?: any;
+  street?: string;
+  model?: string;
+  complement?:string
+  number?: string;
+  city?: string;
+  district?: string;
+  state?: string;
+  zip?: string;
   oldGallery?: any;
   isPropostal?:any
 };
@@ -27,7 +35,15 @@ export default async function UpdateAnnouncement(id: any, props: Props) {
     included: props.included,
     notIncluded: props.notIncluded,
     information: props.information,
-    isPropostal: props.isPropostal
+    isPropostal: props.isPropostal,
+    street: props.street,
+    model: props.model,
+    complement:props.complement,
+    number: props.number,
+    city: props.city,
+    district: props.district,
+    state: props.state,
+    cep: props.zip
   });
 
   // 1. Keys antigas (antes da edição)
