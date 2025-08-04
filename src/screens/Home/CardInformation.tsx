@@ -89,6 +89,7 @@ const CardInformation = ({ route }: CardInformationProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCandidateApplied, setIsCandidateApplied] = useState(false);
 
+
   useEffect(() => {
     const checkCandidateStatus = () => {
       // console.log('=== DEBUG CANDIDATE STATUS ===');

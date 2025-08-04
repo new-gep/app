@@ -178,16 +178,16 @@ const ServiceInformation = ({
   };
 
   const handleSave = async () => {
-    if(!collaborator) return;
+    if (!collaborator) return;
 
     const data = {
       CPF_responder: collaborator.CPF,
-      isPropostal: peopleData.isPropostal
+      isPropostal: peopleData.isPropostal,
     };
 
     try {
       const response = await UpdateAnnouncement(peopleData.id, data);
-      
+
       if (response.status === 200) {
         Alert.alert(
           "Sucesso!",
@@ -211,8 +211,7 @@ const ServiceInformation = ({
         [{ text: "OK", onPress: () => console.log("OK Pressed") }],
         { cancelable: false }
       );
-    } 
-    catch (error) {
+    } catch (error) {
       console.error("Erro ao tentar salvar:", error);
       Alert.alert("Erro!", `Ocorreu um erro inesperado.`, [{ text: "OK" }], {
         cancelable: false,
@@ -357,7 +356,8 @@ const ServiceInformation = ({
                       color: "#6b7280",
                     }}
                   >
-                    {peopleData?.CPF_Creator?.collaborator?.collaborator?.name &&
+                    {peopleData?.CPF_Creator?.collaborator?.collaborator
+                      ?.name &&
                       peopleData?.CPF_Creator.collaborator.collaborator.name}
                   </Text>
                 </View>
@@ -416,11 +416,11 @@ const ServiceInformation = ({
                       marginLeft: rf(4),
                     }}
                   >
-                    { peopleData?.salary ?
-                      `${Mask("amount", peopleData.salary)}, ${peopleData.typePayment}`
-                      :
-                      "A combinar"
-                    }
+                    {peopleData?.salary
+                      ? `${Mask("amount", peopleData.salary)}, ${
+                          peopleData.typePayment
+                        }`
+                      : "A combinar"}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -433,10 +433,10 @@ const ServiceInformation = ({
                       textTransform: "capitalize",
                     }}
                   >
-                    { peopleData?.model &&
-                      peopleData.model}
+                    {peopleData?.model && peopleData.model}
                   </Text>
                 </View>
+                
               </View>
               <View style={{ gap: rf(12) }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -466,8 +466,7 @@ const ServiceInformation = ({
                     }}
                   >
                     {peopleData?.city &&
-                      `${peopleData?.city}, ${peopleData?.state}`
-                    }
+                      `${peopleData?.city}, ${peopleData?.state}`}
                   </Text>
                 </View>
               </View>

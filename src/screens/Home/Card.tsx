@@ -139,6 +139,14 @@ const SwipeableCardCompany = React.memo(function SwipeableCard({
               >
                 {item?.job?.locality ? item.job.locality : "Localidade não informada"}
               </Text>
+              { item?.distanceInfo &&
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className="text-zinc-500"
+                >
+                  {item.distanceInfo.distance}
+                </Text>
+              }
             </View>
           </View>
           <View className="mr-3">
@@ -170,6 +178,7 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
       </TouchableOpacity>
     </View>
   );
+
 
   return (
 
@@ -253,6 +262,14 @@ const SwipeableCardPeople = React.memo(function SwipeableCard({
               >
                 {item?.announcement?.announcement?.city}, {item?.announcement?.announcement?.state}
               </Text>
+              { item?.distanceInfo &&
+                <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className="text-zinc-500"
+                >
+                  {item.distanceInfo.distance}
+                </Text>
+              }
               <Text
                 style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
                 className="text-zinc-500"

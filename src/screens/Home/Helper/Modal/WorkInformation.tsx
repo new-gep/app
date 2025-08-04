@@ -390,6 +390,15 @@ const WorkInformation = ({
                   </View>
                 )}
               </View>
+
+              { jobData?.distanceInfo &&
+                              <Text
+                                style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                                className="text-zinc-500"
+                              >
+                                {jobData.distanceInfo.distance}
+                              </Text>
+                            }
             </View>
             <Animated.View
               onLayout={() => setShowContent(true)}

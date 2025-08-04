@@ -14,7 +14,7 @@ import Mask from "~/src/function/mask";
 import FindCep from "~/src/hooks/findOne/cep";
 
 const LocationFilter = ({locations, setLocations , distance, setDistance, showFarWork, setShowFarWork}:any) => {
-
+  
   const [newLocation, setNewLocation] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [foundLocation, setFoundLocation] = useState<{

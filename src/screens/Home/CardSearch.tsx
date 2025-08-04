@@ -25,14 +25,23 @@ import SearchModal from "./Search/Index";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-
 interface CardSearchProps {
   setCards: any;
   setActiveTab: any;
-  activeTab:any
+  activeTab: any;
+  title: string;
+  setTitle: any;
+  fetchJobs: any;
 }
 
-const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCards }) => {
+const CardSearch: React.FC<CardSearchProps> = ({
+  activeTab,
+  setActiveTab,
+  setCards,
+  title,
+  setTitle,
+  fetchJobs,
+}) => {
   const navigation = useNavigation<NavigationProp<any>>();
   const { collaborator, fetchCollaborator } = useCollaborator();
   const [searchText, setSearchText] = useState("");
@@ -77,7 +86,7 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
   ];
 
   const handleSearch = (text: string) => {
-    setSearchText(text);
+    setTitle(text);
     if (text.length > 0) {
       const filteredJobs = jobs.filter((job) =>
         job.toLowerCase().includes(text.toLowerCase())
@@ -88,14 +97,8 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
     }
   };
 
-  const clearSearch = () => {
-    setSearchText("");
-    setSuggestions([]);
-    Keyboard.dismiss();
-  };
-
   const searchJob = async (text?: string) => {
-    const query = text || searchText;
+    const query = text || title;
     if (query.trim().length === 0) {
       Alert.alert(
         "Erro",
@@ -104,19 +107,8 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
       return;
     }
 
-    const response = await SearchJob(query);
-    if (response.status !== 200) {
-      Alert.alert("Erro", "Falha ao buscar a vaga.");
-      return;
-    }
-    setCards();
-    const uniqueJobs = response.job.filter(
-      (job: any, index: any, self: any) =>
-        self.findIndex((j: any) => j.id === job.id) === index
-    );
+    fetchJobs();
 
-    setCards(uniqueJobs);
-    setSuggestions([]);
     Keyboard.dismiss();
   };
 
@@ -126,9 +118,23 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
     }
   }, [collaborator]);
 
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (title.trim().length > 0) {
+        fetchJobs();
+      }
+    }, 800); // aguarda 800ms após digitação parar
+
+    return () => clearTimeout(delayDebounce);
+  }, [title]);
+
   return (
     <View>
-      <SearchModal activeTab={activeTab} visible={visible} setVisible={setVisible} />
+      <SearchModal
+        activeTab={activeTab}
+        visible={visible}
+        setVisible={setVisible}
+      />
       <View className="px-4  flex-row justify-between items-end ">
         {/* Toggle */}
         <View
@@ -143,7 +149,7 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
             }`}
           >
             <Text
-              style={{...FONTS.fontSemiBold,fontSize:rf(13)}}
+              style={{ ...FONTS.fontSemiBold, fontSize: rf(13) }}
               className={`font-semibold ${
                 activeTab === "People" ? "text-dark" : "text-gray-500"
               }`}
@@ -160,7 +166,7 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
             }`}
           >
             <Text
-            style={{...FONTS.fontSemiBold, fontSize:rf(13)}}
+              style={{ ...FONTS.fontSemiBold, fontSize: rf(13) }}
               className={`font-semibold ${
                 activeTab === "Service" ? "text-dark" : "text-gray-500"
               }`}
@@ -199,22 +205,23 @@ const CardSearch: React.FC<CardSearchProps> = ({activeTab ,setActiveTab ,setCard
           style={{ marginLeft: 12, marginRight: 8 }}
         />
         <TextInput
-          style={{...FONTS.fontBlack}}
+          style={{ ...FONTS.fontBlack }}
           placeholder="Pesquisar"
           placeholderTextColor="#9CA3AF"
           className="flex-1 h-10 py-1 text-base text-dark"
-          value={searchText}
+          value={title}
           onChangeText={handleSearch}
-          onSubmitEditing={() => searchJob()}
         />
-          <TouchableOpacity
-            onPress={()=> navigation.navigate('FilterCard',{
-              option: activeTab
-            })}
-            className="pl-2 border-l border-gray-200 ml-1"
-          >
-            <Settings2 size={22} color="#9CA3AF" />
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("FilterCard", {
+              option: activeTab,
+            })
+          }
+          className="pl-2 border-l border-gray-200 ml-1"
+        >
+          <Settings2 size={22} color="#9CA3AF" />
+        </TouchableOpacity>
       </View>
     </View>
   );

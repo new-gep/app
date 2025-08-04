@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text } from 'react-native';
-import MultiSlider from '@ptomasroos/react-native-multi-slider'; // Install via npm install @ptomasroos/react-native-multi-slider
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { FONTS } from '~/src/constants/theme';
 
 const AgeRangeFilter = () => {

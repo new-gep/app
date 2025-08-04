@@ -36,6 +36,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Home = () => {
   const [cards, setCards] = useState<any>(false);
   const [cardSearch, setCardSearch] = useState<any>("Service");
+  const [title, setTitle] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
@@ -53,10 +54,12 @@ const Home = () => {
   const fetchJobs = async () => {
     try {
       if (!collaborator) return;
+      setIsLoading(true)
       let filterCategory = await AsyncStorage.getItem("filterService");
       const props: any = {
         cpf: collaborator.CPF,
-        title:'programador'
+        title:title,
+        cep: collaborator.zip_code
       };
       if(filterCategory){
         const parsed = JSON.parse(filterCategory)
@@ -65,11 +68,11 @@ const Home = () => {
         props.contractSelected=parsed.contract,
         props.paymentSelected =parsed.payment,
         props.timeSelected    =parsed.time,
-        props.serviceSelected =parsed.serviceSelected
+        props.serviceSelected =parsed.service
+        props.distance = parsed.distance,
+        props.showFarWork = parsed.showFarWork
       };
-
-      const response = await FindAllService(filterCategory);
-      console.log(response, 'aqui')
+      const response = await FindAllService(props);
       if (response.status !== 200) {
         throw new Error(response.message || "Erro ao buscar os jobs.");
       }
@@ -239,9 +242,12 @@ const Home = () => {
             {/* Topo da tela */}
             <View className="w-full z-50 mt-1 mb-10">
               <CardSearch
-                setActiveTab={setCardSearch}
                 activeTab={cardSearch}
+                setActiveTab={setCardSearch}
                 setCards={setCards}
+                title={title} 
+                setTitle={setTitle}
+                fetchJobs={fetchJobs}
               />
             </View>
             <BannerImage />

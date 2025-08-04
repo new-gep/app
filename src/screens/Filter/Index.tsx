@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, Switch } from "react-native";
 import Header from "~/src/layout/Header";
 import Input from "./Input";
 import { useEffect, useState } from "react";
@@ -14,18 +14,23 @@ import Button from "~/src/components/Button/Button";
 import Modality from "./Components/Modality";
 import Category from "./Components/Category";
 import { useRoute } from "@react-navigation/native";
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
+import { FONTS } from "~/src/constants/theme";
+import Slider from "@react-native-community/slider";
 
 export default function Filter() {
   const [menu, setMenu] = useState<string>("default");
   const [serviceSelected, setServiceSelected] = useState<string[]>([]);
+  const [distance, setDistance] = useState(2);
+  const [showFarWork, setShowFarWork] = useState<boolean>(false);
   const [timeSelected, setTimeSelected] = useState<string[]>([]);
   const [paymentSelected, setPaymentSelected] = useState<string[]>([]);
   const [contractSelected, setContractSelected] = useState<string[]>([]);
   const [modalitySelected, setModalitySelected] = useState<string[]>([]);
   const [categorySelected, setCategorySelected] = useState<string[]>([]);
+
   const route = useRoute();
   const { option } = route.params as { option?: string };
-
   const handleApplyFilter = async () => {
     if (option == "Service") {
       const filterService = {
@@ -34,6 +39,8 @@ export default function Filter() {
         payment: paymentSelected,
         contract: contractSelected,
         modality: modalitySelected,
+        distance: distance,
+        showFarWork: showFarWork
       };
       await AsyncStorage.setItem(
         "filterService",
@@ -50,6 +57,8 @@ export default function Filter() {
       payment: paymentSelected,
       contract: contractSelected,
       modality: modalitySelected,
+      distance: distance,
+      showFarWork: showFarWork
     };
     await AsyncStorage.setItem(
       "filterCategory",
@@ -72,6 +81,8 @@ export default function Filter() {
             setPaymentSelected(filters.payment || []);
             setContractSelected(filters.contract || []);
             setModalitySelected(filters.modality || []);
+            setDistance(filters.distance || 2);
+            setShowFarWork(filters.showFarWork || false);
           }
         } else {
           const json = await AsyncStorage.getItem("filterCategory");
@@ -82,6 +93,8 @@ export default function Filter() {
             setPaymentSelected(filters.payment || []);
             setContractSelected(filters.contract || []);
             setModalitySelected(filters.modality || []);
+            setDistance(filters.distance || 2);
+            setShowFarWork(filters.showFarWork || false);
           }
         }
       } catch (error) {
@@ -220,33 +233,73 @@ export default function Filter() {
                   )}
                 </View>
                 <View>
-                    <Input
-                      go="modality"
-                      title={"Modalidade"}
-                      placeholder={"Escolha uma modalidade"}
-                      visible={menu}
-                      setVisible={setMenu}
+                  <Input
+                    go="modality"
+                    title={"Modalidade"}
+                    placeholder={"Escolha uma modalidade"}
+                    visible={menu}
+                    setVisible={setMenu}
+                  />
+                  {modalitySelected.length > 0 && (
+                    <View className="mt-2 px-8">
+                      {modalitySelected.map((item, index) => (
+                        <View className="flex-row items-center">
+                          <Check
+                            size={rf(20)}
+                            color={"#22c55e"}
+                            className="mr-1"
+                          />
+                          <Text
+                            key={index}
+                            className="text-sm text-[#22c55e] font-semibold"
+                            style={{ marginBottom: 4, fontSize: rf(14) }}
+                          >
+                            {item}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </View>
+                <View className="rounded-lg p-4 mb-4">
+                  <Text
+                    className="text-dark mb-2"
+                    style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                  >
+                    Distância máxima
+                  </Text>
+                  <Slider
+                    minimumValue={1}
+                    maximumValue={100}
+                    step={1}
+                    value={distance}
+                    onValueChange={setDistance}
+                    minimumTrackTintColor="#fde047"
+                    maximumTrackTintColor="#666"
+                    thumbTintColor="#fde047"
+                    className="mb-4"
+                  />
+                  <Text
+                    className="text-dark mb-2"
+                    style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                  >
+                    {distance} km
+                  </Text>
+                  <View className="flex-row justify-between items-center">
+                    <Text
+                      className="text-dark w-5/6"
+                      style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                    >
+                      Mostrar vagas mais longe de mim se eu ficar sem vagas pra
+                      ver
+                    </Text>
+                    <Switch
+                      value={showFarWork}
+                      onValueChange={setShowFarWork}
+                      trackColor={{ true: "#fde047", false: "#666" }}
+                      thumbColor="#FFF"
                     />
-                    {modalitySelected.length > 0 && (
-                      <View className="mt-2 px-8">
-                        {modalitySelected.map((item, index) => (
-                          <View className="flex-row items-center">
-                            <Check
-                              size={rf(20)}
-                              color={"#22c55e"}
-                              className="mr-1"
-                            />
-                            <Text
-                              key={index}
-                              className="text-sm text-[#22c55e] font-semibold"
-                              style={{ marginBottom: 4, fontSize: rf(14) }}
-                            >
-                              {item}
-                            </Text>
-                          </View>
-                        ))}
-                      </View>
-                    )}
+                  </View>
                 </View>
               </ScrollView>
               <View className="px-5 py-2 ">
@@ -504,3 +557,13 @@ export default function Filter() {
     </View>
   );
 }
+
+const styles = {
+  card: {
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+};
