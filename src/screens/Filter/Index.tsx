@@ -35,6 +35,7 @@ export default function Filter() {
     reload?: any;
     setReload?: any;
   };
+
   const handleApplyFilter = async () => {
     if (option == "Service") {
       const filterService = {
@@ -50,8 +51,12 @@ export default function Filter() {
         "filterService",
         JSON.stringify(filterService)
       );
+      setReload((prev: number) => prev + 1);
       Alert.alert("Filtro aplicado", "Seu filtro foi aplicado com sucesso!", [
-        { text: "OK" },
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(), // <- volta para a tela anterior
+        },
       ]);
       return;
     }
@@ -69,7 +74,6 @@ export default function Filter() {
       JSON.stringify(filterCategory)
     );
     setReload((prev: number) => prev + 1);
-
     Alert.alert("Filtro aplicado", "Seu filtro foi aplicado com sucesso!", [
       {
         text: "OK",
@@ -512,6 +516,46 @@ export default function Filter() {
                       ))}
                     </View>
                   )}
+                </View>
+                <View className="rounded-lg p-4 mb-4">
+                  <Text
+                    className="text-dark mb-2"
+                    style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                  >
+                    Distância máxima
+                  </Text>
+                  <Slider
+                    minimumValue={1}
+                    maximumValue={100}
+                    step={1}
+                    value={distance}
+                    onValueChange={setDistance}
+                    minimumTrackTintColor="#fde047"
+                    maximumTrackTintColor="#666"
+                    thumbTintColor="#fde047"
+                    className="mb-4"
+                  />
+                  <Text
+                    className="text-dark mb-2"
+                    style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                  >
+                    {distance} km
+                  </Text>
+                  <View className="flex-row justify-between items-center">
+                    <Text
+                      className="text-dark w-5/6"
+                      style={{ ...FONTS.fontRegular, fontSize: 14 }}
+                    >
+                      Mostrar pessoas mais longe de mim se eu ficar sem pessoas pra
+                      ver
+                    </Text>
+                    <Switch
+                      value={showFarWork}
+                      onValueChange={setShowFarWork}
+                      trackColor={{ true: "#fde047", false: "#666" }}
+                      thumbColor="#FFF"
+                    />
+                  </View>
                 </View>
               </ScrollView>
               <View className="px-5 py-2 ">

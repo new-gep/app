@@ -1,7 +1,7 @@
 import config from '../../../../config.json';
 import axios from 'axios'
 
-export default async function AllPeople(cpf:any){
-    const response = await axios.get(`${config.API_URL}collaborator/people/${cpf}`)
+export default async function AllPeople(props:any){
+    const response = await axios.post(`${config.API_URL}collaborator/people`, props)
     return response.data
 }

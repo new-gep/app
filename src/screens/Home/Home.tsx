@@ -40,6 +40,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [refresh, setRefresh] = useState<number>(0);
   const [previousCards, setPreviousCards] = useState<any>([]);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { collaborator, updateCollaborator } = useCollaborator();
@@ -54,24 +55,24 @@ const Home = () => {
   const fetchJobs = async () => {
     try {
       if (!collaborator) return;
-      setIsLoading(true)
-      let filterCategory = await AsyncStorage.getItem("filterService");
+      setIsLoading(true);
+      let filterService = await AsyncStorage.getItem("filterService");
       const props: any = {
         cpf: collaborator.CPF,
-        title:title,
-        cep: collaborator.zip_code
+        title: title,
+        cep: collaborator.zip_code,
       };
-      if(filterCategory){
-        const parsed = JSON.parse(filterCategory)
-        props.categorySelected=parsed.category,
-        props.modalitySelected=parsed.modality,
-        props.contractSelected=parsed.contract,
-        props.paymentSelected =parsed.payment,
-        props.timeSelected    =parsed.time,
-        props.serviceSelected =parsed.service
-        props.distance = parsed.distance,
-        props.showFarWork = parsed.showFarWork
-      };
+      if (filterService) {
+        const parsed = JSON.parse(filterService);
+          (props.categorySelected = parsed.category),
+          (props.modalitySelected = parsed.modality),
+          (props.contractSelected = parsed.contract),
+          (props.paymentSelected = parsed.payment),
+          (props.timeSelected = parsed.time),
+          (props.serviceSelected = parsed.service);
+          (props.distance = parsed.distance),
+          (props.showFarWork = parsed.showFarWork);
+      }
       const response = await FindAllService(props);
       if (response.status !== 200) {
         throw new Error(response.message || "Erro ao buscar os jobs.");
@@ -86,7 +87,26 @@ const Home = () => {
 
   const fetchPeople = async () => {
     if (!collaborator) return;
-    const response = await AllPeople(collaborator.CPF);
+    setIsLoading(true);
+    let filterCategory = await AsyncStorage.getItem("filterCategory");
+    const props: any = {
+      cpf: collaborator.CPF,
+      title: title,
+      cep: collaborator.zip_code,
+    };
+    if (filterCategory) {
+      const parsed = JSON.parse(filterCategory);
+        (props.categorySelected = parsed.category),
+        (props.modalitySelected = parsed.modality),
+        (props.contractSelected = parsed.contract),
+        (props.paymentSelected = parsed.payment),
+        (props.timeSelected = parsed.time),
+        (props.serviceSelected = parsed.service);
+        (props.distance = parsed.distance),
+        (props.showFarWork = parsed.showFarWork);
+    }
+
+    const response = await AllPeople(props);
     if (response?.status == 200) {
       setCards(response.peoples);
     }
@@ -120,9 +140,9 @@ const Home = () => {
         setTimeout(() => {
           updateCollaborator(collaborator.CPF);
         }, 3000);
-      }else{
-        if(token !== collaborator.push_token){
-            const date = {
+      } else {
+        if (token !== collaborator.push_token) {
+          const date = {
             push_token: token,
           };
           await UpdateCollaborator(collaborator.CPF, date);
@@ -131,8 +151,6 @@ const Home = () => {
           }, 3000);
         }
       }
-
-
     } catch (error) {
       console.log("Erro ao registrar notificações:", error);
     }
@@ -170,7 +188,7 @@ const Home = () => {
     setCards(null);
     setIsLoading(true);
     loadData();
-  }, [cardSearch, collaborator]);
+  }, [cardSearch, collaborator, refresh]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -242,12 +260,15 @@ const Home = () => {
             {/* Topo da tela */}
             <View className="w-full z-50 mt-1 mb-10">
               <CardSearch
+                refresh={refresh}
+                setRefresh={setRefresh}
                 activeTab={cardSearch}
                 setActiveTab={setCardSearch}
                 setCards={setCards}
-                title={title} 
+                title={title}
                 setTitle={setTitle}
                 fetchJobs={fetchJobs}
+                fetchPeople={fetchPeople}
               />
             </View>
             <BannerImage />

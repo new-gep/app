@@ -32,6 +32,9 @@ interface CardSearchProps {
   title: string;
   setTitle: any;
   fetchJobs: any;
+  fetchPeople:any;
+  refresh: any;
+  setRefresh: any;
 }
 
 const CardSearch: React.FC<CardSearchProps> = ({
@@ -41,13 +44,15 @@ const CardSearch: React.FC<CardSearchProps> = ({
   title,
   setTitle,
   fetchJobs,
+  fetchPeople,
+  refresh,
+  setRefresh
 }) => {
   const navigation = useNavigation<NavigationProp<any>>();
   const { collaborator, fetchCollaborator } = useCollaborator();
   const [searchText, setSearchText] = useState("");
   const [path, setPath] = useState<any>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const [refresh, setRefresh] = useState<number>(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { wp, hp } = useScreen(); // 📱 dimensões da tela
 
@@ -122,7 +127,11 @@ const CardSearch: React.FC<CardSearchProps> = ({
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (title.trim().length > 0) {
-        fetchJobs();
+        if(activeTab === 'Service'){
+          fetchJobs();
+        }else{
+          fetchPeople()
+        }
       }
     }, 800); // aguarda 800ms após digitação parar
 

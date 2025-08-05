@@ -63,7 +63,8 @@ const SwipeableCard = React.memo(function SwipeableCard({
   id,
   isCandidate,
   reload,
-  setReload
+  setReload,
+  distance
 }: any) {
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -156,6 +157,7 @@ const SwipeableCard = React.memo(function SwipeableCard({
         setVisible={setVisible}
         setReload={setReload}
         reload={reload}
+        distance={distance}
         peopleData={{ ...item, isCandidate: isCandidate, id: id }}
       />
       <Swipeable
@@ -180,8 +182,8 @@ const SwipeableCard = React.memo(function SwipeableCard({
                     resizeMode="cover"
                   />
                 ) : (
-                  <View className="rounded-full bg-zinc-100 items-center justify-center p-3 w-12 h-12">
-                    <UserRound size={rf(25)} />
+                  <View className="rounded-full bg-zinc-100 items-center justify-center p-2">
+                    <UserRound size={rf(20)} />
                   </View>
                 )}
 
@@ -230,14 +232,13 @@ const SwipeableCard = React.memo(function SwipeableCard({
                 </View>
                 <Text
                   style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
-                  className="text-zinc-500 w-10/12"
+                  className="text-zinc-500 w-9/12"
                 >
                   {item?.collaborator &&
                   item?.collaborator?.howWork?.contract?.length > 0 ? (
-                    item?.collaborator?.howWork?.contract?.join(", ")
+                      item?.collaborator?.howWork?.contract?.join(", ")
                   ) : (
                     <Text
-                      className=""
                       style={{ ...FONTS.fontBlack, fontSize: rf(10) }}
                     >
                       Sem preferencia de contrato
@@ -251,6 +252,15 @@ const SwipeableCard = React.memo(function SwipeableCard({
                   {item?.collaborator?.city && item?.collaborator?.uf ?
                     `${item?.collaborator.city}, ${item?.collaborator.uf}` : 'Endereço não cadastrado'}
                 </Text>
+                { distance &&
+                  <Text
+                  style={{ ...FONTS.fontSemiBold, fontSize: rf(10) }}
+                  className="text-zinc-500"
+                >
+                  {distance?.distance? 
+                    `${distance?.distance}` : 'Não disponível'}
+                </Text>
+                }
               </View>
             </View>
 
@@ -311,6 +321,7 @@ export default function CardPeople({
             navigateToCardInformation({ data: item })
           }
           item={item?.collaborator}
+          distance={item?.distanceInfo}
           id={id}
           isCandidate={isCandidate}
           reload={reload} 

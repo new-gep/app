@@ -10,7 +10,7 @@ import {
   ScrollView,
   Linking,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import Modal from "react-native-modal";
 import {
@@ -80,7 +80,8 @@ const PeopleInformation = ({
   peopleData,
   setReload,
   reload,
-  removeCard
+  removeCard,
+  distance,
 }: any) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isContract, setIsContract] = useState<boolean>(false);
@@ -289,7 +290,7 @@ const PeopleInformation = ({
 
   const handleFavorite = async () => {
     if (!collaborator || !peopleData?.collaborator?.CPF) return;
-    setLoadFavorite(true)
+    setLoadFavorite(true);
     const currentCpf = String(peopleData.collaborator.CPF);
     let favorites: string[] = [];
 
@@ -323,7 +324,7 @@ const PeopleInformation = ({
     } else {
       console.warn("Erro ao atualizar favoritos.");
     }
-    setLoadFavorite(false)
+    setLoadFavorite(false);
     if (reload) {
       setReload((prev: number) => prev + 1);
     }
@@ -493,15 +494,17 @@ const PeopleInformation = ({
                           : ""
                       }`}
                     </Text>
-                    <Text
-                      style={{
-                        ...FONTS.fontBlack,
-                        fontSize: rf(12),
-                        color: "#6b7280",
-                      }}
-                    >
-                      {/* {peopleData.name} */}
-                    </Text>
+                    { distance &&
+                      <Text
+                        style={{
+                          ...FONTS.fontBlack,
+                          fontSize: rf(12),
+                          color: "#6b7280",
+                        }}
+                      >
+                      Está {distance.distance} de você (endereço cadastrado)
+                      </Text>
+                    }
                   </View>
                   {peopleData && peopleData.isVerified && (
                     <TouchableOpacity
@@ -1174,44 +1177,47 @@ const PeopleInformation = ({
                 )}
               </TouchableOpacity>
 
-              { !loadFavorite ?
+              {!loadFavorite ? (
                 <TouchableOpacity
-                style={{ flex: 1, padding: 12, alignItems: "center" }}
-                onPress={handleFavorite}
-              >
-                {!isFavorite ? (
-                  <>
-                    <Heart size={rf(24)} color="#71717a" />
-                    <Text
-                      style={{
-                        ...FONTS.font,
-                        fontSize: rf(9),
-                        color: "#71717a",
-                      }}
-                    >
-                      Favoritar
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <HeartOff size={rf(24)} color="#71717a" />
-                    <Text
-                      style={{
-                        ...FONTS.font,
-                        fontSize: rf(9),
-                        color: "#71717a",
-                      }}
-                    >
-                      Desfavoritar
-                    </Text>
-                  </>
-                )}
+                  style={{ flex: 1, padding: 12, alignItems: "center" }}
+                  onPress={handleFavorite}
+                >
+                  {!isFavorite ? (
+                    <>
+                      <Heart size={rf(24)} color="#71717a" />
+                      <Text
+                        style={{
+                          ...FONTS.font,
+                          fontSize: rf(9),
+                          color: "#71717a",
+                        }}
+                      >
+                        Favoritar
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <HeartOff size={rf(24)} color="#71717a" />
+                      <Text
+                        style={{
+                          ...FONTS.font,
+                          fontSize: rf(9),
+                          color: "#71717a",
+                        }}
+                      >
+                        Desfavoritar
+                      </Text>
+                    </>
+                  )}
                 </TouchableOpacity>
-                :
-                <View className="mt-1" style={{ flex: 1, padding: 12, alignItems: "center" }}>
-                  <ActivityIndicator color={'#71717a'} size={rf(25)}/>
+              ) : (
+                <View
+                  className="mt-1"
+                  style={{ flex: 1, padding: 12, alignItems: "center" }}
+                >
+                  <ActivityIndicator color={"#71717a"} size={rf(25)} />
                 </View>
-              }
+              )}
 
               {handleSwipeRight && !isContract && (
                 <TouchableOpacity
