@@ -76,6 +76,7 @@ export default function Contract({menu, setMenu, select, setSelect}:any){
                         isChecked={select.includes("Contrato")}
                         iconStyle={{ borderColor: "#22c55e" }}
                         onPress={() => toggleService("Contrato")}
+                        
                     />
                     <View className="border-b border-[#a7a7a7]"></View>
                     <BouncyCheckbox
@@ -93,3 +94,4 @@ export default function Contract({menu, setMenu, select, setSelect}:any){
         </View>
     )
 }
+

@@ -569,7 +569,6 @@ const Styles = {
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-
   text: {
     backgroundColor: "white",
     padding: 8,

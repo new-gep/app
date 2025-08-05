@@ -21,8 +21,8 @@ export default function Input({
 
   return (
     <View className="px-7">
-      {title && <Text className="mb-2" style={{...FONTS.fontBlack, fontSize:rf(18)}}>{title}</Text>}
-      <TouchableOpacity className="border-2 h-10 border-[#a1a1a1] rounded-md px-5 flex-row items-center justify-between"
+      {title && <Text className="mb-2" style={{ ...FONTS.fontLight, fontSize: rf(16) }}>{title}</Text>}
+      <TouchableOpacity style={Styles.card} className="h-10 bg-white rounded-md px-5 flex-row items-center justify-between"
         onPress={()=>setVisible(go)}
       >
         <Text
@@ -36,3 +36,29 @@ export default function Input({
     </View>
   );
 }
+
+const Styles = {
+  card: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    // backgroundColor: "#FFFFFF",
+  },
+  select: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+
+  text: {
+    backgroundColor: "white",
+    padding: 8,
+    borderRadius: 8,
+    marginTop: 8,
+    color: "black",
+  },
+};

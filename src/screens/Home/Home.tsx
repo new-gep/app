@@ -41,7 +41,6 @@ const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [refresh, setRefresh] = useState<number>(0);
-  const [previousCards, setPreviousCards] = useState<any>([]);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { collaborator, updateCollaborator } = useCollaborator();
   const { validateCollaborator, missingData } = useCollaboratorContext();
@@ -272,7 +271,7 @@ const Home = () => {
               />
             </View>
             <BannerImage />
-            <BannerCircle />
+            <BannerCircle setCards={setCards} setIsLoading={setIsLoading} option={cardSearch}/>
 
             {!isLoading ? (
               <>

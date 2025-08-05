@@ -137,26 +137,21 @@ export default function Filter() {
                     visible={menu}
                     setVisible={setMenu}
                   />
-                  {serviceSelected.length > 0 && (
-                    <View className="mt-2 px-8">
-                      {serviceSelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
-                          <Text
-                            key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
-                            style={{ marginBottom: 4, fontSize: rf(14) }}
-                          >
-                            {item}
-                          </Text>
-                        </View>
-                      ))}
-                    </View>
-                  )}
+                    {serviceSelected.length > 0 && (
+                      <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
+                        {serviceSelected.map((item, index) => (
+                          <View  style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
+                            <Text
+                              key={index}
+                              className="text-dark"
+                              style={{ marginBottom: 4, fontSize: rf(14) }}
+                            >
+                              {item}
+                            </Text>
+                          </View>
+                        ))}
+                      </ScrollView>
+                    )}
                 </View>
                 <View>
                   <Input
@@ -167,24 +162,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {timeSelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                    <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {timeSelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                        <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View>
@@ -196,24 +186,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {paymentSelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                    <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {paymentSelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                        <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View>
@@ -225,24 +210,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {contractSelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                    <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {contractSelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                        <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View>
@@ -254,24 +234,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {modalitySelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                    <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {modalitySelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                        <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View className="rounded-lg p-4 mb-4">
@@ -367,7 +342,7 @@ export default function Filter() {
         <>
           {menu == "default" ? (
             <>
-              <Header title="Filtro de Serviço" leftIcon={"back"} />
+              <Header title="Filtro de Pessoas" leftIcon={"back"} />
               <ScrollView
                 className="gap-5 mt-5"
                 contentContainerStyle={{ paddingBottom: 50 }}
@@ -381,24 +356,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {categorySelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                    <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {categorySelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                         <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View>
@@ -410,24 +380,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {timeSelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                    <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {timeSelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                        <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View>
@@ -439,24 +404,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {paymentSelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                    <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {paymentSelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                        <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View>
@@ -468,24 +428,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {contractSelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                   <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {contractSelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                        <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View>
@@ -497,24 +452,19 @@ export default function Filter() {
                     setVisible={setMenu}
                   />
                   {modalitySelected.length > 0 && (
-                    <View className="mt-2 px-8">
+                    <ScrollView contentContainerStyle={{ paddingRight: 33 }} horizontal className="mt-2 px-8 py-3">
                       {modalitySelected.map((item, index) => (
-                        <View className="flex-row items-center">
-                          <Check
-                            size={rf(20)}
-                            color={"#22c55e"}
-                            className="mr-1"
-                          />
+                        <View style={Styles.card} className="px-4 py-2 rounded-full bg-primary w-fit mr-2">
                           <Text
                             key={index}
-                            className="text-sm text-[#22c55e] font-semibold"
+                            className="text-dark"
                             style={{ marginBottom: 4, fontSize: rf(14) }}
                           >
                             {item}
                           </Text>
                         </View>
                       ))}
-                    </View>
+                    </ScrollView>
                   )}
                 </View>
                 <View className="rounded-lg p-4 mb-4">
@@ -611,12 +561,27 @@ export default function Filter() {
   );
 }
 
-const styles = {
+const Styles = {
   card: {
-    elevation: 8,
-    shadowColor: "#000",
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    // backgroundColor: "#FFFFFF",
+  },
+  select: {
+    elevation: 8, // Sombra para Android
+    shadowColor: "#000", // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  text: {
+    backgroundColor: "white",
+    padding: 8,
+    borderRadius: 8,
+    marginTop: 8,
+    color: "black",
   },
 };
