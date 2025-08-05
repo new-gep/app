@@ -11,8 +11,7 @@ const ListStyle1 = (props : any) => {
 
     return (
         <>
-            <TouchableOpacity 
-                onPress={() => props.onPress && props.onPress()}
+            <View 
                 style={[styles.listStyle,{backgroundColor:colors.card}]}>
                 {props.icon &&
                     <View
@@ -41,13 +40,13 @@ const ListStyle1 = (props : any) => {
                     />
                 }
                 <Text style={{...FONTS.fontRegular,fontSize:rf(14),color:colors.title,flex:1}}>{props.title}</Text>
-                {props.arrowDown && 
+                {/* {props.arrowDown && 
                     <FontAwesome name={'angle-down'} color={colors.title} size={18}/>
                 }
                 {props.arrowRight && 
                     <FontAwesome name={'angle-right'} color={colors.title} size={20}/>
-                }
-            </TouchableOpacity>
+                } */}
+            </View>
         </>
     );
 };

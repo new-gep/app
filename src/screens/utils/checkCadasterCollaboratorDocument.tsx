@@ -136,8 +136,8 @@ export default function CheckCadasterCollaboratorDocument() {
                             {missingDate.RG && (
                                 <ListStyle1 
                                     
-                                    arrowRight 
-                                    icon={<AntDesign name={'picture'} size={rf(16)} color={COLORS.dark} />}
+                                    // arrowRight 
+                                    // icon={<AntDesign name={'picture'} size={rf(16)} color={COLORS.dark} />}
                                     title={'RG'}
                                 />
                             )}
@@ -152,8 +152,8 @@ export default function CheckCadasterCollaboratorDocument() {
                             {missingDate.Address && (
                                 <ListStyle1 
                                     
-                                    arrowRight 
-                                    icon={<AntDesign name={'picture'} size={rf(16)} color={COLORS.dark} />}
+                                    // arrowRight 
+                                    // icon={<AntDesign name={'picture'} size={rf(16)} color={COLORS.dark} />}
                                     title={'Comprovante de Endereço'}
                                 />
                             )}

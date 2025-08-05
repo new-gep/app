@@ -37,11 +37,8 @@ const Documents = () => {
   const [picturesData, setPicturesData] = useState<PicturesProps | {}>(() => {
     const base = {
       RG: null,
-      Voter_Registration: null,
       CNH: null,
-      Work_Card: null,
       Address: null,
-      School_History: null,
     };
 
     // Adiciona apenas se for homem
