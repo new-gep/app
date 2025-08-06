@@ -56,8 +56,9 @@ export default function CheckCadasterCollaboratorDocument() {
                 // Garantir que missingDocuments e missingFields são arrays
                 const missingDocuments = Array.isArray(parsedMissingDates.missingDocuments) ? parsedMissingDates.missingDocuments : [];
                 // const missingFields    = Array.isArray(parsedMissingDates.missingFields) ? parsedMissingDates.missingFields : [];
+                console.log(missingDocuments)
                 const newMissingDate = {
-                    RG: missingDocuments.includes("RG"),
+                    RG: missingDocuments.includes("RG ou CNH"),
                     Work_Card: missingDocuments.includes("Work_Card"),
                     Marriage_Certificate: missingDocuments.includes("Marriage_Certificate"),
                     Address: missingDocuments.includes("Address"),
@@ -138,7 +139,7 @@ export default function CheckCadasterCollaboratorDocument() {
                                     
                                     // arrowRight 
                                     // icon={<AntDesign name={'picture'} size={rf(16)} color={COLORS.dark} />}
-                                    title={'RG'}
+                                    title={'RG ou CNH'}
                                 />
                             )}
                             {missingDate.Work_Card && (
